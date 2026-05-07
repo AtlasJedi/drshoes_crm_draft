@@ -1,0 +1,18 @@
+{
+  "name": "drshoes",
+  "private": true,
+  "version": "0.0.1",
+  "packageManager": "pnpm@9.12.3",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.6.3",
+    "@types/node": "^20.16.11"
+  }
+}
