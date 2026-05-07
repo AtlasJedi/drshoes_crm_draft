@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "active_milestone": "0B",
+  "active_plan": "docs/superpowers/plans/2026-05-08-milestone-00b-auth-rbac.md",
+  "tasks": [
+    {
+      "id": "0b-1",
+      "title": "User entity + UserRepository + repo integration test",
+      "status": "completed",
+      "commit_sha": "ddea414",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-2",
+      "title": "Spring Session JDBC config",
+      "status": "completed",
+      "commit_sha": "9d16661",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-3",
+      "title": "BCrypt password encoder",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-4",
+      "title": "SecurityConfig + CSRF + public allow-list",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-5",
+      "title": "Login throttle (Bucket4j)",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-6",
+      "title": "AuthService + AuthController + DTOs",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-7",
+      "title": "RbacService + @EnableMethodSecurity",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-8",
+      "title": "AuditLogAspect AOP",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-9",
+      "title": "V002 seed users",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-10",
+      "title": "Frontend API client + auth helpers (incl. lib/log.ts)",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-11",
+      "title": "Login page + LoginForm component",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-12",
+      "title": "Admin layout auth guard + sidebar shell",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "0b-13",
+      "title": "E2E auth verification + tag milestone-0b",
+      "status": "pending",
+      "dispatch_log": null
+    }
+  ],
+  "notes": [
+    "Tasks 0b-1 and 0b-2 shipped before the dispatch-log directive, so dispatch_log is null. Future tasks must include a dispatch_log path.",
+    "Per locked dispatch protocol: plans on disk only; thin prompts; combined reviews for mechanical tasks; structured logging baked in from 0b-3 onward."
+  ]
+}

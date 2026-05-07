@@ -54,10 +54,27 @@ All UI copy in Polish; code/comments in English.
 
 ## Workflow
 
-Opus 4.7 (this session) drives architecture, planning, review.
+Opus drives architecture, planning, review.
 Sonnet subagents do mechanical implementation.
 Atomic commits, Conventional Commits.
 TDD per `superpowers:test-driven-development`.
+
+## Dispatch Protocol (locked 2026-05-08)
+
+**Owner directive: minimize main-session context.** Plans live on disk and are NOT re-pasted into subagent prompts. Subagents read the plan file themselves and write structured dispatch logs to `docs/dispatch-log/`. Main session reads only summary fields. `/clear` must be cheap at any time.
+
+**Rules in force:**
+1. Dispatch prompts are THIN — point subagent at `docs/superpowers/plans/<plan>.md` + task id + log template, not full task text.
+2. Each dispatch writes `docs/dispatch-log/<task-id>-<UTC>.md` with files, commands, test summary, decisions, commit SHA.
+3. Tracker on disk: `docs/dispatch-log/tasks.json` is authoritative across sessions (replaces in-session TaskCreate state for cross-session continuity).
+4. **Combined spec+quality review** for pure-config / mechanical TDD tasks. Two-stage only for substantial logic / security-sensitive code / > 100 LOC.
+5. Inline trivial fixups (read + edit + commit) — don't dispatch a subagent for 2-line edits.
+6. **Granulated code:** Java classes < 120 LOC, TS modules < 80 LOC. Larger units get flagged for split.
+7. **Extensive structured logging:** every backend service / controller / aspect logs at INFO with `key=value` fields including correlation/request id, actor, operation, entity id, outcome. Every substantive TS module uses the shared `lib/log.ts` named-logger pattern.
+8. Commit messages tag `[milestone:X][task:Y]` and include `Refs: <dispatch-log-path>` in body.
+9. If main-session is past ~50% of model window mid-milestone: save state, write a session-summary memory entry, suggest `/clear`. Don't push past 60%.
+
+Full protocol in memory entry `feedback_dispatch_protocol.md` (auto-loaded each session).
 
 ## Status
 
