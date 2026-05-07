@@ -54,4 +54,30 @@ class S3BlobStorageIntegrationTest {
         assertThat(presigned.url()).contains("orders/2026/05/abc.txt");
         assertThat(presigned.expiresAt()).isAfter(java.time.Instant.now());
     }
+
+    @Test
+    void exists_returns_false_for_missing_key() throws Exception {
+        var client = S3Client.builder()
+                .endpointOverride(URI.create(minio.getS3URL()))
+                .region(Region.US_EAST_1)
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create("test", "test1234")))
+                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
+                .build();
+        var presigner = S3Presigner.builder()
+                .endpointOverride(URI.create(minio.getS3URL()))
+                .region(Region.US_EAST_1)
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create("test", "test1234")))
+                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
+                .build();
+        try {
+            client.createBucket(CreateBucketRequest.builder().bucket("drshoes-test").build());
+        } catch (software.amazon.awssdk.services.s3.model.BucketAlreadyOwnedByYouException e) {
+            // OK — bucket survives across tests
+        }
+
+        var storage = new S3BlobStorage(client, presigner, "drshoes-test");
+        assertThat(storage.exists(new BlobKey("does/not/exist.txt"))).isFalse();
+    }
 }

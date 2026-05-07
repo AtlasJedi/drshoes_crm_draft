@@ -44,7 +44,7 @@ public class S3BlobStorage implements BlobStorage {
         try {
             client.headObject(HeadObjectRequest.builder().bucket(bucket).key(key.value()).build());
             return true;
-        } catch (S3Exception e) {
+        } catch (NoSuchKeyException e) {
             return false;
         }
     }
