@@ -9,3 +9,16 @@ node_modules
 dist
 build
 .turbo
+
+# Java / Maven
+target/
+*.class
+.mvn/wrapper/maven-wrapper.jar
+hs_err_pid*.log
+
+# IDE
+.idea/
+*.iml
+*.iws
+.vscode/
+*.swp
