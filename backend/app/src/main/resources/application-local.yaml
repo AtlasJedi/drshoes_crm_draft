@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/drshoes}
+    username: ${SPRING_DATASOURCE_USERNAME:drshoes}
+    password: ${SPRING_DATASOURCE_PASSWORD:drshoes-dev-secret}
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+drshoes:
+  storage:
+    endpoint: ${DRSHOES_STORAGE_ENDPOINT:http://localhost:9000}
+    bucket: ${DRSHOES_STORAGE_BUCKET:drshoes-dev}
+    access-key: ${DRSHOES_STORAGE_ACCESS_KEY:drshoes}
+    secret-key: ${DRSHOES_STORAGE_SECRET_KEY:drshoes-dev-secret}
+    region: us-east-1
+    path-style-access: true
