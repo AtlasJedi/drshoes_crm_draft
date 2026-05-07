@@ -460,8 +460,13 @@ CREATE INDEX scheduled_message_due_idx ON scheduled_message (state, scheduled_fo
   WHERE state IN ('PENDING','AWAITING_CONFIRM');
 CREATE INDEX scheduled_message_order_idx ON scheduled_message (order_id);
 -- Idempotency for daily-tick triggers: prevent duplicate scheduling per (trigger,order,date)
+-- NOTE: scheduled_for::date is STABLE (timezone-dependent), not IMMUTABLE, so we wrap it.
+CREATE OR REPLACE FUNCTION utc_date(ts TIMESTAMPTZ) RETURNS DATE AS $$
+  SELECT (ts AT TIME ZONE 'UTC')::date;
+$$ LANGUAGE sql IMMUTABLE;
+
 CREATE UNIQUE INDEX scheduled_message_dedup_idx ON scheduled_message
-  (trigger_id, order_id, (scheduled_for::date))
+  (trigger_id, order_id, utc_date(scheduled_for))
   WHERE state IN ('PENDING','AWAITING_CONFIRM','SENT');
 CREATE TRIGGER scheduled_message_touch BEFORE UPDATE ON scheduled_message
   FOR EACH ROW EXECUTE FUNCTION touch_updated_at();
