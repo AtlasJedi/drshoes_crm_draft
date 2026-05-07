@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    show-sql: false
+drshoes:
+  storage:
+    endpoint: http://localhost:9000
+    bucket: drshoes-test
+    access-key: test
+    secret-key: testtest
