@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 /**
@@ -21,12 +22,14 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
  *   /api/public/**                     — public-facing API endpoints
  *   /api/webhooks/**                   — inbound webhook callbacks
  *   /api/admin/auth/login              — login endpoint (unauthenticated)
- *   /api/admin/auth/csrf               — CSRF token fetch (unauthenticated)
  *
  * All other /api/admin/** routes require an authenticated session.
  *
  * CSRF: double-submit cookie (XSRF-TOKEN, httpOnly=false so JS can read it).
- * CSRF is ignored for public/** and actuator/** routes (no state-changing ops there).
+ * The CSRF token is delivered as a cookie on the login response — no separate
+ * CSRF endpoint is needed or exposed.
+ * CSRF is ignored for /api/public/**, /api/webhooks/**, and /actuator/**
+ * (external callers / read-only probes — no state-changing ops there).
  */
 @Configuration
 public class SecurityConfig {
@@ -39,8 +42,7 @@ public class SecurityConfig {
         "/actuator/info",
         "/api/public/**",
         "/api/webhooks/**",
-        "/api/admin/auth/login",
-        "/api/admin/auth/csrf"
+        "/api/admin/auth/login"
     };
 
     // Routes where CSRF is not enforced (read-only / external callers)
@@ -50,17 +52,25 @@ public class SecurityConfig {
         "/actuator/**"
     };
 
+    /**
+     * Exposed as a bean so tests can assert cookie configuration (httpOnly=false,
+     * cookieName=XSRF-TOKEN) without relying on lazy token materialisation.
+     */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        var csrfRepo = CookieCsrfTokenRepository.withHttpOnlyFalse(); // double-submit pattern
-        csrfRepo.setCookieName("XSRF-TOKEN");
+    public CsrfTokenRepository csrfTokenRepository() {
+        var repo = CookieCsrfTokenRepository.withHttpOnlyFalse(); // double-submit pattern
+        repo.setCookieName("XSRF-TOKEN");
+        return repo;
+    }
 
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, CsrfTokenRepository csrfTokenRepository) throws Exception {
         var csrfHandler = new CsrfTokenRequestAttributeHandler();
         csrfHandler.setCsrfRequestAttributeName("_csrf");
 
         http
             .csrf(c -> c
-                .csrfTokenRepository(csrfRepo)
+                .csrfTokenRepository(csrfTokenRepository)
                 .csrfTokenRequestHandler(csrfHandler)
                 .ignoringRequestMatchers(CSRF_IGNORED))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
@@ -74,8 +84,8 @@ public class SecurityConfig {
             .exceptionHandling(e -> e.authenticationEntryPoint(
                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 
-        log.info("op=securityFilterChainConfigured publicRoutes={} csrfMode=double-submit-cookie csrfCookieName=XSRF-TOKEN",
-            PUBLIC_MATCHERS.length);
+        log.info("op=securityFilterChainConfigured publicRouteCount={} publicRoutePatterns={} csrfMode=double-submit-cookie csrfCookieName=XSRF-TOKEN",
+            PUBLIC_MATCHERS.length, java.util.Arrays.toString(PUBLIC_MATCHERS));
 
         return http.build();
     }
