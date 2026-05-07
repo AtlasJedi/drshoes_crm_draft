@@ -65,7 +65,9 @@ TDD per `superpowers:test-driven-development`.
 - [x] Superpowers v5.1.0 cloned to `.superpowers/`
 - [x] Handoff package received
 - [x] Q&A round complete — `handoff/DECISIONS.md` written
-- [x] `ARCHITECTURE.md` drafted for sign-off
-- [ ] Owner sign-off on `ARCHITECTURE.md`
-- [ ] Milestone 0 plan via `superpowers:writing-plans`
-- [ ] Implementation begins (Sonnet subagents per milestone)
+- [x] `ARCHITECTURE.md` drafted and signed off
+- [x] Proto API + SQL schema reviewed
+- [x] Milestone 0A plan written (`docs/superpowers/plans/2026-05-07-milestone-00a-foundation.md`)
+- [x] Milestone 0A: foundation skeleton boots — health green, V001 applied, web renders
+- [ ] Milestone 0B plan: auth + RBAC + RbacService
+- [ ] Milestone 1: Order domain + drawer + audit timeline

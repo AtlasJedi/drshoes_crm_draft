@@ -27,6 +27,6 @@ After `make up`:
 - `apps/web/` — Next.js 16 (public landing + `/admin/*` route group).
 - `packages/ui` — shared design tokens + Tailwind preset.
 - `packages/api-types` — TypeScript types generated from backend OpenAPI.
-- `infra/` — deploy manifests (Cloudflare Containers, GitHub Actions).
 - `docs/` — schema, API contract, plans.
 - `handoff/` — original brief, design prototype, locked decisions.
+- `infra/` — deploy manifests (Cloudflare Containers, GitHub Actions) — added in a later milestone.
