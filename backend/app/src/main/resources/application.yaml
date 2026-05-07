@@ -14,11 +14,23 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: false
     validate-on-migrate: true
+  session:
+    jdbc:
+      initialize-schema: never
+      table-name: SPRING_SESSION
+    timeout: 30m
 
 server:
   port: 8080
   forward-headers-strategy: framework
   shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        name: dr_session
+        http-only: true
+        secure: false
+        same-site: lax
 
 management:
   endpoints:
