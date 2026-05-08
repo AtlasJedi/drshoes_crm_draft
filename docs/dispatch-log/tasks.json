@@ -253,8 +253,16 @@
     {
       "id": "1-10",
       "title": "AuditTimelineService + Controller + integration test",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "b29ea5f",
+      "log_backfill_sha": "a2dc77b",
+      "dispatch_log": "docs/dispatch-log/1-10-20260508T191200Z.md",
+      "deviations_from_plan": [
+        "Plan body referenced AuditLog.entity_type / entity_id columns (don't exist). Repo query rewritten to scan `path LIKE :pathPrefix OR parent_entity_id = :orderId ORDER BY createdAt`. Two-parameter method signature: caller (service) constructs pathPrefix.",
+        "ORDER_CREATED event SYNTHESIZED from Order.createdAt — the POST /api/admin/orders audit row has no orderId in its path, so the LIKE scan can't find it. Actor resolved from the earliest scanned row. If order not found (unknown orderId), empty list returned. M2 debt: TimelineEvent.id is null for the synthetic event; frontend must handle.",
+        "AuditTimelineController placed at com.drshoes.app.audit.api.AuditTimelineController per .api. convention.",
+        "RBAC: no @PreAuthorize — SecurityConfig filter chain already enforces isAuthenticated() on /api/admin/**. Test 3 proves anonymous → 401."
+      ]
     },
     {
       "id": "1-11",
