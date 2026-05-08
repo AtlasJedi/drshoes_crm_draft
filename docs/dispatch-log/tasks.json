@@ -56,7 +56,12 @@
       "title": "RbacService + @EnableMethodSecurity",
       "status": "completed",
       "commit_sha": "21bcbdf",
-      "dispatch_log": "docs/dispatch-log/0b-7-2026-05-08T132000Z.md"
+      "fixup_sha": "25cc2f1",
+      "dispatch_log": "docs/dispatch-log/0b-7-2026-05-08T132000Z.md",
+      "fixup_log": "docs/dispatch-log/0b-7-fixup-2026-05-08T132700Z.md",
+      "review_blockers_resolved": [
+        "AnonymousAuthenticationToken bypass — explicit instanceof check added; new unit test asserts the trap is now caught"
+      ]
     },
     {
       "id": "0b-8",
