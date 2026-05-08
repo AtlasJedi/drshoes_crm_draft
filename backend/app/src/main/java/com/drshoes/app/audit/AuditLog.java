@@ -58,6 +58,10 @@ public class AuditLog {
 
     // getters/setters
     public UUID getId() { return id; }
+    public UUID getActorId() { return actorId; }
+    public String getMethod() { return method; }
+    public String getPath() { return path; }
+    public int getStatus() { return status; }
     public void setActorId(UUID actorId) { this.actorId = actorId; }
     public void setMethod(String method) { this.method = method; }
     public void setPath(String path) { this.path = path; }
