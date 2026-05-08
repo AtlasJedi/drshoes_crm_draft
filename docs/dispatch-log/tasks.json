@@ -312,8 +312,20 @@
     {
       "id": "1-14",
       "title": "Orders list page + filters + table",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "7c867de",
+      "dispatch_log": "docs/dispatch-log/1-14-20260508T173354Z.md",
+      "atomic_commit": true,
+      "deviations_from_plan": [
+        "Plan body said multi-checkbox status filter (6 statuses) — WRONG. Backend OrderController takes single ?status=. Implemented as single <select> with 'Wszystkie' empty option. M1 debt.",
+        "Cookie-forwarding pattern from lib/auth/session.ts mirrored in new lib/orders/api-server.ts (server-only module).",
+        "OrderListRow DTO is missing 'items' array — 'Pozycje' column falls back to description. Backend debt.",
+        "OrderListRow DTO is missing 'assignedCraftsmanId' — 'Wykonawca' column renders '—'. Backend debt.",
+        "/admin/orders/new Link uses `as any` cast — typed routes won't know the path until 1-15 ships. Resolves automatically next task."
+      ],
+      "follow_up_debts": [
+        "Backend OrderListRow.java should include `items` (or at least an items-count + kinds summary) and `assignedCraftsmanId` fields. File as separate task before M1 closure if assignee + items columns matter for UAT, otherwise defer."
+      ]
     },
     {
       "id": "1-15",
