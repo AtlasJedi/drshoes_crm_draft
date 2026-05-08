@@ -40,7 +40,7 @@ public class MessageThreadEntity {
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime updatedAt;
 
-    protected MessageThreadEntity() {}
+    public MessageThreadEntity() {}
 
     // ---- accessors ----
 
