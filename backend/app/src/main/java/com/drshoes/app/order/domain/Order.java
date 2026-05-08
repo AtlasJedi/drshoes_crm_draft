@@ -48,6 +48,9 @@ public class Order {
     @Column(name = "picked_up_at")
     private Instant pickedUpAt;
 
+    @Column(name = "delivered_at")
+    private Instant deliveredAt;
+
     @Column(name = "assigned_craftsman_id", columnDefinition = "uuid")
     private UUID assignedCraftsmanId;
 
@@ -111,6 +114,9 @@ public class Order {
 
     public Instant getPickedUpAt() { return pickedUpAt; }
     public void setPickedUpAt(Instant pickedUpAt) { this.pickedUpAt = pickedUpAt; }
+
+    public Instant getDeliveredAt() { return deliveredAt; }
+    public void setDeliveredAt(Instant deliveredAt) { this.deliveredAt = deliveredAt; }
 
     public UUID getAssignedCraftsmanId() { return assignedCraftsmanId; }
     public void setAssignedCraftsmanId(UUID assignedCraftsmanId) { this.assignedCraftsmanId = assignedCraftsmanId; }
