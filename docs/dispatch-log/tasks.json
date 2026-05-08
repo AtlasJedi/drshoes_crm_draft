@@ -409,8 +409,9 @@
     {
       "id": "2-5",
       "title": "PlaceholderResolver + TemplateRenderer",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "725f80e",
+      "dispatch_log": "docs/dispatch-log/2-5-20260508T191928Z.md"
     },
     {
       "id": "2-6",
@@ -464,8 +465,9 @@
     {
       "id": "2-11",
       "title": "TemplatesController",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "fb9aab2",
+      "dispatch_log": "docs/dispatch-log/2-11-20260508T200252Z.md"
     },
     {
       "id": "2-12",
@@ -477,14 +479,16 @@
     {
       "id": "2-13",
       "title": "MessagesController",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e722c51",
+      "dispatch_log": "docs/dispatch-log/2-13-20260508T201341Z.md"
     },
     {
       "id": "2-14",
       "title": "lib/messaging API client + types",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "46dead5",
+      "dispatch_log": "docs/dispatch-log/2-14-20260508T203821Z.md"
     },
     {
       "id": "2-15",
