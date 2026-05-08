@@ -438,8 +438,9 @@
     {
       "id": "2-8",
       "title": "TriggerEngine + STATUS_CHANGE post-commit hook",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "7af95d7",
+      "dispatch_log": "docs/dispatch-log/2-8-20260508T193742Z.md"
     },
     {
       "id": "2-9",
