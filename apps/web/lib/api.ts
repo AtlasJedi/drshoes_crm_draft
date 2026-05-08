@@ -4,6 +4,20 @@ import { createLogger } from "./log";
 const BASE = env.NEXT_PUBLIC_API_BASE;
 const log = createLogger("api");
 
+/**
+ * Typed error thrown by ApiClient for non-2xx responses.
+ * Carries the HTTP status code for caller-side branching (e.g., 401 vs 429 vs 5xx).
+ */
+export class HttpError extends Error {
+  constructor(
+    public readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "HttpError";
+  }
+}
+
 /** Client-only: reads a cookie by name from document.cookie. */
 function getCookie(name: string): string | undefined {
   if (typeof document === "undefined") return undefined;
@@ -43,7 +57,7 @@ export class ApiClient {
     if (!resp.ok) {
       const bodyText = await resp.text().catch(() => "");
       log.warn("non-2xx response", { op: "request", path, status: resp.status, requestId });
-      throw new Error(`API ${resp.status}: ${bodyText}`);
+      throw new HttpError(resp.status, `API ${resp.status}: ${bodyText}`);
     }
 
     if (resp.status === 204) return undefined as unknown as T;
