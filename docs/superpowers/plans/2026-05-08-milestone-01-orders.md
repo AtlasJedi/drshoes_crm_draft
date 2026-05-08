@@ -44,6 +44,12 @@
 
 **Test infrastructure correction:**
 - Plan references `com.drshoes.app.test.PostgresIntegrationTestBase` in several tasks. **The actual base class is `com.drshoes.app.AbstractIntegrationTest`** (no `test` sub-package). All integration tests extend that. The base already carries `@SpringBootTest` + Testcontainers — do not redeclare those annotations.
+- For controller integration tests use the shared `com.drshoes.app.AdminWebTestBase` (introduced in 1-3) — it provides MockMvc + `loginAsOwner()` / `loginAsEmployee()` post-processors and helpers like `createClientAndReturnId(...)`. State-changing requests must include `.with(csrf())`.
+
+**Controller package convention (added 2026-05-08 after task 1-3-fixup):**
+- All admin REST controllers MUST live at `com.drshoes.app.<domain>.api.<X>Controller`. The `AuditLogAspect` pointcut is `execution(public * com.drshoes.app..api..*Controller.*(..))` — anything outside `.api.` will silently lose audit-log coverage. This applies to upcoming tasks 1-7 (`OrderController`), 1-10 (`AuditTimelineController`), and 1-11 (`UsersController`). The plan body's file-tree ASCII diagram omits the `.api.` segment; treat that as a typo, not a directive.
+- Controller exception handlers (`@RestControllerAdvice`) belong alongside their controller in the same `.api.` package.
+- A regression test asserting at least one audit row written by a successful POST on the controller is the proof — see `ClientControllerIntegrationTest#postCreateWritesAuditRow`. Each new admin controller should include an equivalent.
 
 **Entity exception reminder:** Java entities are an explicit exception to the < 120 LOC granular-code rule. JPA boilerplate naturally pushes them past 80 LOC; that's fine.
 
