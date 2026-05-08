@@ -42,7 +42,8 @@ public class SecurityConfig {
         "/actuator/info",
         "/api/public/**",
         "/api/webhooks/**",
-        "/api/admin/auth/login"
+        "/api/admin/auth/login",
+        "/api/health"
     };
 
     // Routes where CSRF is not enforced (read-only / external callers, or bootstrap endpoints

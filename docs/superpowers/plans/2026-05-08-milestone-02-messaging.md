@@ -71,6 +71,13 @@ M2 is outbound-only with single-admin operation; service-level `findFirstByClien
 **12. `Channel` enum.**
 The microlib `messaging-core` already defines `com.drshoes.lib.messaging.Channel` (EMAIL/SMS/WHATSAPP). The schema string is the same. Use the microlib enum where natural; add `MessageChannel` mirror in the app domain only if JPA requires it.
 
+**13. Timeline label composition — RATIFIED client-side (2026-05-08).**
+The M1 1-19 deviation (backend ships structured `labels` map; client composes
+Polish strings via `KIND_LABELS_PL`) is the project standard going forward.
+Reasoning: copy belongs in the presentation layer; i18n stays bolt-on by
+adding new dictionaries; backend stays free of locale concerns. M2's
+`MESSAGE_SENT` label (`Wysłano wiadomość ({channel})`) follows this pattern.
+
 ---
 
 ## File Structure
