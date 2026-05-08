@@ -13,6 +13,7 @@ import { OrderDrawerStatusChanger } from "./OrderDrawerStatusChanger";
 import { OrderDrawerItems } from "./OrderDrawerItems";
 import { OrderDrawerTimeline } from "./OrderDrawerTimeline";
 import { OrderDrawerMessages } from "./OrderDrawerMessages";
+import { MessageComposerModal } from "./MessageComposerModal";
 
 const log = createLogger("order-drawer");
 
@@ -74,6 +75,14 @@ export function OrderDrawer({ initialOrder, users }: Props) {
           </div>
         </Dialog.Content>
       </Dialog.Portal>
+
+      {/* Composer modal — rendered outside the drawer scroll container */}
+      <MessageComposerModal
+        orderId={order.id}
+        open={composeOpen}
+        onOpenChange={setComposeOpen}
+        onSent={() => setRefreshKey((k) => k + 1)}
+      />
     </Dialog.Root>
   );
 }
