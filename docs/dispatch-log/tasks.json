@@ -372,8 +372,9 @@
     {
       "id": "1-20",
       "title": "E2E compose smoke + milestone-1 tag + CLAUDE.md flip",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e86b149",
+      "dispatch_log": "docs/dispatch-log/1-20-20260508T180442Z.md"
     }
   ],
   "notes": [
