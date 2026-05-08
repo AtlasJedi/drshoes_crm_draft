@@ -298,8 +298,16 @@
     {
       "id": "1-13",
       "title": "ClientPicker + ClientCreateModal components",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "dae1119",
+      "dispatch_log": "docs/dispatch-log/1-13-20260508T172835Z.md",
+      "atomic_commit": true,
+      "deps_added": ["@radix-ui/react-dialog@1.1.15"],
+      "deviations_from_plan": [
+        "ClientPicker split per plan into ClientPicker.tsx (101 LOC) + ClientPickerResults.tsx (51 LOC). Picker over 80 LOC soft cap but under 120; modal also 96 LOC.",
+        "Keyboard nav (arrow up/down + Enter) deferred — mouse-only for M1. Documented.",
+        "onMouseDown+preventDefault used on result rows to prevent onBlur from closing dropdown before click — standard combobox technique not in plan."
+      ]
     },
     {
       "id": "1-14",
