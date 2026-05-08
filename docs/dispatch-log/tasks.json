@@ -217,8 +217,23 @@
     {
       "id": "1-8",
       "title": "V005 audit_parent_entity + AuditLogAspect parent-id population",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "39a5d17",
+      "fixup_sha": "0c707ad",
+      "log_backfill_sha": "0b1c097",
+      "dispatch_log": "docs/dispatch-log/1-8-20260508T165032Z.md",
+      "review_log": "docs/dispatch-log/1-8-review-20260508T165321Z.md",
+      "fixup_log": "docs/dispatch-log/1-8-fixup-20260508T165900Z.md",
+      "review_blockers_resolved": [
+        "Test 'methodWithoutAuditedAnnotationLeavesParentEntityIdNull' was vacuously true (called clientService.create() directly with no HTTP context — controller pointcut bailed, zero rows written, assertion ran over empty list). Fixed: switched to AdminWebTestBase + MockMvc POST so a real audit row gets written and asserted.",
+        "Test 'spelFailureDoesNotBreakAuditRow' didn't exercise the full proxy pipeline — only tested the resolver in isolation. Fixed: @TestConfiguration adds BrokenSpelAuditedService bean with @Audited(parent='#nonExistentVariable.toString()') (chain forces SpelEvaluationException — undefined variable alone returns null in SimpleEvaluationContext); test calls through Spring proxy, asserts method returns normally, audit row written with parent_entity_id null, WARN log captured via Logback ListAppender."
+      ],
+      "key_decisions": [
+        "Two-row audit architecture: HTTP controller advice writes one row (path=/api/admin/.../, parent_entity_id=null); @Audited service advice writes a SECOND row (path=synthetic 'OrderService#addItem', method=INTERNAL, status=0, parent_entity_id=orderId). Reviewer confirmed sound — alternative thread-local enrichment was rejected as fragile.",
+        "Sandboxing: SimpleEvaluationContext.forReadOnlyDataBinding() — blocks T(...) reflection + bean refs.",
+        "Exception safety: try/catch around SpEL eval in AuditedParentResolver; WARN log; returns null; audit row still writes.",
+        "-parameters compile flag is enabled in root pom.xml (pluginManagement/maven-compiler-plugin) — required for #orderId-style param-name SpEL bindings."
+      ]
     },
     {
       "id": "1-9",
