@@ -1,5 +1,6 @@
 package com.drshoes.app.messaging.api;
 
+import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.dto.MessageDto;
 import com.drshoes.app.messaging.dto.SendMessageRequest;
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,8 +23,8 @@ import java.util.UUID;
 
 /**
  * REST: GET + POST /api/admin/orders/{orderId}/messages.
- * actorId=null in M2 — sentBy nullable per V001.
- * TODO(M3): resolve Authentication to UserEntity UUID and pass real actorId to sendManual.
+ * Actor resolved via {@code @AuthenticationPrincipal AdminPrincipal} — no per-request DB lookup.
+ * {@code message.sent_by} and {@code audit_log.actor_id} both carry the authenticated user's UUID.
  */
 @RestController
 @RequestMapping("/api/admin/orders/{orderId}/messages")
@@ -46,8 +47,9 @@ public class MessagesController {
     }
 
     @GetMapping
-    public List<MessageDto> list(@PathVariable UUID orderId, Authentication auth) {
-        log.info("op=messages.list actor={} orderId={} outcome=ok", actor(auth), orderId);
+    public List<MessageDto> list(@PathVariable UUID orderId,
+                                 @AuthenticationPrincipal AdminPrincipal actor) {
+        log.info("op=messages.list actor={} orderId={} outcome=ok", actor.email(), orderId);
         return messageRepository.findAllByOrderIdOrderByCreatedAtAsc(orderId)
             .stream()
             .map(this::toDto)
@@ -57,7 +59,7 @@ public class MessagesController {
     @PostMapping
     public ResponseEntity<MessageDto> send(@PathVariable UUID orderId,
                                            @RequestBody SendMessageRequest req,
-                                           Authentication auth) {
+                                           @AuthenticationPrincipal AdminPrincipal actor) {
         if (req.templateId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "templateId is required");
         }
@@ -70,16 +72,14 @@ public class MessagesController {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
 
-        // actorId is null — M2 deferred. sentBy is nullable per V001 schema.
-        // TODO(M3): resolve Authentication → UserEntity UUID and pass real actorId.
         UUID messageId = router.sendManual(orderId, order.getClientId(), req.templateId(),
-            channel, null);
+            channel, actor.userId());
 
         MessageEntity msg = messageRepository.findById(messageId)
             .orElseThrow(() -> new IllegalStateException("Message not found after send: " + messageId));
 
-        log.info("op=messages.send actor={} orderId={} templateId={} channel={} outcome=ok",
-            actor(auth), orderId, req.templateId(), channel);
+        log.info("op=messages.send actor={} actorId={} orderId={} templateId={} channel={} outcome=ok",
+            actor.email(), actor.userId(), orderId, req.templateId(), channel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(msg));
     }
@@ -99,9 +99,5 @@ public class MessagesController {
             e.getProviderMessageId(),
             e.getSentAt(),
             e.getCreatedAt());
-    }
-
-    private static String actor(Authentication auth) {
-        return (auth != null) ? auth.getName() : "anonymous";
     }
 }

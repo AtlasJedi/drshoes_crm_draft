@@ -4,12 +4,15 @@ import com.drshoes.app.audit.AuditLogRepository;
 import com.drshoes.app.auth.domain.User;
 import com.drshoes.app.auth.domain.UserRepository;
 import com.drshoes.app.auth.domain.UserRole;
+import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
@@ -76,14 +79,29 @@ public abstract class AdminWebTestBase extends AbstractIntegrationTest {
         principalProcessor = null;
     }
 
-    protected void loginAsOwner() {
-        principalProcessor = SecurityMockMvcRequestPostProcessors
-            .user("owner@test.pl").roles("OWNER");
+    /**
+     * Injects an {@link AdminPrincipal}-backed authentication into MockMvc requests
+     * so that {@code @AuthenticationPrincipal AdminPrincipal actor} resolves correctly
+     * in controllers. Returns the seeded owner's UUID for assertion use in tests.
+     */
+    protected UUID loginAsOwner() {
+        User owner = users.findByEmailIgnoreCase("owner@test.pl").orElseThrow(
+            () -> new IllegalStateException("Owner not seeded"));
+        var principal = new AdminPrincipal(owner.getId(), owner.getEmail(), "OWNER");
+        var auth = UsernamePasswordAuthenticationToken.authenticated(
+            principal, null, List.of(new SimpleGrantedAuthority("ROLE_OWNER")));
+        principalProcessor = SecurityMockMvcRequestPostProcessors.authentication(auth);
+        return owner.getId();
     }
 
-    protected void loginAsEmployee() {
-        principalProcessor = SecurityMockMvcRequestPostProcessors
-            .user("emp@test.pl").roles("EMPLOYEE");
+    protected UUID loginAsEmployee() {
+        User emp = users.findByEmailIgnoreCase("emp@test.pl").orElseThrow(
+            () -> new IllegalStateException("Employee not seeded"));
+        var principal = new AdminPrincipal(emp.getId(), emp.getEmail(), "EMPLOYEE");
+        var auth = UsernamePasswordAuthenticationToken.authenticated(
+            principal, null, List.of(new SimpleGrantedAuthority("ROLE_EMPLOYEE")));
+        principalProcessor = SecurityMockMvcRequestPostProcessors.authentication(auth);
+        return emp.getId();
     }
 
     /**
