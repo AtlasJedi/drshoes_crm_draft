@@ -238,8 +238,17 @@
     {
       "id": "1-9",
       "title": "TimelineEventCurator (pure function) + unit tests",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "055fbc9",
+      "log_backfill_sha": "455de66",
+      "dispatch_log": "docs/dispatch-log/1-9-20260508T170346Z.md",
+      "deviations_from_plan": [
+        "Plan body assumed AuditLog had entityType/operation/fieldsChanged/before-after JSON — none of those exist on the actual entity. Curator built as a path-pattern dispatcher keyed on (method, path, parentEntityId, status). Documented as M2 debt: body-capture would unlock ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED + field-level deltas.",
+        "9 enum kinds shipped; only 7 emitted: ORDER_CREATED, ORDER_UPDATED (new), STATUS_CHANGED, ORDER_SOFT_DELETED, ITEM_ADDED, ITEM_EDITED, ITEM_REMOVED. ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED reserved for M2 (in enum, never dispatched). ORDER_UPDATED is the generic PATCH event since the curator can't see field-level info.",
+        "HTTP item-op rows (POST /orders/{id}/items etc) are intentionally SKIPPED — the INTERNAL @Audited service row covers them. Prevents double-count. Test covers this.",
+        "AuditLog needed 4 missing getters (getMethod, getPath, getStatus, getActorId) — added inline. Mechanical accessor additions, not behavioral changes.",
+        "TimelineEventCurator 140 LOC = 90 logic + 50 Javadoc. Over 120 ceiling but documentation is load-bearing (URL-prefix brittleness debt is documented in class Javadoc)."
+      ]
     },
     {
       "id": "1-10",
