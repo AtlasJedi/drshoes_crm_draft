@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "active_milestone": "0B",
-  "active_plan": "docs/superpowers/plans/2026-05-08-milestone-00b-auth-rbac.md",
+  "active_milestone": "1",
+  "active_plan": "docs/superpowers/plans/2026-05-08-milestone-01-orders.md",
   "tasks": [
     {
       "id": "0b-1",
@@ -34,7 +34,7 @@
       "fixup_log": "docs/dispatch-log/0b-4-fixup-2026-05-07T231117Z.md",
       "review_blockers_resolved": [
         "phantom /api/admin/auth/csrf matcher removed",
-        "CSRF enforcement tests added (3) — admin POST without token → 403, cookie repo bean wired, webhook bypass verified"
+        "CSRF enforcement tests added (3) \u2014 admin POST without token \u2192 403, cookie repo bean wired, webhook bypass verified"
       ]
     },
     {
@@ -60,7 +60,7 @@
       "dispatch_log": "docs/dispatch-log/0b-7-2026-05-08T132000Z.md",
       "fixup_log": "docs/dispatch-log/0b-7-fixup-2026-05-08T132700Z.md",
       "review_blockers_resolved": [
-        "AnonymousAuthenticationToken bypass — explicit instanceof check added; new unit test asserts the trap is now caught"
+        "AnonymousAuthenticationToken bypass \u2014 explicit instanceof check added; new unit test asserts the trap is now caught"
       ]
     },
     {
@@ -72,7 +72,7 @@
       "dispatch_log": "docs/dispatch-log/0b-8-2026-05-08T133000Z.md",
       "fixup_log": "docs/dispatch-log/0b-8-fixup-2026-05-08T134200Z.md",
       "review_blockers_resolved": [
-        "Pointcut excluded @ExceptionHandler methods — failed login now writes exactly one audit row (was two: status=500 + status=401). Regression test added; unused imports removed."
+        "Pointcut excluded @ExceptionHandler methods \u2014 failed login now writes exactly one audit row (was two: status=500 + status=401). Regression test added; unused imports removed."
       ]
     },
     {
@@ -109,12 +109,139 @@
       "status": "completed",
       "commit_sha": "79d363d",
       "dispatch_log": "docs/dispatch-log/0b-13-20260508T121154Z.md"
+    },
+    {
+      "id": "1-0",
+      "title": "Activate milestone 1 in tasks.json (this commit)",
+      "status": "completed",
+      "dispatch_log": null,
+      "commit_sha": "PENDING"
+    },
+    {
+      "id": "1-1",
+      "title": "V003 clients migration + Client entity + repo + integration test",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-2",
+      "title": "ClientService (CRUD + search) + unit test",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-3",
+      "title": "ClientController + RBAC + integration test",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-4",
+      "title": "V004 orders migration + Order/OrderItem entities + repos",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-5",
+      "title": "OrderCodeSequence service + integration test",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-6",
+      "title": "OrderService CRUD + status change + soft-delete + items",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-7",
+      "title": "OrderController + ExceptionHandler + integration test",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-8",
+      "title": "V005 audit_parent_entity + AuditLogAspect parent-id population",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-9",
+      "title": "TimelineEventCurator (pure function) + unit tests",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-10",
+      "title": "AuditTimelineService + Controller + integration test",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-11",
+      "title": "UsersController for assignee dropdown",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-12",
+      "title": "lib/clients + lib/orders + lib/timeline modules",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-13",
+      "title": "ClientPicker + ClientCreateModal components",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-14",
+      "title": "Orders list page + filters + table",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-15",
+      "title": "Create-new-order page",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-16",
+      "title": "OrderDrawer scaffold + core fields + URL state",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-17",
+      "title": "OrderDrawerStatusChanger + trigger placeholder",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-18",
+      "title": "OrderDrawerItems CRUD",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-19",
+      "title": "OrderDrawerTimeline (right rail)",
+      "status": "pending",
+      "dispatch_log": null
+    },
+    {
+      "id": "1-20",
+      "title": "E2E compose smoke + milestone-1 tag + CLAUDE.md flip",
+      "status": "pending",
+      "dispatch_log": null
     }
   ],
   "notes": [
     "Tasks 0b-1 and 0b-2 shipped before the dispatch-log directive, so dispatch_log is null. Future tasks must include a dispatch_log path.",
     "Per locked dispatch protocol: plans on disk only; thin prompts; combined reviews for mechanical tasks; structured logging baked in from 0b-3 onward.",
-    "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml — contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
+    "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml \u2014 contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
     "PII flag (from 0b-5 inline review): LoginThrottle logs raw client IP at INFO on throttle events. Polish RODO/GDPR treats IP as personal data. Acceptable for now (security event); revisit during AuditLogAspect (0b-8) to apply a unified PII-redaction or hashing policy across security-event logs."
   ]
 }
