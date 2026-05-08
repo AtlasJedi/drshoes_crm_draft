@@ -39,6 +39,10 @@
       <artifactId>spring-session-jdbc</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.bucket4j</groupId>
       <artifactId>bucket4j-core</artifactId>
       <version>8.10.1</version>
@@ -51,10 +55,10 @@
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-database-postgresql</artifactId>
     </dependency>
+    <!-- compile scope required for PGobject in InetAddressConverter -->
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <scope>runtime</scope>
     </dependency>
 
     <!-- Internal libs -->
