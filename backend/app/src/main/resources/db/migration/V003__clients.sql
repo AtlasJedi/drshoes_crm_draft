@@ -1,0 +1,8 @@
+-- V003: client table no-op marker (milestone 1)
+--
+-- The `client` table was included in V001__init.sql as part of the full
+-- baseline schema. No DDL changes are needed here.
+--
+-- The Client JPA entity (com.drshoes.app.client.domain.Client) maps to the
+-- V001 schema. Task 1-1 adds the JPA entity and repository on top of the
+-- existing table definition.
