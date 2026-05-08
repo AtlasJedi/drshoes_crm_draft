@@ -451,7 +451,7 @@
       "dispatch_log": "docs/dispatch-log/2-9-20260508T194354Z.md",
       "fixup_log": "docs/dispatch-log/2-9-fixup-20260508T195008Z.md",
       "review_blockers_resolved": [
-        "V007 added redundant order_.delivered_at — dropped via V008; OrderRepository.findAllByDeliveredDate renamed to findAllByPickedUpDate querying the correct pre-existing picked_up_at column (V001 line 157, written by OrderService on WYDANE). Order.deliveredAt JPA field + accessors removed. Test helper updated to seed picked_up_at so AFTER_HANDOVER triggers now actually fire in production."
+        "V007 added redundant order_.delivered_at \u2014 dropped via V008; OrderRepository.findAllByDeliveredDate renamed to findAllByPickedUpDate querying the correct pre-existing picked_up_at column (V001 line 157, written by OrderService on WYDANE). Order.deliveredAt JPA field + accessors removed. Test helper updated to seed picked_up_at so AFTER_HANDOVER triggers now actually fire in production."
       ]
     },
     {
@@ -470,8 +470,9 @@
     {
       "id": "2-12",
       "title": "TriggersController",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "done",
+      "dispatch_log": null,
+      "commit_sha": "1d67fe3"
     },
     {
       "id": "2-13",
