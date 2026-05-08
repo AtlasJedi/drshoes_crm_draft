@@ -40,6 +40,13 @@ public class S3BlobStorage implements BlobStorage {
     }
 
     @Override
+    public InputStream get(BlobKey key) {
+        return client.getObject(
+            software.amazon.awssdk.services.s3.model.GetObjectRequest.builder()
+                .bucket(bucket).key(key.value()).build());
+    }
+
+    @Override
     public boolean exists(BlobKey key) {
         try {
             client.headObject(HeadObjectRequest.builder().bucket(bucket).key(key.value()).build());

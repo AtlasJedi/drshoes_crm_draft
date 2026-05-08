@@ -1,5 +1,6 @@
 package com.drshoes.lib.storage;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MinIOContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -13,10 +14,14 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers
 class S3BlobStorageIntegrationTest {
@@ -25,25 +30,39 @@ class S3BlobStorageIntegrationTest {
     static MinIOContainer minio = new MinIOContainer("minio/minio:RELEASE.2024-10-13T13-34-11Z")
             .withUserName("test").withPassword("test1234");
 
-    @Test
-    void put_then_exists_then_presign_get() throws Exception {
+    static S3BlobStorage storage;
+
+    @BeforeAll
+    static void setUp() {
+        var creds = StaticCredentialsProvider.create(
+                AwsBasicCredentials.create("test", "test1234"));
+        var s3Config = S3Configuration.builder().pathStyleAccessEnabled(true).build();
+        var endpoint = URI.create(minio.getS3URL());
+
         var client = S3Client.builder()
-                .endpointOverride(URI.create(minio.getS3URL()))
+                .endpointOverride(endpoint)
                 .region(Region.US_EAST_1)
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("test", "test1234")))
-                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
+                .credentialsProvider(creds)
+                .serviceConfiguration(s3Config)
                 .build();
         var presigner = S3Presigner.builder()
-                .endpointOverride(URI.create(minio.getS3URL()))
+                .endpointOverride(endpoint)
                 .region(Region.US_EAST_1)
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("test", "test1234")))
-                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
+                .credentialsProvider(creds)
+                .serviceConfiguration(s3Config)
                 .build();
-        client.createBucket(CreateBucketRequest.builder().bucket("drshoes-test").build());
 
-        var storage = new S3BlobStorage(client, presigner, "drshoes-test");
+        try {
+            client.createBucket(CreateBucketRequest.builder().bucket("drshoes-test").build());
+        } catch (software.amazon.awssdk.services.s3.model.BucketAlreadyOwnedByYouException e) {
+            // bucket survives across tests — OK
+        }
+
+        storage = new S3BlobStorage(client, presigner, "drshoes-test");
+    }
+
+    @Test
+    void put_then_exists_then_presign_get() throws Exception {
         var key = new BlobKey("orders/2026/05/abc.txt");
         storage.put(key, new ByteArrayInputStream("hello".getBytes()),
                 new BlobMetadata("text/plain", 5L));
@@ -56,28 +75,28 @@ class S3BlobStorageIntegrationTest {
     }
 
     @Test
-    void exists_returns_false_for_missing_key() throws Exception {
-        var client = S3Client.builder()
-                .endpointOverride(URI.create(minio.getS3URL()))
-                .region(Region.US_EAST_1)
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("test", "test1234")))
-                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
-                .build();
-        var presigner = S3Presigner.builder()
-                .endpointOverride(URI.create(minio.getS3URL()))
-                .region(Region.US_EAST_1)
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("test", "test1234")))
-                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
-                .build();
-        try {
-            client.createBucket(CreateBucketRequest.builder().bucket("drshoes-test").build());
-        } catch (software.amazon.awssdk.services.s3.model.BucketAlreadyOwnedByYouException e) {
-            // OK — bucket survives across tests
-        }
-
-        var storage = new S3BlobStorage(client, presigner, "drshoes-test");
+    void exists_returns_false_for_missing_key() {
         assertThat(storage.exists(new BlobKey("does/not/exist.txt"))).isFalse();
+    }
+
+    @Test
+    void get_streamsBackTheBytesWeWrote() throws Exception {
+        var key   = new BlobKey("orders/test-get/" + UUID.randomUUID() + "-cat.jpg");
+        var bytes = "fake jpeg bytes".getBytes(StandardCharsets.UTF_8);
+
+        storage.put(key, new ByteArrayInputStream(bytes),
+                new BlobMetadata("image/jpeg", (long) bytes.length));
+
+        try (InputStream got = storage.get(key)) {
+            byte[] roundTripped = got.readAllBytes();
+            assertThat(roundTripped).isEqualTo(bytes);
+        }
+    }
+
+    @Test
+    void get_throwsWhenMissing() {
+        var key = new BlobKey("does/not/exist-" + UUID.randomUUID());
+        assertThatThrownBy(() -> storage.get(key).close())
+            .isInstanceOf(software.amazon.awssdk.services.s3.model.NoSuchKeyException.class);
     }
 }
