@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { createLogger } from "@/lib/log";
-import { listOrdersServer, listUsersServer } from "@/lib/orders/api-server";
-import type { OrderStatus, OrderItemKind } from "@/lib/orders/types";
+import { listOrdersServer, listUsersServer, getOrderServer } from "@/lib/orders/api-server";
+import type { OrderStatus, OrderItemKind, OrderDto } from "@/lib/orders/types";
 import type { UserStubDto } from "@/lib/users/types";
 import { OrdersFilters } from "./_components/OrdersFilters";
 import { OrdersTable } from "./_components/OrdersTable";
+import { OrderDrawer } from "./_components/OrderDrawer";
 
 const log = createLogger("admin-orders-page");
 
@@ -14,6 +15,7 @@ interface SearchParams {
   craftsmanId?: string;
   q?: string;
   page?: string;
+  orderId?: string;
 }
 
 export default async function OrdersPage({
@@ -31,16 +33,27 @@ export default async function OrdersPage({
   const craftsmanId = sp.craftsmanId;
   const q = sp.q;
   const page = Math.max(0, parseInt(sp.page ?? "0", 10) || 0);
+  const orderId = sp.orderId;
 
   let pageData = null;
   let users: UserStubDto[] = [];
   let fetchError = false;
+  let drawerOrder: OrderDto | null = null;
 
   try {
-    [pageData, users] = await Promise.all([
+    const fetches: [
+      ReturnType<typeof listOrdersServer>,
+      ReturnType<typeof listUsersServer>,
+      ...Array<Promise<OrderDto>>,
+    ] = [
       listOrdersServer({ status, type, craftsmanId, q }, page, 25),
       listUsersServer(),
-    ]);
+    ];
+    if (orderId) fetches.push(getOrderServer(orderId));
+    const results = await Promise.all(fetches);
+    pageData = results[0] as Awaited<ReturnType<typeof listOrdersServer>>;
+    users = results[1] as UserStubDto[];
+    drawerOrder = orderId ? (results[2] as OrderDto) : null;
   } catch (err) {
     log.error("op=fetchOrders outcome=error", { message: String(err) });
     fetchError = true;
@@ -93,6 +106,10 @@ export default async function OrdersPage({
             />
           ) : null}
         </>
+      )}
+
+      {drawerOrder && (
+        <OrderDrawer initialOrder={drawerOrder} users={users} />
       )}
     </div>
   );

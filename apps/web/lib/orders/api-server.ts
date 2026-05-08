@@ -46,6 +46,26 @@ export async function listOrdersServer(
   return (await resp.json()) as Page<OrderListRow>;
 }
 
+export async function getOrderServer(id: string): Promise<import("./types").OrderDto> {
+  const base = process.env["INTERNAL_API_BASE"] ?? "http://localhost:8080";
+  const c = await cookies();
+  const cookieHeader = c.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+
+  log.info("op=getOrderServer", { id });
+
+  const resp = await fetch(`${base}/api/admin/orders/${id}`, {
+    headers: { cookie: cookieHeader },
+    cache: "no-store",
+  });
+
+  if (!resp.ok) {
+    log.warn("op=getOrderServer outcome=error", { id, status: resp.status });
+    throw new Error(`orders/get failed: ${resp.status}`);
+  }
+
+  return (await resp.json()) as import("./types").OrderDto;
+}
+
 export async function listUsersServer(): Promise<import("@/lib/users/types").UserStubDto[]> {
   const base = process.env["INTERNAL_API_BASE"] ?? "http://localhost:8080";
   const c = await cookies();
