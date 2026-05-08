@@ -11,6 +11,7 @@ import { OrderDrawerHeader } from "./OrderDrawerHeader";
 import { OrderDrawerCoreFields } from "./OrderDrawerCoreFields";
 import { OrderDrawerStatusChanger } from "./OrderDrawerStatusChanger";
 import { OrderDrawerItems } from "./OrderDrawerItems";
+import { OrderDrawerTimeline } from "./OrderDrawerTimeline";
 
 const log = createLogger("order-drawer");
 
@@ -21,8 +22,14 @@ interface Props {
 
 export function OrderDrawer({ initialOrder, users }: Props) {
   const [order, setOrder] = useState<OrderDto>(initialOrder);
+  const [refreshKey, setRefreshKey] = useState(0);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  function handleOrderUpdated(updated: OrderDto) {
+    setOrder(updated);
+    setRefreshKey((k) => k + 1);
+  }
 
   function handleOpenChange(open: boolean) {
     if (!open) {
@@ -52,13 +59,11 @@ export function OrderDrawer({ initialOrder, users }: Props) {
           <OrderDrawerHeader code={order.code} status={order.status} />
 
           <div className="flex-1 overflow-y-auto">
-            <OrderDrawerCoreFields order={order} users={users} onOrderUpdate={setOrder} />
+            <OrderDrawerCoreFields order={order} users={users} onOrderUpdate={handleOrderUpdated} />
 
-            <OrderDrawerStatusChanger order={order} onOrderUpdated={setOrder} />
-            <OrderDrawerItems order={order} onOrderUpdated={setOrder} />
-            <div className="px-6 py-4 border-t border-admin-line">
-              <p className="text-xs text-admin-mute italic">Historia — dostępna w zadaniu 1-19</p>
-            </div>
+            <OrderDrawerStatusChanger order={order} onOrderUpdated={handleOrderUpdated} />
+            <OrderDrawerItems order={order} onOrderUpdated={handleOrderUpdated} />
+            <OrderDrawerTimeline orderId={order.id} refreshKey={refreshKey} />
           </div>
         </Dialog.Content>
       </Dialog.Portal>
