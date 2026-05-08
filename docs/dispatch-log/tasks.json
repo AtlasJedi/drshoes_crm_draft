@@ -423,10 +423,17 @@
     {
       "id": "2-7",
       "title": "MessageRouter (TWO-STAGE REVIEW)",
-      "status": "in_progress",
+      "status": "completed",
       "commit_sha": "ee52e0c",
+      "fixup_sha": "5e2124c",
       "dispatch_log": "docs/dispatch-log/2-7-20260508T192440Z.md",
-      "note": "spec-stage committed; quality review pending"
+      "fixup_log": "docs/dispatch-log/2-7-fixup-20260508T193125Z.md",
+      "review_blockers_resolved": [
+        "A: MessageEntity constructor reverted to protected + newMessage() factory added",
+        "B: TriggerEntity.eventParams and .channels annotated with @JdbcTypeCode(SqlTypes.JSON)",
+        "D: null-recipient pre-check WARN added before OutboundMessage construction",
+        "E: @Audited dual-path documented in javadoc; 2-10 must match both sendManual and sendForTrigger"
+      ]
     },
     {
       "id": "2-8",
