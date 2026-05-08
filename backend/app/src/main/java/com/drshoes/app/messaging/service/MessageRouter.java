@@ -84,14 +84,27 @@ public class MessageRouter {
         this.sms = sms;
     }
 
-    /** Manual composer entry point. Returns persisted message id. */
+    /**
+     * Manual composer entry point. Returns persisted message id.
+     *
+     * <p>Audit note (task 2-10): @Audited fires on THIS method, producing path
+     * {@code MessageRouter#sendManual}. Task 2-10's MessageSentTimelineHandler
+     * must match BOTH {@code MessageRouter#sendManual} and
+     * {@code MessageRouter#sendForTrigger} — not the private {@code send(...)},
+     * which Spring AOP cannot intercept.
+     */
     @Transactional
     @Audited(parent = "#orderId")
     public UUID sendManual(UUID orderId, UUID clientId, UUID templateId, String channel, UUID actorId) {
         return send(orderId, clientId, templateId, null, channel, actorId);
     }
 
-    /** Trigger entry point. Returns persisted message id. */
+    /**
+     * Trigger entry point. Returns persisted message id.
+     *
+     * <p>Audit note (task 2-10): @Audited fires on THIS method, producing path
+     * {@code MessageRouter#sendForTrigger}. See sendManual javadoc.
+     */
     @Transactional
     @Audited(parent = "#orderId")
     public UUID sendForTrigger(UUID orderId, UUID clientId, UUID templateId, UUID triggerId, String channel) {
@@ -112,7 +125,7 @@ public class MessageRouter {
 
         var thread = threadService.findOrCreateForClient(clientId);
 
-        var msg = new MessageEntity();
+        var msg = MessageEntity.newMessage();
         msg.setThreadId(thread.getId());
         msg.setOrderId(orderId);
         msg.setClientId(clientId);
@@ -132,6 +145,11 @@ public class MessageRouter {
             case SMS   -> clients.findById(clientId).map(Client::getPhone).orElse(null);
             default    -> throw new IllegalArgumentException("Unsupported channel: " + channel);
         };
+
+        if (recipient == null || recipient.isBlank()) {
+            log.warn("op=message.send outcome=FAILED orderId={} messageId={} channel={} cause=null_or_blank_recipient",
+                    orderId, saved.getId(), channel);
+        }
 
         var outbound = new OutboundMessage(ch, recipient, renderedSubject, renderedBody, null, null);
 

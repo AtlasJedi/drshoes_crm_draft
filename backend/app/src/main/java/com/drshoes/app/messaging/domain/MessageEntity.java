@@ -91,7 +91,17 @@ public class MessageEntity {
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private OffsetDateTime createdAt;
 
-    public MessageEntity() {}
+    protected MessageEntity() {}
+
+    /**
+     * Factory for use by services in other packages.
+     * Constructor remains {@code protected} to match the project convention for
+     * JPA entity no-arg constructors (all other entities: TriggerEntity,
+     * TriggerFireEntity, MessageTemplateEntity use {@code protected}).
+     */
+    public static MessageEntity newMessage() {
+        return new MessageEntity();
+    }
 
     // ---- accessors ----
 

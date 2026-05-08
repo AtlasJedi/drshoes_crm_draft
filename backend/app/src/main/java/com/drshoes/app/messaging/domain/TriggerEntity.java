@@ -1,6 +1,8 @@
 package com.drshoes.app.messaging.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -34,10 +36,12 @@ public class TriggerEntity {
     private TriggerEvent event;
 
     /** JSONB column — stored as raw JSON string; Jackson deserialization at service boundary. */
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "event_params", nullable = false, columnDefinition = "jsonb")
     private String eventParams = "{}";
 
     /** JSONB column — JSON array of channel strings e.g. '["EMAIL"]'. */
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "channels", nullable = false, columnDefinition = "jsonb")
     private String channels = "[\"EMAIL\"]";
 
