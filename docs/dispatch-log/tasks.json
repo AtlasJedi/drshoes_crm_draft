@@ -106,8 +106,9 @@
     {
       "id": "0b-13",
       "title": "E2E auth verification + tag milestone-0b",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "79d363d",
+      "dispatch_log": "docs/dispatch-log/0b-13-20260508T121154Z.md"
     }
   ],
   "notes": [
