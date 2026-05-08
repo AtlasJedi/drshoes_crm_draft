@@ -4,6 +4,7 @@ import com.drshoes.app.auth.api.dto.LoginRequest;
 import com.drshoes.app.auth.api.dto.MeResponse;
 import com.drshoes.app.auth.domain.User;
 import com.drshoes.app.auth.domain.UserRepository;
+import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.auth.service.AuthService;
 import com.drshoes.app.auth.service.InvalidCredentialsException;
 import com.drshoes.app.auth.service.LoginThrottledException;
@@ -77,11 +78,14 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public MeResponse me(Authentication auth) {
-        User u = users.findActiveByEmailIgnoreCase(auth.getName())
+    public ResponseEntity<MeResponse> me(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated() || !(auth.getPrincipal() instanceof AdminPrincipal p)) {
+            return ResponseEntity.status(401).build();
+        }
+        User u = users.findActiveByEmailIgnoreCase(p.email())
             .orElseThrow(InvalidCredentialsException::new);
-        log.info("op=me actor={} userId={} outcome=success", u.getEmail(), u.getId());
-        return new MeResponse(u.getId(), u.getEmail(), u.getFullName(), u.getRole(), u.getLastLoginAt());
+        log.info("op=me actor={} userId={} outcome=success", p.email(), p.userId());
+        return ResponseEntity.ok(new MeResponse(p.userId(), u.getEmail(), u.getFullName(), u.getRole(), u.getLastLoginAt()));
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)

@@ -1,6 +1,7 @@
 package com.drshoes.app.auth.rbac;
 
 import com.drshoes.app.AbstractIntegrationTest;
+import com.drshoes.app.audit.AuditLogRepository;
 import com.drshoes.app.auth.api.dto.LoginRequest;
 import com.drshoes.app.auth.domain.User;
 import com.drshoes.app.auth.domain.UserRepository;
@@ -35,14 +36,18 @@ class RbacIntegrationTest extends AbstractIntegrationTest {
     @Autowired TestRestTemplate rest;
     @Autowired UserRepository users;
     @Autowired PasswordEncoder enc;
+    @Autowired AuditLogRepository auditLogs;
 
     @AfterEach
     void cleanup() {
+        // audit_log.actor_id FK to user_(id) — clear audit rows first
+        auditLogs.deleteAll();
         users.deleteAll();
     }
 
     @BeforeEach
     void seed() {
+        auditLogs.deleteAll();
         users.deleteAll();
         var owner = new User();
         owner.setEmail("owner@x");

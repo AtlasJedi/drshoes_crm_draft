@@ -2,6 +2,7 @@ package com.drshoes.app.auth.service;
 
 import com.drshoes.app.auth.domain.User;
 import com.drshoes.app.auth.domain.UserRepository;
+import com.drshoes.app.auth.principal.AdminPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +74,9 @@ public class AuthService {
         u.setLastLoginAt(Instant.now());
         users.save(u);
 
+        var principal = new AdminPrincipal(u.getId(), u.getEmail(), u.getRole().name());
         var auth = new UsernamePasswordAuthenticationToken(
-            u.getEmail(), null,
+            principal, null,
             List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole().name())));
         SecurityContextHolder.getContext().setAuthentication(auth);
 

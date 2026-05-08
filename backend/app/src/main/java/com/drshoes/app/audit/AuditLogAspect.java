@@ -1,5 +1,6 @@
 package com.drshoes.app.audit;
 
+import com.drshoes.app.auth.principal.AdminPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -91,33 +92,49 @@ public class AuditLogAspect {
     private void persistHttp(ServletRequestAttributes attrs, int status) {
         if (attrs == null) return;
         HttpServletRequest r = attrs.getRequest();
-        String actor = resolveActor();
+        String actorName = resolveActorName();
+        UUID actorId = resolveActorId();
         try {
             writer.write(r.getMethod(), r.getRequestURI(), status,
-                         r.getRemoteAddr(), r.getHeader("User-Agent"));
-            log.info("op=audit actor={} method={} path={} status={} outcome=persisted",
-                     actor, r.getMethod(), r.getRequestURI(), status);
+                         r.getRemoteAddr(), r.getHeader("User-Agent"), null, actorId);
+            log.info("op=audit actor={} actorId={} method={} path={} status={} outcome=persisted",
+                     actorName, actorId, r.getMethod(), r.getRequestURI(), status);
         } catch (Exception ex) {
             log.warn("op=audit actor={} method={} path={} status={} outcome=skipped reason={}",
-                     actor, r.getMethod(), r.getRequestURI(), status, ex.getMessage());
+                     actorName, r.getMethod(), r.getRequestURI(), status, ex.getMessage());
         }
     }
 
     private void persistAnnotated(Method method, UUID parentId) {
-        String actor = resolveActor();
+        String actorName = resolveActorName();
+        UUID actorId = resolveActorId();
         String syntheticPath = method.getDeclaringClass().getSimpleName() + "#" + method.getName();
         try {
-            writer.write("INTERNAL", syntheticPath, 0, null, null, parentId);
-            log.info("op=auditAnnotated actor={} target={} parentEntityId={} outcome=persisted",
-                     actor, syntheticPath, parentId);
+            writer.write("INTERNAL", syntheticPath, 0, null, null, parentId, actorId);
+            log.info("op=auditAnnotated actor={} actorId={} target={} parentEntityId={} outcome=persisted",
+                     actorName, actorId, syntheticPath, parentId);
         } catch (Exception ex) {
             log.warn("op=auditAnnotated actor={} target={} outcome=skipped reason={}",
-                     actor, syntheticPath, ex.getMessage());
+                     actorName, syntheticPath, ex.getMessage());
         }
     }
 
-    private static String resolveActor() {
+    private static String resolveActorName() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         return (auth != null && auth.isAuthenticated()) ? auth.getName() : "anonymous";
+    }
+
+    /**
+     * Resolves the actor's UUID from the current SecurityContext.
+     * Returns the userId if the principal is an AdminPrincipal, null otherwise
+     * (e.g. anonymous requests, login endpoint, or legacy String principals).
+     */
+    private static UUID resolveActorId() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()
+                && auth.getPrincipal() instanceof AdminPrincipal p) {
+            return p.userId();
+        }
+        return null;
     }
 }

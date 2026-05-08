@@ -18,6 +18,9 @@ import java.util.UUID;
  *
  * Deviation from plan: plan used repo.save(); native query used instead for
  * inet cast. Documented in dispatch log 0b-8.
+ *
+ * M3 (task 3-3): actorId is now accepted as a parameter so that audit_log.actor_id
+ * is populated for every admin request once AdminPrincipal is in the SecurityContext.
  */
 @Component
 public class AuditLogWriter {
@@ -30,7 +33,7 @@ public class AuditLogWriter {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(String method, String path, int status, String ip, String userAgent) {
-        write(method, path, status, ip, userAgent, null);
+        write(method, path, status, ip, userAgent, null, null);
     }
 
     /**
@@ -40,14 +43,25 @@ public class AuditLogWriter {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(String method, String path, int status, String ip, String userAgent,
                       UUID parentEntityId) {
+        write(method, path, status, ip, userAgent, parentEntityId, null);
+    }
+
+    /**
+     * Full variant: persists both parent_entity_id and actor_id.
+     * actorId comes from AdminPrincipal.userId() resolved in AuditLogAspect.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void write(String method, String path, int status, String ip, String userAgent,
+                      UUID parentEntityId, UUID actorId) {
         em.createNativeQuery("""
             INSERT INTO audit_log
-                (id, method, path, status, ip, user_agent, request_id, created_at, parent_entity_id)
+                (id, actor_id, method, path, status, ip, user_agent, request_id, created_at, parent_entity_id)
             VALUES
-                (:id, :method, :path, :status, CAST(:ip AS inet), :userAgent, :requestId,
+                (:id, :actorId, :method, :path, :status, CAST(:ip AS inet), :userAgent, :requestId,
                  :createdAt, :parentEntityId)
             """)
             .setParameter("id", UUID.randomUUID())
+            .setParameter("actorId", actorId)
             .setParameter("method", method)
             .setParameter("path", path)
             .setParameter("status", status)

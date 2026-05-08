@@ -1,5 +1,6 @@
 package com.drshoes.app;
 
+import com.drshoes.app.audit.AuditLogRepository;
 import com.drshoes.app.auth.domain.User;
 import com.drshoes.app.auth.domain.UserRepository;
 import com.drshoes.app.auth.domain.UserRole;
@@ -38,12 +39,15 @@ public abstract class AdminWebTestBase extends AbstractIntegrationTest {
     @Autowired private UserRepository users;
     @Autowired private PasswordEncoder enc;
     @Autowired private ClientRepository clients;
+    @Autowired private AuditLogRepository auditLogs;
 
     /** Current principal injector; null = anonymous. */
     private RequestPostProcessor principalProcessor;
 
     @BeforeEach
     void seedUsers() {
+        // audit_log.actor_id is a FK to user_(id) — clear audit rows first
+        auditLogs.deleteAll();
         clients.deleteAll();
         users.deleteAll();
         principalProcessor = null;
@@ -65,6 +69,8 @@ public abstract class AdminWebTestBase extends AbstractIntegrationTest {
 
     @AfterEach
     void cleanupUsers() {
+        // audit_log.actor_id is a FK to user_(id) — clear audit rows first
+        auditLogs.deleteAll();
         clients.deleteAll();
         users.deleteAll();
         principalProcessor = null;

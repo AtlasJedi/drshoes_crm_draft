@@ -1,6 +1,7 @@
 package com.drshoes.app.auth.api;
 
 import com.drshoes.app.AbstractIntegrationTest;
+import com.drshoes.app.audit.AuditLogRepository;
 import com.drshoes.app.auth.api.dto.LoginRequest;
 import com.drshoes.app.auth.api.dto.MeResponse;
 import com.drshoes.app.auth.domain.User;
@@ -21,14 +22,18 @@ class AuthControllerIntegrationTest extends AbstractIntegrationTest {
     @Autowired TestRestTemplate rest;
     @Autowired UserRepository users;
     @Autowired PasswordEncoder enc;
+    @Autowired AuditLogRepository auditLogs;
 
     @AfterEach
     void cleanup() {
+        // audit_log.actor_id FK to user_(id) — clear audit rows first
+        auditLogs.deleteAll();
         users.deleteAll();
     }
 
     @BeforeEach
     void seed() {
+        auditLogs.deleteAll();
         users.deleteAll();
         var u = new User();
         u.setEmail("misza@drshoes.pl");
