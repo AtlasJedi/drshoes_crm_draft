@@ -10,6 +10,7 @@ import type { UserStubDto } from "@/lib/users/types";
 import { OrderDrawerHeader } from "./OrderDrawerHeader";
 import { OrderDrawerCoreFields } from "./OrderDrawerCoreFields";
 import { OrderDrawerStatusChanger } from "./OrderDrawerStatusChanger";
+import { OrderDrawerItems } from "./OrderDrawerItems";
 
 const log = createLogger("order-drawer");
 
@@ -54,9 +55,7 @@ export function OrderDrawer({ initialOrder, users }: Props) {
             <OrderDrawerCoreFields order={order} users={users} onOrderUpdate={setOrder} />
 
             <OrderDrawerStatusChanger order={order} onOrderUpdated={setOrder} />
-            <div className="px-6 py-4 border-t border-admin-line">
-              <p className="text-xs text-admin-mute italic">Pozycje — dostępne w zadaniu 1-18</p>
-            </div>
+            <OrderDrawerItems order={order} onOrderUpdated={setOrder} />
             <div className="px-6 py-4 border-t border-admin-line">
               <p className="text-xs text-admin-mute italic">Historia — dostępna w zadaniu 1-19</p>
             </div>
