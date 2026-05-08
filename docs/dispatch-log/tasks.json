@@ -92,8 +92,9 @@
     {
       "id": "0b-11",
       "title": "Login page + LoginForm component",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "573776b",
+      "dispatch_log": "docs/dispatch-log/0b-11-2026-05-08T170000Z.md"
     },
     {
       "id": "0b-12",
