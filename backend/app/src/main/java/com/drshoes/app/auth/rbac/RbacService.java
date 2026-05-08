@@ -52,6 +52,10 @@ public class RbacService {
         return check(auth, "canRestoreOrder", UserRole.OWNER);
     }
 
+    public boolean canManageClients(Authentication auth) {
+        return check(auth, "canManageClients", UserRole.OWNER);
+    }
+
     // -------------------------------------------------------------------------
     // Internal helpers
     // -------------------------------------------------------------------------

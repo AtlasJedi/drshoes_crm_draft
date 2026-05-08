@@ -47,6 +47,13 @@ class RbacServiceTest {
     }
 
     @Test
+    void canManageClients_owner_true_employee_false() {
+        assertThat(rbac.canManageClients(auth(UserRole.OWNER))).isTrue();
+        assertThat(rbac.canManageClients(auth(UserRole.EMPLOYEE))).isFalse();
+        assertThat(rbac.canManageClients(null)).isFalse();
+    }
+
+    @Test
     void anonymous_token_is_rejected_even_though_isAuthenticated_is_true() {
         // Spring Security 6: AnonymousAuthenticationToken.isAuthenticated() == true.
         // Guard must reject it explicitly via instanceof, not via isAuthenticated().
