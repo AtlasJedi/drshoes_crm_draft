@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createLogger } from "@/lib/log";
 import { changeStatus } from "@/lib/orders/api";
+import { getTriggers } from "@/lib/messaging/api";
 import { STATUS_LABELS_PL, STATUS_ORDER, STATUS_PILL_CLASS } from "@/lib/orders/status";
 import type { OrderDto, OrderStatus } from "@/lib/orders/types";
+import type { TriggerDto } from "@/lib/messaging/types";
 import { StatusChangeConfirm } from "./StatusChangeConfirm";
+import type { TriggerPreview } from "./StatusChangeConfirm";
 
 const log = createLogger("status-changer");
 
@@ -14,10 +17,54 @@ interface Props {
   onOrderUpdated: (updated: OrderDto) => void;
 }
 
+/**
+ * Compute a trigger preview for the prospective status transition.
+ * Looks for a STATUS_CHANGE trigger whose eventParams.toStatus matches targetStatus.
+ */
+function previewFor(targetStatus: string, triggers: TriggerDto[]): TriggerPreview {
+  const matched = triggers.find((t) => {
+    if (t.event !== "STATUS_CHANGE") return false;
+    try {
+      const params = JSON.parse(t.eventParams) as { toStatus?: string };
+      return params.toStatus === targetStatus;
+    } catch {
+      return false;
+    }
+  });
+  if (!matched) return { kind: "none" };
+  if (!matched.enabled) return { kind: "disabled", triggerName: matched.name };
+  let channels: string[] = [];
+  try {
+    channels = JSON.parse(matched.channels) as string[];
+  } catch {
+    // leave channels empty if parse fails
+  }
+  return {
+    kind: "match",
+    templateName: matched.templateName,
+    channels,
+    delayMinutes: matched.delayMinutes,
+    requiresManualConfirmation: matched.requiresManualConfirmation,
+  };
+}
+
 export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
   const [target, setTarget] = useState<OrderStatus | null>(null);
   const [conflict, setConflict] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [triggers, setTriggers] = useState<TriggerDto[]>([]);
+
+  // Fetch all triggers once on mount; preview is computed client-side
+  useEffect(() => {
+    getTriggers()
+      .then((data) => {
+        log.info("op=loadTriggers outcome=success", { count: data.length });
+        setTriggers(data);
+      })
+      .catch((err: unknown) => {
+        log.error("op=loadTriggers outcome=error", { err });
+      });
+  }, []);
 
   function openConfirm(s: OrderStatus) {
     log.info("op=open-confirm", { orderId: order.id, from: order.status, to: s });
@@ -46,6 +93,9 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
     }
   }
 
+  // Compute preview for the currently selected target status
+  const triggerPreview: TriggerPreview = target ? previewFor(target, triggers) : { kind: "none" };
+
   return (
     <div className="px-6 py-4 border-t border-admin-line space-y-3">
       <p className="text-xs font-medium text-admin-mute uppercase tracking-wide">Status</p>
@@ -72,6 +122,7 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
         from={order.status}
         to={target}
         busy={busy}
+        triggerPreview={triggerPreview}
         onConfirm={handleConfirm}
         onCancel={() => setTarget(null)}
       />
