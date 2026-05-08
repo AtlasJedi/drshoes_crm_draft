@@ -78,8 +78,9 @@
     {
       "id": "0b-9",
       "title": "V002 seed users",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "1fbcc28",
+      "dispatch_log": "docs/dispatch-log/0b-9-2026-05-08T114826Z.md"
     },
     {
       "id": "0b-10",
