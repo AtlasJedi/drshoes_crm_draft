@@ -54,8 +54,9 @@
     {
       "id": "0b-7",
       "title": "RbacService + @EnableMethodSecurity",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "21bcbdf",
+      "dispatch_log": "docs/dispatch-log/0b-7-2026-05-08T132000Z.md"
     },
     {
       "id": "0b-8",
