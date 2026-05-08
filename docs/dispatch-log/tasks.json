@@ -186,8 +186,20 @@
     {
       "id": "1-6",
       "title": "OrderService CRUD + status change + soft-delete + items",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e35afa3",
+      "fixup_sha": "6ce609e",
+      "dispatch_log": "docs/dispatch-log/1-6-20260508T141200Z.md",
+      "review_log": "docs/dispatch-log/1-6-review-20260508T153000Z.md",
+      "fixup_log": "docs/dispatch-log/1-6-fixup-20260508T162100Z.md",
+      "review_blockers_resolved": [
+        "3 plan-mandated tests missing (list status filter, list q= search, update on soft-deleted) — added in fixup. Production code was already correct.",
+        "Optimistic-lock test proves app-layer guard, not JPA OLE backstop — accepted (the manual version compare is the intended design).",
+        "Initial status ambiguity (PRZYJETE vs WSTEPNIE_PRZYJETE) — resolved: PRZYJETE for ADMIN-source orders (Misza creating manually = already received and confirmed). WSTEPNIE_PRZYJETE reserved for future PUBLIC_INTAKE source. Plan body wins."
+      ],
+      "deviations_from_plan": [
+        "OrderService at 165 LOC / 133 effective — 13 lines over the 120 ceiling. Split into OrderService + OrderItemService + OrderSpecifications. Reviewer accepted the 'no cohesion benefit from further splitting' argument."
+      ]
     },
     {
       "id": "1-7",
