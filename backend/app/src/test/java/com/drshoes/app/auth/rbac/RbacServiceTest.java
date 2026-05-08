@@ -2,6 +2,7 @@ package com.drshoes.app.auth.rbac;
 
 import com.drshoes.app.auth.domain.UserRole;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,5 +44,17 @@ class RbacServiceTest {
     void anonymous_can_do_nothing() {
         assertThat(rbac.canDeleteOrders(null)).isFalse();
         assertThat(rbac.canEditTriggers(null)).isFalse();
+    }
+
+    @Test
+    void anonymous_token_is_rejected_even_though_isAuthenticated_is_true() {
+        // Spring Security 6: AnonymousAuthenticationToken.isAuthenticated() == true.
+        // Guard must reject it explicitly via instanceof, not via isAuthenticated().
+        var anon = new AnonymousAuthenticationToken("key", "anonymousUser",
+            List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
+        assertThat(anon.isAuthenticated()).isTrue();   // sanity: confirms the trap
+        assertThat(rbac.canDeleteOrders(anon)).isFalse();
+        assertThat(rbac.canEditOrder(anon)).isFalse();
+        assertThat(rbac.canManageUsers(anon)).isFalse();
     }
 }

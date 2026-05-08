@@ -3,6 +3,7 @@ package com.drshoes.app.auth.rbac;
 import com.drshoes.app.auth.domain.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -56,7 +57,10 @@ public class RbacService {
     // -------------------------------------------------------------------------
 
     private boolean check(Authentication auth, String capability, UserRole... allowed) {
-        if (auth == null || !auth.isAuthenticated()) {
+        // AnonymousAuthenticationToken.isAuthenticated() returns true in Spring Security 6,
+        // so a plain `!isAuthenticated()` check would let anonymous principals through.
+        // Reject explicitly via instanceof and only then fall back to isAuthenticated().
+        if (auth == null || auth instanceof AnonymousAuthenticationToken || !auth.isAuthenticated()) {
             log.debug("op=rbacCheck capability={} actor=anonymous role=anonymous outcome=false", capability);
             return false;
         }
