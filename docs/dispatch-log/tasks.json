@@ -47,8 +47,9 @@
     {
       "id": "0b-6",
       "title": "AuthService + AuthController + DTOs",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e696c9e",
+      "dispatch_log": "docs/dispatch-log/0b-6-2026-05-08T110000Z.md"
     },
     {
       "id": "0b-7",
