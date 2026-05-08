@@ -122,4 +122,5 @@ Full protocol in memory entry `feedback_dispatch_protocol.md` (auto-loaded each 
 - [x] Milestone 0A plan written (`docs/superpowers/plans/2026-05-07-milestone-00a-foundation.md`)
 - [x] Milestone 0A: foundation skeleton boots — health green, V001 applied, web renders
 - [x] Milestone 0B: auth + RBAC + audit log + login UI + admin guard
-- [ ] Milestone 1: Order domain + drawer + audit timeline
+- [x] Milestone 1: Order domain + drawer + audit timeline
+- [ ] Milestone 2: Photos + messages + calendar/kanban + triggers
