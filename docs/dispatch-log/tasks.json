@@ -423,8 +423,10 @@
     {
       "id": "2-7",
       "title": "MessageRouter (TWO-STAGE REVIEW)",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "in_progress",
+      "commit_sha": "ee52e0c",
+      "dispatch_log": "docs/dispatch-log/2-7-20260508T192440Z.md",
+      "note": "spec-stage committed; quality review pending"
     },
     {
       "id": "2-8",
