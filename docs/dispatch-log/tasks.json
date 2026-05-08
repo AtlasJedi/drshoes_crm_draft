@@ -20,20 +20,29 @@
     {
       "id": "0b-3",
       "title": "BCrypt password encoder",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "2e73e4f",
+      "dispatch_log": "docs/dispatch-log/0b-3-2026-05-08T010000Z.md"
     },
     {
       "id": "0b-4",
       "title": "SecurityConfig + CSRF + public allow-list",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "2fbd384",
+      "fixup_sha": "61e395f",
+      "dispatch_log": "docs/dispatch-log/0b-4-2026-05-08T010300Z.md",
+      "fixup_log": "docs/dispatch-log/0b-4-fixup-2026-05-07T231117Z.md",
+      "review_blockers_resolved": [
+        "phantom /api/admin/auth/csrf matcher removed",
+        "CSRF enforcement tests added (3) — admin POST without token → 403, cookie repo bean wired, webhook bypass verified"
+      ]
     },
     {
       "id": "0b-5",
       "title": "Login throttle (Bucket4j)",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "47af9b3",
+      "dispatch_log": "docs/dispatch-log/0b-5-2026-05-08T011500Z.md"
     },
     {
       "id": "0b-6",
@@ -86,6 +95,8 @@
   ],
   "notes": [
     "Tasks 0b-1 and 0b-2 shipped before the dispatch-log directive, so dispatch_log is null. Future tasks must include a dispatch_log path.",
-    "Per locked dispatch protocol: plans on disk only; thin prompts; combined reviews for mechanical tasks; structured logging baked in from 0b-3 onward."
+    "Per locked dispatch protocol: plans on disk only; thin prompts; combined reviews for mechanical tasks; structured logging baked in from 0b-3 onward.",
+    "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml — contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
+    "PII flag (from 0b-5 inline review): LoginThrottle logs raw client IP at INFO on throttle events. Polish RODO/GDPR treats IP as personal data. Acceptable for now (security event); revisit during AuditLogAspect (0b-8) to apply a unified PII-redaction or hashing policy across security-event logs."
   ]
 }

@@ -23,3 +23,6 @@ hs_err_pid*.log
 *.iws
 .vscode/
 *.swp
+
+# External tooling clone (per CLAUDE.md: cd .superpowers && git pull)
+.superpowers/
