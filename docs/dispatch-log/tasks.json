@@ -457,8 +457,9 @@
     {
       "id": "2-10",
       "title": "MessageSentTimelineHandler",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e3b343e",
+      "dispatch_log": "docs/dispatch-log/2-10-20260508T195342Z.md"
     },
     {
       "id": "2-11",
