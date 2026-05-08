@@ -34,13 +34,13 @@
 - `user_`, `storage_location`, `message_template`, `trigger_`, `audit_log`, `idempotency_key`, plus messaging/scheduling tables.
 
 **Still legitimately additive (V005 et al. retain real DDL):**
-- `audit_log` exists but has NO `parent_entity_type` / `parent_entity_id` columns. Task 1-8's V005 migration is real DDL that adds these columns + their index.
+- `audit_log` exists but has NO `parent_entity_id` column. Task 1-8's V005 migration is real DDL that adds this single UUID column + its partial index.
 
 **Per-task corrections:**
 - **Task 1-1 (V003):** comment-only marker (already shipped; see commit `9dabeef`).
 - **Task 1-4 (V004):** **NOT** a no-op marker. V001 already creates `order_` and `order_item`, but neither has the `version` column required by the plan's `@Version` optimistic-locking architecture (see plan body line 884 + line 1076). V004 must `ALTER TABLE order_ ADD COLUMN version INTEGER NOT NULL DEFAULT 0;` (do **not** add a version to `order_item` — plan reserves @Version for the aggregate root only). Entities are otherwise mapped to existing V001 columns. Treat the rest of the plan's V004 DDL (CREATE TABLE order_, etc.) as already-done and skip it.
 - **Task 1-5 (OrderCodeSequence):** thin Spring service that runs `SELECT next_order_code(?)` against the existing PL/pgSQL function. No new DDL.
-- **Task 1-8 (V005):** unchanged — real ALTER TABLE adding `parent_entity_type VARCHAR(64)` + `parent_entity_id UUID` + composite index `(parent_entity_type, parent_entity_id, created_at DESC)`.
+- **Task 1-8 (V005):** real ALTER TABLE — plan body wins: a SINGLE `parent_entity_id UUID` column + partial index on `(parent_entity_id, created_at) WHERE parent_entity_id IS NOT NULL`. (Earlier errata wording mentioned a `parent_entity_type` column — that was a miswrite. The aspect populates parent UUIDs only; entity type can be derived from `audit_log.path` if needed by the timeline curator in 1-10.)
 
 **Test infrastructure correction:**
 - Plan references `com.drshoes.app.test.PostgresIntegrationTestBase` in several tasks. **The actual base class is `com.drshoes.app.AbstractIntegrationTest`** (no `test` sub-package). All integration tests extend that. The base already carries `@SpringBootTest` + Testcontainers — do not redeclare those annotations.
