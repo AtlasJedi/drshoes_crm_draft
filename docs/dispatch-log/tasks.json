@@ -542,16 +542,16 @@
     {
       "id": "3-1",
       "title": "V009 photo migration",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-1-20260508T224557Z.md",
+      "commit_sha": "9f6180a"
     },
     {
       "id": "3-2",
       "title": "Extend BlobStorage with get(BlobKey)",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-2-20260508T225401Z.md",
+      "commit_sha": "ed2f164"
     },
     {
       "id": "3-3",
