@@ -1,8 +1,11 @@
 package com.drshoes.app.client;
 
 import com.drshoes.app.AdminWebTestBase;
+import com.drshoes.app.audit.AuditLogRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -20,6 +23,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *   - the CsrfEnforcementTest already proves a POST without csrf() → 403
  */
 class ClientControllerIntegrationTest extends AdminWebTestBase {
+
+    @Autowired private AuditLogRepository auditLogs;
+
+    @Test
+    void postCreateWritesAuditRow() throws Exception {
+        // Regression guard: ClientController must be in .api package so AuditLogAspect's
+        // pointcut (execution(public * com.drshoes.app..api..*Controller.*(..))) fires.
+        // This test would have failed before the relocation.
+        // TODO(audit-coverage): expand with CSRF-rejected and 404 cases
+        loginAsOwner();
+        long beforeCount = auditLogs.count();
+
+        mockMvc().perform(post("/api/admin/clients")
+                .contentType("application/json")
+                .content("""
+                    {"firstName":"Audit","lastName":"Test","phone":"+48 600 999 888"}""")
+                .with(csrf()))
+            .andExpect(status().isCreated());
+
+        long written = auditLogs.count() - beforeCount;
+        assertThat(written)
+            .as("AuditLogAspect must write exactly one row for POST /api/admin/clients")
+            .isEqualTo(1);
+    }
 
     @Test
     void createListAndGetAsOwner() throws Exception {

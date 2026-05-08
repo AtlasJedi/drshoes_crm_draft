@@ -1,5 +1,6 @@
-package com.drshoes.app.client;
+package com.drshoes.app.client.api;
 
+import com.drshoes.app.client.ClientService;
 import com.drshoes.app.client.dto.ClientDto;
 import com.drshoes.app.client.dto.ClientSearchResult;
 import com.drshoes.app.client.dto.CreateClientRequest;

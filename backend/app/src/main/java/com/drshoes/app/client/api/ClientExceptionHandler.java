@@ -1,5 +1,7 @@
-package com.drshoes.app.client;
+package com.drshoes.app.client.api;
 
+import com.drshoes.app.client.ClientContactMissingException;
+import com.drshoes.app.client.ClientNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
