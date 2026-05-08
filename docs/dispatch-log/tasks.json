@@ -528,8 +528,9 @@
     {
       "id": "2-20",
       "title": "/api/health endpoint + timeline label ratification errata",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "02d0978",
+      "dispatch_log": "docs/dispatch-log/2-20-20260508T212428Z.md"
     },
     {
       "id": "2-21",
