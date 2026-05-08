@@ -59,9 +59,8 @@ export default async function OrdersPage({
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-admin-ink">Zlecenia</h1>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <Link
-          href={newHref as any}
+          href={newHref}
           className="inline-flex items-center gap-1 px-4 py-2 rounded bg-acid text-ink text-sm font-medium hover:bg-acid/80 transition-colors"
         >
           + Nowe zlecenie
@@ -79,9 +78,8 @@ export default async function OrdersPage({
           {pageData && pageData.content.length === 0 ? (
             <div className="p-8 text-center border border-admin-line rounded text-admin-mute">
               <p className="mb-3">Brak zleceń. Załóż pierwsze.</p>
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <Link
-                href={newHref as any}
+                href={newHref}
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded bg-acid text-ink text-sm font-medium hover:bg-acid/80 transition-colors"
               >
                 + Nowe zlecenie
