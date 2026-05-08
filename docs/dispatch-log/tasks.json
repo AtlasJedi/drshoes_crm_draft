@@ -204,8 +204,15 @@
     {
       "id": "1-7",
       "title": "OrderController + ExceptionHandler + integration test",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "f27c0ff",
+      "dispatch_log": "docs/dispatch-log/1-7-20260508T143300Z.md",
+      "deviations_from_plan": [
+        "GET /orders takes single ?status= (not comma-separated List<OrderStatus>) because OrderService.list shipped in 1-6 takes single status. Plan body's multi-status filter is debt against later need; design spec doesn't strictly require it.",
+        "OrderController 142 LOC — over 120 ceiling. Accepted under the CRUD-controller exception (mirrors the JPA-entity exception). No clean split: all 9 endpoints share rbac/svc dependency, splitting would just move LOC sideways.",
+        "Test @AfterEach cleanupOrders() added — FK order_.client_id forces orders to be deleted before clients in shared Testcontainers reuse mode."
+      ],
+      "audit_coverage": "postCreateWritesAuditRow regression test asserts audit_log delta == 1 after POST. Controller located at com.drshoes.app.order.api.OrderController per .api. convention — pointcut matches."
     },
     {
       "id": "1-8",
