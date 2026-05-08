@@ -351,14 +351,16 @@
     {
       "id": "1-17",
       "title": "OrderDrawerStatusChanger + trigger placeholder",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "8f9df16",
+      "dispatch_log": "docs/dispatch-log/1-17-20260508T175223Z.md"
     },
     {
       "id": "1-18",
       "title": "OrderDrawerItems CRUD",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "da5248f",
+      "dispatch_log": "docs/dispatch-log/1-18-20260508T175556Z.md"
     },
     {
       "id": "1-19",
