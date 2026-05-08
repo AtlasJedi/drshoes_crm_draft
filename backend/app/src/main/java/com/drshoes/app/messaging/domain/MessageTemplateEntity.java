@@ -44,7 +44,7 @@ public class MessageTemplateEntity {
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime updatedAt;
 
-    protected MessageTemplateEntity() {}
+    public MessageTemplateEntity() {}
 
     // ---- accessors ----
 
