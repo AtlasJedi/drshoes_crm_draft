@@ -159,8 +159,14 @@
     {
       "id": "1-4",
       "title": "V004 orders migration + Order/OrderItem entities + repos",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "eea55c3",
+      "dispatch_log": "docs/dispatch-log/1-4-20260508T140000Z.md",
+      "deviations_from_plan": [
+        "V004 became ALTER TABLE order_ ADD COLUMN version (not no-op marker — V001 lacks the column required by @Version optimistic-locking architecture).",
+        "Added OrderSource enum (V001 declares source NOT NULL DEFAULT 'ADMIN'; Java needs a default to avoid NULL inserts).",
+        "Optimistic-locking conflict test deferred to task 1-6 (OrderService) — repo-layer reproduction needs a detached EntityManager."
+      ]
     },
     {
       "id": "1-5",
