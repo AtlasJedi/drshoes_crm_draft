@@ -330,8 +330,16 @@
     {
       "id": "1-15",
       "title": "Create-new-order page",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "7046c82",
+      "dispatch_log": "docs/dispatch-log/1-15-20260508T175000Z.md",
+      "atomic_commit": true,
+      "deviations_from_plan": [
+        "Items inline-create included — CreateOrderRequest.java accepts List<CreateOrderItemRequest> items.",
+        "Form split into NewOrderForm.tsx (116 LOC) + NewOrderItemRow.tsx (62 LOC) to stay under granular-code ceiling.",
+        "Both `as any` casts on /admin/orders/new Link in 1-14's OrdersTable removed — typed routes now resolve naturally.",
+        "receivedAt field on CreateOrderRequest exists but not wired in the form — backend defaults to now(). M1 acceptable; could add to drawer later."
+      ]
     },
     {
       "id": "1-16",
