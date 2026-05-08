@@ -66,8 +66,9 @@
     {
       "id": "0b-8",
       "title": "AuditLogAspect AOP",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "213a81f",
+      "dispatch_log": "docs/dispatch-log/0b-8-2026-05-08T133000Z.md"
     },
     {
       "id": "0b-9",
