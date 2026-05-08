@@ -38,7 +38,7 @@
 
 **Per-task corrections:**
 - **Task 1-1 (V003):** comment-only marker (already shipped; see commit `9dabeef`).
-- **Task 1-4 (V004):** comment-only marker for `order_` / `order_item` — same reasoning. Entities are mapped to V001 columns.
+- **Task 1-4 (V004):** **NOT** a no-op marker. V001 already creates `order_` and `order_item`, but neither has the `version` column required by the plan's `@Version` optimistic-locking architecture (see plan body line 884 + line 1076). V004 must `ALTER TABLE order_ ADD COLUMN version INTEGER NOT NULL DEFAULT 0;` (do **not** add a version to `order_item` — plan reserves @Version for the aggregate root only). Entities are otherwise mapped to existing V001 columns. Treat the rest of the plan's V004 DDL (CREATE TABLE order_, etc.) as already-done and skip it.
 - **Task 1-5 (OrderCodeSequence):** thin Spring service that runs `SELECT next_order_code(?)` against the existing PL/pgSQL function. No new DDL.
 - **Task 1-8 (V005):** unchanged — real ALTER TABLE adding `parent_entity_type VARCHAR(64)` + `parent_entity_id UUID` + composite index `(parent_entity_type, parent_entity_id, created_at DESC)`.
 
