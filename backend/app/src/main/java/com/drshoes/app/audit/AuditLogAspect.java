@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -41,7 +39,14 @@ public class AuditLogAspect {
         this.writer = writer;
     }
 
-    @Around("execution(public * com.drshoes.app..api..*Controller.*(..))")
+    // Exclude @ExceptionHandler methods: when the primary handler throws, the aspect
+    // already logs status=500 and rethrows; Spring MVC then dispatches to the
+    // exception handler, which would be intercepted again and produce a second row
+    // with the actual response status (e.g. 401). Two rows per failed request — the
+    // 500 one is factually wrong. The pointcut now matches only the primary handler;
+    // the catch block in audit() captures the correct status mapping for failures.
+    @Around("execution(public * com.drshoes.app..api..*Controller.*(..)) "
+        + "&& !@annotation(org.springframework.web.bind.annotation.ExceptionHandler)")
     public Object audit(ProceedingJoinPoint pjp) throws Throwable {
         var attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         Object out;

@@ -47,6 +47,21 @@ class AuditLogAspectIntegrationTest extends AbstractIntegrationTest {
         rest.exchange("/api/admin/auth/login", HttpMethod.POST,
             new HttpEntity<>(new LoginRequest("misza@drshoes.pl", "p"), headers), String.class);
         long count = auditLog.count();
-        assertThat(count).isGreaterThanOrEqualTo(1);
+        assertThat(count).isEqualTo(1);   // exactly one row — primary handler only
+    }
+
+    @Test
+    void failed_login_writes_exactly_one_audit_row() {
+        // Regression test for the @ExceptionHandler double-audit bug:
+        // before the pointcut excluded @ExceptionHandler methods, a wrong-password
+        // login produced two rows — one from the primary handler (status=500) and
+        // one from handleInvalidCredentials (status=401). After the fix, exactly
+        // one row is written, and its status reflects the rethrown-exception path.
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var resp = rest.exchange("/api/admin/auth/login", HttpMethod.POST,
+            new HttpEntity<>(new LoginRequest("misza@drshoes.pl", "wrong"), headers), String.class);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(auditLog.count()).isEqualTo(1);
     }
 }
