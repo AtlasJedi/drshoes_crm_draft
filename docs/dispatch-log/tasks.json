@@ -68,7 +68,12 @@
       "title": "AuditLogAspect AOP",
       "status": "completed",
       "commit_sha": "213a81f",
-      "dispatch_log": "docs/dispatch-log/0b-8-2026-05-08T133000Z.md"
+      "fixup_sha": "2403bb2",
+      "dispatch_log": "docs/dispatch-log/0b-8-2026-05-08T133000Z.md",
+      "fixup_log": "docs/dispatch-log/0b-8-fixup-2026-05-08T134200Z.md",
+      "review_blockers_resolved": [
+        "Pointcut excluded @ExceptionHandler methods — failed login now writes exactly one audit row (was two: status=500 + status=401). Regression test added; unused imports removed."
+      ]
     },
     {
       "id": "0b-9",
