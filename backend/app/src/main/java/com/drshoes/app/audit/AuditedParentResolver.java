@@ -44,13 +44,28 @@ public class AuditedParentResolver {
      * @return the UUID result, or null if expression is blank / evaluation fails
      */
     public UUID resolve(Method method, Object[] args, String expr) {
+        return resolve(method, args, null, expr);
+    }
+
+    /**
+     * Resolves the parent UUID for an @Audited method invocation, optionally
+     * binding the return value as {@code #result} for expressions like
+     * {@code #result.orderId()} or {@code #result} when the return type is UUID.
+     *
+     * @param method  the intercepted method (used for parameter name introspection)
+     * @param args    the actual arguments passed to the method
+     * @param result  the method's return value (may be null); bound as {@code #result}
+     * @param expr    the SpEL expression from {@link Audited#parent()}
+     * @return the UUID result, or null if expression is blank / evaluation fails
+     */
+    public UUID resolve(Method method, Object[] args, Object result, String expr) {
         if (expr == null || expr.isBlank()) return null;
         try {
-            EvaluationContext ctx = buildContext(method, args);
-            Object result = parser.parseExpression(expr).getValue(ctx);
-            if (result == null) return null;
-            if (result instanceof UUID u) return u;
-            return UUID.fromString(result.toString());
+            EvaluationContext ctx = buildContext(method, args, result);
+            Object val = parser.parseExpression(expr).getValue(ctx);
+            if (val == null) return null;
+            if (val instanceof UUID u) return u;
+            return UUID.fromString(val.toString());
         } catch (Exception e) {
             log.warn("op=auditParentEvalFailed expr={} method={} cause={}",
                      expr, method.getName(), e.getMessage());
@@ -58,13 +73,16 @@ public class AuditedParentResolver {
         }
     }
 
-    private EvaluationContext buildContext(Method method, Object[] args) {
+    private EvaluationContext buildContext(Method method, Object[] args, Object result) {
         SimpleEvaluationContext ctx = SimpleEvaluationContext
             .forReadOnlyDataBinding()
             .build();
         Parameter[] params = method.getParameters();
         for (int i = 0; i < params.length && i < args.length; i++) {
             ctx.setVariable(params[i].getName(), args[i]);
+        }
+        if (result != null) {
+            ctx.setVariable("result", result);
         }
         return ctx;
     }

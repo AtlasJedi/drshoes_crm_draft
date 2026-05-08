@@ -3,24 +3,35 @@ package com.drshoes.app.photo.domain;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.springframework.data.domain.Persistable;
 
 import java.time.Instant;
 import java.util.UUID;
 
 /**
  * JPA entity for the photo table (created by V009).
- * This stub ships in task 3-1 to satisfy compilation of the @Disabled PhotoRepositoryTest
- * and to prove V009 + Hibernate schema validation are consistent.
- * Task 3-5 completes the entity with full service/controller wiring.
+ *
+ * Implements {@link Persistable} so that Spring Data JPA always calls
+ * {@code EntityManager.persist()} rather than {@code merge()} when {@code save()} is
+ * invoked with a pre-assigned UUID (as PhotoService does to pre-compute the S3 key
+ * before storing the row). Without {@code Persistable}, Spring Data's {@code isNew()}
+ * check sees a non-null id and calls {@code merge()}, which expects an existing row
+ * and throws {@code StaleObjectStateException}.
+ *
+ * The {@code @Transient isNew} flag is set to {@code true} at construction time and
+ * cleared by {@code @PostPersist} / {@code @PostLoad} so that subsequent saves
+ * (e.g. relabel) correctly call {@code merge()}.
  */
 @Entity
 @Table(name = "photo")
-public class Photo {
+public class Photo implements Persistable<UUID> {
 
     @Id
-    @GeneratedValue
     @Column(columnDefinition = "uuid")
     private UUID id;
+
+    @Transient
+    private boolean isNew = true;
 
     @Column(name = "order_id", nullable = false, columnDefinition = "uuid")
     private UUID orderId;
@@ -51,8 +62,18 @@ public class Photo {
     @Column(name = "original_filename", nullable = false, columnDefinition = "text")
     private String originalFilename;
 
+    @PostPersist
+    @PostLoad
+    void markNotNew() {
+        this.isNew = false;
+    }
+
+    @Override
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
+
+    @Override
+    public boolean isNew() { return isNew; }
 
     public UUID getOrderId() { return orderId; }
     public void setOrderId(UUID orderId) { this.orderId = orderId; }

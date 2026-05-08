@@ -65,6 +65,18 @@ public class TimelineEventCurator {
     private static final Pattern INTERNAL_REMOVE_ITEM =
         Pattern.compile("^OrderService#removeItem");
 
+    // M3 photo service paths (PhotoService @Audited rows)
+    private static final Pattern INTERNAL_PHOTO_UPLOADED =
+        Pattern.compile("^PhotoService#upload$");
+    private static final Pattern INTERNAL_PHOTO_DELETED =
+        Pattern.compile("^PhotoService#delete$");
+    private static final Pattern INTERNAL_PHOTO_RELABELED =
+        Pattern.compile("^PhotoService#relabel$");
+
+    // HTTP rows for photo endpoints — skip; the @Audited INTERNAL row is canonical.
+    private static final Pattern PHOTOS_SEGMENT_PATTERN =
+        Pattern.compile("/api/admin/orders/[^/]+/photos(?:/.*)?$");
+
     private final MessageSentTimelineHandler messagingHandler;
 
     public TimelineEventCurator(MessageSentTimelineHandler messagingHandler) {
@@ -95,6 +107,11 @@ public class TimelineEventCurator {
         // Skip HTTP message rows (POST /api/admin/orders/{uuid}/messages) —
         // the INTERNAL MessageRouter audit row is the canonical source for MESSAGE_SENT.
         if (MESSAGES_SEGMENT_PATTERN.matcher(path).find()) {
+            return Optional.empty();
+        }
+
+        // Skip HTTP photo rows — the @Audited INTERNAL row is the canonical source for PHOTO_*.
+        if (PHOTOS_SEGMENT_PATTERN.matcher(path).find()) {
             return Optional.empty();
         }
 
@@ -154,6 +171,18 @@ public class TimelineEventCurator {
         if (INTERNAL_REMOVE_ITEM.matcher(path).find()) {
             return Optional.of(event(log, TimelineEventKind.ITEM_REMOVED, actorFullName, labels));
         }
+
+        // ── M3 photo events ──────────────────────────────────────────────────
+        if (INTERNAL_PHOTO_UPLOADED.matcher(path).find()) {
+            return Optional.of(event(log, TimelineEventKind.PHOTO_UPLOADED, actorFullName, labels));
+        }
+        if (INTERNAL_PHOTO_DELETED.matcher(path).find()) {
+            return Optional.of(event(log, TimelineEventKind.PHOTO_DELETED, actorFullName, labels));
+        }
+        if (INTERNAL_PHOTO_RELABELED.matcher(path).find()) {
+            return Optional.of(event(log, TimelineEventKind.PHOTO_RELABELED, actorFullName, labels));
+        }
+
         return Optional.empty();
     }
 

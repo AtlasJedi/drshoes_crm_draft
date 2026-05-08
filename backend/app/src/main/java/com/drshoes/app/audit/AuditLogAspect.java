@@ -82,7 +82,8 @@ public class AuditLogAspect {
     public Object auditAnnotated(ProceedingJoinPoint pjp, Audited audited) throws Throwable {
         Object out = pjp.proceed();   // let exceptions propagate — no row on failure
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-        UUID parentId = parentResolver.resolve(method, pjp.getArgs(), audited.parent());
+        // Pass return value so SpEL expressions like "#result.orderId" or "#result" work.
+        UUID parentId = parentResolver.resolve(method, pjp.getArgs(), out, audited.parent());
         persistAnnotated(method, parentId);
         return out;
     }

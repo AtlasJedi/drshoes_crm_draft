@@ -66,6 +66,7 @@ class PhotoRepositoryTest extends AbstractIntegrationTest {
     private Photo save(PhotoRepository repo, java.util.UUID orderId, java.util.UUID actor,
                        PhotoLabel label, Instant when) {
         var p = new Photo();
+        p.setId(java.util.UUID.randomUUID());   // required: Photo.Persistable needs manual id
         p.setOrderId(orderId);
         p.setUploadedBy(actor);
         p.setUploadedAt(when);

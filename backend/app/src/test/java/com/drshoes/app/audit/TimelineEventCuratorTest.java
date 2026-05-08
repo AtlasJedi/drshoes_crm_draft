@@ -182,6 +182,54 @@ class TimelineEventCuratorTest {
         assertThat(result).isEmpty();
     }
 
+    // ── M3: PHOTO_* events ───────────────────────────────────────────────────
+
+    @Test
+    void photoUploaded_internalRow_emitsPhotoUploadedEvent() {
+        UUID orderId = UUID.fromString(ORDER_UUID);
+        AuditLog log = auditLog("INTERNAL", "PhotoService#upload", 0, null, orderId);
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().kind()).isEqualTo(TimelineEventKind.PHOTO_UPLOADED);
+        assertThat(result.get().actorFullName()).isEqualTo(ACTOR);
+        assertThat(result.get().labels()).containsEntry("orderId", ORDER_UUID);
+    }
+
+    @Test
+    void photoDeleted_internalRow_emitsPhotoDeletedEvent() {
+        UUID orderId = UUID.fromString(ORDER_UUID);
+        AuditLog log = auditLog("INTERNAL", "PhotoService#delete", 0, null, orderId);
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().kind()).isEqualTo(TimelineEventKind.PHOTO_DELETED);
+    }
+
+    @Test
+    void photoRelabeled_internalRow_emitsPhotoRelabeledEvent() {
+        UUID orderId = UUID.fromString(ORDER_UUID);
+        AuditLog log = auditLog("INTERNAL", "PhotoService#relabel", 0, null, orderId);
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().kind()).isEqualTo(TimelineEventKind.PHOTO_RELABELED);
+    }
+
+    @Test
+    void httpPhotoRow_isSkipped_toAvoidDoubleCount() {
+        // HTTP rows for photo endpoints are skipped; only the @Audited INTERNAL row is emitted.
+        AuditLog log = auditLog("POST",
+            "/api/admin/orders/" + ORDER_UUID + "/photos", 201, null, null);
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isEmpty();
+    }
+
     // ── helpers ───────────────────────────────────────────────────────────────
 
     private AuditLog auditLog(String method, String path, int status,
