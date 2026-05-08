@@ -12,6 +12,7 @@ import { OrderDrawerCoreFields } from "./OrderDrawerCoreFields";
 import { OrderDrawerStatusChanger } from "./OrderDrawerStatusChanger";
 import { OrderDrawerItems } from "./OrderDrawerItems";
 import { OrderDrawerTimeline } from "./OrderDrawerTimeline";
+import { OrderDrawerMessages } from "./OrderDrawerMessages";
 
 const log = createLogger("order-drawer");
 
@@ -23,6 +24,7 @@ interface Props {
 export function OrderDrawer({ initialOrder, users }: Props) {
   const [order, setOrder] = useState<OrderDto>(initialOrder);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [composeOpen, setComposeOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -64,6 +66,11 @@ export function OrderDrawer({ initialOrder, users }: Props) {
             <OrderDrawerStatusChanger order={order} onOrderUpdated={handleOrderUpdated} />
             <OrderDrawerItems order={order} onOrderUpdated={handleOrderUpdated} />
             <OrderDrawerTimeline orderId={order.id} refreshKey={refreshKey} />
+            <OrderDrawerMessages
+              orderId={order.id}
+              refreshKey={refreshKey}
+              onComposeClick={() => setComposeOpen(true)}
+            />
           </div>
         </Dialog.Content>
       </Dialog.Portal>

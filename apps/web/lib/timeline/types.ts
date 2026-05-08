@@ -9,7 +9,7 @@
  * ASSIGNEE_CHANGED and PICKUP_DATE_CHANGED (require request-body capture).
  */
 
-/** 9 curated timeline event kinds. Matches TimelineEventKind.java. */
+/** 10 curated timeline event kinds. Matches TimelineEventKind.java. */
 export type TimelineEventKind =
   | "ORDER_CREATED"
   | "ORDER_UPDATED"        // generic PATCH — added M1; no field-level diff
@@ -19,7 +19,8 @@ export type TimelineEventKind =
   | "ITEM_ADDED"
   | "ITEM_EDITED"
   | "ITEM_REMOVED"
-  | "ORDER_SOFT_DELETED";
+  | "ORDER_SOFT_DELETED"
+  | "MESSAGE_SENT";        // M2 — outbound message dispatched
 
 /**
  * Curated timeline event — mirrors TimelineEvent.java.

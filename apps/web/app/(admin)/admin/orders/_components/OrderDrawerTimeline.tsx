@@ -17,6 +17,7 @@ const KIND_ICONS: Record<TimelineEventKind, string> = {
   ITEM_EDITED:          "📝",
   ITEM_REMOVED:         "🗑️",
   ORDER_SOFT_DELETED:   "🗂️",
+  MESSAGE_SENT:         "✉️",
 };
 
 const KIND_LABELS_PL: Record<TimelineEventKind, string> = {
@@ -29,6 +30,7 @@ const KIND_LABELS_PL: Record<TimelineEventKind, string> = {
   ITEM_EDITED:          "Edytowano pozycję",
   ITEM_REMOVED:         "Usunięto pozycję",
   ORDER_SOFT_DELETED:   "Zamówienie usunięte",
+  MESSAGE_SENT:         "Wysłano wiadomość",
 };
 
 const fmt = new Intl.DateTimeFormat("pl-PL", { dateStyle: "short", timeStyle: "short" });
