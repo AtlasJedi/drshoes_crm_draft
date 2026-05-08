@@ -21,5 +21,6 @@ public enum TimelineEventKind {
     ITEM_ADDED,
     ITEM_EDITED,
     ITEM_REMOVED,
-    ORDER_SOFT_DELETED
+    ORDER_SOFT_DELETED,
+    MESSAGE_SENT        // M2 — emitted by MessageSentTimelineHandler for MessageRouter service rows
 }

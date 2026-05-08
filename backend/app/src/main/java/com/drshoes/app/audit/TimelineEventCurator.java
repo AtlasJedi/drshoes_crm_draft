@@ -2,6 +2,7 @@ package com.drshoes.app.audit;
 
 import com.drshoes.app.audit.dto.TimelineEvent;
 import com.drshoes.app.audit.dto.TimelineEventKind;
+import com.drshoes.app.messaging.timeline.MessageSentTimelineHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -51,6 +52,11 @@ public class TimelineEventCurator {
     private static final Pattern ITEMS_SEGMENT_PATTERN =
         Pattern.compile("/api/admin/orders/[^/]+/items(?:/.*)?$");
 
+    // HTTP row for POST /api/admin/orders/{uuid}/messages — skip to avoid
+    // double-counting; the INTERNAL MessageRouter audit row is the canonical source.
+    private static final Pattern MESSAGES_SEGMENT_PATTERN =
+        Pattern.compile("/api/admin/orders/[^/]+/messages(?:/.*)?$");
+
     // INTERNAL service-method paths produced by @Audited aspect
     private static final Pattern INTERNAL_ADD_ITEM =
         Pattern.compile("^OrderService#addItem");
@@ -58,6 +64,12 @@ public class TimelineEventCurator {
         Pattern.compile("^OrderService#updateItem");
     private static final Pattern INTERNAL_REMOVE_ITEM =
         Pattern.compile("^OrderService#removeItem");
+
+    private final MessageSentTimelineHandler messagingHandler;
+
+    public TimelineEventCurator(MessageSentTimelineHandler messagingHandler) {
+        this.messagingHandler = messagingHandler;
+    }
 
     /**
      * Curates a single audit log row into a timeline event.
@@ -77,6 +89,12 @@ public class TimelineEventCurator {
 
         // Skip HTTP item-op rows — the INTERNAL row covers them
         if (ITEMS_SEGMENT_PATTERN.matcher(path).find()) {
+            return Optional.empty();
+        }
+
+        // Skip HTTP message rows (POST /api/admin/orders/{uuid}/messages) —
+        // the INTERNAL MessageRouter audit row is the canonical source for MESSAGE_SENT.
+        if (MESSAGES_SEGMENT_PATTERN.matcher(path).find()) {
             return Optional.empty();
         }
 
@@ -117,6 +135,12 @@ public class TimelineEventCurator {
     // ── private helpers ──────────────────────────────────────────────────────
 
     private Optional<TimelineEvent> curateInternal(AuditLog log, String path, String actorFullName) {
+        // M2: dispatch MessageRouter service rows to the messaging handler first
+        TimelineEvent msgEvent = messagingHandler.toEvent(log, actorFullName);
+        if (msgEvent != null) {
+            return Optional.of(msgEvent);
+        }
+
         UUID parentId = log.getParentEntityId();
         String orderIdLabel = parentId != null ? parentId.toString() : "";
         Map<String, String> labels = Map.of("actorFullName", actorFullName, "orderId", orderIdLabel);

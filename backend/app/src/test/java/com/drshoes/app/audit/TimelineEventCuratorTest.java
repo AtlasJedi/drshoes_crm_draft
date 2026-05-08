@@ -2,6 +2,7 @@ package com.drshoes.app.audit;
 
 import com.drshoes.app.audit.dto.TimelineEvent;
 import com.drshoes.app.audit.dto.TimelineEventKind;
+import com.drshoes.app.messaging.timeline.MessageSentTimelineHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Pure unit tests for TimelineEventCurator — no Spring context, no DB.
@@ -20,6 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * one HTTP row (from controller advice) and one INTERNAL row (from @Audited
  * service advice, method=INTERNAL, status=0). The curator skips HTTP item-op
  * rows and emits only the INTERNAL row to avoid double-counting.
+ *
+ * MessageSentTimelineHandler is mocked to return null (no match) for all M1
+ * test cases, so the existing item/status/order event assertions are unaffected.
  */
 class TimelineEventCuratorTest {
 
@@ -30,7 +38,9 @@ class TimelineEventCuratorTest {
 
     @BeforeEach
     void setUp() {
-        curator = new TimelineEventCurator();
+        MessageSentTimelineHandler noopHandler = mock(MessageSentTimelineHandler.class);
+        when(noopHandler.toEvent(any(AuditLog.class), anyString())).thenReturn(null);
+        curator = new TimelineEventCurator(noopHandler);
     }
 
     // ── ORDER_CREATED ────────────────────────────────────────────────────────
