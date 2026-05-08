@@ -132,8 +132,15 @@
     {
       "id": "1-2",
       "title": "ClientService (CRUD + search) + unit test",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "524b32f",
+      "dispatch_log": "docs/dispatch-log/1-2-20260508T134511Z.md",
+      "deviations_from_plan": [
+        "Added 5th unit test for client_contact_present invariant (plan had 4).",
+        "Added ClientContactMissingException + applied invariant in both create() and update().",
+        "Aligned validation with V001 schema (phone max 40 not 32; lastName not @NotBlank since column is nullable).",
+        "ClientSearchResult.fullName made null-safe for nullable lastName."
+      ]
     },
     {
       "id": "1-3",
