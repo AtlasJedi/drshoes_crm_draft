@@ -445,8 +445,9 @@
     {
       "id": "2-9",
       "title": "ScheduledTriggerJob (cron)",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "fed9f0f",
+      "dispatch_log": "docs/dispatch-log/2-9-20260508T194354Z.md"
     },
     {
       "id": "2-10",
