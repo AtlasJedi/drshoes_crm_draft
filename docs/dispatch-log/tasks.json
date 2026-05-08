@@ -120,8 +120,14 @@
     {
       "id": "1-1",
       "title": "V003 clients migration + Client entity + repo + integration test",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "9dabeef",
+      "dispatch_log": "docs/dispatch-log/1-1-20260508T154000Z.md",
+      "concerns_resolved_in_plan": [
+        "V001 already creates `client` table — V003 recast as comment-only marker.",
+        "Plan's Client entity spec was missing real V001 columns (preferred_channel, rodo_consent_at, citext email, nullable last_name, client_contact_present check). Entity mapped to actual schema.",
+        "Plan referenced non-existent PostgresIntegrationTestBase — actual base is AbstractIntegrationTest. Plan errata block added at top of plan file documenting V001 reality + correct base class for downstream tasks."
+      ]
     },
     {
       "id": "1-2",

@@ -22,6 +22,33 @@
 
 ---
 
+## ERRATA — V001 baseline reality (added 2026-05-08 after task 1-1)
+
+**The plan was drafted assuming the schema would be built up incrementally per milestone. In fact `V001__init.sql` is a comprehensive baseline that already creates almost every table.** Tasks below that "create" already-existing tables MUST be recast as no-op marker migrations or as additive ALTERs. Authors of downstream tasks must read this section before generating SQL or entity classes.
+
+**Already in V001 baseline (do NOT re-create):**
+- `client` — full schema. Real columns: `id UUID`, `first_name VARCHAR(80) NOT NULL`, `last_name VARCHAR(80)` *(nullable)*, `email CITEXT`, `phone VARCHAR(40)`, `preferred_channel VARCHAR(16) NOT NULL DEFAULT 'EMAIL'` *(CHECK in {EMAIL,SMS,NONE})*, `notes TEXT`, `rodo_consent_at TIMESTAMPTZ`, `deleted_at`, `created_at`, `updated_at`. CHECK constraint `client_contact_present` requires `phone IS NOT NULL OR email IS NOT NULL`. gin trigram index on `first_name||last_name||coalesce(email,'')||coalesce(phone,'')`.
+- `order_` — full schema with `code`, `status` (7-value CHECK incl. WSTEPNIE_PRZYJETE..ANULOWANE), `source`, timestamps, `assigned_craftsman_id`, `current_storage_location_id`, `tags JSONB`, `total_price_cents`, `currency`, `description`, `cancelled_reason`, `deleted_at`, `created_at`, `updated_at`. Indexes for status+pickup, client+created, craftsman+status, storage, gin search.
+- `order_item` — `id, order_id, position, kind` (CHECK in {NAPRAWA,CUSTOM_BUTY,CUSTOM_KURTKA}), `description`, `craftsman_notes`, `price_cents`, timestamps.
+- `order_code_counter` (table) + `next_order_code(p_year INT)` PL/pgSQL function. **Task 1-5's `OrderCodeSequence` service should wrap a SELECT of this function, not implement its own counter.**
+- `user_`, `storage_location`, `message_template`, `trigger_`, `audit_log`, `idempotency_key`, plus messaging/scheduling tables.
+
+**Still legitimately additive (V005 et al. retain real DDL):**
+- `audit_log` exists but has NO `parent_entity_type` / `parent_entity_id` columns. Task 1-8's V005 migration is real DDL that adds these columns + their index.
+
+**Per-task corrections:**
+- **Task 1-1 (V003):** comment-only marker (already shipped; see commit `9dabeef`).
+- **Task 1-4 (V004):** comment-only marker for `order_` / `order_item` — same reasoning. Entities are mapped to V001 columns.
+- **Task 1-5 (OrderCodeSequence):** thin Spring service that runs `SELECT next_order_code(?)` against the existing PL/pgSQL function. No new DDL.
+- **Task 1-8 (V005):** unchanged — real ALTER TABLE adding `parent_entity_type VARCHAR(64)` + `parent_entity_id UUID` + composite index `(parent_entity_type, parent_entity_id, created_at DESC)`.
+
+**Test infrastructure correction:**
+- Plan references `com.drshoes.app.test.PostgresIntegrationTestBase` in several tasks. **The actual base class is `com.drshoes.app.AbstractIntegrationTest`** (no `test` sub-package). All integration tests extend that. The base already carries `@SpringBootTest` + Testcontainers — do not redeclare those annotations.
+
+**Entity exception reminder:** Java entities are an explicit exception to the < 120 LOC granular-code rule. JPA boilerplate naturally pushes them past 80 LOC; that's fine.
+
+---
+
 ## File Structure
 
 ### Backend (NEW or MODIFIED)
