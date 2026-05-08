@@ -1,3 +1,38 @@
+<!-- ============================================================ -->
+<!-- TOOLING LOCK — read this before invoking ANY subagent or skill -->
+<!-- ============================================================ -->
+> **THIS PROJECT IS BOUND TO `superpowers` EXCLUSIVELY.**
+>
+> A `PreToolUse` hook at `.claude/hooks/check-tooling.sh` (wired via
+> `.claude/settings.json`) deterministically blocks cross-ecosystem calls.
+> If the hook fires, **fix the call site — never loosen the hook.**
+>
+> **Allowed `Agent.subagent_type`:** `general-purpose`, `Explore`, `Plan`,
+> `statusline-setup`, `callitaday`, `claude-code-guide`.
+>
+> **DENIED:** `forge-*`, `gsd-*`, `gstack-*`, `vercel:*`, `majorfucker`.
+> Backend Spring Boot work → dispatch a `general-purpose` Sonnet subagent
+> with a thin prompt pointing at the plan file. Do NOT use `forge-backend`
+> even though it sounds applicable.
+>
+> **Allowed `Skill`:** `superpowers:*`, plus harness-internal skills
+> (`update-config`, `keybindings-help`, `loop`, `schedule`).
+>
+> **DENIED skills:** anything matching `gsd-*` / `vercel:*` / `gstack-*`,
+> plus gstack-flavored slash commands (`gstack`, `bradlej`, `qa`, `qa-only`,
+> `ship`, `dev`, `canary`, `health`, `cso`, `investigate`, `office-hours`,
+> `land-and-deploy`, `manifest`, `ports`, `remote`, `checkpoint`, `go`,
+> `document-release`, `retro`, `test-loop`, `benchmark`, `debug-e2e`,
+> `autoplan`, `design-*`, `plan-design-review`, `plan-ceo-review`,
+> `plan-eng-review`, `plan-devex-review`, `devex-review`, `lesson-studio`,
+> `setup-deploy`, `setup-browser-cookies`, `open-gstack-browser`,
+> `publish_local`).
+>
+> The full superpowers methodology workflow (brainstorming → writing-plans
+> → TDD → subagent-driven-development → requesting-code-review →
+> finishing-a-development-branch) is the only sanctioned path.
+<!-- ============================================================ -->
+
 # misza_madafaka
 
 Web app project. Design template will be provided by user (Claude design export).
