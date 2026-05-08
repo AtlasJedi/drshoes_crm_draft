@@ -85,8 +85,9 @@
     {
       "id": "0b-10",
       "title": "Frontend API client + auth helpers (incl. lib/log.ts)",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "062e29d",
+      "dispatch_log": "docs/dispatch-log/0b-10-2026-05-08T150000Z.md"
     },
     {
       "id": "0b-11",
