@@ -3,6 +3,7 @@ package com.drshoes.app.order;
 import com.drshoes.app.audit.Audited;
 import com.drshoes.app.client.ClientNotFoundException;
 import com.drshoes.app.client.domain.ClientRepository;
+import com.drshoes.app.messaging.service.TriggerEngine;
 import com.drshoes.app.order.domain.*;
 import com.drshoes.app.order.dto.*;
 import org.slf4j.Logger;
@@ -34,13 +35,14 @@ public class OrderService {
     private final ClientRepository clientRepo;
     private final OrderCodeSequence codeSeq;
     private final OrderItemService itemService;
+    private final TriggerEngine triggerEngine;
 
     public OrderService(OrderRepository orderRepo, OrderItemRepository itemRepo,
                         ClientRepository clientRepo, OrderCodeSequence codeSeq,
-                        OrderItemService itemService) {
+                        OrderItemService itemService, TriggerEngine triggerEngine) {
         this.orderRepo = orderRepo; this.itemRepo = itemRepo;
         this.clientRepo = clientRepo; this.codeSeq = codeSeq;
-        this.itemService = itemService;
+        this.itemService = itemService; this.triggerEngine = triggerEngine;
     }
 
     // ---- queries ----
@@ -118,6 +120,7 @@ public class OrderService {
         Order saved = orderRepo.save(o);
         log.info("op=changeOrderStatus orderId={} fromStatus={} toStatus={} expectedVersion={} outcome=ok",
             id, old, req.targetStatus(), req.expectedVersion());
+        triggerEngine.onStatusChange(saved.getId(), old.name(), req.targetStatus().name());
         return new ChangeStatusResponse(toDto(saved), new TriggerSuggestion());
     }
 
