@@ -578,9 +578,9 @@
     {
       "id": "3-5",
       "title": "Photo JPA entity + PhotoRepository",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-5-20260508T232408Z.md",
+      "commit_sha": "72ca604"
     },
     {
       "id": "3-6",
