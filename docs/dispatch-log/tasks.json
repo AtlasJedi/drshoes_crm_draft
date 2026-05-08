@@ -267,8 +267,16 @@
     {
       "id": "1-11",
       "title": "UsersController for assignee dropdown",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "fc89ff4",
+      "dispatch_log": "docs/dispatch-log/1-11-20260508T171634Z.md",
+      "atomic_commit": true,
+      "deviations_from_plan": [
+        "UserStubDto placed at com.drshoes.app.auth.api.dto.UserStubDto (matches existing 0B layout) rather than com.drshoes.app.auth.dto.* as plan body suggests.",
+        "User entity uses `active` boolean (not `deletedAt`) — repo method named findAllByActiveTrueOrderByFullName.",
+        "User.getFullName() already returns a single-column persisted value — no null-safe concat needed.",
+        "Audit-coverage regression test intentionally omitted — endpoint is read-only GET, aspect only fires on writes."
+      ]
     },
     {
       "id": "1-12",
