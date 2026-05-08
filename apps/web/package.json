@@ -11,8 +11,9 @@
     "test": "echo \"(playwright in milestone 1)\""
   },
   "dependencies": {
-    "@drshoes/ui": "workspace:*",
     "@drshoes/api-types": "workspace:*",
+    "@drshoes/ui": "workspace:*",
+    "@radix-ui/react-dialog": "^1.1.15",
     "next": "^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
