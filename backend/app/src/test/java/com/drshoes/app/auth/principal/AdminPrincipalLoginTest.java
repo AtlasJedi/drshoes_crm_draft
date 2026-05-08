@@ -1,6 +1,7 @@
 package com.drshoes.app.auth.principal;
 
 import com.drshoes.app.AbstractIntegrationTest;
+import com.drshoes.app.audit.AuditLogRepository;
 import com.drshoes.app.auth.domain.User;
 import com.drshoes.app.auth.domain.UserRepository;
 import com.drshoes.app.auth.domain.UserRole;
@@ -33,12 +34,15 @@ class AdminPrincipalLoginTest extends AbstractIntegrationTest {
 
     @Autowired AuthService authService;
     @Autowired UserRepository users;
+    @Autowired AuditLogRepository auditLogs;
     @Autowired PasswordEncoder enc;
 
     private User owner;
 
     @BeforeEach
     void seed() {
+        // audit_log.actor_id has FK → user_(id); clear children before parents.
+        auditLogs.deleteAll();
         users.deleteAll();
         owner = new User();
         owner.setEmail("owner@drshoes.pl");
@@ -51,6 +55,7 @@ class AdminPrincipalLoginTest extends AbstractIntegrationTest {
     @AfterEach
     void cleanup() {
         SecurityContextHolder.clearContext();
+        auditLogs.deleteAll();
         users.deleteAll();
     }
 

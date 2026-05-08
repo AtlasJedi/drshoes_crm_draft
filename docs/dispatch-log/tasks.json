@@ -558,7 +558,14 @@
       "title": "AdminPrincipal record + AuthService wrap (TWO-STAGE)",
       "status": "completed",
       "dispatch_log": "docs/dispatch-log/3-3-20260508T225731Z.md",
-      "commit_sha": "24e533e"
+      "commit_sha": "24e533e",
+      "fixup_log": "docs/dispatch-log/3-3-fixup-20260508T231628Z.md",
+      "review_blockers_resolved": [
+        "AdminPrincipalLoginTest missed the audit_log FK teardown that the other three modified tests received — added auditLogs.deleteAll() before users.deleteAll() in seed() and cleanup(), suite stays 153/0/0/1."
+      ],
+      "review_followups_deferred": [
+        "AuthController.me() still does a DB lookup for fullName + lastLoginAt because those fields are not on AdminPrincipal. Optional follow-up: fold them onto the principal to eliminate the lookup. Behavior is correct as-is."
+      ]
     },
     {
       "id": "3-4",
