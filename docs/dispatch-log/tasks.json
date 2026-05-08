@@ -365,8 +365,9 @@
     {
       "id": "1-19",
       "title": "OrderDrawerTimeline (right rail)",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "f84b205",
+      "dispatch_log": "docs/dispatch-log/1-19-20260508T180051Z.md"
     },
     {
       "id": "1-20",
