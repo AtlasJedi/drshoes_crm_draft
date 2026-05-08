@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "active_milestone": "2",
-  "active_plan": "docs/superpowers/plans/2026-05-08-milestone-02-messaging.md",
+  "active_milestone": "3",
+  "active_plan": "docs/superpowers/plans/2026-05-09-milestone-03-photos.md",
   "tasks": [
     {
       "id": "0b-1",
@@ -538,6 +538,97 @@
       "status": "completed",
       "dispatch_log": "docs/dispatch-log/2-21-20260508T212824Z.md",
       "commit_sha": "2ad7b9a"
+    },
+    {
+      "id": "3-1",
+      "title": "V009 photo migration",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-2",
+      "title": "Extend BlobStorage with get(BlobKey)",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-3",
+      "title": "AdminPrincipal record + AuthService wrap (TWO-STAGE)",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-4",
+      "title": "Retrofit MessagesController to use AdminPrincipal.userId()",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-5",
+      "title": "Photo JPA entity + PhotoRepository",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-6",
+      "title": "PhotoService + @Audited + TimelineEventCurator extension (TWO-STAGE)",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-7",
+      "title": "PhotoController + integration tests (Testcontainers MinIO)",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-8",
+      "title": "apps/web/lib/photos/{api,types}.ts",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-9",
+      "title": "OrderDrawerPhotos tab + PhotoGrid + PhotoCard",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-10",
+      "title": "PhotoUploader",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-11",
+      "title": "PhotoLightbox",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-12",
+      "title": "KIND_LABELS_PL extension for PHOTO_* timeline kinds",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
+    },
+    {
+      "id": "3-13",
+      "title": "Smoke + milestone-3 tag + CLAUDE.md flip",
+      "status": "pending",
+      "dispatch_log": null,
+      "commit_sha": null
     }
   ],
   "notes": [
