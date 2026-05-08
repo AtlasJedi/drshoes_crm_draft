@@ -500,8 +500,9 @@
     {
       "id": "2-16",
       "title": "/admin/triggers pages",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e14013d",
+      "dispatch_log": "docs/dispatch-log/2-16-20260508T211518Z.md"
     },
     {
       "id": "2-17",
