@@ -99,8 +99,9 @@
     {
       "id": "0b-12",
       "title": "Admin layout auth guard + sidebar shell",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "a64a5ca",
+      "dispatch_log": "docs/dispatch-log/0b-12-20260508T190000Z.md"
     },
     {
       "id": "0b-13",
