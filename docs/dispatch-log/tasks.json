@@ -171,8 +171,17 @@
     {
       "id": "1-5",
       "title": "OrderCodeSequence service + integration test",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e5beeb0",
+      "log_commit_sha": "d0c0952",
+      "dispatch_log": "docs/dispatch-log/1-5-20260508T160000Z.md",
+      "deviations_from_plan": [
+        "Used JdbcTemplate (per errata) instead of plan-body's EntityManager approach.",
+        "Test is integration (not unit as plan title says) — tests the real PL/pgSQL function, not a mock.",
+        "Year isolation via deleting 1999/1998 rows in @BeforeEach (avoids counter pollution from sibling tests sharing the reused container).",
+        "Concurrency proven: 8 parallel CompletableFuture.runAsync calls produce 8 distinct codes."
+      ],
+      "protocol_drift": "Subagent split work into two commits (service + dispatch log) — instruction was atomic. Not worth fixup; tighten prompt next time."
     },
     {
       "id": "1-6",
