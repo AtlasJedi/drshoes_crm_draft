@@ -281,8 +281,19 @@
     {
       "id": "1-12",
       "title": "lib/clients + lib/orders + lib/timeline modules",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "9a4abab",
+      "log_backfill_sha": "feb2e37",
+      "dispatch_log": "docs/dispatch-log/1-12-20260508T172441Z.md",
+      "deviations_from_plan": [
+        "lib/orders/types.ts is 154 LOC — over the 120 ceiling for TS modules. Pure type declarations, accepted.",
+        "Frontend ClientDto types include preferredChannel? + rodoConsentAt? as optional. The backend ClientDto.java OMITS these fields even though they exist on the Client entity — backend debt to file separately. Frontend papered over with optional typing so wire absence doesn't break consumers.",
+        "Tailwind tokens (acid/magenta/blue/orange/green/admin-line/admin-mute) confirmed live in packages/ui/src/tokens.ts via preset; no stock fallbacks needed.",
+        "Endpoint paths all matched plan body; orders list uses ?type= (repeatable) for item kinds."
+      ],
+      "follow_up_debts": [
+        "Backend ClientDto.java should expose preferredChannel + rodoConsentAt — file as separate task before M1 closes if admin UI needs to edit these fields, otherwise defer to M2 messaging milestone."
+      ]
     },
     {
       "id": "1-13",
