@@ -521,8 +521,9 @@
     {
       "id": "2-19",
       "title": "OrderDrawerStatusChanger real trigger preview",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "d57789a",
+      "dispatch_log": "docs/dispatch-log/2-19-20260508T212212Z.md"
     },
     {
       "id": "2-20",
