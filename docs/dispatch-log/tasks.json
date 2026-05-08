@@ -377,7 +377,7 @@
       "dispatch_log": "docs/dispatch-log/1-20-20260508T180442Z.md"
     },
     { "id": "2-1",  "title": "Activate M2 in tasks.json", "status": "completed", "commit_sha": "aaa452a", "dispatch_log": null },
-    { "id": "2-2",  "title": "V006 migration: seed templates/triggers + trigger_fire table", "status": "pending", "dispatch_log": null },
+    { "id": "2-2",  "title": "V006 migration: seed templates/triggers + trigger_fire table", "status": "completed", "commit_sha": "1829d13", "dispatch_log": "docs/dispatch-log/2-2-20260508T190555Z.md" },
     { "id": "2-3",  "title": "Domain entities + enums + repos + integration test", "status": "pending", "dispatch_log": null },
     { "id": "2-4",  "title": "IdempotencyService.claimTriggerFire", "status": "pending", "dispatch_log": null },
     { "id": "2-5",  "title": "PlaceholderResolver + TemplateRenderer", "status": "pending", "dispatch_log": null },
