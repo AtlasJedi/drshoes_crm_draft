@@ -493,8 +493,9 @@
     {
       "id": "2-15",
       "title": "/admin/templates pages + TemplateForm",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "8afcdd0",
+      "dispatch_log": "docs/dispatch-log/2-15-20260508T210050Z.md"
     },
     {
       "id": "2-16",
