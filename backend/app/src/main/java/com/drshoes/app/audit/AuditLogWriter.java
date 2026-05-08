@@ -30,9 +30,22 @@ public class AuditLogWriter {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(String method, String path, int status, String ip, String userAgent) {
+        write(method, path, status, ip, userAgent, null);
+    }
+
+    /**
+     * Variant that also persists parent_entity_id (populated by @Audited SpEL).
+     * When parentEntityId is null the column is left NULL in the row.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void write(String method, String path, int status, String ip, String userAgent,
+                      UUID parentEntityId) {
         em.createNativeQuery("""
-            INSERT INTO audit_log (id, method, path, status, ip, user_agent, request_id, created_at)
-            VALUES (:id, :method, :path, :status, CAST(:ip AS inet), :userAgent, :requestId, :createdAt)
+            INSERT INTO audit_log
+                (id, method, path, status, ip, user_agent, request_id, created_at, parent_entity_id)
+            VALUES
+                (:id, :method, :path, :status, CAST(:ip AS inet), :userAgent, :requestId,
+                 :createdAt, :parentEntityId)
             """)
             .setParameter("id", UUID.randomUUID())
             .setParameter("method", method)
@@ -42,6 +55,7 @@ public class AuditLogWriter {
             .setParameter("userAgent", userAgent)
             .setParameter("requestId", UUID.randomUUID())
             .setParameter("createdAt", Instant.now())
+            .setParameter("parentEntityId", parentEntityId)
             .executeUpdate();
     }
 }

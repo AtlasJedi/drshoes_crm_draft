@@ -1,0 +1,71 @@
+package com.drshoes.app.audit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
+import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.UUID;
+
+/**
+ * Evaluates the SpEL expression declared in {@link Audited#parent()} against
+ * method arguments and returns the resulting UUID.
+ *
+ * Sandboxing: uses {@link SimpleEvaluationContext#forReadOnlyDataBinding()} which
+ * blocks T(...) reflection escapes and Spring bean references — correct posture for
+ * a cross-cutting aspect that evaluates caller-controlled expressions.
+ *
+ * Exception safety: any evaluation failure is caught, logged at WARN, and null is
+ * returned. The audit row still writes; parent_entity_id is left null.
+ *
+ * Parameter binding: args are bound by parameter name using {@link Parameter#getName()}.
+ * This requires the class to be compiled with {@code -parameters} (Spring Boot's Maven
+ * plugin passes this flag by default via spring-boot-starter-parent). Variable names
+ * follow SpEL convention: {@code #orderId}, {@code #itemId}, etc.
+ */
+@Component
+public class AuditedParentResolver {
+
+    private static final Logger log = LoggerFactory.getLogger(AuditedParentResolver.class);
+
+    private final ExpressionParser parser = new SpelExpressionParser();
+
+    /**
+     * Resolves the parent UUID for an @Audited method invocation.
+     *
+     * @param method  the intercepted method (used for parameter name introspection)
+     * @param args    the actual arguments passed to the method
+     * @param expr    the SpEL expression from {@link Audited#parent()}
+     * @return the UUID result, or null if expression is blank / evaluation fails
+     */
+    public UUID resolve(Method method, Object[] args, String expr) {
+        if (expr == null || expr.isBlank()) return null;
+        try {
+            EvaluationContext ctx = buildContext(method, args);
+            Object result = parser.parseExpression(expr).getValue(ctx);
+            if (result == null) return null;
+            if (result instanceof UUID u) return u;
+            return UUID.fromString(result.toString());
+        } catch (Exception e) {
+            log.warn("op=auditParentEvalFailed expr={} method={} cause={}",
+                     expr, method.getName(), e.getMessage());
+            return null;
+        }
+    }
+
+    private EvaluationContext buildContext(Method method, Object[] args) {
+        SimpleEvaluationContext ctx = SimpleEvaluationContext
+            .forReadOnlyDataBinding()
+            .build();
+        Parameter[] params = method.getParameters();
+        for (int i = 0; i < params.length && i < args.length; i++) {
+            ctx.setVariable(params[i].getName(), args[i]);
+        }
+        return ctx;
+    }
+}

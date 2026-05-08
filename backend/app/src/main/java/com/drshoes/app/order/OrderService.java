@@ -1,5 +1,6 @@
 package com.drshoes.app.order;
 
+import com.drshoes.app.audit.Audited;
 import com.drshoes.app.client.ClientNotFoundException;
 import com.drshoes.app.client.domain.ClientRepository;
 import com.drshoes.app.order.domain.*;
@@ -131,18 +132,21 @@ public class OrderService {
 
     // ---- item delegation ----
 
+    @Audited(parent = "#orderId")
     @Transactional
     public OrderItemDto addItem(UUID orderId, CreateOrderItemRequest req) {
         ensureOrderActive(orderId);
         return itemService.addItem(orderId, req);
     }
 
+    @Audited(parent = "#orderId")
     @Transactional
     public OrderItemDto updateItem(UUID orderId, UUID itemId, UpdateOrderItemRequest req) {
         ensureOrderActive(orderId);
         return itemService.updateItem(orderId, itemId, req);
     }
 
+    @Audited(parent = "#orderId")
     @Transactional
     public void removeItem(UUID orderId, UUID itemId) {
         ensureOrderActive(orderId);

@@ -49,6 +49,10 @@ public class AuditLog {
     @Column(name = "body_hash", length = 64)
     private String bodyHash;
 
+    /** Populated by @Audited(parent=...) SpEL evaluation. Links child-entity ops to their parent. */
+    @Column(name = "parent_entity_id")
+    private UUID parentEntityId;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
@@ -62,5 +66,7 @@ public class AuditLog {
     public void setUserAgent(String userAgent) { this.userAgent = userAgent; }
     public void setRequestId(UUID requestId) { this.requestId = requestId; }
     public void setBodyHash(String bodyHash) { this.bodyHash = bodyHash; }
+    public UUID getParentEntityId() { return parentEntityId; }
+    public void setParentEntityId(UUID parentEntityId) { this.parentEntityId = parentEntityId; }
     public Instant getCreatedAt() { return createdAt; }
 }
