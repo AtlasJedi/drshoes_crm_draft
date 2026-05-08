@@ -507,8 +507,9 @@
     {
       "id": "2-17",
       "title": "OrderDrawerMessages thread view + MESSAGE_SENT timeline label",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "69b7d24",
+      "dispatch_log": "docs/dispatch-log/2-17-20260508T211737Z.md"
     },
     {
       "id": "2-18",
