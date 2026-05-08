@@ -29,14 +29,15 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     List<Order> findAllByPlannedPickupDate(@Param("targetDate") LocalDate targetDate);
 
     /**
-     * Finds non-deleted orders whose delivered_at falls on the given Warsaw-local date.
+     * Finds non-deleted orders whose picked_up_at falls on the given Warsaw-local date.
+     * Used by ScheduledTriggerJob.runAfterHandover for AFTER_HANDOVER_Y_DAYS triggers.
      * Native query for the same Instant-cast reason as findAllByPlannedPickupDate.
      */
     @Query(value = """
             SELECT * FROM order_
             WHERE deleted_at IS NULL
-              AND delivered_at IS NOT NULL
-              AND (delivered_at AT TIME ZONE 'Europe/Warsaw')::date = :targetDate
+              AND picked_up_at IS NOT NULL
+              AND (picked_up_at AT TIME ZONE 'Europe/Warsaw')::date = :targetDate
             """, nativeQuery = true)
-    List<Order> findAllByDeliveredDate(@Param("targetDate") LocalDate targetDate);
+    List<Order> findAllByPickedUpDate(@Param("targetDate") LocalDate targetDate);
 }

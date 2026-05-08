@@ -67,16 +67,16 @@ class ScheduledTriggerJobIntegrationTest extends AbstractIntegrationTest {
         UUID clientId = UUID.randomUUID();
         UUID orderId  = UUID.randomUUID();
         String code   = "SCH-" + orderId.toString().substring(0, 8).toUpperCase();
-        Instant deliveredAt = d.atStartOfDay(PL).toInstant();
+        Instant pickedUpAt = d.atStartOfDay(PL).toInstant();
 
         jdbc.update(
                 "INSERT INTO client (id, first_name, phone, email) VALUES (?::uuid, ?, ?, ?)",
                 clientId.toString(), "Ewa", "+48600333444", "ewa@example.com");
         jdbc.update(
-                "INSERT INTO order_ (id, code, client_id, status, delivered_at, version)"
+                "INSERT INTO order_ (id, code, client_id, status, picked_up_at, version)"
                 + " VALUES (?::uuid, ?, ?::uuid, ?, ?::timestamptz, 0)",
                 orderId.toString(), code, clientId.toString(), "WYDANE",
-                deliveredAt.toString());
+                pickedUpAt.toString());
 
         insertedClientIds.add(clientId);
         insertedOrderIds.add(orderId);

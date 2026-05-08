@@ -73,7 +73,7 @@ public class ScheduledTriggerJob {
         for (TriggerEntity trg : enabled) {
             int days = readIntParam(trg, "days", 3);
             LocalDate handoverDate = now.minusDays(days);
-            orders.findAllByDeliveredDate(handoverDate)
+            orders.findAllByPickedUpDate(handoverDate)
                   .forEach(o -> engine.fireScheduled(trg, o.getId(), "after:" + handoverDate));
         }
     }
