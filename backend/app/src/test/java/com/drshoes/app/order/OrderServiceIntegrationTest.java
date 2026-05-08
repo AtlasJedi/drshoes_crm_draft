@@ -250,4 +250,50 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
             .extracting(OrderListRow::id)
             .doesNotContain(toDelete.id());
     }
+
+    // ============================================================
+    // Test 13: list filters by status — only PRZYJETE returned when status=PRZYJETE
+    // ============================================================
+    @Test
+    void listFiltersByStatus() {
+        OrderDto przyjete = svc.create(req("przyjete order"));
+        OrderDto wRealizacji = svc.create(req("w realizacji order"));
+        OrderDto wydane = svc.create(req("wydane order"));
+
+        svc.changeStatus(wRealizacji.id(), new ChangeStatusRequest(OrderStatus.W_REALIZACJI, wRealizacji.version()));
+        svc.changeStatus(wydane.id(), new ChangeStatusRequest(OrderStatus.WYDANE, wydane.version()));
+
+        Page<OrderListRow> page = svc.list(OrderStatus.PRZYJETE, null, null, null, PageRequest.of(0, 20));
+
+        assertThat(page.getContent()).hasSize(1);
+        assertThat(page.getContent().get(0).id()).isEqualTo(przyjete.id());
+    }
+
+    // ============================================================
+    // Test 14: list searches by query — q matches description substring
+    // ============================================================
+    @Test
+    void listSearchesByQuery() {
+        svc.create(req("czyszczenie zamszu"));
+        svc.create(req("naprawa podeszwy"));
+
+        Page<OrderListRow> page = svc.list(null, null, null, "czyszczenie", PageRequest.of(0, 20));
+
+        assertThat(page.getContent()).hasSize(1);
+        assertThat(page.getContent().get(0).description()).contains("czyszczenie");
+    }
+
+    // ============================================================
+    // Test 15: update throws OrderAlreadyDeletedException on soft-deleted order
+    // ============================================================
+    @Test
+    void updateThrowsOnSoftDeletedOrder() {
+        OrderDto created = svc.create(req("do usuniecia"));
+        svc.softDelete(created.id());
+
+        UpdateOrderRequest updateReq = new UpdateOrderRequest("nowy opis", null, null, null, null, null, null);
+
+        assertThatThrownBy(() -> svc.update(created.id(), updateReq))
+            .isInstanceOf(OrderAlreadyDeletedException.class);
+    }
 }
