@@ -1,6 +1,8 @@
 package com.drshoes.app.messaging.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -56,6 +58,7 @@ public class MessageEntity {
     private String body;
 
     /** JSONB column — array of s3_keys; raw JSON string. */
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "jsonb")
     private String attachments = "[]";
 
@@ -88,7 +91,7 @@ public class MessageEntity {
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private OffsetDateTime createdAt;
 
-    protected MessageEntity() {}
+    public MessageEntity() {}
 
     // ---- accessors ----
 
