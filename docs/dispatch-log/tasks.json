@@ -344,8 +344,9 @@
     {
       "id": "1-16",
       "title": "OrderDrawer scaffold + core fields + URL state",
-      "status": "pending",
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "3577831",
+      "dispatch_log": "docs/dispatch-log/1-16-20260508T174820Z.md"
     },
     {
       "id": "1-17",
