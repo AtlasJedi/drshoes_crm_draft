@@ -45,11 +45,13 @@ public class SecurityConfig {
         "/api/admin/auth/login"
     };
 
-    // Routes where CSRF is not enforced (read-only / external callers)
+    // Routes where CSRF is not enforced (read-only / external callers, or bootstrap endpoints
+    // that cannot carry a CSRF token because no session exists yet).
     private static final String[] CSRF_IGNORED = {
         "/api/public/**",
         "/api/webhooks/**",
-        "/actuator/**"
+        "/actuator/**",
+        "/api/admin/auth/login"  // bootstrap: no session = no CSRF cookie; anti-CSRF still meaningless here
     };
 
     /**
