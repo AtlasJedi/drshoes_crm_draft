@@ -585,9 +585,9 @@
     {
       "id": "3-6",
       "title": "PhotoService + @Audited + TimelineEventCurator extension (TWO-STAGE)",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-6-20260508T233215Z.md",
+      "commit_sha": "ca521b6"
     },
     {
       "id": "3-7",
