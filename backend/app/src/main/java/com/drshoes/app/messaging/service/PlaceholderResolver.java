@@ -1,0 +1,46 @@
+package com.drshoes.app.messaging.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
+
+@Component
+public class PlaceholderResolver {
+
+  private static final Logger log = LoggerFactory.getLogger(PlaceholderResolver.class);
+
+  private static final DateTimeFormatter PL =
+      DateTimeFormatter.ofPattern("dd.MM.yyyy 'o' HH:mm", Locale.forLanguageTag("pl"))
+          .withZone(ZoneId.of("Europe/Warsaw"));
+
+  private final Map<String, Function<TemplateContext, String>> strategies = new HashMap<>();
+
+  public PlaceholderResolver() {
+    strategies.put("imie_klienta",   ctx -> blankToDash(ctx.imieKlienta()));
+    strategies.put("numer_zlecenia", ctx -> blankToDash(ctx.numerZlecenia()));
+    strategies.put("typ_pracy",      ctx -> ctx.typyPracy() == null || ctx.typyPracy().isEmpty()
+                                            ? "—"
+                                            : String.join(", ", ctx.typyPracy()));
+    strategies.put("data_odbioru",   ctx -> ctx.dataOdbioru() == null ? "—" : PL.format(ctx.dataOdbioru()));
+    strategies.put("nazwa_warsztatu",ctx -> blankToDash(ctx.nazwaWarsztatu()));
+    strategies.put("link_do_zdjec",  ctx -> {
+      log.warn("op=template.render placeholder=link_do_zdjec reason=deferred_until_M3");
+      return "—";
+    });
+  }
+
+  /** Returns substitution for the placeholder name (no braces) or null if unknown. */
+  public String resolve(String name, TemplateContext ctx) {
+    var fn = strategies.get(name);
+    return fn == null ? null : fn.apply(ctx);
+  }
+
+  private static String blankToDash(String s) { return (s == null || s.isBlank()) ? "—" : s; }
+}
