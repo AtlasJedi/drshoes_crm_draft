@@ -123,11 +123,15 @@ public class PhotoService {
     /**
      * Stream the bytes of a photo back to the caller.
      * Caller MUST close the returned InputStream (try-with-resources).
+     *
+     * Not @Transactional — blob stream is held by caller; tx must not span the download.
+     * Spring Data opens its own short tx for the findById call; JDBC connection is
+     * released before the AWS socket stream is handed to the response writer.
      */
-    @Transactional(readOnly = true)
-    public StreamHandle stream(UUID photoId) {
+    public StreamHandle stream(UUID orderId, UUID photoId) {
         var photo = photos.findById(photoId)
             .orElseThrow(() -> new PhotoNotFoundException(photoId));
+        verifyOwnership(orderId, photoId, photo);
         InputStream bytes = storage.get(new BlobKey(photo.getS3Key()));
         return new StreamHandle(bytes, photo.getMime(), photo.getOriginalFilename());
     }
@@ -138,9 +142,10 @@ public class PhotoService {
      */
     @Audited(parent = "#result.orderId")
     @Transactional
-    public Photo relabel(UUID photoId, PhotoLabel newLabel, UUID actorId) {
+    public Photo relabel(UUID orderId, UUID photoId, PhotoLabel newLabel, UUID actorId) {
         var photo = photos.findById(photoId)
             .orElseThrow(() -> new PhotoNotFoundException(photoId));
+        verifyOwnership(orderId, photoId, photo);
         var oldLabel = photo.getLabel();
         photo.setLabel(newLabel);
         var saved = photos.save(photo);
@@ -161,10 +166,10 @@ public class PhotoService {
      */
     @Audited(parent = "#result")
     @Transactional
-    public UUID delete(UUID photoId, UUID actorId) {
+    public UUID delete(UUID orderId, UUID photoId, UUID actorId) {
         var photo = photos.findById(photoId)
             .orElseThrow(() -> new PhotoNotFoundException(photoId));
-        var orderId = photo.getOrderId();
+        verifyOwnership(orderId, photoId, photo);
         var s3Key = photo.getS3Key();
         photos.delete(photo);
         photos.flush();   // flush DB delete before attempting storage delete
@@ -181,6 +186,17 @@ public class PhotoService {
     }
 
     // ── private helpers ──────────────────────────────────────────────────────
+
+    /**
+     * Guard against cross-order photo ID enumeration. Throws PhotoNotFoundException
+     * (not a more informative exception) so callers cannot distinguish "photo does not
+     * exist" from "photo belongs to a different order" — leaks less information.
+     */
+    private void verifyOwnership(UUID orderId, UUID photoId, Photo photo) {
+        if (!photo.getOrderId().equals(orderId)) {
+            throw new PhotoNotFoundException(photoId);
+        }
+    }
 
     private void validateOrderExists(UUID orderId) {
         if (!orders.existsById(orderId)) {

@@ -172,7 +172,7 @@ class PhotoServiceTest extends AbstractIntegrationTest {
             PhotoLabel.OTHER, testUserId);
         reset(blobStorage);
 
-        photoService.delete(photo.getId(), testUserId);
+        photoService.delete(order.getId(), photo.getId(), testUserId);
 
         verify(blobStorage).delete(argThat(k -> k.value().equals(photo.getS3Key())));
         assertThat(photos.findById(photo.getId())).isEmpty();
@@ -187,7 +187,7 @@ class PhotoServiceTest extends AbstractIntegrationTest {
         reset(blobStorage);
         audits.deleteAll();   // clear upload audit so assertion targets only the delete row
 
-        var returnedOrderId = photoService.delete(photo.getId(), testUserId);
+        var returnedOrderId = photoService.delete(order.getId(), photo.getId(), testUserId);
 
         assertThat(returnedOrderId).isEqualTo(order.getId());
 
@@ -210,7 +210,7 @@ class PhotoServiceTest extends AbstractIntegrationTest {
             PhotoLabel.OTHER, testUserId);
         audits.deleteAll();   // clear upload audit
 
-        var updated = photoService.relabel(photo.getId(), PhotoLabel.AFTER, testUserId);
+        var updated = photoService.relabel(order.getId(), photo.getId(), PhotoLabel.AFTER, testUserId);
 
         assertThat(updated.getLabel()).isEqualTo(PhotoLabel.AFTER);
 
@@ -221,6 +221,59 @@ class PhotoServiceTest extends AbstractIntegrationTest {
         assertThat(relabelAudits.get(0).getParentEntityId())
             .as("relabel audit row must carry orderId via #result.orderId SpEL")
             .isEqualTo(order.getId());
+    }
+
+    // ── cross-order ownership guard ──────────────────────────────────────────
+
+    @Test
+    void relabel_throwsPhotoNotFound_whenPhotoBelongsToDifferentOrder() {
+        var orderA = givenOrder();
+        var orderB = givenOrder();
+        var photo = photoService.upload(orderA.getId(), null,
+            new MockMultipartFile("file", "x.jpg", "image/jpeg", "y".getBytes()),
+            PhotoLabel.BEFORE, testUserId);
+
+        assertThatThrownBy(() ->
+            photoService.relabel(orderB.getId(), photo.getId(), PhotoLabel.AFTER, testUserId))
+            .isInstanceOf(PhotoNotFoundException.class);
+
+        // Photo must NOT be modified — label still BEFORE
+        var reloaded = photos.findById(photo.getId()).orElseThrow();
+        assertThat(reloaded.getLabel()).isEqualTo(PhotoLabel.BEFORE);
+    }
+
+    @Test
+    void delete_throwsPhotoNotFound_whenPhotoBelongsToDifferentOrder() {
+        var orderA = givenOrder();
+        var orderB = givenOrder();
+        var photo = photoService.upload(orderA.getId(), null,
+            new MockMultipartFile("file", "x.jpg", "image/jpeg", "y".getBytes()),
+            PhotoLabel.OTHER, testUserId);
+        reset(blobStorage);
+
+        assertThatThrownBy(() ->
+            photoService.delete(orderB.getId(), photo.getId(), testUserId))
+            .isInstanceOf(PhotoNotFoundException.class);
+
+        // Photo row must still exist
+        assertThat(photos.findById(photo.getId())).isPresent();
+        verifyNoInteractions(blobStorage);
+    }
+
+    @Test
+    void stream_throwsPhotoNotFound_whenPhotoBelongsToDifferentOrder() {
+        var orderA = givenOrder();
+        var orderB = givenOrder();
+        var photo = photoService.upload(orderA.getId(), null,
+            new MockMultipartFile("file", "x.jpg", "image/jpeg", "y".getBytes()),
+            PhotoLabel.OTHER, testUserId);
+
+        assertThatThrownBy(() ->
+            photoService.stream(orderB.getId(), photo.getId()))
+            .isInstanceOf(PhotoNotFoundException.class);
+
+        // BlobStorage must never be called when ownership check fails
+        verify(blobStorage, never()).get(any());
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────

@@ -587,7 +587,16 @@
       "title": "PhotoService + @Audited + TimelineEventCurator extension (TWO-STAGE)",
       "status": "completed",
       "dispatch_log": "docs/dispatch-log/3-6-20260508T233215Z.md",
-      "commit_sha": "ca521b6"
+      "commit_sha": "ca521b6",
+      "fixup_log": "docs/dispatch-log/3-6-fixup-20260508T234841Z.md",
+      "review_blockers_resolved": [
+        "Cross-order photo ID enumeration — added orderId param + verifyOwnership() guard to relabel/delete/stream; cross-order calls throw PhotoNotFoundException (info-leak resistant). 3 new ownership-guard tests in PhotoServiceTest.",
+        "stream() pinned a JDBC connection for the full download — dropped @Transactional(readOnly=true); findById opens its own short tx, blob InputStream is held by caller without spanning the JPA session."
+      ],
+      "review_followups_deferred": [
+        "MIME magic-byte verification — service trusts multipart Content-Type header (admin-only surface; low risk). Track for task 3-7 if Apache Tika or similar is added.",
+        "PhotoService is 232 LOC vs 120 cap — cohesive, no clean split point. Acknowledged in dispatch log."
+      ]
     },
     {
       "id": "3-7",
