@@ -588,6 +588,7 @@
       "status": "completed",
       "dispatch_log": "docs/dispatch-log/3-6-20260508T233215Z.md",
       "commit_sha": "ca521b6",
+      "fixup_sha": "b1a956f",
       "fixup_log": "docs/dispatch-log/3-6-fixup-20260508T234841Z.md",
       "review_blockers_resolved": [
         "Cross-order photo ID enumeration — added orderId param + verifyOwnership() guard to relabel/delete/stream; cross-order calls throw PhotoNotFoundException (info-leak resistant). 3 new ownership-guard tests in PhotoServiceTest.",
@@ -601,9 +602,9 @@
     {
       "id": "3-7",
       "title": "PhotoController + integration tests (Testcontainers MinIO)",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-7-20260509T011555Z.md",
+      "commit_sha": "2426672"
     },
     {
       "id": "3-8",
