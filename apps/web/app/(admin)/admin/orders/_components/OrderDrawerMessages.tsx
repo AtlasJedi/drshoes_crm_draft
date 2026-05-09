@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { getOrderMessages } from "@/lib/messaging/api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getOrderMessages, retryMessage } from "@/lib/messaging/api";
 import type { MessageDto } from "@/lib/messaging/types";
 import { createLogger } from "@/lib/log";
-import { MessageRow } from "./MessageRow";
+import { MessageStatusBadge } from "./MessageStatusBadge";
 
 const log = createLogger("messaging.thread");
+const POLL_INTERVAL_MS = 10_000;
 
 interface Props {
   orderId: string;
@@ -15,23 +16,52 @@ interface Props {
 }
 
 export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Props) {
-  const [items, setItems] = useState<MessageDto[]>([]);
-  const [state, setState] = useState<"loading" | "ok" | "err">("loading");
+  const [items, setItems]   = useState<MessageDto[]>([]);
+  const [state, setState]   = useState<"loading" | "ok" | "err">("loading");
+  const [retrying, setRetrying] = useState<Set<string>>(new Set());
+  const [retryError, setRetryError] = useState<Record<string, string>>({});
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const load = useCallback(async () => {
-    setState("loading");
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setState("loading");
     try {
       const data = await getOrderMessages(orderId);
       setItems(data);
-      setState("ok");
-      log.info("op=load outcome=ok", { orderId, count: data.length });
+      if (!silent) setState("ok");
+      log.info("op=poll.thread outcome=ok", { orderId, count: data.length });
     } catch (e) {
-      setState("err");
-      log.warn("op=load outcome=error", { orderId, err: String(e) });
+      if (!silent) setState("err");
+      log.warn("op=poll.thread outcome=stale-error", { orderId, err: String(e) });
     }
   }, [orderId]);
 
-  useEffect(() => { void load(); }, [load, refreshKey]);
+  // Initial + refreshKey-driven load
+  useEffect(() => { void load(false); }, [load, refreshKey]);
+
+  // 10s polling while drawer is mounted
+  useEffect(() => {
+    pollRef.current = setInterval(() => { void load(true); }, POLL_INTERVAL_MS);
+    return () => {
+      if (pollRef.current !== null) clearInterval(pollRef.current);
+    };
+  }, [load]);
+
+  async function handleRetry(msg: MessageDto) {
+    setRetrying((prev) => new Set(prev).add(msg.id));
+    setRetryError((prev) => { const n = { ...prev }; delete n[msg.id]; return n; });
+    try {
+      log.info("op=message.retry outcome=start", { messageId: msg.id });
+      await retryMessage(msg.id);
+      log.info("op=message.retry outcome=ok", { messageId: msg.id });
+      await load(false);
+    } catch (e) {
+      const errText = "Nie udało się ponowić — spróbuj ponownie.";
+      log.warn("op=message.retry outcome=failed", { messageId: msg.id, err: String(e) });
+      setRetryError((prev) => ({ ...prev, [msg.id]: errText }));
+    } finally {
+      setRetrying((prev) => { const n = new Set(prev); n.delete(msg.id); return n; });
+    }
+  }
 
   return (
     <section className="px-6 py-4 border-t border-admin-line">
@@ -57,7 +87,7 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
           <p className="text-xs text-red-600">Nie udało się załadować wiadomości.</p>
           <button
             type="button"
-            onClick={() => void load()}
+            onClick={() => void load(false)}
             className="text-xs text-acid hover:underline font-medium"
           >
             Ponów
@@ -69,10 +99,46 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
         <p className="text-xs text-admin-mute italic">Brak wiadomości.</p>
       )}
 
-      {state === "ok" && items.length > 0 && (
-        <div className="space-y-0">
-          {items.map((m) => (
-            <MessageRow key={m.id} message={m} />
+      {(state === "ok" || items.length > 0) && (
+        <div className="space-y-3 mt-1">
+          {items.map((msg) => (
+            <div key={msg.id} className="text-sm border border-admin-line rounded p-3 space-y-1">
+              {/* Retry-chain indicator */}
+              {msg.retryOfMessageId !== null && (
+                <span className="text-xs text-admin-mute" aria-label="Ponowienie wiadomości">↳ </span>
+              )}
+
+              {/* Channel + status badge */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-admin-mute">{msg.channel}</span>
+                {msg.direction === "OUTBOUND" && (
+                  <MessageStatusBadge status={msg.deliveryStatus} />
+                )}
+              </div>
+
+              {/* Body */}
+              <p className="text-ink whitespace-pre-wrap">{msg.body}</p>
+
+              {/* FAILED: error message + retry button */}
+              {msg.direction === "OUTBOUND" && msg.deliveryStatus === "FAILED" && (
+                <div className="space-y-1 pt-1">
+                  {msg.errorMessage && (
+                    <p className="text-xs text-red-600">{msg.errorMessage}</p>
+                  )}
+                  {retryError[msg.id] && (
+                    <p className="text-xs text-red-600">{retryError[msg.id]}</p>
+                  )}
+                  <button
+                    type="button"
+                    disabled={retrying.has(msg.id)}
+                    onClick={() => void handleRetry(msg)}
+                    className="text-xs px-2 py-1 rounded bg-red-50 border border-red-200 text-red-700 hover:bg-red-100 disabled:opacity-50 transition-colors"
+                  >
+                    {retrying.has(msg.id) ? "Wysyłanie…" : "Wyślij ponownie"}
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}
