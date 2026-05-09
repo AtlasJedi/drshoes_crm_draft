@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "active_milestone": "4",
-  "active_plan": "docs/superpowers/plans/2026-05-09-milestone-04-real-providers.md",
+  "active_milestone": "5",
+  "active_plan": "docs/superpowers/plans/2026-05-09-milestone-05-inbound-replies.md",
   "tasks": [
     {
       "id": "0b-1",
@@ -796,6 +796,153 @@
       "status": "completed",
       "dispatch_log": "docs/dispatch-log/4-16-20260509T200019Z.md",
       "commit_sha": "6b7ffd1"
+    },
+    {
+      "id": "5-1",
+      "title": "V012 migration — message_thread channel + raw_sender + discarded_at + message idempotency unique",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-2",
+      "title": "Entity + repo updates + repo IT",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-3",
+      "title": "MessageGatewayDispatcher hygiene extraction",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-4",
+      "title": "InboundMessageService + PhoneNormalizer",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-5",
+      "title": "PostmarkInboundController + IT",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-6",
+      "title": "SmsApiInboundController + IT",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-7",
+      "title": "Timeline kinds + curator wiring + frontend label/icon",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-8",
+      "title": "MessageThreadService extensions + MessageThreadMutationService split",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-9",
+      "title": "ThreadController + integration test (TWO-STAGE REVIEW)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-10",
+      "title": "Reply send — POST /api/admin/threads/{id}/messages",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-11",
+      "title": "Cross-thread compose — POST /api/admin/clients/{id}/messages",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-12",
+      "title": "lib/messaging frontend extensions",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-13",
+      "title": "MessagesNavItem (sidebar) + unread polling + OrderDrawerMessages NIT fixups",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-14",
+      "title": "UnreadElsewhereBanner + dedicated backend endpoint",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-15",
+      "title": "Page shell + ThreadList + filter chips + search input (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-16",
+      "title": "ThreadHeader + MessageBubble + SelectedThread (10s polling)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-17",
+      "title": "ReplyComposer + TemplatePicker (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-18",
+      "title": "ThreadClientPanel (right rail)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-19",
+      "title": "EmptyState + UnmatchedThreadPanel + assign/discard wiring",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-20",
+      "title": "NewMessageDialog (cross-thread compose)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "5-21",
+      "title": "Closure — mvn verify + frontend gates + milestone-5 tag + CLAUDE.md flip",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
     }
   ],
   "notes": [
