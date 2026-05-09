@@ -24,6 +24,13 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
     </dependency>
+    <!-- spring-web (NOT spring-boot-starter-web) — provides RestClient and
+         SimpleClientHttpRequestFactory without embedding a servlet container.
+         Carry-forward rule #1: never use spring-boot-starter-web in a microlib. -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
@@ -50,6 +57,14 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- WireMock standalone — same artifact as email-gateway (task 4-4).
+         Includes WireMock JUnit 5 extension.  -->
+    <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock-jre8-standalone</artifactId>
+      <version>3.0.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

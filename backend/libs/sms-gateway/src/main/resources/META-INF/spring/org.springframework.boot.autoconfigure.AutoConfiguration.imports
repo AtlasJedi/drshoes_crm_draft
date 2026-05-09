@@ -1,1 +1,2 @@
 com.drshoes.lib.sms.SmsGatewayAutoConfiguration
+com.drshoes.lib.sms.smsapi.SmsApiAutoConfiguration
