@@ -21,7 +21,9 @@ class WebhookEventTest {
                 null,           // providerEventId — nullable
                 DeliveryStatus.DELIVERED,
                 NOW,
-                "{\"RecordType\":\"Delivery\"}"
+                "{\"RecordType\":\"Delivery\"}",
+                null,           // errorCode — nullable for DELIVERED
+                null            // errorMessage — nullable for DELIVERED
         );
 
         assertThat(event.provider()).isEqualTo(Provider.POSTMARK);
@@ -29,6 +31,8 @@ class WebhookEventTest {
         assertThat(event.providerEventId()).isNull();
         assertThat(event.status()).isEqualTo(DeliveryStatus.DELIVERED);
         assertThat(event.occurredAt()).isEqualTo(NOW);
+        assertThat(event.errorCode()).isNull();
+        assertThat(event.errorMessage()).isNull();
     }
 
     @Test
@@ -41,24 +45,29 @@ class WebhookEventTest {
                         null,
                         DeliveryStatus.DELIVERED,
                         NOW,
-                        "{}"
+                        "{}",
+                        null,
+                        null
                 ))
                 .withMessageContaining("provider");
     }
 
     @Test
-    @DisplayName("status is required — null throws NullPointerException")
-    void statusRequired() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> new WebhookEvent(
-                        Provider.SMSAPI,
-                        "sms-msg-xyz",
-                        null,
-                        null,
-                        NOW,
-                        "{}"
-                ))
-                .withMessageContaining("status");
+    @DisplayName("status may be null for non-delivery event types (DROPPED path)")
+    void statusNullable() {
+        // Null status = non-delivery record type (e.g. Click, Open) — reconciler treats as DROPPED.
+        WebhookEvent event = new WebhookEvent(
+                Provider.POSTMARK,
+                "pm-msg-xyz",
+                null,
+                null,           // null status — DROPPED path
+                NOW,
+                "{}",
+                null,
+                null
+        );
+
+        assertThat(event.status()).isNull();
     }
 
     @Test
@@ -71,9 +80,28 @@ class WebhookEventTest {
                         null,
                         DeliveryStatus.FAILED,
                         null,
-                        "{}"
+                        "{}",
+                        null,
+                        null
                 ))
                 .withMessageContaining("occurredAt");
+    }
+
+    @Test
+    @DisplayName("rawPayload is required — null throws NullPointerException")
+    void rawPayloadRequired() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> new WebhookEvent(
+                        Provider.SMSAPI,
+                        "sms-msg-xyz",
+                        null,
+                        DeliveryStatus.FAILED,
+                        NOW,
+                        null,
+                        null,
+                        null
+                ))
+                .withMessageContaining("rawPayload");
     }
 
     @Test
@@ -85,10 +113,14 @@ class WebhookEventTest {
                 null,
                 DeliveryStatus.FAILED,
                 NOW,
-                "{\"status_name\":\"UNDELIVERED\"}"
+                "{\"status_name\":\"UNDELIVERED\"}",
+                "UNDELIVERED",
+                "SMS delivery failed"
         );
 
         assertThat(event.providerEventId()).isNull();
         assertThat(event.providerMessageId()).isEqualTo("sms-msg-123");
+        assertThat(event.errorCode()).isEqualTo("UNDELIVERED");
+        assertThat(event.errorMessage()).isEqualTo("SMS delivery failed");
     }
 }

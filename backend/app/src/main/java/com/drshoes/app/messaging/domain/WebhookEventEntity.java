@@ -64,6 +64,12 @@ public class WebhookEventEntity {
     @Column(name = "raw_payload", nullable = false, columnDefinition = "jsonb")
     private JsonNode rawPayload;
 
+    @Column(name = "error_code", length = 60)
+    private String errorCode;
+
+    @Column(name = "error_message", columnDefinition = "text")
+    private String errorMessage;
+
     @Column(name = "received_at", nullable = false, updatable = false)
     private Instant receivedAt;
 
@@ -97,6 +103,12 @@ public class WebhookEventEntity {
 
     public JsonNode getRawPayload() { return rawPayload; }
     public void setRawPayload(JsonNode rawPayload) { this.rawPayload = rawPayload; }
+
+    public String getErrorCode() { return errorCode; }
+    public void setErrorCode(String errorCode) { this.errorCode = errorCode; }
+
+    public String getErrorMessage() { return errorMessage; }
+    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
 
     public Instant getReceivedAt() { return receivedAt; }
     public void setReceivedAt(Instant receivedAt) { this.receivedAt = receivedAt; }

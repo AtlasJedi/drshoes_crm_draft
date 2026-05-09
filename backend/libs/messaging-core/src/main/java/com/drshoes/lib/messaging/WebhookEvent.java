@@ -19,11 +19,15 @@ import java.util.Objects;
  *   <li>{@code providerEventId} — optional per-event unique ID. Null for both
  *       Postmark and SMSAPI in current integrations. Reserved for future providers
  *       that supply one (drives the UNIQUE dedupe index in webhook_event).</li>
- *   <li>{@code status} — required; DELIVERED or FAILED (caller has already mapped
- *       the raw provider status; DROPPED events are short-circuited before
- *       WebhookEvent is constructed).</li>
+ *   <li>{@code status} — nullable; DELIVERED or FAILED after provider mapping.
+ *       Null means the event type is not a delivery outcome (e.g. Click, Open) —
+ *       the reconciler treats null status as DROPPED.</li>
  *   <li>{@code occurredAt} — required; provider-supplied event timestamp.</li>
  *   <li>{@code rawPayload} — required; original payload string for forensics log.</li>
+ *   <li>{@code errorCode} — optional; provider-specific error code for FAILED events
+ *       (e.g. Postmark bounce Type, SMSAPI status_name). Null for DELIVERED events.</li>
+ *   <li>{@code errorMessage} — optional; human-readable error detail. Null for
+ *       DELIVERED events.</li>
  * </ul>
  * </p>
  */
@@ -33,11 +37,13 @@ public record WebhookEvent(
         String providerEventId,
         DeliveryStatus status,
         Instant occurredAt,
-        String rawPayload) {
+        String rawPayload,
+        String errorCode,
+        String errorMessage) {
 
     public WebhookEvent {
         Objects.requireNonNull(provider, "provider");
-        Objects.requireNonNull(status, "status");
         Objects.requireNonNull(occurredAt, "occurredAt");
+        Objects.requireNonNull(rawPayload, "rawPayload");
     }
 }
