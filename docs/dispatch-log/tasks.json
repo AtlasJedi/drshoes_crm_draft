@@ -722,9 +722,10 @@
     {
       "id": "4-7",
       "title": "PostmarkWebhookController + Basic-auth verifier + IT",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/4-7-20260509T185728Z.md",
+      "commit_sha": "a963ebb1d285515ad757b451414537d28613b9cd",
+      "completed_at": "2026-05-09T18:57:28Z"
     },
     {
       "id": "4-8",
