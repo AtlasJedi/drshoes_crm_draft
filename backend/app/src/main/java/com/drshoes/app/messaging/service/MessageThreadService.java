@@ -32,4 +32,32 @@ public class MessageThreadService {
           return saved;
         });
   }
+
+  @Transactional
+  public MessageThreadEntity findOrCreateForClient(UUID clientId, String channel) {
+    return threads.findFirstByClientIdAndChannelAndDiscardedAtIsNullOrderByLastMessageAtDesc(clientId, channel)
+        .orElseGet(() -> {
+          var t = new MessageThreadEntity();
+          t.setClientId(clientId);
+          t.setChannel(channel);
+          t.setUnreadCount(0);
+          MessageThreadEntity saved = threads.save(t);
+          log.info("op=thread.create clientId={} channel={} threadId={}", clientId, channel, saved.getId());
+          return saved;
+        });
+  }
+
+  @Transactional
+  public MessageThreadEntity findOrCreateForRawSender(String rawSender, String channel) {
+    return threads.findFirstByRawSenderAndChannelAndDiscardedAtIsNull(rawSender, channel)
+        .orElseGet(() -> {
+          var t = new MessageThreadEntity();
+          t.setRawSender(rawSender);
+          t.setChannel(channel);
+          t.setUnreadCount(0);
+          MessageThreadEntity saved = threads.save(t);
+          log.info("op=thread.create rawSender={} channel={} threadId={}", rawSender, channel, saved.getId());
+          return saved;
+        });
+  }
 }

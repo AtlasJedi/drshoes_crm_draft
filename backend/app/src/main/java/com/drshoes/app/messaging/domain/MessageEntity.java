@@ -118,6 +118,7 @@ public class MessageEntity {
     // ---- accessors ----
 
     public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
     public UUID getThreadId() { return threadId; }
     public void setThreadId(UUID threadId) { this.threadId = threadId; }
