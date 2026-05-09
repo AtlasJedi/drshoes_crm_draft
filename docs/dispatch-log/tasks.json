@@ -829,9 +829,9 @@
     {
       "id": "5-4",
       "title": "InboundMessageService + PhoneNormalizer",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "b26ebda",
+      "dispatch_log": "docs/dispatch-log/5-4-20260510T010000Z.md"
     },
     {
       "id": "5-5",
