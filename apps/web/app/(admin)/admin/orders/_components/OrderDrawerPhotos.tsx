@@ -59,7 +59,13 @@ export function OrderDrawerPhotos({ orderId }: { orderId: string }) {
       {photos === null
         ? <p className="text-sm text-neutral-500">Ładowanie…</p>
         : <PhotoGrid photos={photos} onCardClick={setOpen} onRelabel={onRelabel} onDelete={onDelete} />}
-      <PhotoLightbox photo={open} onClose={() => setOpen(null)} />
+      <PhotoLightbox
+        photo={open}
+        photos={photos ?? undefined}
+        onClose={() => setOpen(null)}
+        onNavigate={setOpen}
+        onRelabel={onRelabel}
+      />
     </div>
   );
 }
