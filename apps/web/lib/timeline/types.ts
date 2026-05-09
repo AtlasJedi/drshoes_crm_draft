@@ -20,7 +20,9 @@ export type TimelineEventKind =
   | "MESSAGE_SENT"         // M2 — outbound message dispatched
   | "PHOTO_UPLOADED"       // M3 — admin uploaded a photo
   | "PHOTO_DELETED"        // M3 — admin deleted a photo
-  | "PHOTO_RELABELED";     // M3 — admin changed a photo's label
+  | "PHOTO_RELABELED"      // M3 — admin changed a photo's label
+  | "MESSAGE_DELIVERED"    // M4 — provider confirmed delivery
+  | "MESSAGE_FAILED";      // M4 — provider reported delivery failure
 
 /**
  * Curated timeline event — mirrors TimelineEvent.java.
