@@ -16,4 +16,8 @@ public record MessageDto(
     String deliveryStatus,
     String providerMessageId,
     OffsetDateTime sentAt,
-    OffsetDateTime createdAt) {}
+    OffsetDateTime createdAt,
+    String errorCode,
+    String errorMessage,
+    UUID retryOfMessageId,
+    int retryAttempt) {}

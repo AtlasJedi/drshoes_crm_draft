@@ -88,6 +88,14 @@ public class MessageEntity {
     @Column(name = "sent_by", columnDefinition = "uuid")
     private UUID sentBy;
 
+    /** V010: FK to the original message that this row retried. Null for original sends. */
+    @Column(name = "retry_of_message_id", columnDefinition = "uuid")
+    private UUID retryOfMessageId;
+
+    /** V010: Attempt count. Defaults to 1 for all original sends. */
+    @Column(name = "retry_attempt", nullable = false)
+    private Integer retryAttempt = 1;
+
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private OffsetDateTime createdAt;
 
@@ -160,6 +168,12 @@ public class MessageEntity {
 
     public UUID getSentBy() { return sentBy; }
     public void setSentBy(UUID sentBy) { this.sentBy = sentBy; }
+
+    public UUID getRetryOfMessageId() { return retryOfMessageId; }
+    public void setRetryOfMessageId(UUID retryOfMessageId) { this.retryOfMessageId = retryOfMessageId; }
+
+    public Integer getRetryAttempt() { return retryAttempt; }
+    public void setRetryAttempt(Integer retryAttempt) { this.retryAttempt = retryAttempt; }
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
 }

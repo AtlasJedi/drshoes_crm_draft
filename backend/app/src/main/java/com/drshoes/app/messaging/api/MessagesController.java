@@ -98,6 +98,10 @@ public class MessagesController {
             e.getDeliveryStatus(),
             e.getProviderMessageId(),
             e.getSentAt(),
-            e.getCreatedAt());
+            e.getCreatedAt(),
+            e.getErrorCode(),
+            e.getErrorMessage(),
+            e.getRetryOfMessageId(),
+            e.getRetryAttempt() == null ? 1 : e.getRetryAttempt());
     }
 }
