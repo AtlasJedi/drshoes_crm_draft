@@ -737,10 +737,11 @@
     },
     {
       "id": "4-9",
-      "title": "WebhookStatusReconciler + MESSAGE_DELIVERED/FAILED timeline kinds (TWO-STAGE)",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "title": "MessageReconcileTimelineHandler + per-outcome audit paths (narrowed from TWO-STAGE: 4-7 forward-pulled reconciler internals)",
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/4-9-20260509T191422Z.md",
+      "commit_sha": "b0a1923",
+      "completed_at": "2026-05-09T19:18:15Z"
     },
     {
       "id": "4-10",
