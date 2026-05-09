@@ -562,7 +562,7 @@
       "fixup_sha": "fdaec86",
       "fixup_log": "docs/dispatch-log/3-3-fixup-20260508T231628Z.md",
       "review_blockers_resolved": [
-        "AdminPrincipalLoginTest missed the audit_log FK teardown that the other three modified tests received — added auditLogs.deleteAll() before users.deleteAll() in seed() and cleanup(), suite stays 153/0/0/1."
+        "AdminPrincipalLoginTest missed the audit_log FK teardown that the other three modified tests received \u2014 added auditLogs.deleteAll() before users.deleteAll() in seed() and cleanup(), suite stays 153/0/0/1."
       ],
       "review_followups_deferred": [
         "AuthController.me() still does a DB lookup for fullName + lastLoginAt because those fields are not on AdminPrincipal. Optional follow-up: fold them onto the principal to eliminate the lookup. Behavior is correct as-is."
@@ -591,12 +591,12 @@
       "fixup_sha": "b1a956f",
       "fixup_log": "docs/dispatch-log/3-6-fixup-20260508T234841Z.md",
       "review_blockers_resolved": [
-        "Cross-order photo ID enumeration — added orderId param + verifyOwnership() guard to relabel/delete/stream; cross-order calls throw PhotoNotFoundException (info-leak resistant). 3 new ownership-guard tests in PhotoServiceTest.",
-        "stream() pinned a JDBC connection for the full download — dropped @Transactional(readOnly=true); findById opens its own short tx, blob InputStream is held by caller without spanning the JPA session."
+        "Cross-order photo ID enumeration \u2014 added orderId param + verifyOwnership() guard to relabel/delete/stream; cross-order calls throw PhotoNotFoundException (info-leak resistant). 3 new ownership-guard tests in PhotoServiceTest.",
+        "stream() pinned a JDBC connection for the full download \u2014 dropped @Transactional(readOnly=true); findById opens its own short tx, blob InputStream is held by caller without spanning the JPA session."
       ],
       "review_followups_deferred": [
-        "MIME magic-byte verification — service trusts multipart Content-Type header (admin-only surface; low risk). Track for task 3-7 if Apache Tika or similar is added.",
-        "PhotoService is 232 LOC vs 120 cap — cohesive, no clean split point. Acknowledged in dispatch log."
+        "MIME magic-byte verification \u2014 service trusts multipart Content-Type header (admin-only surface; low risk). Track for task 3-7 if Apache Tika or similar is added.",
+        "PhotoService is 232 LOC vs 120 cap \u2014 cohesive, no clean split point. Acknowledged in dispatch log."
       ]
     },
     {
@@ -643,9 +643,11 @@
     {
       "id": "3-12",
       "title": "KIND_LABELS_PL extension for PHOTO_* timeline kinds",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-12-20260509T103338Z.md",
+      "commit_sha": "e646356",
+      "start_utc": "2026-05-09T10:33:00Z",
+      "end_utc": "2026-05-09T10:33:38Z"
     },
     {
       "id": "3-13",
