@@ -82,10 +82,11 @@ export interface OrderListRow {
   updatedAt: string;            // ISO-8601
 }
 
-/** Placeholder trigger suggestion — mirrors TriggerSuggestion.java (empty record for M1). */
-export interface TriggerSuggestion {
-  // Empty in M1. Populated in a later milestone with SMS/email preview fields.
-}
+/**
+ * Placeholder trigger suggestion — mirrors TriggerSuggestion.java (empty record for M1).
+ * Populated in a later milestone with SMS/email preview fields.
+ */
+export type TriggerSuggestion = Record<string, never>;
 
 /** Response from POST /orders/{id}/status — mirrors ChangeStatusResponse.java. */
 export interface ChangeStatusResponse {
