@@ -670,9 +670,11 @@
     {
       "id": "4-2",
       "title": "messaging-core extensions (Provider enum + WebhookEvent extension)",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/4-2-20260509T135734Z.md",
+      "commit_sha": "2f3bfe9",
+      "start_utc": "2026-05-09T15:50:00Z",
+      "end_utc": "2026-05-09T15:57:34Z"
     },
     {
       "id": "4-3",
