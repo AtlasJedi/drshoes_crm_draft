@@ -769,16 +769,17 @@
     {
       "id": "4-13",
       "title": "MessageStatusBadge component",
-      "status": "pending",
+      "status": "completed",
       "dispatch_log": null,
-      "commit_sha": null
+      "commit_sha": "e867370"
     },
     {
       "id": "4-14",
       "title": "OrderDrawerMessages — badge + retry button + 10s polling",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/4-14-20260509T195456Z.md",
+      "commit_sha": "b34a9c2",
+      "completed_at": "2026-05-09T20:05:00Z"
     },
     {
       "id": "4-15",
