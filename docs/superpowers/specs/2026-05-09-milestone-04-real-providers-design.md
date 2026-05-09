@@ -101,10 +101,15 @@ The send transaction stays atomic. A FAILED row is a successful transaction whos
 
 ### 3.3 Data flow — webhook reconciliation (async)
 
-1. Provider POSTs to `/api/webhooks/postmark` or `/api/webhooks/smsapi`. Public, CSRF-exempt (already opened in `SecurityConfig`).
-2. Controller verifies the signature (HMAC or Basic-auth depending on provider — see §3.6). **Bad signature → 401, zero DB writes.**
-3. Controller parses payload → normalized `WebhookEvent(provider, providerMessageId, providerEventId, mappedStatus, occurredAt, rawPayload)`.
-4. Events that don't map to `DELIVERED` / `FAILED` (Postmark `Click`, `Open`, `SubscriptionChange`, etc.) are short-circuited: INSERT `webhook_event` with `applied_outcome='DROPPED'`, return 200.
+1. Provider sends a callback:
+   - **Postmark** → `POST /api/webhooks/postmark` (JSON body, `Authorization: Basic ...` header).
+   - **SMSAPI** → `GET /api/webhooks/smsapi?MsgId=...&status=...&...` (no auth header; identity by source IP).
+   Both paths are public + CSRF-exempt (already opened in `SecurityConfig`).
+2. Controller authenticates the request:
+   - Postmark: constant-time Basic-auth credential compare. Mismatch → **401**, zero DB writes.
+   - SMSAPI: source IP must be in `messaging.sms.smsapi.callback-allowlist`. Mismatch → **403**, zero DB writes.
+3. Controller parses payload (Postmark JSON / SMSAPI query params) → normalized `WebhookEvent(provider, providerMessageId, providerEventId, mappedStatus, occurredAt, rawPayload)`. `providerEventId` is empty/null for Postmark (no per-event id) and for SMSAPI; dedupe relies on the state-guarded UPDATE for both.
+4. Events that don't map to `DELIVERED` / `FAILED` (Postmark `Click`, `Open`, `SubscriptionChange`; SMSAPI `QUEUE`/`ACCEPTD`/`SENT`) are short-circuited inside the reconciler: INSERT `webhook_event` with `applied_outcome='DROPPED'`, return 200.
 5. `WebhookStatusReconciler.apply(event)` (`@Audited`):
    1. INSERT `webhook_event`. ON CONFLICT on `UNIQUE(provider, provider_event_id)` → `applied_outcome='DEDUP'`, return.
    2. `SELECT message WHERE provider_message_id=?` filtered by channel (POSTMARK→EMAIL, SMSAPI→SMS). Missing → `applied_outcome='NO_MESSAGE'`, return.
@@ -164,13 +169,58 @@ CREATE INDEX message_retry_chain_idx ON message (retry_of_message_id)
   WHERE retry_of_message_id IS NOT NULL;
 ```
 
-### 3.6 Webhook signature verification
+### 3.6 Webhook authentication (pinned at plan time, 2026-05-09)
 
-**Postmark.** Postmark webhooks support Basic Auth — operator configures a username/password on the webhook URL in the Postmark dashboard, and provider sends `Authorization: Basic ...` on every callback. M4 uses Basic Auth as the verification mechanism: `messaging.email.postmark.webhook-secret` is the password (username can be hardcoded `drshoes`). The implementation phase MUST pin this against the current Postmark documentation; if Postmark has shipped HMAC signature support since this spec was written, prefer HMAC.
+**Postmark — HTTP Basic Auth.** Postmark does not ship HMAC signatures for webhooks. Operator embeds credentials in the webhook URL configured in the Postmark dashboard (`https://drshoes:<secret>@api.drshoes.pl/api/webhooks/postmark`), and Postmark sends `Authorization: Basic <base64(drshoes:secret)>` on every callback. `messaging.email.postmark.webhook-username` defaults to `drshoes`; `messaging.email.postmark.webhook-secret` is the password. Verification: constant-time compare of decoded credentials.
 
-**SMSAPI.pl.** SMSAPI delivers status callbacks via configurable URL on which checksum or shared-secret authentication is supported. The exact mechanism MUST be pinned at implementation time against current SMSAPI docs. Spec commits to: "fail closed on missing or invalid signature, return 401."
+**SMSAPI.pl — IP allowlist only.** SMSAPI does NOT sign callbacks. Authentication is by source IP. Fixed allowlist (current as of 2026-05-09):
 
-The plan phase will use `mcp__context7__query-docs` (or fall back to provider docs URLs from configuration) to pin the exact verification mechanism before implementation.
+```
+89.174.81.98
+91.185.187.219
+213.189.53.211
+31.186.83.18
+212.91.26.253
+```
+
+Stored in `messaging.sms.smsapi.callback-allowlist` (comma-separated), read at startup. Per-request: extract client IP (respecting `X-Forwarded-For` set by the reverse proxy in production — which one? our deploy is Cloudflare Containers; the platform sets `Cf-Connecting-Ip`. Read from the configured header property `messaging.sms.smsapi.client-ip-header`, default `X-Forwarded-For` and falls back to `request.remoteAddr`). Reject (403) if IP is not in allowlist.
+
+Both authentication failures fail closed: 401 (Postmark Basic) / 403 (SMSAPI IP). No DB writes on rejection.
+
+### 3.6.1 Webhook HTTP method + response shape (pinned)
+
+| Provider | Method | Path | Content-Type | Required response |
+|---|---|---|---|---|
+| Postmark | POST | `/api/webhooks/postmark` | `application/json` | 200 with empty body (or any body, ignored) |
+| SMSAPI | **GET** | `/api/webhooks/smsapi` | n/a (URL params) | 200 with literal text body `OK` |
+
+SMSAPI requires the response body to be exactly `OK` (case-sensitive) per its docs — otherwise it retries. Spring `@GetMapping` returning `String "OK"` with `text/plain`. **The spec's earlier assumption that both providers POST is corrected here.**
+
+### 3.6.2 SMSAPI callback fields (pinned)
+
+GET query parameters: `MsgId`, `status` (numeric code), `donedate` (UNIX timestamp), `idx` (custom value passed in send), `from`, `to`, `points`, `sent_at`, `username`, `mcc`, `mnc`, `status_name`.
+
+Status code mapping (status_name preferred when present):
+- `DELIVERED` (status=404 in legacy, status_name="DELIVERED") → `DELIVERED`.
+- `UNDELIVERED`, `EXPIRED`, `FAILED`, `REJECTD`, `UNKNOWN` → `FAILED` with `error_code=status_name`.
+- `QUEUE`, `ACCEPTD`, `SENT` → no transition (still in flight on provider side; M4 already wrote SENT inline).
+
+Plan-time research note: status code numerics differ across SMSAPI API versions; the plan MUST use `status_name` text values (preferred) and only fall back to numeric `status` if `status_name` is missing in the callback. Plan task 4-2 will pin the exact mapping table from current SMSAPI docs at implementation time.
+
+### 3.6.3 Postmark webhook records (pinned)
+
+Top-level `RecordType` field discriminates events. Records relevant to delivery_status reconciliation:
+
+| RecordType | Mapped status | Error fields read |
+|---|---|---|
+| `Delivery` | `DELIVERED` | n/a |
+| `Bounce` | `FAILED` | `Type`, `TypeCode`, `Description` (combined into `error_message`) |
+| `SpamComplaint` | `FAILED` | `error_code='SPAM_COMPLAINT'` |
+| `Open`, `Click`, `SubscriptionChange` | drop (`applied_outcome='DROPPED'`) | n/a |
+
+Common fields across record types: `MessageID` (used for `provider_message_id` lookup), `MessageStream`, `RecordType`, server-assigned timestamp.
+
+Postmark fires a unique webhook payload per event; there is no separate `event_id` field — `provider_event_id` is the empty string for Postmark, so the dedupe UNIQUE index does NOT apply (it's `WHERE provider_event_id IS NOT NULL`). Dedupe falls back to state-guarded UPDATE (already designed). Spec accepts this — Postmark documents at-least-once delivery, but in practice repeat webhooks for the same record are rare; state guard handles them.
 
 ### 3.7 Profile activation (config)
 
@@ -185,6 +235,7 @@ messaging:
       server-token: ${POSTMARK_SERVER_TOKEN}
       from: noreply@drshoes.pl
       message-stream: outbound
+      webhook-username: drshoes
       webhook-secret: ${POSTMARK_WEBHOOK_SECRET}
       api-base-url: https://api.postmarkapp.com   # test-overridable
       timeout-seconds: 10
@@ -193,7 +244,8 @@ messaging:
     smsapi:
       token: ${SMSAPI_TOKEN}
       from: DrShoes
-      webhook-secret: ${SMSAPI_WEBHOOK_SECRET}
+      callback-allowlist: 89.174.81.98,91.185.187.219,213.189.53.211,31.186.83.18,212.91.26.253
+      client-ip-header: X-Forwarded-For   # behind Cloudflare set this to Cf-Connecting-Ip
       api-base-url: https://api.smsapi.pl
       timeout-seconds: 10
 ```
@@ -388,16 +440,18 @@ Closing 167 (M3). M4 adds ~25-30 tests. Closing target: **190-200**.
 
 ≈ **16 tasks total.** Two two-stage reviews (4-4/4-6 provider HTTP clients, 4-9 reconciler + curator wiring); the rest single-stage combined per dispatch protocol §4.
 
-## 10. Errata reservation
+## 10. Errata — items pinned at plan time (2026-05-09)
 
-The plan phase will pin the following items against current provider documentation and may amend this spec:
+The following items were researched against current provider docs and folded into §3.6 / §3.6.1 / §3.6.2 / §3.6.3:
 
-1. **Postmark webhook auth** — Basic Auth is the spec assumption; if Postmark now ships HMAC signature support, prefer HMAC.
-2. **SMSAPI callback auth** — exact checksum / shared-secret mechanism (form parameter? header?) per current SMSAPI.pl docs.
-3. **Postmark/SMSAPI request shapes** — exact JSON / form fields, error envelope shape, rate limits. Plan phase will fetch current docs via `mcp__context7__query-docs` or provider URLs.
-4. **Idempotency key format on SMSAPI** — confirm `idempotency_key` is the right field name on the current SMSAPI API.
+1. **Postmark webhook auth** — pinned to HTTP Basic Auth (URL-embedded credentials → `Authorization: Basic` header). Postmark does not ship HMAC signature support.
+2. **SMSAPI callback auth** — pinned to source-IP allowlist (5 fixed IPs). No signature/checksum mechanism; SMSAPI does not provide one.
+3. **Webhook HTTP method** — Postmark POSTs JSON to its endpoint; **SMSAPI uses GET with URL query params** and requires the response body to be the literal text `OK`. Spec amended in §3.6.1.
+4. **Postmark record types** — Delivery / Bounce / SpamComplaint reconcile; Open / Click / SubscriptionChange drop. Pinned in §3.6.3.
+5. **SMSAPI status mapping** — pinned to `status_name` text values (preferred) with numeric `status` fallback. Plan task will verify the current text values against SMSAPI docs at implementation time. See §3.6.2.
+6. **Idempotency key on SMSAPI send** — to be confirmed by the gateway implementation against current SMSAPI send-API docs (use whatever the current API exposes; if absent, fall back to `idx` custom field, which SMSAPI echoes back on the callback).
 
-Any deviations from this spec discovered at plan or implementation time get appended to a "Plan errata" section in the M4 plan file (matches M2/M3 precedent).
+Any further deviations discovered at implementation time get appended to a "Plan errata" section in the M4 plan file (matches M2/M3 precedent).
 
 ## 11. Closing definition (ship gates)
 
