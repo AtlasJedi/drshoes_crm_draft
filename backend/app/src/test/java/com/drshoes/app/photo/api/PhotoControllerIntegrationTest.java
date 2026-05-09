@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * All state-changing requests must carry .with(csrf()) per the double-submit CSRF policy.
  */
 @Testcontainers
-class PhotoControllerIT extends AdminWebTestBase {
+class PhotoControllerIntegrationTest extends AdminWebTestBase {
 
     @Container
     static final MinIOContainer minio = new MinIOContainer("minio/minio:RELEASE.2024-10-13T13-34-11Z")
