@@ -841,6 +841,16 @@
       "dispatch_log": "docs/dispatch-log/5-5-2026-05-09T23:28:44Z.md"
     },
     {
+      "id": "5-5b",
+      "title": "@Audited SpEL record fix — property access (no parens) + restore IT assertion",
+      "status": "completed",
+      "parent_task": "5-5",
+      "commit_sha": null,
+      "dispatch_log": "docs/dispatch-log/5-5b-20260510T014000Z.md",
+      "option_used": "A",
+      "key_fix": "Changed #result.threadId() and #result.orderId() to #result.threadId and #result.orderId — SimpleEvaluationContext.forReadOnlyDataBinding() supports property access (DataBindingPropertyAccessor resolves record components as bean properties in Spring 6.x) but blocks method calls."
+    },
+    {
       "id": "5-6",
       "title": "SmsApiInboundController + IT",
       "status": "pending",

@@ -50,7 +50,7 @@ public class MessageRetryService {
      * @return MessageDto for the newly created retry row
      */
     @Transactional
-    @Audited(parent = "#result.orderId()")
+    @Audited(parent = "#result.orderId")
     public MessageDto retry(UUID failedMessageId, AdminPrincipal actor) {
         // 1. Load original message
         MessageEntity orig = messages.findById(failedMessageId)

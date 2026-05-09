@@ -101,15 +101,14 @@ class PostmarkInboundControllerIntegrationTest extends AbstractIntegrationTest {
         var thread = threads.findById(inboundRows.get(0).getThreadId()).orElseThrow();
         assertThat(thread.getUnreadCount()).isEqualTo(1);
 
-        // Audit row with path = InboundMessageService#recordEmailInbound must be present.
-        // Note: parentEntityId is null in SimpleEvaluationContext because record component
-        // accessors like threadId() are not JavaBean getters — SpEL silently returns null.
-        // This is a known @Audited + record limitation; the path assertion is sufficient here.
+        // Audit row with path = InboundMessageService#recordEmailInbound must be present
+        // and parent_entity_id must equal the thread id (SpEL property access: #result.threadId).
         var auditRow = auditLogs.findAll().stream()
             .filter(a -> a.getPath() != null
                       && a.getPath().contains("InboundMessageService#recordEmailInbound"))
             .findFirst();
         assertThat(auditRow).isPresent();
+        assertThat(auditRow.get().getParentEntityId()).isEqualTo(thread.getId());
     }
 
     // ── Case 2: Unknown sender → unmatched / raw_sender set ─────────────────

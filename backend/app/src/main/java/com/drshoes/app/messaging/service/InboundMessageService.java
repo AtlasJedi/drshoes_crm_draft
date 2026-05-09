@@ -43,7 +43,7 @@ public class InboundMessageService {
 
     public record InboundResult(UUID messageId, UUID threadId, boolean duplicate, boolean unmatched) {}
 
-    @Audited(parent = "#result.threadId()")
+    @Audited(parent = "#result.threadId")
     @Transactional
     public InboundResult recordEmailInbound(PostmarkInboundPayload p) {
         var existing = messageRepo.findByProviderMessageIdAndChannel(p.messageId(), "EMAIL");
@@ -71,7 +71,7 @@ public class InboundMessageService {
         return new InboundResult(saved.getId(), thread.getId(), false, unmatched);
     }
 
-    @Audited(parent = "#result.threadId()")
+    @Audited(parent = "#result.threadId")
     @Transactional
     public InboundResult recordSmsInbound(SmsApiInboundPayload p) {
         var existing = messageRepo.findByProviderMessageIdAndChannel(p.smsId(), "SMS");

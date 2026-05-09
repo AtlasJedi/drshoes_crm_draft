@@ -11,6 +11,7 @@ import com.drshoes.app.messaging.repository.MessageThreadRepository;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderRepository;
 import com.drshoes.app.order.domain.OrderStatus;
+import com.drshoes.app.audit.AuditLogRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +44,7 @@ class MessageRetryControllerIntegrationTest extends AdminWebTestBase {
     @Autowired private OrderRepository         orderRepository;
     @Autowired private MessageRepository       messageRepository;
     @Autowired private MessageThreadRepository threadRepository;
+    @Autowired private AuditLogRepository      auditLogRepository;
     @Autowired private ObjectMapper            objectMapper;
     @Autowired private JdbcTemplate            jdbc;
 
@@ -70,6 +72,7 @@ class MessageRetryControllerIntegrationTest extends AdminWebTestBase {
         // message.retry_of_message_id is a self-referential FK — JPA deleteAll() fails when
         // retry rows exist. Use native SQL to delete all messages in one statement, then
         // threads and orders. AdminWebTestBase.cleanupUsers() removes clients+users after.
+        auditLogRepository.deleteAll();
         jdbc.execute("DELETE FROM message");
         threadRepository.deleteAll();
         orderRepository.deleteAll();
@@ -103,6 +106,14 @@ class MessageRetryControllerIntegrationTest extends AdminWebTestBase {
         // Original row still FAILED
         var origMsg = messageRepository.findById(origId).orElseThrow();
         assertThat(origMsg.getDeliveryStatus()).isEqualTo(DeliveryStatus.FAILED.name());
+
+        // Audit row: parent_entity_id must equal orderId (SpEL property access: #result.orderId).
+        // Regression guard for the @Audited + record accessor fix (task 5-5b).
+        var auditRow = auditLogRepository.findAll().stream()
+            .filter(a -> a.getPath() != null && a.getPath().contains("MessageRetryService#retry"))
+            .findFirst();
+        assertThat(auditRow).isPresent();
+        assertThat(auditRow.get().getParentEntityId()).isEqualTo(orderId);
     }
 
     // -------------------------------------------------------------------------
