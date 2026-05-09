@@ -819,6 +819,14 @@
       "dispatch_log": "docs/dispatch-log/5-3-20260510T004200Z.md"
     },
     {
+      "id": "5-3b",
+      "title": "MessageRouter LOC fixup — extract TemplateContextBuilder",
+      "status": "completed",
+      "commit_sha": "5810725",
+      "dispatch_log": "docs/dispatch-log/5-3b-20260510T005600Z.md",
+      "parent_task": "5-3"
+    },
+    {
       "id": "5-4",
       "title": "InboundMessageService + PhoneNormalizer",
       "status": "pending",
