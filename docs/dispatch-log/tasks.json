@@ -708,9 +708,10 @@
     {
       "id": "4-6",
       "title": "SmsApiSmsGateway + properties + autoconfig + WireMock IT (TWO-STAGE)",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "in_review",
+      "dispatch_log": "docs/dispatch-log/4-6-20260509T152513Z.md",
+      "stage_1_commit_sha": "81d684a",
+      "stage_1_completed_at": "2026-05-09T15:25:13Z"
     },
     {
       "id": "4-7",
