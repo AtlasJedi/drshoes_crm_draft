@@ -68,6 +68,37 @@ export class ApiClient {
   post<T>(path: string, body?: unknown)     { return this.request<T>(path, { method: "POST",  body: body ? JSON.stringify(body) : undefined }); }
   patch<T>(path: string, body?: unknown)    { return this.request<T>(path, { method: "PATCH", body: body ? JSON.stringify(body) : undefined }); }
   delete<T>(path: string)                   { return this.request<T>(path, { method: "DELETE" }); }
+
+  /**
+   * POST with a FormData body — lets the browser set the multipart boundary automatically.
+   * Bypasses the JSON Content-Type logic in request(); handles CSRF and error handling inline.
+   */
+  async postFormData<T>(path: string, fd: FormData): Promise<T> {
+    const headers = new Headers();
+    headers.set("Accept", "application/json");
+    const csrf = getCookie("XSRF-TOKEN");
+    if (csrf) headers.set("X-XSRF-TOKEN", csrf);
+    const resp = await fetch(`${BASE}${path}`, {
+      method: "POST",
+      headers,
+      credentials: "include",
+      body: fd,
+    });
+    const requestId = resp.headers.get("X-Request-Id") ?? undefined;
+    if (resp.status === 401 && typeof window !== "undefined" && !path.startsWith("/admin/auth/login")) {
+      log.info("session expired — redirecting to login", { op: "postFormData", path, status: 401, requestId });
+      const next = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.href = `/admin/login?next=${next}`;
+      throw new Error("UNAUTHORIZED");
+    }
+    if (!resp.ok) {
+      const bodyText = await resp.text().catch(() => "");
+      log.warn("non-2xx response", { op: "postFormData", path, status: resp.status, requestId });
+      throw new HttpError(resp.status, `API ${resp.status}: ${bodyText}`);
+    }
+    if (resp.status === 204) return undefined as unknown as T;
+    return (await resp.json()) as T;
+  }
 }
 
 export const api = new ApiClient();
