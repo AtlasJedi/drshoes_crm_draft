@@ -1,15 +1,20 @@
 package com.drshoes.app.messaging.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Size;
+
 /**
- * Minimal stub for Postmark inbound webhook payload.
- * Full DTO with Jackson annotations and field validation ships in task 5-5.
- * Only the fields consumed by InboundMessageService are declared here.
+ * DTO for Postmark inbound stream webhook payload.
+ * Jackson {@code @JsonProperty} annotations map Postmark's PascalCase field names.
+ * {@code messageId} is bounded to 120 chars to match the VARCHAR(120) DB column.
  */
 public record PostmarkInboundPayload(
-    String messageId,
-    String from,
-    String subject,
-    String textBody,
-    String strippedTextReply,
-    String date
+    @JsonProperty("MessageID")         @Size(max = 120) String messageId,
+    @JsonProperty("From")              String from,
+    @JsonProperty("FromName")          String fromName,
+    @JsonProperty("To")                String to,
+    @JsonProperty("Subject")           String subject,
+    @JsonProperty("TextBody")          String textBody,
+    @JsonProperty("StrippedTextReply") String strippedTextReply,
+    @JsonProperty("Date")              String date
 ) {}

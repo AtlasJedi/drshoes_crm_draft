@@ -63,7 +63,7 @@ class InboundMessageServiceTest {
     }
 
     private PostmarkInboundPayload emailPayload(String from, String msgId) {
-        return new PostmarkInboundPayload(msgId, from, "Temat", "body text", null, null);
+        return new PostmarkInboundPayload(msgId, from, null, null, "Temat", "body text", null, null);
     }
 
     private SmsApiInboundPayload smsPayload(String smsId, String from) {
@@ -197,7 +197,7 @@ class InboundMessageServiceTest {
         var threadId = UUID.randomUUID();
         var msgId    = UUID.randomUUID();
         var thread   = stubThread(threadId);
-        var payload  = new PostmarkInboundPayload("pm-003", "a@b.com", "Subj", "fallback body", "", null);
+        var payload  = new PostmarkInboundPayload("pm-003", "a@b.com", null, null, "Subj", "fallback body", "", null);
 
         when(messageRepo.findByProviderMessageIdAndChannel("pm-003", "EMAIL")).thenReturn(Optional.empty());
         when(clientRepo.findByEmailIgnoreCase("a@b.com")).thenReturn(Optional.empty());
@@ -215,7 +215,7 @@ class InboundMessageServiceTest {
         var threadId = UUID.randomUUID();
         var msgId    = UUID.randomUUID();
         var thread   = stubThread(threadId);
-        var payload  = new PostmarkInboundPayload("pm-004", "a@b.com", "Subj", "full body", "quoted reply only", null);
+        var payload  = new PostmarkInboundPayload("pm-004", "a@b.com", null, null, "Subj", "full body", "quoted reply only", null);
 
         when(messageRepo.findByProviderMessageIdAndChannel("pm-004", "EMAIL")).thenReturn(Optional.empty());
         when(clientRepo.findByEmailIgnoreCase("a@b.com")).thenReturn(Optional.empty());
@@ -239,7 +239,7 @@ class InboundMessageServiceTest {
         when(threadRepo.save(any())).thenReturn(thread);
         when(messageRepo.save(any())).thenReturn(stubSavedMessage(UUID.randomUUID(), threadId));
 
-        var payload = new PostmarkInboundPayload("pm-005", "a@b.com", "Pilna sprawa!", "body", null, null);
+        var payload = new PostmarkInboundPayload("pm-005", "a@b.com", null, null, "Pilna sprawa!", "body", null, null);
         sut.recordEmailInbound(payload);
 
         verify(threadRepo).save(argThat(t -> "Pilna sprawa!".equals(t.getSubject())));
@@ -275,7 +275,7 @@ class InboundMessageServiceTest {
         when(threadRepo.save(any())).thenReturn(thread);
         when(messageRepo.save(any())).thenReturn(stubSavedMessage(UUID.randomUUID(), threadId));
 
-        var payload = new PostmarkInboundPayload("pm-006", "JAN@EXAMPLE.COM", "Subj", "body", null, null);
+        var payload = new PostmarkInboundPayload("pm-006", "JAN@EXAMPLE.COM", null, null, "Subj", "body", null, null);
         sut.recordEmailInbound(payload);
 
         verify(clientRepo).findByEmailIgnoreCase("JAN@EXAMPLE.COM");
