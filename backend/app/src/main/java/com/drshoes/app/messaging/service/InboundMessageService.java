@@ -76,7 +76,8 @@ public class InboundMessageService {
     public InboundResult recordSmsInbound(SmsApiInboundPayload p) {
         var existing = messageRepo.findByProviderMessageIdAndChannel(p.smsId(), "SMS");
         if (existing.isPresent()) {
-            log.info("op=inbound.sms outcome=duplicate actor=system providerId={}", p.smsId());
+            log.info("op=inbound.sms outcome=duplicate actor=system providerId={} threadId={}",
+                p.smsId(), existing.get().getThreadId());
             return new InboundResult(existing.get().getId(), existing.get().getThreadId(), true, false);
         }
         var normalized = PhoneNormalizer.normalize(p.smsFrom());
