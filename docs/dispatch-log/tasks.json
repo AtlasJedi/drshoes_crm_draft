@@ -609,9 +609,9 @@
     {
       "id": "3-8",
       "title": "apps/web/lib/photos/{api,types}.ts",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-8-20260509T102353Z.md",
+      "commit_sha": "12ba385"
     },
     {
       "id": "3-9",
