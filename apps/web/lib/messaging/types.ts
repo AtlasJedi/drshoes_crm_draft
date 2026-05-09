@@ -56,6 +56,10 @@ export interface MessageDto {
   providerMessageId: string | null;
   sentAt: string | null;
   createdAt: string;
+  errorCode: string | null;
+  errorMessage: string | null;
+  retryOfMessageId: string | null;
+  retryAttempt: number;
 }
 
 export interface SendMessageRequest {

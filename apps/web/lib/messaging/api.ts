@@ -60,3 +60,8 @@ export async function sendMessage(orderId: string, req: SendMessageRequest): Pro
   log.info("op=sendMessage", { orderId, templateId: req.templateId, channel: req.channel });
   return api.post<MessageDto>(`/admin/orders/${orderId}/messages`, req);
 }
+
+export async function retryMessage(id: string): Promise<MessageDto> {
+  log.info("op=retryMessage", { id });
+  return api.post<MessageDto>(`/admin/messages/${id}/retry`);
+}
