@@ -13,6 +13,7 @@ import { OrderDrawerStatusChanger } from "./OrderDrawerStatusChanger";
 import { OrderDrawerItems } from "./OrderDrawerItems";
 import { OrderDrawerTimeline } from "./OrderDrawerTimeline";
 import { OrderDrawerMessages } from "./OrderDrawerMessages";
+import { OrderDrawerPhotos } from "./OrderDrawerPhotos";
 import { MessageComposerModal } from "./MessageComposerModal";
 
 const log = createLogger("order-drawer");
@@ -67,6 +68,12 @@ export function OrderDrawer({ initialOrder, users }: Props) {
             <OrderDrawerStatusChanger order={order} onOrderUpdated={handleOrderUpdated} />
             <OrderDrawerItems order={order} onOrderUpdated={handleOrderUpdated} />
             <OrderDrawerTimeline orderId={order.id} refreshKey={refreshKey} />
+            <section className="px-6 py-4 border-t border-admin-line">
+              <p className="text-xs font-medium text-admin-mute uppercase tracking-wide mb-3">
+                Zdjęcia
+              </p>
+              <OrderDrawerPhotos orderId={order.id} />
+            </section>
             <OrderDrawerMessages
               orderId={order.id}
               refreshKey={refreshKey}
