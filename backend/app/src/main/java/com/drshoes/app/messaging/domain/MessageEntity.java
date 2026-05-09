@@ -34,8 +34,12 @@ public class MessageEntity {
     @Column(name = "order_id", columnDefinition = "uuid")
     private UUID orderId;
 
-    @Column(name = "client_id", nullable = false, columnDefinition = "uuid")
+    @Column(name = "client_id", columnDefinition = "uuid")
     private UUID clientId;
+
+    /** Null for matched messages (client known). Set for unmatched inbound messages. Added V012. */
+    @Column(name = "raw_sender", length = 255)
+    private String rawSender;
 
     /** OUTBOUND or INBOUND — raw String for forward-compat with DB CHECK constraint. */
     @Column(nullable = false, length = 10)
@@ -123,6 +127,9 @@ public class MessageEntity {
 
     public UUID getClientId() { return clientId; }
     public void setClientId(UUID clientId) { this.clientId = clientId; }
+
+    public String getRawSender() { return rawSender; }
+    public void setRawSender(String rawSender) { this.rawSender = rawSender; }
 
     public String getDirection() { return direction; }
     public void setDirection(String direction) { this.direction = direction; }

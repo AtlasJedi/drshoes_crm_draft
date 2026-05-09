@@ -21,12 +21,24 @@ public class MessageThreadEntity {
     @Column(columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "client_id", nullable = false, columnDefinition = "uuid")
+    @Column(name = "client_id", columnDefinition = "uuid")
     private UUID clientId;
 
     /** Carried from the latest email subject; nullable. */
     @Column(columnDefinition = "text")
     private String subject;
+
+    /** EMAIL / SMS / WHATSAPP — per-channel threading. Added V012. */
+    @Column(nullable = false, length = 16)
+    private String channel = "EMAIL";
+
+    /** Null for matched threads (client known). Set for unmatched inbound threads. Added V012. */
+    @Column(name = "raw_sender", length = 255)
+    private String rawSender;
+
+    /** Non-null when operator has discarded this unmatched thread. Added V012. */
+    @Column(name = "discarded_at")
+    private OffsetDateTime discardedAt;
 
     @Column(name = "last_message_at")
     private OffsetDateTime lastMessageAt;
@@ -60,4 +72,13 @@ public class MessageThreadEntity {
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public OffsetDateTime getUpdatedAt() { return updatedAt; }
+
+    public String getChannel() { return channel; }
+    public void setChannel(String channel) { this.channel = channel; }
+
+    public String getRawSender() { return rawSender; }
+    public void setRawSender(String rawSender) { this.rawSender = rawSender; }
+
+    public OffsetDateTime getDiscardedAt() { return discardedAt; }
+    public void setDiscardedAt(OffsetDateTime discardedAt) { this.discardedAt = discardedAt; }
 }
