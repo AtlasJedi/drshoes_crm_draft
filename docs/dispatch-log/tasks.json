@@ -708,10 +708,16 @@
     {
       "id": "4-6",
       "title": "SmsApiSmsGateway + properties + autoconfig + WireMock IT (TWO-STAGE)",
-      "status": "in_review",
+      "status": "completed",
       "dispatch_log": "docs/dispatch-log/4-6-20260509T152513Z.md",
       "stage_1_commit_sha": "81d684a",
-      "stage_1_completed_at": "2026-05-09T15:25:13Z"
+      "stage_1_completed_at": "2026-05-09T15:25:13Z",
+      "completed_at": "2026-05-09T18:44:08Z",
+      "review_log": "docs/dispatch-log/4-6-review-20260509T153024Z.md",
+      "review_commit_sha": "ff267e7",
+      "fixup_log": "docs/dispatch-log/4-6-fixup-20260509T184408Z.md",
+      "fixup_commit_sha": "e19e49b",
+      "commit_sha": "e19e49b"
     },
     {
       "id": "4-7",
