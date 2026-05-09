@@ -8,15 +8,11 @@ import com.drshoes.app.messaging.domain.MessageDirection;
 import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageTemplateRepository;
-import com.drshoes.app.messaging.repository.MessageThreadRepository;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderItemKind;
 import com.drshoes.app.order.domain.OrderItemRepository;
 import com.drshoes.app.order.domain.OrderRepository;
-import com.drshoes.lib.email.EmailGateway;
 import com.drshoes.lib.messaging.Channel;
-import com.drshoes.lib.messaging.OutboundMessage;
-import com.drshoes.lib.sms.SmsGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,13 +33,9 @@ import java.util.UUID;
  *   2. renders subject + body
  *   3. find-or-create message thread
  *   4. persists MessageEntity with deliveryStatus=QUEUED
- *   5. invokes gateway (EMAIL or SMS)
- *   6. updates row to SENT (providerMessageId + sentAt) or FAILED (errorCode + errorMessage)
- *   7. bumps thread.lastMessageAt ONLY on SENT
+ *   5. delegates to MessageGatewayDispatcher (gateway call + status update + thread bump)
  *
- * Logging contract: exactly ONE INFO log per call at step 7 with outcome=SENT|FAILED.
- *
- * LOC: ~ 100 effective lines.
+ * Logging contract: exactly ONE INFO log per call at step 5 with outcome=SENT|FAILED.
  */
 @Service
 public class MessageRouter {
@@ -53,35 +45,29 @@ public class MessageRouter {
     private final MessageRepository messages;
     private final MessageTemplateRepository templates;
     private final MessageThreadService threadService;
-    private final MessageThreadRepository threads;
     private final TemplateRenderer renderer;
     private final OrderRepository orders;
     private final OrderItemRepository orderItems;
     private final ClientRepository clients;
-    private final EmailGateway email;
-    private final SmsGateway sms;
+    private final MessageGatewayDispatcher dispatcher;
 
     public MessageRouter(
             MessageRepository messages,
             MessageTemplateRepository templates,
             MessageThreadService threadService,
-            MessageThreadRepository threads,
             TemplateRenderer renderer,
             OrderRepository orders,
             OrderItemRepository orderItems,
             ClientRepository clients,
-            EmailGateway email,
-            SmsGateway sms) {
+            MessageGatewayDispatcher dispatcher) {
         this.messages = messages;
         this.templates = templates;
         this.threadService = threadService;
-        this.threads = threads;
         this.renderer = renderer;
         this.orders = orders;
         this.orderItems = orderItems;
         this.clients = clients;
-        this.email = email;
-        this.sms = sms;
+        this.dispatcher = dispatcher;
     }
 
     /**
@@ -147,38 +133,12 @@ public class MessageRouter {
             default    -> throw new IllegalArgumentException("Unsupported channel: " + orig.getChannel());
         };
 
-        var outbound = new OutboundMessage(ch, recipient, orig.getSubject(), orig.getBody(), null, null);
-
-        boolean sent = false;
-        try {
-            var receipt = switch (ch) {
-                case EMAIL -> email.send(outbound);
-                case SMS   -> sms.send(outbound);
-                default    -> throw new IllegalArgumentException("Unsupported channel: " + orig.getChannel());
-            };
-            saved.setDeliveryStatus(DeliveryStatus.SENT.name());
-            saved.setProviderMessageId(receipt.providerMessageId());
-            saved.setSentAt(OffsetDateTime.now(ZoneOffset.UTC));
-            sent = true;
-        } catch (RuntimeException e) {
-            saved.setDeliveryStatus(DeliveryStatus.FAILED.name());
-            saved.setErrorCode(truncate(e.getClass().getSimpleName(), 60));
-            saved.setErrorMessage(truncate(e.getMessage(), 1000));
-            log.warn("op=message.sendRetry outcome=FAILED orderId={} messageId={} channel={} cause={}",
-                    orig.getOrderId(), saved.getId(), orig.getChannel(), e.toString());
-        }
-
-        messages.save(saved);
-
-        if (sent) {
-            thread.setLastMessageAt(OffsetDateTime.now(ZoneOffset.UTC));
-            threads.save(thread);
-        }
+        MessageEntity persisted = dispatcher.dispatch(saved, recipient, orig.getSubject(), orig.getBody());
 
         log.info("op=message.sendRetry outcome={} orderId={} newMessageId={} channel={}",
-                saved.getDeliveryStatus(), orig.getOrderId(), saved.getId(), orig.getChannel());
+                persisted.getDeliveryStatus(), orig.getOrderId(), persisted.getId(), orig.getChannel());
 
-        return saved.getId();
+        return persisted.getId();
     }
 
     // ---- private ----
@@ -221,38 +181,12 @@ public class MessageRouter {
                     orderId, saved.getId(), channel);
         }
 
-        var outbound = new OutboundMessage(ch, recipient, renderedSubject, renderedBody, null, null);
-
-        boolean sent = false;
-        try {
-            var receipt = switch (ch) {
-                case EMAIL -> email.send(outbound);
-                case SMS   -> sms.send(outbound);
-                default    -> throw new IllegalArgumentException("Unsupported channel: " + channel);
-            };
-            saved.setDeliveryStatus(DeliveryStatus.SENT.name());
-            saved.setProviderMessageId(receipt.providerMessageId());
-            saved.setSentAt(OffsetDateTime.now(ZoneOffset.UTC));
-            sent = true;
-        } catch (RuntimeException e) {
-            saved.setDeliveryStatus(DeliveryStatus.FAILED.name());
-            saved.setErrorCode(truncate(e.getClass().getSimpleName(), 60));
-            saved.setErrorMessage(truncate(e.getMessage(), 1000));
-            log.warn("op=message.send outcome=FAILED orderId={} messageId={} channel={} cause={}",
-                    orderId, saved.getId(), channel, e.toString());
-        }
-
-        messages.save(saved);
-
-        if (sent) {
-            thread.setLastMessageAt(OffsetDateTime.now(ZoneOffset.UTC));
-            threads.save(thread);
-        }
+        MessageEntity persisted = dispatcher.dispatch(saved, recipient, renderedSubject, renderedBody);
 
         log.info("op=message.send outcome={} orderId={} messageId={} channel={} triggerId={}",
-                saved.getDeliveryStatus(), orderId, saved.getId(), channel, triggerId);
+                persisted.getDeliveryStatus(), orderId, persisted.getId(), channel, triggerId);
 
-        return saved.getId();
+        return persisted.getId();
     }
 
     private TemplateContext buildContext(UUID orderId, UUID clientId) {
@@ -284,10 +218,5 @@ public class MessageRouter {
             case CUSTOM_BUTY  -> "custom buty";
             case CUSTOM_KURTKA -> "custom kurtka";
         };
-    }
-
-    private static String truncate(String s, int max) {
-        if (s == null) return null;
-        return s.length() <= max ? s : s.substring(0, max);
     }
 }
