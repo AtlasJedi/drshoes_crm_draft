@@ -634,9 +634,11 @@
     {
       "id": "3-11",
       "title": "PhotoLightbox",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-11-20260509T103143Z.md",
+      "commit_sha": "45a90e6",
+      "start_utc": "2026-05-09T10:31:00Z",
+      "end_utc": "2026-05-09T10:35:00Z"
     },
     {
       "id": "3-12",
