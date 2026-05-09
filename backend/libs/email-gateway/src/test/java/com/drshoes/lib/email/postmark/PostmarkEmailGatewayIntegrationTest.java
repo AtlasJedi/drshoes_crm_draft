@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Six cases: 200 success, 200 inline error, 422, 500, retry-then-success,
  * double network fault.
  */
-class PostmarkEmailGatewayIT {
+class PostmarkEmailGatewayIntegrationTest {
 
     @RegisterExtension
     static WireMockExtension wm = WireMockExtension.newInstance()
