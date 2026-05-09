@@ -111,6 +111,76 @@ public class MessageRouter {
         return send(orderId, clientId, templateId, triggerId, channel, null);
     }
 
+    /**
+     * Retry entry point. Bypasses template lookup — uses the stored body/subject from the
+     * original message directly. This is needed because seeded/manual messages may have
+     * {@code templateId=null}, which would cause {@code sendManual} to throw.
+     *
+     * <p>The {@code @Audited} on {@code MessageRetryService#retry} handles audit for retries;
+     * this method intentionally has no @Audited to avoid a double audit row.
+     *
+     * @param orig    the original FAILED MessageEntity (body/subject/channel/clientId/orderId)
+     * @param actorId the authenticated admin's UUID
+     * @return id of the newly persisted retry message row
+     */
+    @Transactional
+    public UUID sendRetry(MessageEntity orig, UUID actorId) {
+        var thread = threadService.findOrCreateForClient(orig.getClientId());
+
+        var msg = MessageEntity.newMessage();
+        msg.setThreadId(thread.getId());
+        msg.setOrderId(orig.getOrderId());
+        msg.setClientId(orig.getClientId());
+        msg.setDirection(MessageDirection.OUTBOUND.name());
+        msg.setChannel(orig.getChannel());
+        msg.setTemplateId(orig.getTemplateId());   // may be null — no re-render needed
+        msg.setSubject(orig.getSubject());
+        msg.setBody(orig.getBody());
+        msg.setDeliveryStatus(DeliveryStatus.QUEUED.name());
+        msg.setSentBy(actorId);
+        var saved = messages.saveAndFlush(msg);
+
+        Channel ch = Channel.valueOf(orig.getChannel());
+        String recipient = switch (ch) {
+            case EMAIL -> clients.findById(orig.getClientId()).map(Client::getEmail).orElse(null);
+            case SMS   -> clients.findById(orig.getClientId()).map(Client::getPhone).orElse(null);
+            default    -> throw new IllegalArgumentException("Unsupported channel: " + orig.getChannel());
+        };
+
+        var outbound = new OutboundMessage(ch, recipient, orig.getSubject(), orig.getBody(), null, null);
+
+        boolean sent = false;
+        try {
+            var receipt = switch (ch) {
+                case EMAIL -> email.send(outbound);
+                case SMS   -> sms.send(outbound);
+                default    -> throw new IllegalArgumentException("Unsupported channel: " + orig.getChannel());
+            };
+            saved.setDeliveryStatus(DeliveryStatus.SENT.name());
+            saved.setProviderMessageId(receipt.providerMessageId());
+            saved.setSentAt(OffsetDateTime.now(ZoneOffset.UTC));
+            sent = true;
+        } catch (RuntimeException e) {
+            saved.setDeliveryStatus(DeliveryStatus.FAILED.name());
+            saved.setErrorCode(truncate(e.getClass().getSimpleName(), 60));
+            saved.setErrorMessage(truncate(e.getMessage(), 1000));
+            log.warn("op=message.sendRetry outcome=FAILED orderId={} messageId={} channel={} cause={}",
+                    orig.getOrderId(), saved.getId(), orig.getChannel(), e.toString());
+        }
+
+        messages.save(saved);
+
+        if (sent) {
+            thread.setLastMessageAt(OffsetDateTime.now(ZoneOffset.UTC));
+            threads.save(thread);
+        }
+
+        log.info("op=message.sendRetry outcome={} orderId={} newMessageId={} channel={}",
+                saved.getDeliveryStatus(), orig.getOrderId(), saved.getId(), orig.getChannel());
+
+        return saved.getId();
+    }
+
     // ---- private ----
 
     private UUID send(UUID orderId, UUID clientId, UUID templateId, UUID triggerId,

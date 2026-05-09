@@ -82,7 +82,7 @@ class MessageRetryServiceTest {
 
         when(messageRepository.findById(origId)).thenReturn(Optional.of(orig));
         when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(stubOrder()));
-        when(messageRouter.sendManual(eq(ORDER_ID), eq(CLIENT_ID), any(), anyString(), eq(ACTOR_ID)))
+        when(messageRouter.sendRetry(any(MessageEntity.class), eq(ACTOR_ID)))
             .thenReturn(newMsgId);
 
         var newMsg = MessageEntity.newMessage();
@@ -139,7 +139,7 @@ class MessageRetryServiceTest {
 
         when(messageRepository.findById(retry1Id)).thenReturn(Optional.of(retry1Msg));
         when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(stubOrder()));
-        when(messageRouter.sendManual(eq(ORDER_ID), eq(CLIENT_ID), any(), anyString(), eq(ACTOR_ID)))
+        when(messageRouter.sendRetry(any(MessageEntity.class), eq(ACTOR_ID)))
             .thenReturn(retry2Id);
 
         var retry2Msg = MessageEntity.newMessage();

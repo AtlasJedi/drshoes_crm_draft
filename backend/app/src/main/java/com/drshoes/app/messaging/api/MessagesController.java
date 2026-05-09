@@ -5,7 +5,9 @@ import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.dto.MessageDto;
 import com.drshoes.app.messaging.dto.SendMessageRequest;
 import com.drshoes.app.messaging.repository.MessageRepository;
+import com.drshoes.app.messaging.service.MessageRetryService;
 import com.drshoes.app.messaging.service.MessageRouter;
+import com.drshoes.app.messaging.service.NotRetryableException;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderRepository;
 import org.slf4j.Logger;
@@ -18,16 +20,22 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 /**
- * REST: GET + POST /api/admin/orders/{orderId}/messages.
+ * REST: GET + POST /api/admin/orders/{orderId}/messages
+ *       and POST /api/admin/messages/{id}/retry.
+ *
+ * Class-level @RequestMapping is intentionally absent so the retry endpoint
+ * can live at a flat path (/api/admin/messages/{id}/retry) without the orderId prefix.
+ * All other paths are declared explicitly on each method.
+ *
  * Actor resolved via {@code @AuthenticationPrincipal AdminPrincipal} — no per-request DB lookup.
  * {@code message.sent_by} and {@code audit_log.actor_id} both carry the authenticated user's UUID.
  */
 @RestController
-@RequestMapping("/api/admin/orders/{orderId}/messages")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
 public class MessagesController {
 
@@ -37,16 +45,19 @@ public class MessagesController {
     private final MessageRepository messageRepository;
     private final MessageRouter router;
     private final OrderRepository orderRepository;
+    private final MessageRetryService retryService;
 
     public MessagesController(MessageRepository messageRepository,
                                MessageRouter router,
-                               OrderRepository orderRepository) {
+                               OrderRepository orderRepository,
+                               MessageRetryService retryService) {
         this.messageRepository = messageRepository;
-        this.router = router;
-        this.orderRepository = orderRepository;
+        this.router            = router;
+        this.orderRepository   = orderRepository;
+        this.retryService      = retryService;
     }
 
-    @GetMapping
+    @GetMapping("/api/admin/orders/{orderId}/messages")
     public List<MessageDto> list(@PathVariable UUID orderId,
                                  @AuthenticationPrincipal AdminPrincipal actor) {
         log.info("op=messages.list actor={} orderId={} outcome=ok", actor.email(), orderId);
@@ -56,7 +67,7 @@ public class MessagesController {
             .toList();
     }
 
-    @PostMapping
+    @PostMapping("/api/admin/orders/{orderId}/messages")
     public ResponseEntity<MessageDto> send(@PathVariable UUID orderId,
                                            @RequestBody SendMessageRequest req,
                                            @AuthenticationPrincipal AdminPrincipal actor) {
@@ -82,6 +93,27 @@ public class MessagesController {
             actor.email(), actor.userId(), orderId, req.templateId(), channel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(msg));
+    }
+
+    @PostMapping("/api/admin/messages/{id}/retry")
+    public ResponseEntity<MessageDto> retry(@PathVariable("id") UUID messageId,
+                                            @AuthenticationPrincipal AdminPrincipal actor) {
+        log.info("op=messages.retry actor={} messageId={}", actor.email(), messageId);
+        MessageDto dto = retryService.retry(messageId, actor);
+        log.info("op=messages.retry actor={} messageId={} newId={} outcome=ok",
+            actor.email(), messageId, dto.id());
+        return ResponseEntity.ok(dto);
+    }
+
+    @ExceptionHandler(NotRetryableException.class)
+    public ResponseEntity<Map<String, String>> handleNotRetryable(NotRetryableException e) {
+        log.info("op=messages.retry outcome=not_retryable messageId={} actualStatus={}",
+            e.getMessageId(), e.getActualStatus());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(Map.of(
+                "code",         "NOT_RETRYABLE",
+                "messageId",    e.getMessageId().toString(),
+                "actualStatus", e.getActualStatus()));
     }
 
     private MessageDto toDto(MessageEntity e) {

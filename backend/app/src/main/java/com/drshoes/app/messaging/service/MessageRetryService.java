@@ -75,10 +75,10 @@ public class MessageRetryService {
         log.info("op=message.retry outcome=start actor={} originalId={} orderId={} attempt={}",
             actor.userId(), failedMessageId, orig.getOrderId(), nextAttempt);
 
-        // 5. Send via existing pipeline — produces a new MessageEntity row
-        UUID newMsgId = router.sendManual(
-            orig.getOrderId(), orig.getClientId(), orig.getTemplateId(),
-            orig.getChannel(), actor.userId());
+        // 5. Send via retry pipeline — uses stored body/subject directly, bypasses template
+        //    re-render. sendManual would throw if templateId is null (e.g. messages seeded
+        //    directly without a template). sendRetry is the correct path per plan errata.
+        UUID newMsgId = router.sendRetry(orig, actor.userId());
 
         // 6. Link new row back to original and set retry_attempt
         MessageEntity newMsg = messages.findById(newMsgId)
