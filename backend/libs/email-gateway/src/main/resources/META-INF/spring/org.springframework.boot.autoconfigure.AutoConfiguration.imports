@@ -1,1 +1,2 @@
 com.drshoes.lib.email.EmailGatewayAutoConfiguration
+com.drshoes.lib.email.postmark.PostmarkAutoConfiguration
