@@ -1,6 +1,10 @@
 spring:
   application:
     name: drshoes-app
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 200MB
   jpa:
     open-in-view: false
     hibernate:
