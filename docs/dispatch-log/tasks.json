@@ -793,9 +793,9 @@
     {
       "id": "4-16",
       "title": "Smoke + milestone-4 tag + CLAUDE.md flip",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/4-16-20260509T200019Z.md",
+      "commit_sha": "TBD"
     }
   ],
   "notes": [

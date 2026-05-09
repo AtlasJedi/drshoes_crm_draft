@@ -125,3 +125,4 @@ Full protocol in memory entry `feedback_dispatch_protocol.md` (auto-loaded each 
 - [x] Milestone 1: Order domain + drawer + audit timeline
 - [x] Milestone 2: Messaging + triggers
 - [x] Milestone 3: Photos + actor resolution (real providers deferred to a later milestone)
+- [x] Milestone 4: Real providers + webhooks + delivery reconciliation + retry
