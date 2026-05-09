@@ -18,6 +18,9 @@ const KIND_ICONS: Record<TimelineEventKind, string> = {
   ITEM_REMOVED:         "🗑️",
   ORDER_SOFT_DELETED:   "🗂️",
   MESSAGE_SENT:         "✉️",
+  PHOTO_UPLOADED:       "📷",
+  PHOTO_DELETED:        "🗑️",
+  PHOTO_RELABELED:      "🏷️",
 };
 
 const KIND_LABELS_PL: Record<TimelineEventKind, string> = {
@@ -31,6 +34,9 @@ const KIND_LABELS_PL: Record<TimelineEventKind, string> = {
   ITEM_REMOVED:         "Usunięto pozycję",
   ORDER_SOFT_DELETED:   "Zamówienie usunięte",
   MESSAGE_SENT:         "Wysłano wiadomość",
+  PHOTO_UPLOADED:       "Przesłano zdjęcie",
+  PHOTO_DELETED:        "Usunięto zdjęcie",
+  PHOTO_RELABELED:      "Zmieniono etykietę zdjęcia",
 };
 
 const fmt = new Intl.DateTimeFormat("pl-PL", { dateStyle: "short", timeStyle: "short" });

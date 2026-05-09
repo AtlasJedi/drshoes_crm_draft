@@ -4,12 +4,9 @@
  *
  * TimelineEvent.id is string | null because the synthetic ORDER_CREATED event
  * has no backing audit_log row and carries a null id from the curator.
- *
- * TimelineEventKind has 9 values including two M2 reserved kinds:
- * ASSIGNEE_CHANGED and PICKUP_DATE_CHANGED (require request-body capture).
  */
 
-/** 10 curated timeline event kinds. Matches TimelineEventKind.java. */
+/** Curated timeline event kinds. Matches TimelineEventKind.java. */
 export type TimelineEventKind =
   | "ORDER_CREATED"
   | "ORDER_UPDATED"        // generic PATCH — added M1; no field-level diff
@@ -20,7 +17,10 @@ export type TimelineEventKind =
   | "ITEM_EDITED"
   | "ITEM_REMOVED"
   | "ORDER_SOFT_DELETED"
-  | "MESSAGE_SENT";        // M2 — outbound message dispatched
+  | "MESSAGE_SENT"         // M2 — outbound message dispatched
+  | "PHOTO_UPLOADED"       // M3 — admin uploaded a photo
+  | "PHOTO_DELETED"        // M3 — admin deleted a photo
+  | "PHOTO_RELABELED";     // M3 — admin changed a photo's label
 
 /**
  * Curated timeline event — mirrors TimelineEvent.java.
