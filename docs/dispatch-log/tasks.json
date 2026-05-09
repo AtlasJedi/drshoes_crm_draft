@@ -836,9 +836,9 @@
     {
       "id": "5-5",
       "title": "PostmarkInboundController + IT",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "1f06cc9",
+      "dispatch_log": "docs/dispatch-log/5-5-2026-05-09T23:28:44Z.md"
     },
     {
       "id": "5-6",
