@@ -8,19 +8,12 @@ import com.drshoes.app.messaging.domain.MessageDirection;
 import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageTemplateRepository;
-import com.drshoes.app.order.domain.Order;
-import com.drshoes.app.order.domain.OrderItemKind;
-import com.drshoes.app.order.domain.OrderItemRepository;
-import com.drshoes.app.order.domain.OrderRepository;
 import com.drshoes.lib.messaging.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,7 +22,7 @@ import java.util.UUID;
  *   - sendForTrigger — called by TriggerEngine after status-change post-commit hook
  *
  * Both delegate to a private send(...) that:
- *   1. loads template + builds TemplateContext
+ *   1. loads template + builds TemplateContext via TemplateContextBuilder
  *   2. renders subject + body
  *   3. find-or-create message thread
  *   4. persists MessageEntity with deliveryStatus=QUEUED
@@ -46,8 +39,7 @@ public class MessageRouter {
     private final MessageTemplateRepository templates;
     private final MessageThreadService threadService;
     private final TemplateRenderer renderer;
-    private final OrderRepository orders;
-    private final OrderItemRepository orderItems;
+    private final TemplateContextBuilder contextBuilder;
     private final ClientRepository clients;
     private final MessageGatewayDispatcher dispatcher;
 
@@ -56,16 +48,14 @@ public class MessageRouter {
             MessageTemplateRepository templates,
             MessageThreadService threadService,
             TemplateRenderer renderer,
-            OrderRepository orders,
-            OrderItemRepository orderItems,
+            TemplateContextBuilder contextBuilder,
             ClientRepository clients,
             MessageGatewayDispatcher dispatcher) {
         this.messages = messages;
         this.templates = templates;
         this.threadService = threadService;
         this.renderer = renderer;
-        this.orders = orders;
-        this.orderItems = orderItems;
+        this.contextBuilder = contextBuilder;
         this.clients = clients;
         this.dispatcher = dispatcher;
     }
@@ -147,7 +137,7 @@ public class MessageRouter {
                       String channel, UUID actorId) {
         var template = templates.findById(templateId).orElseThrow(
                 () -> new IllegalArgumentException("Template not found: " + templateId));
-        var ctx = buildContext(orderId, clientId);
+        var ctx = contextBuilder.buildContext(orderId, clientId);
 
         String renderedSubject = template.getSubject() == null
                 ? null : renderer.render(template.getSubject(), ctx);
@@ -187,36 +177,5 @@ public class MessageRouter {
                 persisted.getDeliveryStatus(), orderId, persisted.getId(), channel, triggerId);
 
         return persisted.getId();
-    }
-
-    private TemplateContext buildContext(UUID orderId, UUID clientId) {
-        Order order = orders.findById(orderId).orElseThrow(
-                () -> new IllegalArgumentException("Order not found: " + orderId));
-        Client client = clients.findById(clientId).orElseThrow(
-                () -> new IllegalArgumentException("Client not found: " + clientId));
-
-        List<String> typyPracy = orderItems.findAllByOrderIdOrderByPosition(orderId).stream()
-                .map(item -> polishKindLabel(item.getKind()))
-                .toList();
-
-        OffsetDateTime dataOdbioru = order.getPlannedPickupAt() == null
-                ? null
-                : order.getPlannedPickupAt().atOffset(ZoneOffset.UTC);
-
-        return new TemplateContext(
-                client.getFirstName(),
-                order.getCode(),
-                typyPracy,
-                dataOdbioru,
-                "Dr Shoes"
-        );
-    }
-
-    private static String polishKindLabel(OrderItemKind kind) {
-        return switch (kind) {
-            case NAPRAWA      -> "naprawa";
-            case CUSTOM_BUTY  -> "custom buty";
-            case CUSTOM_KURTKA -> "custom kurtka";
-        };
     }
 }
