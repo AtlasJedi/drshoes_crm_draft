@@ -752,13 +752,6 @@
       "completed_at": "2026-05-09T21:27:00Z"
     },
     {
-      "id": "4-11",
-      "title": "POST /api/admin/messages/{id}/retry endpoint + IT",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
-    },
-    {
       "id": "4-12",
       "title": "apps/web/lib/messaging types extension + retryMessage api",
       "status": "completed",
@@ -770,8 +763,9 @@
       "id": "4-13",
       "title": "MessageStatusBadge component",
       "status": "completed",
-      "dispatch_log": null,
-      "commit_sha": "e867370"
+      "dispatch_log": "docs/dispatch-log/4-13-20260509T195301Z.md",
+      "commit_sha": "e867370",
+      "completed_at": "2026-05-09T19:54:00Z"
     },
     {
       "id": "4-14",
@@ -784,9 +778,10 @@
     {
       "id": "4-15",
       "title": "KIND_LABELS_PL + KIND_ICONS extension for MESSAGE_DELIVERED/FAILED",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/4-15-20260509T195756Z.md",
+      "commit_sha": "cac53b5",
+      "completed_at": "2026-05-09T19:59:00Z"
     },
     {
       "id": "4-11",
