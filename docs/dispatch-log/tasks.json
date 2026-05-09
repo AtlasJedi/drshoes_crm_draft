@@ -800,9 +800,9 @@
     {
       "id": "5-1",
       "title": "V012 migration — message_thread channel + raw_sender + discarded_at + message idempotency unique",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "5ae8b17",
+      "dispatch_log": "docs/dispatch-log/5-1-20260509T222908Z.md"
     },
     {
       "id": "5-2",
