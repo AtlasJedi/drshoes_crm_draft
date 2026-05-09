@@ -43,7 +43,12 @@ import java.util.UUID;
 @Service
 public class WebhookStatusReconciler {
 
-    static final String AUDIT_PATH = "WebhookStatusReconciler#apply";
+    /** Shared prefix — both suffix constants start with this string. */
+    public static final String AUDIT_PATH_PREFIX    = "WebhookStatusReconciler#apply";
+    /** Audit path written on APPLIED + DELIVERED outcome. */
+    public static final String AUDIT_PATH_DELIVERED = "WebhookStatusReconciler#applyDelivered";
+    /** Audit path written on APPLIED + FAILED outcome. */
+    public static final String AUDIT_PATH_FAILED    = "WebhookStatusReconciler#applyFailed";
 
     private static final Logger log = LoggerFactory.getLogger(WebhookStatusReconciler.class);
 
@@ -135,9 +140,12 @@ public class WebhookStatusReconciler {
                 WebhookEventEntity.AppliedOutcome.APPLIED, appliedStatus);
 
         // Write INTERNAL audit row with orderId as parent_entity_id so the
-        // TimelineEventCurator can emit a MESSAGE_DELIVERED timeline event.
+        // TimelineEventCurator can emit MESSAGE_DELIVERED or MESSAGE_FAILED.
         UUID orderId = msg.getOrderId();
-        auditWriter.write("INTERNAL", AUDIT_PATH, 0, null, null, orderId, null);
+        String auditPath = "DELIVERED".equals(targetStatus)
+                ? AUDIT_PATH_DELIVERED
+                : AUDIT_PATH_FAILED;
+        auditWriter.write("INTERNAL", auditPath, 0, null, null, orderId, null);
 
         log.info("op=webhook.reconcile provider={} messageId={} orderId={} newStatus={} outcome=APPLIED",
                 event.provider(), msg.getId(), orderId, targetStatus);

@@ -2,6 +2,7 @@ package com.drshoes.app.audit;
 
 import com.drshoes.app.audit.dto.TimelineEvent;
 import com.drshoes.app.audit.dto.TimelineEventKind;
+import com.drshoes.app.messaging.timeline.MessageReconcileTimelineHandler;
 import com.drshoes.app.messaging.timeline.MessageSentTimelineHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +27,9 @@ import static org.mockito.Mockito.when;
  * service advice, method=INTERNAL, status=0). The curator skips HTTP item-op
  * rows and emits only the INTERNAL row to avoid double-counting.
  *
- * MessageSentTimelineHandler is mocked to return null (no match) for all M1
- * test cases, so the existing item/status/order event assertions are unaffected.
+ * MessageSentTimelineHandler and MessageReconcileTimelineHandler are mocked to
+ * return null (no match) for all non-messaging test cases, so the existing
+ * item/status/order event assertions are unaffected.
  */
 class TimelineEventCuratorTest {
 
@@ -38,9 +40,11 @@ class TimelineEventCuratorTest {
 
     @BeforeEach
     void setUp() {
-        MessageSentTimelineHandler noopHandler = mock(MessageSentTimelineHandler.class);
-        when(noopHandler.toEvent(any(AuditLog.class), anyString())).thenReturn(null);
-        curator = new TimelineEventCurator(noopHandler);
+        MessageSentTimelineHandler noopSentHandler = mock(MessageSentTimelineHandler.class);
+        when(noopSentHandler.toEvent(any(AuditLog.class), anyString())).thenReturn(null);
+        MessageReconcileTimelineHandler noopReconcileHandler = mock(MessageReconcileTimelineHandler.class);
+        when(noopReconcileHandler.toEvent(any(AuditLog.class), anyString())).thenReturn(null);
+        curator = new TimelineEventCurator(noopSentHandler, noopReconcileHandler);
     }
 
     // ── ORDER_CREATED ────────────────────────────────────────────────────────

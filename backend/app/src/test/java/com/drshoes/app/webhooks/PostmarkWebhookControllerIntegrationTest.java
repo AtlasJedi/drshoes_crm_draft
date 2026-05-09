@@ -198,6 +198,12 @@ class PostmarkWebhookControllerIntegrationTest extends AbstractIntegrationTest {
 
         var updatedMsg = messages.findByProviderMessageIdAndChannel(providerMessageId, "EMAIL");
         assertThat(updatedMsg.get().getDeliveryStatus()).isEqualTo("FAILED");
+
+        // timeline must emit MESSAGE_FAILED (not MESSAGE_DELIVERED) for a bounce
+        mockMvc.perform(get("/api/admin/orders/{orderId}/timeline", orderId)
+                .with(user("owner@drshoes.pl").roles("OWNER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[?(@.kind == 'MESSAGE_FAILED')]").exists());
     }
 
     // ── Case 3: Bad auth ─────────────────────────────────────────────────────

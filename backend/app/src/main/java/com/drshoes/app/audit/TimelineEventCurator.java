@@ -2,6 +2,7 @@ package com.drshoes.app.audit;
 
 import com.drshoes.app.audit.dto.TimelineEvent;
 import com.drshoes.app.audit.dto.TimelineEventKind;
+import com.drshoes.app.messaging.timeline.MessageReconcileTimelineHandler;
 import com.drshoes.app.messaging.timeline.MessageSentTimelineHandler;
 import org.springframework.stereotype.Component;
 
@@ -65,10 +66,6 @@ public class TimelineEventCurator {
     private static final Pattern INTERNAL_REMOVE_ITEM =
         Pattern.compile("^OrderService#removeItem");
 
-    // M4 webhook reconciler paths (WebhookStatusReconciler @Audited rows)
-    private static final Pattern INTERNAL_RECONCILER_APPLY =
-        Pattern.compile("^WebhookStatusReconciler#apply$");
-
     // M3 photo service paths (PhotoService @Audited rows)
     private static final Pattern INTERNAL_PHOTO_UPLOADED =
         Pattern.compile("^PhotoService#upload$");
@@ -81,10 +78,13 @@ public class TimelineEventCurator {
     private static final Pattern PHOTOS_SEGMENT_PATTERN =
         Pattern.compile("/api/admin/orders/[^/]+/photos(?:/.*)?$");
 
-    private final MessageSentTimelineHandler messagingHandler;
+    private final MessageSentTimelineHandler     messagingHandler;
+    private final MessageReconcileTimelineHandler reconcileHandler;
 
-    public TimelineEventCurator(MessageSentTimelineHandler messagingHandler) {
-        this.messagingHandler = messagingHandler;
+    public TimelineEventCurator(MessageSentTimelineHandler messagingHandler,
+                                MessageReconcileTimelineHandler reconcileHandler) {
+        this.messagingHandler  = messagingHandler;
+        this.reconcileHandler  = reconcileHandler;
     }
 
     /**
@@ -162,6 +162,12 @@ public class TimelineEventCurator {
             return Optional.of(msgEvent);
         }
 
+        // M4: dispatch WebhookStatusReconciler rows to the reconcile handler
+        TimelineEvent reconcileEvent = reconcileHandler.toEvent(log, actorFullName);
+        if (reconcileEvent != null) {
+            return Optional.of(reconcileEvent);
+        }
+
         UUID parentId = log.getParentEntityId();
         String orderIdLabel = parentId != null ? parentId.toString() : "";
         Map<String, String> labels = Map.of("actorFullName", actorFullName, "orderId", orderIdLabel);
@@ -174,22 +180,6 @@ public class TimelineEventCurator {
         }
         if (INTERNAL_REMOVE_ITEM.matcher(path).find()) {
             return Optional.of(event(log, TimelineEventKind.ITEM_REMOVED, actorFullName, labels));
-        }
-
-        // ── M4 webhook reconciler events ─────────────────────────────────────
-        // WebhookStatusReconciler#apply writes @Audited rows; the reconcile result
-        // is stored in webhook_event (not in the audit row body), so we emit
-        // MESSAGE_DELIVERED or MESSAGE_FAILED based on the path alone.
-        // The parent_entity_id is the orderId resolved from the matched message row.
-        // We emit MESSAGE_DELIVERED when the row was for a successful delivery, and
-        // MESSAGE_FAILED otherwise. Since the audit row does not carry the outcome,
-        // we emit MESSAGE_DELIVERED as a general "reconcile event" and rely on the
-        // frontend to fetch the actual message status for rendering.
-        // For simplicity both DELIVERED and FAILED cases use the same pattern match;
-        // the curator emits MESSAGE_DELIVERED — the actual status lives in message row.
-        // Task 4-9 (TWO-STAGE) will refine this if per-outcome kinds are needed.
-        if (INTERNAL_RECONCILER_APPLY.matcher(path).find()) {
-            return Optional.of(event(log, TimelineEventKind.MESSAGE_DELIVERED, actorFullName, labels));
         }
 
         // ── M3 photo events ──────────────────────────────────────────────────
