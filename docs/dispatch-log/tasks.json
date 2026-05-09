@@ -688,11 +688,14 @@
     {
       "id": "4-4",
       "title": "PostmarkEmailGateway + properties + autoconfig + WireMock IT (TWO-STAGE)",
-      "status": "pending",
+      "status": "completed",
       "dispatch_log": "docs/dispatch-log/4-4-20260509T144728Z.md",
-      "commit_sha": null,
-      "stage1_commit_sha": "cd83005",
-      "start_utc": "2026-05-09T16:35:00Z"
+      "commit_sha": "cd83005",
+      "start_utc": "2026-05-09T13:00:00Z",
+      "fixup_sha": "367a2ae",
+      "review_log": "docs/dispatch-log/4-4-review-20260509T145324Z.md",
+      "review_sha": "b5a68d3",
+      "end_utc": "2026-05-09T15:04:42Z"
     },
     {
       "id": "4-5",
