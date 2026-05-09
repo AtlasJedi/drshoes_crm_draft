@@ -652,9 +652,11 @@
     {
       "id": "3-13",
       "title": "Smoke + milestone-3 tag + CLAUDE.md flip",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/3-13-20260509T103837Z.md",
+      "commit_sha": "<pending>",
+      "start_utc": "2026-05-09T10:36:00Z",
+      "end_utc": "2026-05-09T10:38:37Z"
     }
   ],
   "notes": [
