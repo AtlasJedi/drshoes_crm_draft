@@ -814,9 +814,9 @@
     {
       "id": "5-3",
       "title": "MessageGatewayDispatcher hygiene extraction",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "96ede4f",
+      "dispatch_log": "docs/dispatch-log/5-3-20260510T004200Z.md"
     },
     {
       "id": "5-4",
