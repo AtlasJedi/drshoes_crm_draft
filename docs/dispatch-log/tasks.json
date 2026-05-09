@@ -661,9 +661,11 @@
     {
       "id": "4-1",
       "title": "V010 messaging providers migration + WebhookEventEntity + Repository",
-      "status": "pending",
-      "dispatch_log": null,
-      "commit_sha": null
+      "status": "completed",
+      "dispatch_log": "docs/dispatch-log/4-1-20260509T135513Z.md",
+      "commit_sha": "056c68c",
+      "start_utc": "2026-05-09T13:40:00Z",
+      "end_utc": "2026-05-09T13:55:13Z"
     },
     {
       "id": "4-2",
