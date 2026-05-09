@@ -787,6 +787,13 @@
       "commit_sha": null
     },
     {
+      "id": "4-11",
+      "title": "POST /api/admin/messages/{id}/retry endpoint + IT",
+      "status": "completed",
+      "commit_sha": "1a4de6a",
+      "dispatch_log": "docs/dispatch-log/4-11-20260509T193457Z.md"
+    },
+    {
       "id": "4-16",
       "title": "Smoke + milestone-4 tag + CLAUDE.md flip",
       "status": "pending",
