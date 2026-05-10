@@ -1160,9 +1160,9 @@
     {
       "id": "6-15",
       "title": "BezTerminuPanel",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "d8bcdac",
+      "dispatch_log": "docs/dispatch-log/6-15-20260510T181328Z.md"
     },
     {
       "id": "6-16",
