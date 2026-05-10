@@ -1015,9 +1015,18 @@
     {
       "id": "5-20",
       "title": "NewMessageDialog (cross-thread compose)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "21c80e6",
+      "precondition_sha": "cbdb5c6",
+      "dispatch_log": "docs/dispatch-log/5-20-20260510T112611Z.md",
+      "precondition_log": "docs/dispatch-log/5-20a-20260510T112256Z.md",
+      "review_verdict": "APPROVED",
+      "notes": [
+        "Plan errata: sendNewToClient returns MessageDto (not {threadId}). Backend precondition slice (cbdb5c6, log 5-20a) added threadId: UUID to MessageDto record + 5 mapper sites + TS interface so result.threadId is a real field. M5 backend tests still 72/0/0/0.",
+        "effectiveChannel auto-fallback verified: when channel=EMAIL but client has no email and has phone, effectiveChannel promotes to SMS; EMAIL toggle button shown disabled + inactive while SMS shows active. Send goes via SMS.",
+        "MessagesShell wiring: removed `void newMsgOpen` suppression, mounted <NewMessageDialog open=newMsgOpen onOpenChange=setNewMsgOpen onSent=(threadId)=>sel.setSelectedId(threadId)/>. Radix Portal places dialog at document.body so placement in tree is cosmetic.",
+        "LOC counts: NewMessageDialog 133 (over 80 cap; pure JSX density; consistent with 5-17 142, 5-18 129, 5-19 UnmatchedThreadPanel 171). MessagesShell 65 (unchanged net)."
+      ]
     },
     {
       "id": "5-21",
