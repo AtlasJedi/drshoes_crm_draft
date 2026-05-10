@@ -5,6 +5,7 @@ import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import { STATUS_LABELS_PL, STATUS_PILL_CLASS } from "@/lib/orders/status";
 import type { OrderListRow } from "@/lib/orders/types";
+import { RowQuickActionsMenu } from "./RowQuickActionsMenu";
 
 const log = createLogger("orders-table");
 
@@ -84,6 +85,9 @@ export function OrdersTable({
               <th className={thCls}>Termin odbioru</th>
               <th className={thCls}>Wykonawca</th>
               <th className={thCls + " text-right"}>Suma</th>
+              <th className={thCls + " w-10 text-right"}>
+                {/* actions */}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -117,6 +121,18 @@ export function OrdersTable({
                 <td className={tdCls}>{fmtDate(row.plannedPickupAt)}</td>
                 <td className={tdCls + " text-admin-mute"}>—</td>
                 <td className={tdCls + " text-right font-mono"}>{pricePLN(row.totalPriceCents)}</td>
+                <td
+                  className="px-2 py-3 text-right"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <RowQuickActionsMenu
+                    row={row}
+                    onOrderUpdated={() => {
+                      // Reload page data via Next.js Server Component re-render
+                      router.refresh();
+                    }}
+                  />
+                </td>
               </tr>
             ))}
           </tbody>
