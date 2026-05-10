@@ -4,7 +4,7 @@ import { listOrdersServer, listUsersServer, getOrderServer } from "@/lib/orders/
 import type { OrderStatus, OrderItemKind, OrderDto } from "@/lib/orders/types";
 import type { UserStubDto } from "@/lib/users/types";
 import { OrdersFilters } from "./_components/OrdersFilters";
-import { OrdersTable } from "./_components/OrdersTable";
+import { OrdersPageClient } from "./_components/OrdersPageClient";
 import { OrderDrawer } from "./_components/OrderDrawer";
 import { OrderViewTabs } from "./_components/OrderViewTabs";
 import { SavedFilterPresets } from "./_components/SavedFilterPresets";
@@ -114,7 +114,7 @@ export default async function OrdersPage({
               </Link>
             </div>
           ) : pageData ? (
-            <OrdersTable
+            <OrdersPageClient
               rows={pageData.content}
               totalPages={pageData.totalPages}
               currentPage={page}

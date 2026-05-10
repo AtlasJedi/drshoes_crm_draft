@@ -25,9 +25,22 @@ interface Props {
   rows: OrderListRow[];
   totalPages: number;
   currentPage: number;
+  // Selection props — optional; injected by OrdersPageClient when BulkActionBar is active
+  selectedIds?: string[];
+  isAllSelected?: boolean;
+  onToggleRow?: (id: string) => void;
+  onToggleAll?: () => void;
 }
 
-export function OrdersTable({ rows, totalPages, currentPage }: Props) {
+export function OrdersTable({
+  rows,
+  totalPages,
+  currentPage,
+  selectedIds,
+  isAllSelected,
+  onToggleRow,
+  onToggleAll,
+}: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -53,6 +66,17 @@ export function OrdersTable({ rows, totalPages, currentPage }: Props) {
         <table className="w-full border-collapse">
           <thead className="bg-admin-surface border-b border-admin-line">
             <tr>
+              <th className={thCls + " w-10"}>
+                {onToggleAll && (
+                  <input
+                    type="checkbox"
+                    checked={isAllSelected ?? false}
+                    onChange={onToggleAll}
+                    className="accent-acid"
+                    aria-label="Zaznacz wszystkie"
+                  />
+                )}
+              </th>
               <th className={thCls}>Kod</th>
               <th className={thCls}>Status</th>
               <th className={thCls}>Klient</th>
@@ -71,6 +95,17 @@ export function OrdersTable({ rows, totalPages, currentPage }: Props) {
                 onClick={() => onRowActivate(row.id)}
                 onKeyDown={(e) => e.key === "Enter" && onRowActivate(row.id)}
               >
+                <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                  {onToggleRow && (
+                    <input
+                      type="checkbox"
+                      checked={selectedIds?.includes(row.id) ?? false}
+                      onChange={() => onToggleRow(row.id)}
+                      className="accent-acid"
+                      aria-label={`Zaznacz zlecenie ${row.code}`}
+                    />
+                  )}
+                </td>
                 <td className={tdCls + " font-mono text-xs"}>{row.code}</td>
                 <td className={tdCls}>
                   <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${STATUS_PILL_CLASS[row.status]}`}>
