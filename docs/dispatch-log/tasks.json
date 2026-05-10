@@ -1262,11 +1262,11 @@
     {
       "id": "7-4",
       "title": "ClientSummaryService + ClientSummaryDto + GET /api/admin/clients/{id}/summary (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null,
-      "stage_1_sha": null,
-      "stage2_log": null,
+      "status": "completed",
+      "commit_sha": "feb75b3",
+      "stage_1_sha": "feb75b3",
+      "dispatch_log": "docs/dispatch-log/7-4-stage1-20260510T214209Z.md",
+      "stage2_log": "docs/dispatch-log/7-4-stage2-20260510T215219Z.md",
       "fixup_sha": null
     },
     {
