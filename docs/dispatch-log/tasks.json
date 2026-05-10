@@ -1067,9 +1067,9 @@
     {
       "id": "6-4",
       "title": "pnpm lint verification + closure-bar wiring",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "816a88c",
+      "dispatch_log": "docs/dispatch-log/6-4-20260510T155449Z.md"
     },
     {
       "id": "6-5",
