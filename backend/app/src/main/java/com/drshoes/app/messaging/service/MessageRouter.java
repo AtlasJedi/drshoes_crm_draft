@@ -178,6 +178,50 @@ public class MessageRouter {
         return persisted.getId();
     }
 
+    /**
+     * Cross-thread "Nowa wiadomość" compose — operator initiates first contact with a client.
+     * Unlike sendManual, no template is required; body and subject are provided directly.
+     * Unlike sendReply, no existing thread is needed — find-or-create for the client+channel pair.
+     *
+     * @param clientId the target client (must exist, channel availability pre-validated by controller)
+     * @param channel  EMAIL or SMS
+     * @param subject  email subject (null for SMS)
+     * @param body     message body
+     * @param actor    the authenticated admin performing the send
+     * @return id of the persisted message row
+     */
+    @Transactional
+    public UUID sendNewToClient(UUID clientId, String channel, String subject,
+                                String body, AdminPrincipal actor) {
+        Channel ch = Channel.valueOf(channel);
+        String recipient = switch (ch) {
+            case EMAIL -> clients.findById(clientId).map(Client::getEmail).orElse(null);
+            case SMS   -> clients.findById(clientId).map(Client::getPhone).orElse(null);
+            default    -> throw new IllegalArgumentException("Unsupported channel: " + channel);
+        };
+
+        var thread = threadService.findOrCreateForClient(clientId, channel);
+
+        var msg = MessageEntity.newMessage();
+        msg.setThreadId(thread.getId());
+        msg.setClientId(clientId);
+        msg.setDirection(MessageDirection.OUTBOUND.name());
+        msg.setChannel(channel);
+        msg.setSubject(subject);
+        msg.setBody(body);
+        msg.setDeliveryStatus(DeliveryStatus.QUEUED.name());
+        msg.setSentBy(actor == null ? null : actor.userId());
+        var saved = messages.saveAndFlush(msg);
+
+        MessageEntity persisted = dispatcher.dispatch(saved, recipient, subject, body);
+
+        log.info("op=message.sendNewToClient outcome={} clientId={} channel={} threadId={} messageId={} actor={}",
+                persisted.getDeliveryStatus(), clientId, channel, thread.getId(), persisted.getId(),
+                actor == null ? "system" : actor.email());
+
+        return persisted.getId();
+    }
+
     // ---- private ----
 
     private UUID send(UUID orderId, UUID clientId, UUID templateId, UUID triggerId,
