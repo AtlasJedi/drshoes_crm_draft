@@ -853,9 +853,9 @@
     {
       "id": "5-6",
       "title": "SmsApiInboundController + IT",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "94d70a5",
+      "dispatch_log": "docs/dispatch-log/5-6-2026-05-10T00:38:21Z.md"
     },
     {
       "id": "5-7",
