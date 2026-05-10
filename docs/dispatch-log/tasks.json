@@ -1174,9 +1174,9 @@
     {
       "id": "6-17",
       "title": "lib/kanban/api-server.ts + types.ts",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "3bcc341",
+      "dispatch_log": "docs/dispatch-log/6-17-20260510T182413Z.md"
     },
     {
       "id": "6-18",
