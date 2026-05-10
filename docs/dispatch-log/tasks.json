@@ -1248,9 +1248,9 @@
     {
       "id": "7-2",
       "title": "Add clientId filter to OrderController.list -> OrderService.list -> OrderSpecifications.forList",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "681c529",
+      "dispatch_log": "docs/dispatch-log/7-2-20260510T213247Z.md"
     },
     {
       "id": "7-3",
