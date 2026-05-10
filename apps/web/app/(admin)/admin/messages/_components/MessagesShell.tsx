@@ -4,7 +4,9 @@ import { useState } from "react";
 import { MessagesHeader } from "./MessagesHeader";
 import { ThreadList } from "./ThreadList";
 import { SelectedThread } from "./SelectedThread";
+import { ThreadClientPanel } from "./ThreadClientPanel";
 import { useThreadSelection } from "./useThreadSelection";
+import type { MessageThreadDto } from "@/lib/messaging/types";
 
 interface Props {
   initialThreadId: string | null;
@@ -12,16 +14,19 @@ interface Props {
 
 /**
  * Top-level client shell for the messages page.
- * Composes: MessagesHeader, ThreadList (sidebar), and SelectedThread in the main area.
- * NewMessageDialog will be wired in task 5-18.
+ * Composes: MessagesHeader, ThreadList (sidebar), SelectedThread (main column),
+ * and ThreadClientPanel (right rail — task 5-18).
+ * NewMessageDialog will be wired in a future task.
  */
 export function MessagesShell({ initialThreadId }: Props) {
   const sel = useThreadSelection(initialThreadId);
   // newMsgOpen state is kept here so MessagesHeader can trigger it;
-  // actual dialog is wired in task 5-18.
+  // actual dialog is wired in a future task.
   const [newMsgOpen, setNewMsgOpen] = useState(false);
+  // Lifted from SelectedThread via onLoaded; drives the right-rail panel.
+  const [loadedThread, setLoadedThread] = useState<MessageThreadDto | null>(null);
 
-  // suppress unused warning until task 5-18 wires the dialog
+  // suppress unused warning until dialog is wired
   void newMsgOpen;
 
   return (
@@ -47,10 +52,15 @@ export function MessagesShell({ initialThreadId }: Props) {
           {sel.selectedId && (
             <SelectedThread
               threadId={sel.selectedId}
-              onLoaded={() => { /* sidebar refresh handled by ThreadList polling */ }}
+              onLoaded={setLoadedThread}
             />
           )}
         </main>
+
+        {/* Right rail: only for matched threads (clientId non-null) */}
+        {sel.selectedId && loadedThread && loadedThread.clientId && (
+          <ThreadClientPanel thread={loadedThread} />
+        )}
       </div>
     </div>
   );
