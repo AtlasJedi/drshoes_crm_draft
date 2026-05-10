@@ -6,6 +6,7 @@ import type { UserStubDto } from "@/lib/users/types";
 import { OrdersFilters } from "./_components/OrdersFilters";
 import { OrdersTable } from "./_components/OrdersTable";
 import { OrderDrawer } from "./_components/OrderDrawer";
+import { OrderViewTabs } from "./_components/OrderViewTabs";
 
 const log = createLogger("admin-orders-page");
 
@@ -78,6 +79,10 @@ export default async function OrdersPage({
         >
           + Nowe zlecenie
         </Link>
+      </div>
+
+      <div className="mb-4">
+        <OrderViewTabs active="list" />
       </div>
 
       {fetchError ? (
