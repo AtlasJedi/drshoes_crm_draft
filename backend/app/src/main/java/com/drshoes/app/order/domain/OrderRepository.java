@@ -103,4 +103,34 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
         GROUP BY kind
         """, nativeQuery = true)
     List<Object[]> countByItemKind();
+
+    /**
+     * Scheduled orders in the [fromInstant, toInstant) window — non-deleted, active statuses only.
+     * Active = NOT IN (WYDANE, ANULOWANE). planned_pickup_at must be non-null.
+     */
+    @Query(value = """
+        SELECT * FROM order_
+        WHERE deleted_at IS NULL
+          AND planned_pickup_at IS NOT NULL
+          AND planned_pickup_at >= :fromInstant
+          AND planned_pickup_at < :toInstant
+          AND status NOT IN ('WYDANE', 'ANULOWANE')
+        ORDER BY planned_pickup_at ASC
+        """, nativeQuery = true)
+    List<Order> findScheduledInWindow(@Param("fromInstant") Instant fromInstant,
+                                      @Param("toInstant") Instant toInstant);
+
+    /**
+     * Unscheduled orders: no planned_pickup_at, non-deleted, active statuses.
+     * Capped at 50 by received_at DESC.
+     */
+    @Query(value = """
+        SELECT * FROM order_
+        WHERE deleted_at IS NULL
+          AND planned_pickup_at IS NULL
+          AND status NOT IN ('WYDANE', 'ANULOWANE')
+        ORDER BY received_at DESC
+        LIMIT 50
+        """, nativeQuery = true)
+    List<Order> findUnscheduled();
 }
