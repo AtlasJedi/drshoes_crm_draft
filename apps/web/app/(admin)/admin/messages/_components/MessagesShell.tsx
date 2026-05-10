@@ -5,6 +5,7 @@ import { MessagesHeader } from "./MessagesHeader";
 import { ThreadList } from "./ThreadList";
 import { SelectedThread } from "./SelectedThread";
 import { ThreadClientPanel } from "./ThreadClientPanel";
+import { EmptyState } from "./EmptyState";
 import { useThreadSelection } from "./useThreadSelection";
 import type { MessageThreadDto } from "@/lib/messaging/types";
 
@@ -44,15 +45,12 @@ export function MessagesShell({ initialThreadId }: Props) {
         />
 
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {!sel.selectedId && (
-            <div className="flex-1 flex items-center justify-center text-[13px] text-admin-mute">
-              Wybierz wątek, aby zobaczyć wiadomości
-            </div>
-          )}
+          {!sel.selectedId && <EmptyState variant="no-selection" />}
           {sel.selectedId && (
             <SelectedThread
               threadId={sel.selectedId}
               onLoaded={setLoadedThread}
+              onResolved={() => sel.setSelectedId(null)}
             />
           )}
         </main>
