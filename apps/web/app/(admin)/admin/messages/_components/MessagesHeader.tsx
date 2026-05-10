@@ -31,6 +31,7 @@ export function MessagesHeader({ onNewMessage }: Props) {
       </div>
       <div className="flex items-center gap-2">
         <button
+          type="button"
           onClick={handleRefresh}
           className="h-8 px-3 text-[13px] inline-flex items-center gap-1.5 rounded-md border border-admin-line bg-white hover:bg-admin-hover"
         >
@@ -40,6 +41,7 @@ export function MessagesHeader({ onNewMessage }: Props) {
           Odśwież
         </button>
         <button
+          type="button"
           onClick={onNewMessage}
           className="h-8 px-3 text-[13px] font-semibold inline-flex items-center gap-1.5 rounded-md bg-ink text-paper hover:bg-ink/90"
         >

@@ -1,13 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { createLogger } from "@/lib/log";
 import { MessagesHeader } from "./MessagesHeader";
 import { ThreadList } from "./ThreadList";
 import { useThreadSelection } from "./useThreadSelection";
-import type { Channel } from "@/lib/messaging/types";
-
-const log = createLogger("messaging.shell");
 
 interface Props {
   initialThreadId: string | null;
@@ -25,8 +21,6 @@ export function MessagesShell({ initialThreadId }: Props) {
   // actual dialog is wired in task 5-18.
   const [newMsgOpen, setNewMsgOpen] = useState(false);
 
-  log.debug("op=render", { selectedId: sel.selectedId, filter: sel.filter });
-
   // suppress unused warning until task 5-18 wires the dialog
   void newMsgOpen;
 
@@ -37,7 +31,7 @@ export function MessagesShell({ initialThreadId }: Props) {
         <ThreadList
           selectedId={sel.selectedId}
           filter={sel.filter}
-          channel={sel.channel as Channel | null}
+          channel={sel.channel}
           q={sel.q}
           onSelect={sel.setSelectedId}
           onFilterChange={sel.setFilter}

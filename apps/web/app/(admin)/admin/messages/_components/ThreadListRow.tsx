@@ -22,6 +22,7 @@ export function ThreadListRow({ thread: t, selected, onSelect }: Props) {
   return (
     <div
       role="button" tabIndex={0}
+      aria-current={selected ? "true" : undefined}
       onClick={() => onSelect(t.id)}
       onKeyDown={(e) => e.key === "Enter" && onSelect(t.id)}
       className={"relative flex gap-3 px-4 py-3 border-b border-admin-line cursor-pointer " + (selected ? "bg-paper" : "hover:bg-admin-hover/60")}

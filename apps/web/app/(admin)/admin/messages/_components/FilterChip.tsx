@@ -11,6 +11,7 @@ interface Props {
 export function FilterChip({ active, label, count, onClick }: Props) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={
         "h-8 px-3 inline-flex items-center gap-1.5 rounded-md text-[13px] font-medium border transition-colors " +

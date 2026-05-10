@@ -53,6 +53,7 @@ export function ThreadList({ selectedId, filter, channel, q, onSelect, onFilterC
       <div className="px-4 pt-4 pb-3 border-b border-admin-line">
         <div className="relative mb-3">
           <input type="text" value={q} onChange={(e) => onQChange(e.target.value)}
+            aria-label="Szukaj wątków"
             placeholder="Szukaj klienta, treści, numeru…"
             className="w-full h-9 pl-9 pr-3 rounded-md border border-admin-line bg-paper text-[13px] focus:outline-none focus:ring-2 focus:ring-acid/60 focus:border-ink/40" />
           <svg className="absolute left-3 top-2.5 text-admin-mute" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
