@@ -1,4 +1,5 @@
 import type { MeResponse } from "@/lib/auth/types";
+import { MessagesNavItem } from "@/app/(admin)/admin/_components/Sidebar/MessagesNavItem";
 
 interface Props {
   me: MeResponse;
@@ -21,6 +22,7 @@ export function AdminSidebar({ me }: Props) {
         <div className="px-2 py-1 rounded text-admin-mute cursor-not-allowed">
           Klienci (0B)
         </div>
+        <MessagesNavItem />
       </nav>
 
       <div className="mt-8 pt-4 border-t border-admin-line text-xs text-admin-mute">

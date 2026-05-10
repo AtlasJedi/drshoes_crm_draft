@@ -35,8 +35,14 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
     }
   }, [orderId]);
 
-  // Initial + refreshKey-driven load
-  useEffect(() => { void load(false); }, [load, refreshKey]);
+  // Initial + refreshKey-driven load with race-cancel guard
+  useEffect(() => {
+    let cancelled = false;
+    void load(false).then(() => {
+      if (cancelled) return; // discard result if orderId changed before load completed
+    });
+    return () => { cancelled = true; };
+  }, [load, refreshKey]);
 
   // 10s polling while drawer is mounted
   useEffect(() => {
@@ -54,8 +60,16 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
       await retryMessage(msg.id);
       log.info("op=message.retry outcome=ok", { messageId: msg.id });
       await load(false);
-    } catch (e) {
-      const errText = "Nie udało się ponowić — spróbuj ponownie.";
+    } catch (e: unknown) {
+      let errText = "Nie udało się ponowić — spróbuj ponownie.";
+      if (e && typeof e === "object") {
+        const resp = e as { status?: number; body?: { code?: string } };
+        if (resp.status === 404) {
+          errText = "Nie znaleziono wiadomości.";
+        } else if (resp.status === 409 || resp.body?.code === "NOT_RETRYABLE") {
+          errText = "Wiadomość nie kwalifikuje się do ponowienia.";
+        }
+      }
       log.warn("op=message.retry outcome=failed", { messageId: msg.id, err: String(e) });
       setRetryError((prev) => ({ ...prev, [msg.id]: errText }));
     } finally {
