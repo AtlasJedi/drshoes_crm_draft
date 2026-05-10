@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "active_milestone": "6",
-  "active_plan": "docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md",
+  "active_milestone": "7",
+  "active_plan": "docs/superpowers/plans/2026-05-10-milestone-07-clients.md",
   "tasks": [
     {
       "id": "0b-1",
@@ -1237,6 +1237,131 @@
       "status": "completed",
       "commit_sha": "7b87dec",
       "dispatch_log": "docs/dispatch-log/6-23-20260510T191323Z.md"
+    },
+    {
+      "id": "7-1",
+      "title": "Extend UpdateClientRequest + ClientService.update for preferredChannel + rodoConsent",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-2",
+      "title": "Add clientId filter to OrderController.list -> OrderService.list -> OrderSpecifications.forList",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-3",
+      "title": "Add clientId filter to ThreadController.list + new MessageThreadRepository derived method",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-4",
+      "title": "ClientSummaryService + ClientSummaryDto + GET /api/admin/clients/{id}/summary (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null,
+      "stage_1_sha": null,
+      "stage2_log": null,
+      "fixup_sha": null
+    },
+    {
+      "id": "7-5",
+      "title": "Extend lib/clients — types, api, api-server (listClients, getClient, getClientSummary, updateClient)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-6",
+      "title": "ClientListSearchBox CC — debounced typeahead + tests",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-7",
+      "title": "ClientListTable SC — paginated rows + inline RODO pill (placeholder until 7-10)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-8",
+      "title": "/admin/clients/page.tsx — list page Server Component (search + paginated list shell)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-9",
+      "title": "[id]/layout.tsx + ClientTabNav CC (shared shell + active-tab styling)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-10",
+      "title": "ClientHeader SC + RodoBadge SC + EditClient island stub (real modal in 7-15)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-11",
+      "title": "ClientSummaryTiles SC — 4 dashboard tiles wired to /summary",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-12",
+      "title": "/admin/clients/[id]/page.tsx — overview tab (parallel fetches, 404 guard)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-13",
+      "title": "/admin/clients/[id]/zlecenia/page.tsx — orders sub-tab",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-14",
+      "title": "/admin/clients/[id]/wiadomosci/page.tsx — threads sub-tab",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-15",
+      "title": "EditClientModal CC + useEditClientModalForm hook + RTL tests (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null,
+      "stage_1_sha": null,
+      "stage2_log": null,
+      "fixup_sha": null
+    },
+    {
+      "id": "7-16",
+      "title": "PlaceholderCard SC + /admin/sklep + /admin/aktualnosci stub pages + smoke tests",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "7-17",
+      "title": "Sidebar wiring verify + active-state + smoke UAT + milestone-7 tag",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
     }
   ],
   "notes": [
@@ -1244,6 +1369,7 @@
     "Per locked dispatch protocol: plans on disk only; thin prompts; combined reviews for mechanical tasks; structured logging baked in from 0b-3 onward.",
     "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml — contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
     "PII flag (from 0b-5 inline review): LoginThrottle logs raw client IP at INFO on throttle events. Polish RODO/GDPR treats IP as personal data. Acceptable for now (security event); revisit during AuditLogAspect (0b-8) to apply a unified PII-redaction or hashing policy across security-event logs.",
-    "M6 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md (10,462 lines, 23 tasks). Two TWO-STAGE reviews planned (6-9 bulk-status, 6-19 kanban drag flow + dialog extraction); rest combined single-stage. Inline backend slice 6-21a will fire (W5 author confirmed OrderController.list() lacks tag/date-range/multi-status params) — not a separate task ID. W4 may also fire an inline KanbanCardDto version-field slice (decision pinned at 6-20 dispatch). Resume next session by dispatching 6-1 cold per dispatch protocol."
+    "M6 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md (10,462 lines, 23 tasks). Two TWO-STAGE reviews planned (6-9 bulk-status, 6-19 kanban drag flow + dialog extraction); rest combined single-stage. Inline backend slice 6-21a will fire (W5 author confirmed OrderController.list() lacks tag/date-range/multi-status params) — not a separate task ID. W4 may also fire an inline KanbanCardDto version-field slice (decision pinned at 6-20 dispatch). Resume next session by dispatching 6-1 cold per dispatch protocol.",
+    "M7 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-07-clients.md (4,783 lines, 17 tasks). Spec: docs/superpowers/specs/2026-05-10-milestone-07-clients-design.md (commits f3f33e6 + 1a51d0a). Authored via 4 parallel slice subagents (A backend, B lib+list, C detail+tabs, D modal+stubs+scaffold). Two TWO-STAGE reviews planned (7-4 ClientSummaryService SQL correctness, 7-15 EditClientModal form + a11y); rest combined single-stage. Awaiting Claude.ai design export per spec §13–§14 — DOM details for tasks 7-7, 7-8, 7-10, 7-11, 7-12, 7-15 may need minor refinement once export lands; no impact on task IDs or contracts. M5/M6 hygiene carry-forward (AuditLogAspect flake, send/sendRetry dedup) deferred to a future hygiene milestone. Resume next session by dispatching 7-1 cold per dispatch protocol."
   ]
 }
