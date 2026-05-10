@@ -881,9 +881,9 @@
     {
       "id": "5-10",
       "title": "Reply send — POST /api/admin/threads/{id}/messages",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "d0c938b",
+      "dispatch_log": "docs/dispatch-log/5-10-20260510T092121Z.md"
     },
     {
       "id": "5-11",
