@@ -30,7 +30,7 @@ public enum TimelineEventKind {
     PHOTO_RELABELED,    // M3 — emitted by PhotoService#relabel @Audited row
     // M5 — inbound messages + thread lifecycle
     MESSAGE_RECEIVED,   // M5 — emitted by InboundMessageService#recordEmailInbound / #recordSmsInbound
-    THREAD_MARKED_READ, // M5 — emitted by MessageThreadService#markRead (class not yet split; see task 5-8)
-    THREAD_ASSIGNED,    // M5 — emitted by MessageThreadService#assignUnmatched
-    THREAD_DISCARDED    // M5 — emitted by MessageThreadService#discardUnmatched
+    THREAD_MARKED_READ, // M5 — emitted by MessageThreadMutationService#markRead
+    THREAD_ASSIGNED,    // M5 — emitted by MessageThreadMutationService#assignUnmatched
+    THREAD_DISCARDED    // M5 — emitted by MessageThreadMutationService#discardUnmatched
 }

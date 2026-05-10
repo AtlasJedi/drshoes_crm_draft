@@ -867,9 +867,9 @@
     {
       "id": "5-8",
       "title": "MessageThreadService extensions + MessageThreadMutationService split",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "PENDING",
+      "dispatch_log": "docs/dispatch-log/5-8-2026-05-10T01:12:36Z.md"
     },
     {
       "id": "5-9",

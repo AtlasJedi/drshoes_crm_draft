@@ -26,6 +26,15 @@ public interface MessageRepository extends JpaRepository<MessageEntity, UUID> {
             @Param("channel") String channel);
 
     /**
+     * Bulk-updates clientId and clears rawSender on all messages belonging to a thread.
+     * Used by MessageThreadMutationService.assignUnmatched to propagate client resolution
+     * to existing message rows when an unmatched thread is linked to a known client.
+     */
+    @Modifying
+    @Query("UPDATE MessageEntity m SET m.clientId = :clientId, m.rawSender = null WHERE m.threadId = :threadId")
+    void bulkUpdateClientIdByThreadId(@Param("threadId") UUID threadId, @Param("clientId") UUID clientId);
+
+    /**
      * State-guarded UPDATE: advances delivery_status from SENT to the target status.
      * Returns 1 if the row was updated, 0 if it was already at the target status
      * or not in SENT state (no-op / idempotent).

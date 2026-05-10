@@ -41,4 +41,18 @@ public interface MessageThreadRepository extends JpaRepository<MessageThreadEnti
      * Used by MessagesNavItem sidebar badge.
      */
     long countByUnreadCountGreaterThan(int min);
+
+    /**
+     * Returns the earliest thread for a known client + channel (no discard filter).
+     * Used by MessageThreadService.findOrCreateForClient(UUID, String) for simple find-or-create.
+     */
+    Optional<MessageThreadEntity> findFirstByClientIdAndChannelOrderByCreatedAtAsc(
+            UUID clientId, String channel);
+
+    /**
+     * Returns the earliest unmatched thread for a raw sender + channel (no discard filter).
+     * Used by MessageThreadService.findOrCreateForRawSender for simple find-or-create.
+     */
+    Optional<MessageThreadEntity> findFirstByRawSenderAndChannelOrderByCreatedAtAsc(
+            String rawSender, String channel);
 }

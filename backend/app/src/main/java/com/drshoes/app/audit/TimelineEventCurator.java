@@ -80,15 +80,13 @@ public class TimelineEventCurator {
     private static final Pattern INTERNAL_SMS_INBOUND =
         Pattern.compile("^InboundMessageService#recordSmsInbound$");
 
-    // M5 thread mutation paths — class name is MessageThreadService until task 5-8 splits it
-    // into MessageThreadMutationService. Update these patterns when 5-8 ships.
-    // TODO(5-8): rename MessageThreadService → MessageThreadMutationService here after split.
+    // M5 thread mutation paths — MessageThreadMutationService (split from MessageThreadService in task 5-8)
     private static final Pattern INTERNAL_THREAD_MARK_READ =
-        Pattern.compile("^MessageThreadService#markRead$");
+        Pattern.compile("^MessageThreadMutationService#markRead$");
     private static final Pattern INTERNAL_THREAD_ASSIGN =
-        Pattern.compile("^MessageThreadService#assignUnmatched$");
+        Pattern.compile("^MessageThreadMutationService#assignUnmatched$");
     private static final Pattern INTERNAL_THREAD_DISCARD =
-        Pattern.compile("^MessageThreadService#discardUnmatched$");
+        Pattern.compile("^MessageThreadMutationService#discardUnmatched$");
 
     // HTTP rows for photo endpoints — skip; the @Audited INTERNAL row is canonical.
     private static final Pattern PHOTOS_SEGMENT_PATTERN =

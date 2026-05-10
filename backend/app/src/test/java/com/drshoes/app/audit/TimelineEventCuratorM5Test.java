@@ -23,10 +23,10 @@ import static org.mockito.Mockito.when;
  * Class-name suffix M5Test avoids merging with the existing M1–M4 test class,
  * keeping LOC per file within the 120-line cap.
  *
- * NOTE on class names: MessageThreadService has NOT been split into
- * MessageThreadMutationService (slice B / task 5-8). All path strings use
- * "MessageThreadService" — the actual class name in the codebase at time of
- * this task. Update when 5-8 ships.
+ * NOTE on class names: task 5-8 split MessageThreadService into read-side
+ * MessageThreadService and write-side MessageThreadMutationService. All thread
+ * mutation path strings now reference MessageThreadMutationService — updated
+ * atomically with the service split in the same commit.
  */
 class TimelineEventCuratorM5Test {
 
@@ -69,8 +69,7 @@ class TimelineEventCuratorM5Test {
 
     @Test
     void markRead_mapsToThreadMarkedRead() {
-        // Uses MessageThreadService (not yet split into MessageThreadMutationService — task 5-8)
-        AuditLog log = auditLog("MessageThreadService#markRead");
+        AuditLog log = auditLog("MessageThreadMutationService#markRead");
 
         Optional<TimelineEvent> result = curator.curate(log, ACTOR);
 
@@ -80,7 +79,7 @@ class TimelineEventCuratorM5Test {
 
     @Test
     void assignUnmatched_mapsToThreadAssigned() {
-        AuditLog log = auditLog("MessageThreadService#assignUnmatched");
+        AuditLog log = auditLog("MessageThreadMutationService#assignUnmatched");
 
         Optional<TimelineEvent> result = curator.curate(log, ACTOR);
 
@@ -90,7 +89,7 @@ class TimelineEventCuratorM5Test {
 
     @Test
     void discardUnmatched_mapsToThreadDiscarded() {
-        AuditLog log = auditLog("MessageThreadService#discardUnmatched");
+        AuditLog log = auditLog("MessageThreadMutationService#discardUnmatched");
 
         Optional<TimelineEvent> result = curator.curate(log, ACTOR);
 
