@@ -67,7 +67,7 @@ class InboundMessageServiceTest {
     }
 
     private SmsApiInboundPayload smsPayload(String smsId, String from) {
-        return new SmsApiInboundPayload(smsId, from, "SMS body", 1715000000L);
+        return new SmsApiInboundPayload(smsId, from, null, "SMS body", 1715000000L);
     }
 
     // --- tests ---
