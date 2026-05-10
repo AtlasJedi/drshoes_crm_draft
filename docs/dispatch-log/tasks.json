@@ -1000,9 +1000,17 @@
     {
       "id": "5-19",
       "title": "EmptyState + UnmatchedThreadPanel + assign/discard wiring",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "a784c01",
+      "dispatch_log": "docs/dispatch-log/5-19-20260510T111602Z.md",
+      "review_verdict": "APPROVED",
+      "notes": [
+        "Plan errata: ThreadDto → MessageThreadDto; UnmatchedThreadPanel signature changed to accept ThreadDetailDto (not MessageThreadDto) so the last-inbound bubble derives lastMsg from detail.messages[length-1] without any backend call.",
+        "@radix-ui/react-alert-dialog NOT installed — Discard confirmation built as @radix-ui/react-dialog with destructive button styling. Visually + semantically equivalent.",
+        "ClientCreateModal.onCreate is synchronous (client: ClientDto) => void; the assignUnmatched call lives in a sibling async handler in UnmatchedThreadPanel rather than inside onCreate, preserving the modal's internal close/reset flow.",
+        "Integration glue NOT in plan but added per Opus dispatch: SelectedThread branches on detail.thread.unmatched (renders UnmatchedThreadPanel instead of normal flow); MessagesShell replaces hardcoded \"Wybierz wątek…\" with <EmptyState variant=\"no-selection\"/> and threads onResolved → sel.setSelectedId(null).",
+        "LOC counts: EmptyState 74, AssignUnmatchedDialog 75, UnmatchedThreadPanel 171 (over cap; 2 embedded dialogs + 4 state booleans, justified vs 5-17/5-18 precedent), SelectedThread 56, MessagesShell 65."
+      ]
     },
     {
       "id": "5-20",
