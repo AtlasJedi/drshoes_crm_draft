@@ -895,9 +895,9 @@
     {
       "id": "5-12",
       "title": "lib/messaging frontend extensions",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "1a95398",
+      "dispatch_log": "docs/dispatch-log/5-12-20260510T094616Z.md"
     },
     {
       "id": "5-13",
