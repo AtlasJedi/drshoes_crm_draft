@@ -1132,9 +1132,9 @@
     {
       "id": "6-11",
       "title": "KpiTilesRow + OrdersWeekChart + MixDonut",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "738b548",
+      "dispatch_log": "docs/dispatch-log/6-11-20260510T170315Z.md"
     },
     {
       "id": "6-12",
