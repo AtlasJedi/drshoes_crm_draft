@@ -1102,9 +1102,15 @@
     {
       "id": "6-8",
       "title": "GET /api/admin/orders/kanban",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "c19940a",
+      "dispatch_log": "docs/dispatch-log/6-8-20260510T162332Z.md",
+      "review_verdict": "APPROVED",
+      "notes": [
+        "Plan used @Validated/@Min/@Max for limitPerColumn validation — ConstraintViolationException maps to 500 by default. Replaced with explicit ResponseStatusException(BAD_REQUEST) guard (same pattern as CalendarController). All 7 ITs green.",
+        "countByStatusNotDeleted reused from 6-5 (no duplication). Two new native queries added to OrderRepository.",
+        "Suite: 333 → 340 (+7)."
+      ]
     },
     {
       "id": "6-9",
