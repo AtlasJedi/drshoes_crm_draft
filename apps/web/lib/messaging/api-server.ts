@@ -5,7 +5,7 @@
  */
 import { cookies } from "next/headers";
 import { createLogger } from "@/lib/log";
-import type { TemplateDto, TriggerDto, MessageDto } from "./types";
+import type { TemplateDto, TriggerDto, MessageDto, MessageThreadDto, ThreadFilter } from "./types";
 
 const log = createLogger("messaging.api-server");
 
@@ -53,4 +53,18 @@ export async function getTriggerServer(id: string): Promise<TriggerDto> {
 export async function getOrderMessagesServer(orderId: string): Promise<MessageDto[]> {
   log.info("op=getOrderMessagesServer", { orderId });
   return serverGet<MessageDto[]>(`/api/admin/orders/${orderId}/messages`, "getOrderMessagesServer");
+}
+
+/**
+ * Server-side fetch for message threads list.
+ * Backend returns a plain array (not a Page); the panel slices to top-N.
+ */
+export async function listThreadsServer(
+  filter: ThreadFilter = "ALL",
+): Promise<MessageThreadDto[]> {
+  log.info("op=listThreadsServer", { filter });
+  return serverGet<MessageThreadDto[]>(
+    `/api/admin/threads?filter=${filter}`,
+    "listThreadsServer",
+  );
 }
