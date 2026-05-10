@@ -133,4 +133,29 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
         LIMIT 50
         """, nativeQuery = true)
     List<Order> findUnscheduled();
+
+    /**
+     * Paged orders for a Kanban column ordered by received_at DESC.
+     * Uses native LIMIT so the result is a plain List (not Page) to avoid count overhead.
+     * status param is the enum name string (e.g. "PRZYJETE").
+     */
+    @Query(value = """
+        SELECT * FROM order_
+        WHERE status = :status AND deleted_at IS NULL
+        ORDER BY received_at DESC
+        LIMIT :lim
+        """, nativeQuery = true)
+    List<Order> findTopByStatusOrderByReceivedAtDesc(@Param("status") String status,
+                                                     @Param("lim") int lim);
+
+    /**
+     * WYDANE column: paged by picked_up_at DESC NULLS LAST, capped at WYDANE_CAP (always 10 max).
+     */
+    @Query(value = """
+        SELECT * FROM order_
+        WHERE status = 'WYDANE' AND deleted_at IS NULL
+        ORDER BY picked_up_at DESC NULLS LAST
+        LIMIT :lim
+        """, nativeQuery = true)
+    List<Order> findTopWydaneOrderByPickedUpAtDesc(@Param("lim") int lim);
 }
