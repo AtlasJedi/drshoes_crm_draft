@@ -34,7 +34,7 @@
       "fixup_log": "docs/dispatch-log/0b-4-fixup-2026-05-07T231117Z.md",
       "review_blockers_resolved": [
         "phantom /api/admin/auth/csrf matcher removed",
-        "CSRF enforcement tests added (3) \u2014 admin POST without token \u2192 403, cookie repo bean wired, webhook bypass verified"
+        "CSRF enforcement tests added (3) — admin POST without token → 403, cookie repo bean wired, webhook bypass verified"
       ]
     },
     {
@@ -60,7 +60,7 @@
       "dispatch_log": "docs/dispatch-log/0b-7-2026-05-08T132000Z.md",
       "fixup_log": "docs/dispatch-log/0b-7-fixup-2026-05-08T132700Z.md",
       "review_blockers_resolved": [
-        "AnonymousAuthenticationToken bypass \u2014 explicit instanceof check added; new unit test asserts the trap is now caught"
+        "AnonymousAuthenticationToken bypass — explicit instanceof check added; new unit test asserts the trap is now caught"
       ]
     },
     {
@@ -72,7 +72,7 @@
       "dispatch_log": "docs/dispatch-log/0b-8-2026-05-08T133000Z.md",
       "fixup_log": "docs/dispatch-log/0b-8-fixup-2026-05-08T134200Z.md",
       "review_blockers_resolved": [
-        "Pointcut excluded @ExceptionHandler methods \u2014 failed login now writes exactly one audit row (was two: status=500 + status=401). Regression test added; unused imports removed."
+        "Pointcut excluded @ExceptionHandler methods — failed login now writes exactly one audit row (was two: status=500 + status=401). Regression test added; unused imports removed."
       ]
     },
     {
@@ -124,9 +124,9 @@
       "commit_sha": "9dabeef",
       "dispatch_log": "docs/dispatch-log/1-1-20260508T154000Z.md",
       "concerns_resolved_in_plan": [
-        "V001 already creates `client` table \u2014 V003 recast as comment-only marker.",
+        "V001 already creates `client` table — V003 recast as comment-only marker.",
         "Plan's Client entity spec was missing real V001 columns (preferred_channel, rodo_consent_at, citext email, nullable last_name, client_contact_present check). Entity mapped to actual schema.",
-        "Plan referenced non-existent PostgresIntegrationTestBase \u2014 actual base is AbstractIntegrationTest. Plan errata block added at top of plan file documenting V001 reality + correct base class for downstream tasks."
+        "Plan referenced non-existent PostgresIntegrationTestBase — actual base is AbstractIntegrationTest. Plan errata block added at top of plan file documenting V001 reality + correct base class for downstream tasks."
       ]
     },
     {
@@ -151,9 +151,9 @@
       "dispatch_log": "docs/dispatch-log/1-3-20260508T135000Z.md",
       "fixup_log": "docs/dispatch-log/1-3-fixup-20260508T135533Z.md",
       "deviations_from_plan": [
-        "Added spring-security-test (test scope) \u2014 wasn't on classpath before.",
+        "Added spring-security-test (test scope) — wasn't on classpath before.",
         "Used SecurityMockMvcRequestPostProcessors.user().roles() instead of plan's manually-stuffed MockHttpSession (SS6-idiomatic).",
-        "Initial commit placed ClientController at com.drshoes.app.client \u2014 outside the AuditLogAspect pointcut (.api.). Fixup relocated to com.drshoes.app.client.api and added postCreateWritesAuditRow regression test. Plan errata updated to encode the .api. controller-package convention for downstream tasks 1-7/1-10/1-11."
+        "Initial commit placed ClientController at com.drshoes.app.client — outside the AuditLogAspect pointcut (.api.). Fixup relocated to com.drshoes.app.client.api and added postCreateWritesAuditRow regression test. Plan errata updated to encode the .api. controller-package convention for downstream tasks 1-7/1-10/1-11."
       ]
     },
     {
@@ -163,9 +163,9 @@
       "commit_sha": "eea55c3",
       "dispatch_log": "docs/dispatch-log/1-4-20260508T140000Z.md",
       "deviations_from_plan": [
-        "V004 became ALTER TABLE order_ ADD COLUMN version (not no-op marker \u2014 V001 lacks the column required by @Version optimistic-locking architecture).",
+        "V004 became ALTER TABLE order_ ADD COLUMN version (not no-op marker — V001 lacks the column required by @Version optimistic-locking architecture).",
         "Added OrderSource enum (V001 declares source NOT NULL DEFAULT 'ADMIN'; Java needs a default to avoid NULL inserts).",
-        "Optimistic-locking conflict test deferred to task 1-6 (OrderService) \u2014 repo-layer reproduction needs a detached EntityManager."
+        "Optimistic-locking conflict test deferred to task 1-6 (OrderService) — repo-layer reproduction needs a detached EntityManager."
       ]
     },
     {
@@ -177,11 +177,11 @@
       "dispatch_log": "docs/dispatch-log/1-5-20260508T160000Z.md",
       "deviations_from_plan": [
         "Used JdbcTemplate (per errata) instead of plan-body's EntityManager approach.",
-        "Test is integration (not unit as plan title says) \u2014 tests the real PL/pgSQL function, not a mock.",
+        "Test is integration (not unit as plan title says) — tests the real PL/pgSQL function, not a mock.",
         "Year isolation via deleting 1999/1998 rows in @BeforeEach (avoids counter pollution from sibling tests sharing the reused container).",
         "Concurrency proven: 8 parallel CompletableFuture.runAsync calls produce 8 distinct codes."
       ],
-      "protocol_drift": "Subagent split work into two commits (service + dispatch log) \u2014 instruction was atomic. Not worth fixup; tighten prompt next time."
+      "protocol_drift": "Subagent split work into two commits (service + dispatch log) — instruction was atomic. Not worth fixup; tighten prompt next time."
     },
     {
       "id": "1-6",
@@ -193,12 +193,12 @@
       "review_log": "docs/dispatch-log/1-6-review-20260508T153000Z.md",
       "fixup_log": "docs/dispatch-log/1-6-fixup-20260508T162100Z.md",
       "review_blockers_resolved": [
-        "3 plan-mandated tests missing (list status filter, list q= search, update on soft-deleted) \u2014 added in fixup. Production code was already correct.",
-        "Optimistic-lock test proves app-layer guard, not JPA OLE backstop \u2014 accepted (the manual version compare is the intended design).",
-        "Initial status ambiguity (PRZYJETE vs WSTEPNIE_PRZYJETE) \u2014 resolved: PRZYJETE for ADMIN-source orders (Misza creating manually = already received and confirmed). WSTEPNIE_PRZYJETE reserved for future PUBLIC_INTAKE source. Plan body wins."
+        "3 plan-mandated tests missing (list status filter, list q= search, update on soft-deleted) — added in fixup. Production code was already correct.",
+        "Optimistic-lock test proves app-layer guard, not JPA OLE backstop — accepted (the manual version compare is the intended design).",
+        "Initial status ambiguity (PRZYJETE vs WSTEPNIE_PRZYJETE) — resolved: PRZYJETE for ADMIN-source orders (Misza creating manually = already received and confirmed). WSTEPNIE_PRZYJETE reserved for future PUBLIC_INTAKE source. Plan body wins."
       ],
       "deviations_from_plan": [
-        "OrderService at 165 LOC / 133 effective \u2014 13 lines over the 120 ceiling. Split into OrderService + OrderItemService + OrderSpecifications. Reviewer accepted the 'no cohesion benefit from further splitting' argument."
+        "OrderService at 165 LOC / 133 effective — 13 lines over the 120 ceiling. Split into OrderService + OrderItemService + OrderSpecifications. Reviewer accepted the 'no cohesion benefit from further splitting' argument."
       ]
     },
     {
@@ -209,10 +209,10 @@
       "dispatch_log": "docs/dispatch-log/1-7-20260508T143300Z.md",
       "deviations_from_plan": [
         "GET /orders takes single ?status= (not comma-separated List<OrderStatus>) because OrderService.list shipped in 1-6 takes single status. Plan body's multi-status filter is debt against later need; design spec doesn't strictly require it.",
-        "OrderController 142 LOC \u2014 over 120 ceiling. Accepted under the CRUD-controller exception (mirrors the JPA-entity exception). No clean split: all 9 endpoints share rbac/svc dependency, splitting would just move LOC sideways.",
-        "Test @AfterEach cleanupOrders() added \u2014 FK order_.client_id forces orders to be deleted before clients in shared Testcontainers reuse mode."
+        "OrderController 142 LOC — over 120 ceiling. Accepted under the CRUD-controller exception (mirrors the JPA-entity exception). No clean split: all 9 endpoints share rbac/svc dependency, splitting would just move LOC sideways.",
+        "Test @AfterEach cleanupOrders() added — FK order_.client_id forces orders to be deleted before clients in shared Testcontainers reuse mode."
       ],
-      "audit_coverage": "postCreateWritesAuditRow regression test asserts audit_log delta == 1 after POST. Controller located at com.drshoes.app.order.api.OrderController per .api. convention \u2014 pointcut matches."
+      "audit_coverage": "postCreateWritesAuditRow regression test asserts audit_log delta == 1 after POST. Controller located at com.drshoes.app.order.api.OrderController per .api. convention — pointcut matches."
     },
     {
       "id": "1-8",
@@ -225,14 +225,14 @@
       "review_log": "docs/dispatch-log/1-8-review-20260508T165321Z.md",
       "fixup_log": "docs/dispatch-log/1-8-fixup-20260508T165900Z.md",
       "review_blockers_resolved": [
-        "Test 'methodWithoutAuditedAnnotationLeavesParentEntityIdNull' was vacuously true (called clientService.create() directly with no HTTP context \u2014 controller pointcut bailed, zero rows written, assertion ran over empty list). Fixed: switched to AdminWebTestBase + MockMvc POST so a real audit row gets written and asserted.",
-        "Test 'spelFailureDoesNotBreakAuditRow' didn't exercise the full proxy pipeline \u2014 only tested the resolver in isolation. Fixed: @TestConfiguration adds BrokenSpelAuditedService bean with @Audited(parent='#nonExistentVariable.toString()') (chain forces SpelEvaluationException \u2014 undefined variable alone returns null in SimpleEvaluationContext); test calls through Spring proxy, asserts method returns normally, audit row written with parent_entity_id null, WARN log captured via Logback ListAppender."
+        "Test 'methodWithoutAuditedAnnotationLeavesParentEntityIdNull' was vacuously true (called clientService.create() directly with no HTTP context — controller pointcut bailed, zero rows written, assertion ran over empty list). Fixed: switched to AdminWebTestBase + MockMvc POST so a real audit row gets written and asserted.",
+        "Test 'spelFailureDoesNotBreakAuditRow' didn't exercise the full proxy pipeline — only tested the resolver in isolation. Fixed: @TestConfiguration adds BrokenSpelAuditedService bean with @Audited(parent='#nonExistentVariable.toString()') (chain forces SpelEvaluationException — undefined variable alone returns null in SimpleEvaluationContext); test calls through Spring proxy, asserts method returns normally, audit row written with parent_entity_id null, WARN log captured via Logback ListAppender."
       ],
       "key_decisions": [
-        "Two-row audit architecture: HTTP controller advice writes one row (path=/api/admin/.../, parent_entity_id=null); @Audited service advice writes a SECOND row (path=synthetic 'OrderService#addItem', method=INTERNAL, status=0, parent_entity_id=orderId). Reviewer confirmed sound \u2014 alternative thread-local enrichment was rejected as fragile.",
-        "Sandboxing: SimpleEvaluationContext.forReadOnlyDataBinding() \u2014 blocks T(...) reflection + bean refs.",
+        "Two-row audit architecture: HTTP controller advice writes one row (path=/api/admin/.../, parent_entity_id=null); @Audited service advice writes a SECOND row (path=synthetic 'OrderService#addItem', method=INTERNAL, status=0, parent_entity_id=orderId). Reviewer confirmed sound — alternative thread-local enrichment was rejected as fragile.",
+        "Sandboxing: SimpleEvaluationContext.forReadOnlyDataBinding() — blocks T(...) reflection + bean refs.",
         "Exception safety: try/catch around SpEL eval in AuditedParentResolver; WARN log; returns null; audit row still writes.",
-        "-parameters compile flag is enabled in root pom.xml (pluginManagement/maven-compiler-plugin) \u2014 required for #orderId-style param-name SpEL bindings."
+        "-parameters compile flag is enabled in root pom.xml (pluginManagement/maven-compiler-plugin) — required for #orderId-style param-name SpEL bindings."
       ]
     },
     {
@@ -243,10 +243,10 @@
       "log_backfill_sha": "455de66",
       "dispatch_log": "docs/dispatch-log/1-9-20260508T170346Z.md",
       "deviations_from_plan": [
-        "Plan body assumed AuditLog had entityType/operation/fieldsChanged/before-after JSON \u2014 none of those exist on the actual entity. Curator built as a path-pattern dispatcher keyed on (method, path, parentEntityId, status). Documented as M2 debt: body-capture would unlock ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED + field-level deltas.",
+        "Plan body assumed AuditLog had entityType/operation/fieldsChanged/before-after JSON — none of those exist on the actual entity. Curator built as a path-pattern dispatcher keyed on (method, path, parentEntityId, status). Documented as M2 debt: body-capture would unlock ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED + field-level deltas.",
         "9 enum kinds shipped; only 7 emitted: ORDER_CREATED, ORDER_UPDATED (new), STATUS_CHANGED, ORDER_SOFT_DELETED, ITEM_ADDED, ITEM_EDITED, ITEM_REMOVED. ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED reserved for M2 (in enum, never dispatched). ORDER_UPDATED is the generic PATCH event since the curator can't see field-level info.",
-        "HTTP item-op rows (POST /orders/{id}/items etc) are intentionally SKIPPED \u2014 the INTERNAL @Audited service row covers them. Prevents double-count. Test covers this.",
-        "AuditLog needed 4 missing getters (getMethod, getPath, getStatus, getActorId) \u2014 added inline. Mechanical accessor additions, not behavioral changes.",
+        "HTTP item-op rows (POST /orders/{id}/items etc) are intentionally SKIPPED — the INTERNAL @Audited service row covers them. Prevents double-count. Test covers this.",
+        "AuditLog needed 4 missing getters (getMethod, getPath, getStatus, getActorId) — added inline. Mechanical accessor additions, not behavioral changes.",
         "TimelineEventCurator 140 LOC = 90 logic + 50 Javadoc. Over 120 ceiling but documentation is load-bearing (URL-prefix brittleness debt is documented in class Javadoc)."
       ]
     },
@@ -259,9 +259,9 @@
       "dispatch_log": "docs/dispatch-log/1-10-20260508T191200Z.md",
       "deviations_from_plan": [
         "Plan body referenced AuditLog.entity_type / entity_id columns (don't exist). Repo query rewritten to scan `path LIKE :pathPrefix OR parent_entity_id = :orderId ORDER BY createdAt`. Two-parameter method signature: caller (service) constructs pathPrefix.",
-        "ORDER_CREATED event SYNTHESIZED from Order.createdAt \u2014 the POST /api/admin/orders audit row has no orderId in its path, so the LIKE scan can't find it. Actor resolved from the earliest scanned row. If order not found (unknown orderId), empty list returned. M2 debt: TimelineEvent.id is null for the synthetic event; frontend must handle.",
+        "ORDER_CREATED event SYNTHESIZED from Order.createdAt — the POST /api/admin/orders audit row has no orderId in its path, so the LIKE scan can't find it. Actor resolved from the earliest scanned row. If order not found (unknown orderId), empty list returned. M2 debt: TimelineEvent.id is null for the synthetic event; frontend must handle.",
         "AuditTimelineController placed at com.drshoes.app.audit.api.AuditTimelineController per .api. convention.",
-        "RBAC: no @PreAuthorize \u2014 SecurityConfig filter chain already enforces isAuthenticated() on /api/admin/**. Test 3 proves anonymous \u2192 401."
+        "RBAC: no @PreAuthorize — SecurityConfig filter chain already enforces isAuthenticated() on /api/admin/**. Test 3 proves anonymous → 401."
       ]
     },
     {
@@ -273,9 +273,9 @@
       "atomic_commit": true,
       "deviations_from_plan": [
         "UserStubDto placed at com.drshoes.app.auth.api.dto.UserStubDto (matches existing 0B layout) rather than com.drshoes.app.auth.dto.* as plan body suggests.",
-        "User entity uses `active` boolean (not `deletedAt`) \u2014 repo method named findAllByActiveTrueOrderByFullName.",
-        "User.getFullName() already returns a single-column persisted value \u2014 no null-safe concat needed.",
-        "Audit-coverage regression test intentionally omitted \u2014 endpoint is read-only GET, aspect only fires on writes."
+        "User entity uses `active` boolean (not `deletedAt`) — repo method named findAllByActiveTrueOrderByFullName.",
+        "User.getFullName() already returns a single-column persisted value — no null-safe concat needed.",
+        "Audit-coverage regression test intentionally omitted — endpoint is read-only GET, aspect only fires on writes."
       ]
     },
     {
@@ -286,13 +286,13 @@
       "log_backfill_sha": "feb2e37",
       "dispatch_log": "docs/dispatch-log/1-12-20260508T172441Z.md",
       "deviations_from_plan": [
-        "lib/orders/types.ts is 154 LOC \u2014 over the 120 ceiling for TS modules. Pure type declarations, accepted.",
-        "Frontend ClientDto types include preferredChannel? + rodoConsentAt? as optional. The backend ClientDto.java OMITS these fields even though they exist on the Client entity \u2014 backend debt to file separately. Frontend papered over with optional typing so wire absence doesn't break consumers.",
+        "lib/orders/types.ts is 154 LOC — over the 120 ceiling for TS modules. Pure type declarations, accepted.",
+        "Frontend ClientDto types include preferredChannel? + rodoConsentAt? as optional. The backend ClientDto.java OMITS these fields even though they exist on the Client entity — backend debt to file separately. Frontend papered over with optional typing so wire absence doesn't break consumers.",
         "Tailwind tokens (acid/magenta/blue/orange/green/admin-line/admin-mute) confirmed live in packages/ui/src/tokens.ts via preset; no stock fallbacks needed.",
         "Endpoint paths all matched plan body; orders list uses ?type= (repeatable) for item kinds."
       ],
       "follow_up_debts": [
-        "Backend ClientDto.java should expose preferredChannel + rodoConsentAt \u2014 file as separate task before M1 closes if admin UI needs to edit these fields, otherwise defer to M2 messaging milestone."
+        "Backend ClientDto.java should expose preferredChannel + rodoConsentAt — file as separate task before M1 closes if admin UI needs to edit these fields, otherwise defer to M2 messaging milestone."
       ]
     },
     {
@@ -307,8 +307,8 @@
       ],
       "deviations_from_plan": [
         "ClientPicker split per plan into ClientPicker.tsx (101 LOC) + ClientPickerResults.tsx (51 LOC). Picker over 80 LOC soft cap but under 120; modal also 96 LOC.",
-        "Keyboard nav (arrow up/down + Enter) deferred \u2014 mouse-only for M1. Documented.",
-        "onMouseDown+preventDefault used on result rows to prevent onBlur from closing dropdown before click \u2014 standard combobox technique not in plan."
+        "Keyboard nav (arrow up/down + Enter) deferred — mouse-only for M1. Documented.",
+        "onMouseDown+preventDefault used on result rows to prevent onBlur from closing dropdown before click — standard combobox technique not in plan."
       ]
     },
     {
@@ -319,11 +319,11 @@
       "dispatch_log": "docs/dispatch-log/1-14-20260508T173354Z.md",
       "atomic_commit": true,
       "deviations_from_plan": [
-        "Plan body said multi-checkbox status filter (6 statuses) \u2014 WRONG. Backend OrderController takes single ?status=. Implemented as single <select> with 'Wszystkie' empty option. M1 debt.",
+        "Plan body said multi-checkbox status filter (6 statuses) — WRONG. Backend OrderController takes single ?status=. Implemented as single <select> with 'Wszystkie' empty option. M1 debt.",
         "Cookie-forwarding pattern from lib/auth/session.ts mirrored in new lib/orders/api-server.ts (server-only module).",
-        "OrderListRow DTO is missing 'items' array \u2014 'Pozycje' column falls back to description. Backend debt.",
-        "OrderListRow DTO is missing 'assignedCraftsmanId' \u2014 'Wykonawca' column renders '\u2014'. Backend debt.",
-        "/admin/orders/new Link uses `as any` cast \u2014 typed routes won't know the path until 1-15 ships. Resolves automatically next task."
+        "OrderListRow DTO is missing 'items' array — 'Pozycje' column falls back to description. Backend debt.",
+        "OrderListRow DTO is missing 'assignedCraftsmanId' — 'Wykonawca' column renders '—'. Backend debt.",
+        "/admin/orders/new Link uses `as any` cast — typed routes won't know the path until 1-15 ships. Resolves automatically next task."
       ],
       "follow_up_debts": [
         "Backend OrderListRow.java should include `items` (or at least an items-count + kinds summary) and `assignedCraftsmanId` fields. File as separate task before M1 closure if assignee + items columns matter for UAT, otherwise defer."
@@ -337,10 +337,10 @@
       "dispatch_log": "docs/dispatch-log/1-15-20260508T175000Z.md",
       "atomic_commit": true,
       "deviations_from_plan": [
-        "Items inline-create included \u2014 CreateOrderRequest.java accepts List<CreateOrderItemRequest> items.",
+        "Items inline-create included — CreateOrderRequest.java accepts List<CreateOrderItemRequest> items.",
         "Form split into NewOrderForm.tsx (116 LOC) + NewOrderItemRow.tsx (62 LOC) to stay under granular-code ceiling.",
-        "Both `as any` casts on /admin/orders/new Link in 1-14's OrdersTable removed \u2014 typed routes now resolve naturally.",
-        "receivedAt field on CreateOrderRequest exists but not wired in the form \u2014 backend defaults to now(). M1 acceptable; could add to drawer later."
+        "Both `as any` casts on /admin/orders/new Link in 1-14's OrdersTable removed — typed routes now resolve naturally.",
+        "receivedAt field on CreateOrderRequest exists but not wired in the form — backend defaults to now(). M1 acceptable; could add to drawer later."
       ]
     },
     {
@@ -452,7 +452,7 @@
       "dispatch_log": "docs/dispatch-log/2-9-20260508T194354Z.md",
       "fixup_log": "docs/dispatch-log/2-9-fixup-20260508T195008Z.md",
       "review_blockers_resolved": [
-        "V007 added redundant order_.delivered_at \u2014 dropped via V008; OrderRepository.findAllByDeliveredDate renamed to findAllByPickedUpDate querying the correct pre-existing picked_up_at column (V001 line 157, written by OrderService on WYDANE). Order.deliveredAt JPA field + accessors removed. Test helper updated to seed picked_up_at so AFTER_HANDOVER triggers now actually fire in production."
+        "V007 added redundant order_.delivered_at — dropped via V008; OrderRepository.findAllByDeliveredDate renamed to findAllByPickedUpDate querying the correct pre-existing picked_up_at column (V001 line 157, written by OrderService on WYDANE). Order.deliveredAt JPA field + accessors removed. Test helper updated to seed picked_up_at so AFTER_HANDOVER triggers now actually fire in production."
       ]
     },
     {
@@ -562,7 +562,7 @@
       "fixup_sha": "fdaec86",
       "fixup_log": "docs/dispatch-log/3-3-fixup-20260508T231628Z.md",
       "review_blockers_resolved": [
-        "AdminPrincipalLoginTest missed the audit_log FK teardown that the other three modified tests received \u2014 added auditLogs.deleteAll() before users.deleteAll() in seed() and cleanup(), suite stays 153/0/0/1."
+        "AdminPrincipalLoginTest missed the audit_log FK teardown that the other three modified tests received — added auditLogs.deleteAll() before users.deleteAll() in seed() and cleanup(), suite stays 153/0/0/1."
       ],
       "review_followups_deferred": [
         "AuthController.me() still does a DB lookup for fullName + lastLoginAt because those fields are not on AdminPrincipal. Optional follow-up: fold them onto the principal to eliminate the lookup. Behavior is correct as-is."
@@ -591,12 +591,12 @@
       "fixup_sha": "b1a956f",
       "fixup_log": "docs/dispatch-log/3-6-fixup-20260508T234841Z.md",
       "review_blockers_resolved": [
-        "Cross-order photo ID enumeration \u2014 added orderId param + verifyOwnership() guard to relabel/delete/stream; cross-order calls throw PhotoNotFoundException (info-leak resistant). 3 new ownership-guard tests in PhotoServiceTest.",
-        "stream() pinned a JDBC connection for the full download \u2014 dropped @Transactional(readOnly=true); findById opens its own short tx, blob InputStream is held by caller without spanning the JPA session."
+        "Cross-order photo ID enumeration — added orderId param + verifyOwnership() guard to relabel/delete/stream; cross-order calls throw PhotoNotFoundException (info-leak resistant). 3 new ownership-guard tests in PhotoServiceTest.",
+        "stream() pinned a JDBC connection for the full download — dropped @Transactional(readOnly=true); findById opens its own short tx, blob InputStream is held by caller without spanning the JPA session."
       ],
       "review_followups_deferred": [
-        "MIME magic-byte verification \u2014 service trusts multipart Content-Type header (admin-only surface; low risk). Track for task 3-7 if Apache Tika or similar is added.",
-        "PhotoService is 232 LOC vs 120 cap \u2014 cohesive, no clean split point. Acknowledged in dispatch log."
+        "MIME magic-byte verification — service trusts multipart Content-Type header (admin-only surface; low risk). Track for task 3-7 if Apache Tika or similar is added.",
+        "PhotoService is 232 LOC vs 120 cap — cohesive, no clean split point. Acknowledged in dispatch log."
       ]
     },
     {
@@ -769,7 +769,7 @@
     },
     {
       "id": "4-14",
-      "title": "OrderDrawerMessages \u2014 badge + retry button + 10s polling",
+      "title": "OrderDrawerMessages — badge + retry button + 10s polling",
       "status": "completed",
       "dispatch_log": "docs/dispatch-log/4-14-20260509T195456Z.md",
       "commit_sha": "b34a9c2",
@@ -799,7 +799,7 @@
     },
     {
       "id": "5-1",
-      "title": "V012 migration \u2014 message_thread channel + raw_sender + discarded_at + message idempotency unique",
+      "title": "V012 migration — message_thread channel + raw_sender + discarded_at + message idempotency unique",
       "status": "completed",
       "commit_sha": "5ae8b17",
       "dispatch_log": "docs/dispatch-log/5-1-20260509T222908Z.md"
@@ -820,7 +820,7 @@
     },
     {
       "id": "5-3b",
-      "title": "MessageRouter LOC fixup \u2014 extract TemplateContextBuilder",
+      "title": "MessageRouter LOC fixup — extract TemplateContextBuilder",
       "status": "completed",
       "commit_sha": "5810725",
       "dispatch_log": "docs/dispatch-log/5-3b-20260510T005600Z.md",
@@ -842,13 +842,13 @@
     },
     {
       "id": "5-5b",
-      "title": "@Audited SpEL record fix \u2014 property access (no parens) + restore IT assertion",
+      "title": "@Audited SpEL record fix — property access (no parens) + restore IT assertion",
       "status": "completed",
       "parent_task": "5-5",
       "commit_sha": null,
       "dispatch_log": "docs/dispatch-log/5-5b-20260510T014000Z.md",
       "option_used": "A",
-      "key_fix": "Changed #result.threadId() and #result.orderId() to #result.threadId and #result.orderId \u2014 SimpleEvaluationContext.forReadOnlyDataBinding() supports property access (DataBindingPropertyAccessor resolves record components as bean properties in Spring 6.x) but blocks method calls."
+      "key_fix": "Changed #result.threadId() and #result.orderId() to #result.threadId and #result.orderId — SimpleEvaluationContext.forReadOnlyDataBinding() supports property access (DataBindingPropertyAccessor resolves record components as bean properties in Spring 6.x) but blocks method calls."
     },
     {
       "id": "5-6",
@@ -880,14 +880,14 @@
     },
     {
       "id": "5-10",
-      "title": "Reply send \u2014 POST /api/admin/threads/{id}/messages",
+      "title": "Reply send — POST /api/admin/threads/{id}/messages",
       "status": "done",
       "commit_sha": "d0c938b",
       "dispatch_log": "docs/dispatch-log/5-10-20260510T092121Z.md"
     },
     {
       "id": "5-11",
-      "title": "Cross-thread compose \u2014 POST /api/admin/clients/{id}/messages",
+      "title": "Cross-thread compose — POST /api/admin/clients/{id}/messages",
       "status": "done",
       "commit_sha": "53f8c18",
       "dispatch_log": "docs/dispatch-log/5-11-20260510T093424Z.md"
@@ -913,9 +913,9 @@
       "commit_sha": "8d10fea",
       "dispatch_log": "docs/dispatch-log/5-14-20260510T100150Z.md",
       "deviations_from_plan": [
-        "Plan IT used OrderType.NAPRAWA \u2014 Order entity has no orderType field; removed setOrderType call.",
-        "Plan owner() helper used SecurityMockMvcRequestPostProcessors.user(...).roles(...) which injects plain UserDetails, causing NPE on actor.email(). Replaced with authentication(UsernamePasswordAuthenticationToken.authenticated(new AdminPrincipal(...))) \u2014 same pattern as ThreadControllerIntegrationTest.",
-        "UnreadElsewhereBanner.tsx required `import type { Route } from \"next\"` and `as Route` cast on href template literal \u2014 Next.js 16 typed-routes requirement not in plan body."
+        "Plan IT used OrderType.NAPRAWA — Order entity has no orderType field; removed setOrderType call.",
+        "Plan owner() helper used SecurityMockMvcRequestPostProcessors.user(...).roles(...) which injects plain UserDetails, causing NPE on actor.email(). Replaced with authentication(UsernamePasswordAuthenticationToken.authenticated(new AdminPrincipal(...))) — same pattern as ThreadControllerIntegrationTest.",
+        "UnreadElsewhereBanner.tsx required `import type { Route } from \"next\"` and `as Route` cast on href template literal — Next.js 16 typed-routes requirement not in plan body."
       ]
     },
     {
@@ -928,22 +928,22 @@
       "review_mode": "two-stage",
       "review_verdict": "APPROVED-WITH-FOLLOWUP",
       "review_followups_resolved": [
-        "ThreadListRow aria-current \u2014 added in de8b585",
-        "ThreadList search input aria-label \u2014 added in de8b585",
-        "FilterChip + MessagesHeader buttons type='button' \u2014 added in de8b585",
-        "MessagesShell redundant `as Channel | null` cast removed \u2014 de8b585",
-        "MessagesShell render-time log.debug removed \u2014 de8b585"
+        "ThreadListRow aria-current — added in de8b585",
+        "ThreadList search input aria-label — added in de8b585",
+        "FilterChip + MessagesHeader buttons type='button' — added in de8b585",
+        "MessagesShell redundant `as Channel | null` cast removed — de8b585",
+        "MessagesShell render-time log.debug removed — de8b585"
       ],
       "deviations_from_plan": [
-        "ThreadDto \u2192 MessageThreadDto (plan literal mismatch; real export name).",
-        "channel: string|null \u2192 Channel|null in useThreadSelection (matches listThreads signature).",
-        "Bonus 8th file ThreadListSkeleton.tsx extracted from ThreadList.tsx to honor < 80 LOC cap (ThreadList \u2192 76 LOC).",
-        "MessagesShell scaffolds future-task slots (5-16..5-20) with Polish placeholders + // TODO markers \u2014 intentional staging."
+        "ThreadDto → MessageThreadDto (plan literal mismatch; real export name).",
+        "channel: string|null → Channel|null in useThreadSelection (matches listThreads signature).",
+        "Bonus 8th file ThreadListSkeleton.tsx extracted from ThreadList.tsx to honor < 80 LOC cap (ThreadList → 76 LOC).",
+        "MessagesShell scaffolds future-task slots (5-16..5-20) with Polish placeholders + // TODO markers — intentional staging."
       ],
       "carry_forward_followups": [
-        "ThreadListSkeleton width arrays cosmetic \u2014 defer.",
-        "UNMATCHED empty-state copy collapsed with ALL \u2014 defer.",
-        "Cross-filter chip counts: 'Wszystkie' shows current-filter result count, not true global \u2014 architectural, needs server total field if we care.",
+        "ThreadListSkeleton width arrays cosmetic — defer.",
+        "UNMATCHED empty-state copy collapsed with ALL — defer.",
+        "Cross-filter chip counts: 'Wszystkie' shows current-filter result count, not true global — architectural, needs server total field if we care.",
         "Search debounce: plan acceptance says debounces, plan code sample doesn't. Owner decision deferred. 2-char min cutoff in api.ts mitigates."
       ]
     },
@@ -955,10 +955,10 @@
       "dispatch_log": "docs/dispatch-log/5-16-20260510T103110Z.md",
       "fixup_sha": "d52b74e",
       "deviations_from_plan": [
-        "ThreadDto \u2192 MessageThreadDto + ThreadDetailDto unpacking (plan literal mismatch).",
+        "ThreadDto → MessageThreadDto + ThreadDetailDto unpacking (plan literal mismatch).",
         "ReplyComposer.tsx stub created at the 5-17 path because SelectedThread imports it; 5-17 will overwrite.",
         "type='button' added to IconBtn + MessageBubble retry button per project convention.",
-        "SelectedThread originally landed at 86 LOC (6 over 80 cap). Extracted polling concern to useThreadPoller.ts in fixup d52b74e \u2014 SelectedThread now 48 LOC, useThreadPoller 59 LOC."
+        "SelectedThread originally landed at 86 LOC (6 over 80 cap). Extracted polling concern to useThreadPoller.ts in fixup d52b74e — SelectedThread now 48 LOC, useThreadPoller 59 LOC."
       ]
     },
     {
@@ -979,7 +979,7 @@
       "notes": [
         "Plan referenced ThreadDto / clientEmail / clientPhone fields that did not exist. Backend precondition slice (commit e7e6885, log 5-17a) added the fields to MessageThreadDto record + TS interface so 5-18 + 5-20 inherit the same wiring.",
         "Plan called for @radix-ui/react-dropdown-menu, which is not installed. TemplatePicker rolled hand-built dropdown (zero new deps) per simplest-but-working directive.",
-        "ReplyComposer accepted at 142 LOC \u2014 ~35 LOC logic, ~107 LOC JSX/SVG. Hook extraction satisfied the cap's intent."
+        "ReplyComposer accepted at 142 LOC — ~35 LOC logic, ~107 LOC JSX/SVG. Hook extraction satisfied the cap's intent."
       ]
     },
     {
@@ -990,10 +990,10 @@
       "dispatch_log": "docs/dispatch-log/5-18-20260510T110926Z.md",
       "review_verdict": "APPROVED",
       "notes": [
-        "Plan errata: ThreadDto \u2192 MessageThreadDto; recentOrderId/Code/Status/totalOrders fields not on DTO so the active-order card always renders the placeholder branch (\u2014 per plan footnote line 7028) and the totals grid renders \u2014 for both cells.",
+        "Plan errata: ThreadDto → MessageThreadDto; recentOrderId/Code/Status/totalOrders fields not on DTO so the active-order card always renders the placeholder branch (— per plan footnote line 7028) and the totals grid renders — for both cells.",
         "WHATSAPP chip color promoted to 3-way switch: EMAIL=blue, SMS=violet, WHATSAPP=emerald.",
         "MessagesShell wiring: setLoadedThread setter passed directly as the SelectedThread onLoaded prop (signature matches); right rail guarded at parent by selectedId && loadedThread && loadedThread.clientId so unmatched threads don't render the panel at all.",
-        "ThreadClientPanel landed at 129 LOC (over 80 cap) \u2014 JSX-density across 4 sections; within the 142 LOC precedent set by 5-17 ReplyComposer. MessagesShell at 67 LOC.",
+        "ThreadClientPanel landed at 129 LOC (over 80 cap) — JSX-density across 4 sections; within the 142 LOC precedent set by 5-17 ReplyComposer. MessagesShell at 67 LOC.",
         "TS strict-mode self-fix: string[0] indexing replaced with charAt(0) in initials computation (avoids string|undefined in noUncheckedIndexedAccess)."
       ]
     },
@@ -1005,10 +1005,10 @@
       "dispatch_log": "docs/dispatch-log/5-19-20260510T111602Z.md",
       "review_verdict": "APPROVED",
       "notes": [
-        "Plan errata: ThreadDto \u2192 MessageThreadDto; UnmatchedThreadPanel signature changed to accept ThreadDetailDto (not MessageThreadDto) so the last-inbound bubble derives lastMsg from detail.messages[length-1] without any backend call.",
-        "@radix-ui/react-alert-dialog NOT installed \u2014 Discard confirmation built as @radix-ui/react-dialog with destructive button styling. Visually + semantically equivalent.",
+        "Plan errata: ThreadDto → MessageThreadDto; UnmatchedThreadPanel signature changed to accept ThreadDetailDto (not MessageThreadDto) so the last-inbound bubble derives lastMsg from detail.messages[length-1] without any backend call.",
+        "@radix-ui/react-alert-dialog NOT installed — Discard confirmation built as @radix-ui/react-dialog with destructive button styling. Visually + semantically equivalent.",
         "ClientCreateModal.onCreate is synchronous (client: ClientDto) => void; the assignUnmatched call lives in a sibling async handler in UnmatchedThreadPanel rather than inside onCreate, preserving the modal's internal close/reset flow.",
-        "Integration glue NOT in plan but added per Opus dispatch: SelectedThread branches on detail.thread.unmatched (renders UnmatchedThreadPanel instead of normal flow); MessagesShell replaces hardcoded \"Wybierz w\u0105tek\u2026\" with <EmptyState variant=\"no-selection\"/> and threads onResolved \u2192 sel.setSelectedId(null).",
+        "Integration glue NOT in plan but added per Opus dispatch: SelectedThread branches on detail.thread.unmatched (renders UnmatchedThreadPanel instead of normal flow); MessagesShell replaces hardcoded \"Wybierz wątek…\" with <EmptyState variant=\"no-selection\"/> and threads onResolved → sel.setSelectedId(null).",
         "LOC counts: EmptyState 74, AssignUnmatchedDialog 75, UnmatchedThreadPanel 171 (over cap; 2 embedded dialogs + 4 state booleans, justified vs 5-17/5-18 precedent), SelectedThread 56, MessagesShell 65."
       ]
     },
@@ -1030,16 +1030,16 @@
     },
     {
       "id": "5-21",
-      "title": "Closure \u2014 mvn verify + frontend gates + milestone-5 tag + CLAUDE.md flip",
+      "title": "Closure — mvn verify + frontend gates + milestone-5 tag + CLAUDE.md flip",
       "status": "completed",
       "commit_sha": "061f99a",
       "dispatch_log": "docs/dispatch-log/5-21-20260510T113542Z.md",
       "review_verdict": "APPROVED",
       "notes": [
         "Suite: 302 total / 0 failures / 1 error (pre-existing flake) / 0 skipped. M4 close was 201; M5 added 101 cases.",
-        "Flake: MessagesControllerIntegrationTest.emptyThreadReturnsEmptyList \u2014 AdminWebTestBase.seedUsers() clients.deleteAll() hits FK from prior test class's uncleaned order. Pre-existing since task 5-16. Fix in M6: add orderRepository.deleteAll() to AdminWebTestBase.seedUsers() before clients.deleteAll().",
+        "Flake: MessagesControllerIntegrationTest.emptyThreadReturnsEmptyList — AdminWebTestBase.seedUsers() clients.deleteAll() hits FK from prior test class's uncleaned order. Pre-existing since task 5-16. Fix in M6: add orderRepository.deleteAll() to AdminWebTestBase.seedUsers() before clients.deleteAll().",
         "Frontend: typecheck 0 errors, lint 0 errors (eslint direct, not next lint), build SUCCESSFUL.",
-        "milestone-5 tag created locally. Not pushed to remote (consistent with M0b\u2013M4 precedent).",
+        "milestone-5 tag created locally. Not pushed to remote (consistent with M0b–M4 precedent).",
         "CLAUDE.md status row flipped to [x] Milestone 5: Inbound parsing + reply UI + cross-client inbox."
       ]
     },
@@ -1053,9 +1053,9 @@
     {
       "id": "6-2",
       "title": "MessageRouter split + sendRetry/send dedup",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "bc9d54c",
+      "dispatch_log": "docs/dispatch-log/6-2-20260510T174000Z.md"
     },
     {
       "id": "6-3",
@@ -1208,8 +1208,8 @@
   "notes": [
     "Tasks 0b-1 and 0b-2 shipped before the dispatch-log directive, so dispatch_log is null. Future tasks must include a dispatch_log path.",
     "Per locked dispatch protocol: plans on disk only; thin prompts; combined reviews for mechanical tasks; structured logging baked in from 0b-3 onward.",
-    "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml \u2014 contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
+    "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml — contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
     "PII flag (from 0b-5 inline review): LoginThrottle logs raw client IP at INFO on throttle events. Polish RODO/GDPR treats IP as personal data. Acceptable for now (security event); revisit during AuditLogAspect (0b-8) to apply a unified PII-redaction or hashing policy across security-event logs.",
-    "M6 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md (10,462 lines, 23 tasks). Two TWO-STAGE reviews planned (6-9 bulk-status, 6-19 kanban drag flow + dialog extraction); rest combined single-stage. Inline backend slice 6-21a will fire (W5 author confirmed OrderController.list() lacks tag/date-range/multi-status params) \u2014 not a separate task ID. W4 may also fire an inline KanbanCardDto version-field slice (decision pinned at 6-20 dispatch). Resume next session by dispatching 6-1 cold per dispatch protocol."
+    "M6 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md (10,462 lines, 23 tasks). Two TWO-STAGE reviews planned (6-9 bulk-status, 6-19 kanban drag flow + dialog extraction); rest combined single-stage. Inline backend slice 6-21a will fire (W5 author confirmed OrderController.list() lacks tag/date-range/multi-status params) — not a separate task ID. W4 may also fire an inline KanbanCardDto version-field slice (decision pinned at 6-20 dispatch). Resume next session by dispatching 6-1 cold per dispatch protocol."
   ]
 }
