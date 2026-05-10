@@ -874,9 +874,9 @@
     {
       "id": "5-9",
       "title": "ThreadController + integration test (TWO-STAGE REVIEW)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "994f0c1",
+      "dispatch_log": "docs/dispatch-log/5-9-2026-05-10T01:23:25Z.md"
     },
     {
       "id": "5-10",
