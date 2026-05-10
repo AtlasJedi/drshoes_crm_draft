@@ -1272,9 +1272,9 @@
     {
       "id": "7-5",
       "title": "Extend lib/clients — types, api, api-server (listClients, getClient, getClientSummary, updateClient)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "0c7d453",
+      "dispatch_log": "docs/dispatch-log/7-5-20260510T215452Z.md"
     },
     {
       "id": "7-6",
