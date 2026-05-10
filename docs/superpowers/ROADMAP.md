@@ -24,12 +24,13 @@ polish + Dashboard with live data become the next active milestone(s).
 | **M2** | Messaging — outbound providers (logging gateway), templates, manual send, triggers | `milestone-2` |
 | **M3** | Photos — upload (R2/MinIO), order_photo, actor resolution | `milestone-3` |
 | **M4** | Real providers — Postmark + SmsApi + webhooks + delivery reconciliation + retry | `milestone-4` |
+| **M5** | Inbound replies — message_thread, parsing, reply UI, unread badge, /admin/messages page | `milestone-5` |
 
 ## In flight
 
-| Milestone | Scope | Status |
-|---|---|---|
-| **M5** | Inbound replies — message_thread, parsing, reply UI, unread badge, /admin/messages page | **18/23 done** (5-17..5-21 remain) |
+| Milestone | Scope | Status | Plan |
+|---|---|---|---|
+| **M6** | Order processing polish + Dashboard — Calendar + Kanban + bulk + presets + W0 hygiene | **0/23** (planning complete; W0 ready to dispatch) | `docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md` |
 
 ## Next — locked priority
 
