@@ -32,6 +32,8 @@ public class ClientService {
 
     private static final Logger log = LoggerFactory.getLogger(ClientService.class);
     private static final int SEARCH_MAX = 20;
+    private static final java.util.Set<String> VALID_CHANNELS =
+        java.util.Set.of("EMAIL", "SMS", "WHATSAPP");
 
     private final ClientRepository repo;
 
@@ -89,7 +91,18 @@ public class ClientService {
         if (req.phone() != null) c.setPhone(req.phone());
         if (req.email() != null) c.setEmail(req.email());
         if (req.notes() != null) c.setNotes(req.notes());
-        log.info("op=updateClient clientId={} outcome=ok", id);
+        if (req.preferredChannel() != null) {
+            if (!VALID_CHANNELS.contains(req.preferredChannel())) {
+                throw new IllegalArgumentException(
+                    "Invalid preferredChannel: " + req.preferredChannel()
+                    + ". Must be one of " + VALID_CHANNELS);
+            }
+            c.setPreferredChannel(req.preferredChannel());
+        }
+        boolean rodoChanged = req.rodoConsent() != null;
+        if (Boolean.TRUE.equals(req.rodoConsent()))  c.setRodoConsentAt(Instant.now());
+        if (Boolean.FALSE.equals(req.rodoConsent())) c.setRodoConsentAt(null);
+        log.info("op=updateClient clientId={} rodoChanged={} outcome=ok", id, rodoChanged);
         return ClientDto.of(repo.save(c));
     }
 

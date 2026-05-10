@@ -68,7 +68,86 @@ class ClientServiceTest {
         verify(repo, never()).save(any());
     }
 
+    @Test
+    void updateSetsPreferredChannel() {
+        Client c = clientWithPhone();
+        c.setId(UUID.randomUUID());
+        when(repo.findById(c.getId())).thenReturn(Optional.of(c));
+        when(repo.save(any(Client.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        var dto = svc.update(c.getId(),
+            new UpdateClientRequest(null, null, null, null, "SMS", null, null));
+
+        assertThat(dto.preferredChannel()).isEqualTo("SMS");
+        assertThat(c.getPreferredChannel()).isEqualTo("SMS");
+    }
+
+    @Test
+    void updateRejectsInvalidChannel() {
+        Client c = clientWithPhone();
+        c.setId(UUID.randomUUID());
+        when(repo.findById(c.getId())).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> svc.update(c.getId(),
+                new UpdateClientRequest(null, null, null, null, "CARRIER_PIGEON", null, null)))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Invalid preferredChannel");
+        verify(repo, never()).save(any());
+    }
+
+    @Test
+    void updateGrantsRodoConsent() {
+        Client c = clientWithPhone();
+        c.setId(UUID.randomUUID());
+        c.setRodoConsentAt(null);
+        when(repo.findById(c.getId())).thenReturn(Optional.of(c));
+        when(repo.save(any(Client.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        var dto = svc.update(c.getId(),
+            new UpdateClientRequest(null, null, null, null, null, true, null));
+
+        assertThat(dto.rodoConsentAt()).isNotNull();
+        assertThat(c.getRodoConsentAt()).isNotNull();
+    }
+
+    @Test
+    void updateRevokesRodoConsent() {
+        Client c = clientWithPhone();
+        c.setId(UUID.randomUUID());
+        c.setRodoConsentAt(Instant.now());
+        when(repo.findById(c.getId())).thenReturn(Optional.of(c));
+        when(repo.save(any(Client.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        var dto = svc.update(c.getId(),
+            new UpdateClientRequest(null, null, null, null, null, false, null));
+
+        assertThat(dto.rodoConsentAt()).isNull();
+        assertThat(c.getRodoConsentAt()).isNull();
+    }
+
+    @Test
+    void updateLeaveRodoAloneWhenNull() {
+        Instant original = Instant.parse("2025-01-01T00:00:00Z");
+        Client c = clientWithPhone();
+        c.setId(UUID.randomUUID());
+        c.setRodoConsentAt(original);
+        when(repo.findById(c.getId())).thenReturn(Optional.of(c));
+        when(repo.save(any(Client.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        svc.update(c.getId(),
+            new UpdateClientRequest(null, null, null, null, null, null, null));
+
+        assertThat(c.getRodoConsentAt()).isEqualTo(original);
+    }
+
     private Client client(String f, String l) {
         Client c = new Client(); c.setFirstName(f); c.setLastName(l); return c;
+    }
+
+    private Client clientWithPhone() {
+        Client c = new Client();
+        c.setFirstName("Jan");
+        c.setPhone("+48600000001");
+        return c;
     }
 }
