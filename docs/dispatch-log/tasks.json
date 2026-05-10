@@ -921,9 +921,31 @@
     {
       "id": "5-15",
       "title": "Page shell + ThreadList + filter chips + search input (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "5da7c48",
+      "dispatch_log": "docs/dispatch-log/5-15-20260510T101835Z.md",
+      "fixup_sha": "de8b585",
+      "review_mode": "two-stage",
+      "review_verdict": "APPROVED-WITH-FOLLOWUP",
+      "review_followups_resolved": [
+        "ThreadListRow aria-current \u2014 added in de8b585",
+        "ThreadList search input aria-label \u2014 added in de8b585",
+        "FilterChip + MessagesHeader buttons type='button' \u2014 added in de8b585",
+        "MessagesShell redundant `as Channel | null` cast removed \u2014 de8b585",
+        "MessagesShell render-time log.debug removed \u2014 de8b585"
+      ],
+      "deviations_from_plan": [
+        "ThreadDto \u2192 MessageThreadDto (plan literal mismatch; real export name).",
+        "channel: string|null \u2192 Channel|null in useThreadSelection (matches listThreads signature).",
+        "Bonus 8th file ThreadListSkeleton.tsx extracted from ThreadList.tsx to honor < 80 LOC cap (ThreadList \u2192 76 LOC).",
+        "MessagesShell scaffolds future-task slots (5-16..5-20) with Polish placeholders + // TODO markers \u2014 intentional staging."
+      ],
+      "carry_forward_followups": [
+        "ThreadListSkeleton width arrays cosmetic \u2014 defer.",
+        "UNMATCHED empty-state copy collapsed with ALL \u2014 defer.",
+        "Cross-filter chip counts: 'Wszystkie' shows current-filter result count, not true global \u2014 architectural, needs server total field if we care.",
+        "Search debounce: plan acceptance says debounces, plan code sample doesn't. Owner decision deferred. 2-char min cutoff in api.ts mitigates."
+      ]
     },
     {
       "id": "5-16",
