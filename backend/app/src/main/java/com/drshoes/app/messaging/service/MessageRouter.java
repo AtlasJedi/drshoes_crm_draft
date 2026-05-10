@@ -1,6 +1,7 @@
 package com.drshoes.app.messaging.service;
 
 import com.drshoes.app.audit.Audited;
+import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
 import com.drshoes.app.messaging.domain.DeliveryStatus;
@@ -127,6 +128,52 @@ public class MessageRouter {
 
         log.info("op=message.sendRetry outcome={} orderId={} newMessageId={} channel={}",
                 persisted.getDeliveryStatus(), orig.getOrderId(), persisted.getId(), orig.getChannel());
+
+        return persisted.getId();
+    }
+
+    /**
+     * Reply send entry point — operator sends a freeform message on an existing thread.
+     * Unlike sendManual, no template is required; body and subject are provided directly.
+     * The controller pre-validates the thread (exists, matched, not discarded, channel match)
+     * and passes the resolved clientId and threadId here.
+     *
+     * @param threadId  the validated existing thread to post the message on
+     * @param clientId  the client owning the thread (pre-validated non-null by controller)
+     * @param channel   EMAIL or SMS (pre-validated to match thread by controller)
+     * @param subject   email subject (null for SMS)
+     * @param body      message body
+     * @param orderId   optional order context (may be null)
+     * @param actor     the authenticated admin performing the send
+     * @return id of the persisted message row
+     */
+    @Transactional
+    public UUID sendReply(UUID threadId, UUID clientId, String channel, String subject,
+                          String body, UUID orderId, AdminPrincipal actor) {
+        Channel ch = Channel.valueOf(channel);
+        String recipient = switch (ch) {
+            case EMAIL -> clients.findById(clientId).map(Client::getEmail).orElse(null);
+            case SMS   -> clients.findById(clientId).map(Client::getPhone).orElse(null);
+            default    -> throw new IllegalArgumentException("Unsupported channel: " + channel);
+        };
+
+        var msg = MessageEntity.newMessage();
+        msg.setThreadId(threadId);
+        msg.setOrderId(orderId);
+        msg.setClientId(clientId);
+        msg.setDirection(MessageDirection.OUTBOUND.name());
+        msg.setChannel(channel);
+        msg.setSubject(subject);
+        msg.setBody(body);
+        msg.setDeliveryStatus(DeliveryStatus.QUEUED.name());
+        msg.setSentBy(actor == null ? null : actor.userId());
+        var saved = messages.saveAndFlush(msg);
+
+        MessageEntity persisted = dispatcher.dispatch(saved, recipient, subject, body);
+
+        log.info("op=message.sendReply outcome={} threadId={} messageId={} channel={} actor={}",
+                persisted.getDeliveryStatus(), threadId, persisted.getId(), channel,
+                actor == null ? "system" : actor.email());
 
         return persisted.getId();
     }
