@@ -158,4 +158,23 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
         LIMIT :lim
         """, nativeQuery = true)
     List<Order> findTopWydaneOrderByPickedUpAtDesc(@Param("lim") int lim);
+
+    /** Count non-deleted orders for a specific client (any status). */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.clientId = :clientId AND o.deletedAt IS NULL")
+    long countByClientIdAndDeletedAtIsNull(@Param("clientId") UUID clientId);
+
+    /**
+     * Count non-deleted orders for a specific client whose status is in the given list.
+     * Used by ClientSummaryService to count "closed" orders (WYDANE | ANULOWANE).
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.clientId = :clientId AND o.deletedAt IS NULL AND o.status IN :statuses")
+    long countByClientIdAndStatusInAndDeletedAtIsNull(@Param("clientId") UUID clientId,
+                                                      @Param("statuses") List<OrderStatus> statuses);
+
+    /**
+     * Returns the received_at of the most recent non-deleted order for a client.
+     * Returns empty Optional when the client has no orders.
+     */
+    @Query("SELECT o.receivedAt FROM Order o WHERE o.clientId = :clientId AND o.deletedAt IS NULL ORDER BY o.receivedAt DESC LIMIT 1")
+    Optional<Instant> findLastOrderCreatedAtByClientId(@Param("clientId") UUID clientId);
 }
