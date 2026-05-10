@@ -1209,9 +1209,9 @@
     {
       "id": "6-20",
       "title": "Kanban page wiring + states",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "36cf69c",
+      "dispatch_log": "docs/dispatch-log/6-20-20260510T184545Z.md"
     },
     {
       "id": "6-21",
