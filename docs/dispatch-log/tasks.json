@@ -1241,9 +1241,9 @@
     {
       "id": "7-1",
       "title": "Extend UpdateClientRequest + ClientService.update for preferredChannel + rodoConsent",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e9b64ee",
+      "dispatch_log": "docs/dispatch-log/7-1-20260510T212516Z.md"
     },
     {
       "id": "7-2",
