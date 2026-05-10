@@ -888,9 +888,9 @@
     {
       "id": "5-11",
       "title": "Cross-thread compose — POST /api/admin/clients/{id}/messages",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "53f8c18",
+      "dispatch_log": "docs/dispatch-log/5-11-20260510T093424Z.md"
     },
     {
       "id": "5-12",
