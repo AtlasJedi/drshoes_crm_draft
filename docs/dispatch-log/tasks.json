@@ -1234,9 +1234,9 @@
     {
       "id": "6-23",
       "title": "RowQuickActionsMenu (three-dot dropdown)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "7b87dec",
+      "dispatch_log": "docs/dispatch-log/6-23-20260510T191323Z.md"
     }
   ],
   "notes": [
