@@ -964,9 +964,23 @@
     {
       "id": "5-17",
       "title": "ReplyComposer + TemplatePicker (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "a714bfd",
+      "fixup_sha": "3dcd2ff",
+      "precondition_sha": "e7e6885",
+      "dispatch_log": "docs/dispatch-log/5-17-20260510T110000Z.md",
+      "review_log": "docs/dispatch-log/5-17-review-20260510T110325Z.md",
+      "precondition_log": "docs/dispatch-log/5-17a-20260510T105523Z.md",
+      "review_verdict": "APPROVED-WITH-FOLLOWUP",
+      "review_blockers_resolved": [
+        "Hand-built TemplatePicker missing Esc dismiss + focus-return + ARIA roles (a11y). Fixed in 3dcd2ff.",
+        "WHATSAPP edge: useReplyComposerState now defaults non-EMAIL/SMS channels to EMAIL on init."
+      ],
+      "notes": [
+        "Plan referenced ThreadDto / clientEmail / clientPhone fields that did not exist. Backend precondition slice (commit e7e6885, log 5-17a) added the fields to MessageThreadDto record + TS interface so 5-18 + 5-20 inherit the same wiring.",
+        "Plan called for @radix-ui/react-dropdown-menu, which is not installed. TemplatePicker rolled hand-built dropdown (zero new deps) per simplest-but-working directive.",
+        "ReplyComposer accepted at 142 LOC — ~35 LOC logic, ~107 LOC JSX/SVG. Hook extraction satisfied the cap's intent."
+      ]
     },
     {
       "id": "5-18",
