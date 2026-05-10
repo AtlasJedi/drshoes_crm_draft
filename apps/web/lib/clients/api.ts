@@ -3,12 +3,13 @@ import { createLogger } from "@/lib/log";
 import type {
   ClientDto,
   ClientSearchResult,
+  ClientSummary,
   CreateClientRequest,
   UpdateClientRequest,
   Page,
 } from "./types";
 
-const log = createLogger("clients-api");
+const log = createLogger("apps/web/lib/clients");
 
 /** GET /admin/clients/search?q=<query> — typeahead, returns top-N results. */
 export async function searchClients(q: string): Promise<ClientSearchResult[]> {
@@ -17,7 +18,9 @@ export async function searchClients(q: string): Promise<ClientSearchResult[]> {
 }
 
 /** GET /admin/clients?page=&size= — paginated client list. */
-export async function listClients(page = 0, size = 20): Promise<Page<ClientDto>> {
+export async function listClients(opts: { page?: number; size?: number }): Promise<Page<ClientDto>> {
+  const page = opts.page ?? 0;
+  const size = opts.size ?? 20;
   log.info("op=listClients", { page, size });
   return api.get<Page<ClientDto>>(`/admin/clients?page=${page}&size=${size}`);
 }
@@ -26,6 +29,12 @@ export async function listClients(page = 0, size = 20): Promise<Page<ClientDto>>
 export async function getClient(id: string): Promise<ClientDto> {
   log.info("op=getClient", { id });
   return api.get<ClientDto>(`/admin/clients/${id}`);
+}
+
+/** GET /admin/clients/{id}/summary — aggregate header tiles. */
+export async function getClientSummary(id: string): Promise<ClientSummary> {
+  log.info("op=getClientSummary", { id });
+  return api.get<ClientSummary>(`/admin/clients/${id}/summary`);
 }
 
 /** POST /admin/clients — create a new client, returns full ClientDto. */
