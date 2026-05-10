@@ -19,10 +19,19 @@ const log = createLogger("orders-api");
 /** Build query string from OrderListFilters + pagination. */
 function buildOrdersQuery(filters: OrderListFilters, page: number, size: number): string {
   const params = new URLSearchParams();
-  if (filters.status) params.set("status", filters.status);
+  if (filters.status) {
+    if (Array.isArray(filters.status)) {
+      filters.status.forEach((s) => params.append("status", s));
+    } else {
+      params.set("status", filters.status);
+    }
+  }
   if (filters.craftsmanId) params.set("craftsmanId", filters.craftsmanId);
   if (filters.q) params.set("q", filters.q);
   if (filters.type?.length) filters.type.forEach((k) => params.append("type", k));
+  if (filters.tag) params.set("tag", filters.tag);
+  if (filters.plannedPickupAtFrom) params.set("plannedPickupAtFrom", filters.plannedPickupAtFrom);
+  if (filters.plannedPickupAtTo) params.set("plannedPickupAtTo", filters.plannedPickupAtTo);
   params.set("page", String(page));
   params.set("size", String(size));
   return params.toString();

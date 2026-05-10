@@ -12,10 +12,19 @@ const log = createLogger("orders-api-server");
 
 function buildQuery(filters: OrderListFilters, page: number, size: number): string {
   const p = new URLSearchParams();
-  if (filters.status) p.set("status", filters.status);
+  if (filters.status) {
+    if (Array.isArray(filters.status)) {
+      filters.status.forEach((s) => p.append("status", s));
+    } else {
+      p.set("status", filters.status);
+    }
+  }
   if (filters.craftsmanId) p.set("craftsmanId", filters.craftsmanId);
   if (filters.q) p.set("q", filters.q);
   if (filters.type?.length) filters.type.forEach((k) => p.append("type", k));
+  if (filters.tag) p.set("tag", filters.tag);
+  if (filters.plannedPickupAtFrom) p.set("plannedPickupAtFrom", filters.plannedPickupAtFrom);
+  if (filters.plannedPickupAtTo) p.set("plannedPickupAtTo", filters.plannedPickupAtTo);
   p.set("page", String(page));
   p.set("size", String(size));
   return p.toString();

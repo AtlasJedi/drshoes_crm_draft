@@ -144,12 +144,20 @@ export interface UpdateOrderItemRequest {
 
 /**
  * Query params for GET /admin/orders.
- * Maps to @RequestParam in OrderController: status, type (kinds), craftsmanId, q, + Pageable.
+ * Maps to @RequestParam in OrderController: status (multi), type (kinds), craftsmanId, q,
+ * tag (JSONB containment), plannedPickupAtFrom/To (LocalDate), + Pageable.
  */
 export interface OrderListFilters {
-  status?: OrderStatus;
+  /** Single status or array — backend accepts multi-value status= params. */
+  status?: OrderStatus | OrderStatus[];
   /** Filters by item kind — maps to ?type= repeated param. */
   type?: OrderItemKind[];
   craftsmanId?: string;
   q?: string;
+  /** Matches orders whose tags JSONB array contains this value. */
+  tag?: string;
+  /** Lower bound for planned_pickup_at (inclusive), format YYYY-MM-DD. */
+  plannedPickupAtFrom?: string;
+  /** Upper bound for planned_pickup_at (exclusive next day), format YYYY-MM-DD. */
+  plannedPickupAtTo?: string;
 }

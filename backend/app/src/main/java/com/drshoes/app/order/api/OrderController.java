@@ -9,12 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,14 +69,23 @@ public class OrderController {
 
     @GetMapping
     public Page<OrderListRow> list(
-            @RequestParam(required = false) OrderStatus status,
+            @RequestParam(required = false) List<OrderStatus> status,
             @RequestParam(required = false, name = "type") List<OrderItemKind> kinds,
             @RequestParam(required = false) UUID craftsmanId,
             @RequestParam(required = false) String q,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtTo,
             Pageable pageable,
             Authentication auth) {
-        log.info("op=listOrders actor={} outcome=ok", actor(auth));
-        return svc.list(status, craftsmanId, kinds, q, pageable);
+        Instant from = plannedPickupAtFrom != null
+            ? plannedPickupAtFrom.atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
+        // to is exclusive: advance by one day so the entire target date is included
+        Instant to = plannedPickupAtTo != null
+            ? plannedPickupAtTo.plusDays(1).atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
+        log.info("op=listOrders actor={} tag={} from={} to={} outcome=ok",
+            actor(auth), tag, from, to);
+        return svc.list(status, craftsmanId, kinds, q, tag, from, to, pageable);
     }
 
     @GetMapping("/{id}")

@@ -56,10 +56,14 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderListRow> list(OrderStatus status, UUID assigneeId,
-                                   List<OrderItemKind> kinds, String q, Pageable pageable) {
-        return orderRepo.findAll(OrderSpecifications.forList(status, assigneeId, kinds, q), pageable)
-            .map(OrderListRow::of);
+    public Page<OrderListRow> list(List<OrderStatus> statuses, UUID assigneeId,
+                                   List<OrderItemKind> kinds, String q,
+                                   String tag, Instant plannedPickupAtFrom,
+                                   Instant plannedPickupAtTo, Pageable pageable) {
+        return orderRepo.findAll(
+            OrderSpecifications.forList(statuses, assigneeId, kinds, q, tag,
+                                        plannedPickupAtFrom, plannedPickupAtTo),
+            pageable).map(OrderListRow::of);
     }
 
     // ---- commands ----

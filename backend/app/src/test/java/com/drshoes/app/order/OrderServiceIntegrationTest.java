@@ -244,7 +244,7 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         OrderDto toDelete = svc.create(req("hidden"));
         svc.softDelete(toDelete.id());
 
-        Page<OrderListRow> page = svc.list(null, null, null, null, PageRequest.of(0, 20));
+        Page<OrderListRow> page = svc.list(null, null, null, null, null, null, null, PageRequest.of(0, 20));
 
         assertThat(page.getContent())
             .extracting(OrderListRow::id)
@@ -263,7 +263,7 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         svc.changeStatus(wRealizacji.id(), new ChangeStatusRequest(OrderStatus.W_REALIZACJI, wRealizacji.version(), true));
         svc.changeStatus(wydane.id(), new ChangeStatusRequest(OrderStatus.WYDANE, wydane.version(), true));
 
-        Page<OrderListRow> page = svc.list(OrderStatus.PRZYJETE, null, null, null, PageRequest.of(0, 20));
+        Page<OrderListRow> page = svc.list(List.of(OrderStatus.PRZYJETE), null, null, null, null, null, null, PageRequest.of(0, 20));
 
         assertThat(page.getContent()).hasSize(1);
         assertThat(page.getContent().get(0).id()).isEqualTo(przyjete.id());
@@ -277,7 +277,7 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         svc.create(req("czyszczenie zamszu"));
         svc.create(req("naprawa podeszwy"));
 
-        Page<OrderListRow> page = svc.list(null, null, null, "czyszczenie", PageRequest.of(0, 20));
+        Page<OrderListRow> page = svc.list(null, null, null, "czyszczenie", null, null, null, PageRequest.of(0, 20));
 
         assertThat(page.getContent()).hasSize(1);
         assertThat(page.getContent().get(0).description()).contains("czyszczenie");
