@@ -1293,9 +1293,9 @@
     {
       "id": "7-8",
       "title": "/admin/clients/page.tsx — list page Server Component (search + paginated list shell)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "d213177",
+      "dispatch_log": "docs/dispatch-log/7-8-20260510T223956Z.md"
     },
     {
       "id": "7-9",
