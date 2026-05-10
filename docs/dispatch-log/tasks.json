@@ -909,9 +909,14 @@
     {
       "id": "5-14",
       "title": "UnreadElsewhereBanner + dedicated backend endpoint",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "8d10fea",
+      "dispatch_log": "docs/dispatch-log/5-14-20260510T100150Z.md",
+      "deviations_from_plan": [
+        "Plan IT used OrderType.NAPRAWA \u2014 Order entity has no orderType field; removed setOrderType call.",
+        "Plan owner() helper used SecurityMockMvcRequestPostProcessors.user(...).roles(...) which injects plain UserDetails, causing NPE on actor.email(). Replaced with authentication(UsernamePasswordAuthenticationToken.authenticated(new AdminPrincipal(...))) \u2014 same pattern as ThreadControllerIntegrationTest.",
+        "UnreadElsewhereBanner.tsx required `import type { Route } from \"next\"` and `as Route` cast on href template literal \u2014 Next.js 16 typed-routes requirement not in plan body."
+      ]
     },
     {
       "id": "5-15",
