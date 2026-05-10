@@ -33,6 +33,13 @@ public interface MessageThreadRepository extends JpaRepository<MessageThreadEnti
     List<MessageThreadEntity> findAllByClientIdIsNullAndDiscardedAtIsNullOrderByLastMessageAtDesc();
 
     /**
+     * Returns all non-discarded threads for a known client, ordered newest-first.
+     * Used by ThreadController.list when clientId query param is present (M7 client dossier).
+     * Replaces the filter/channel/q branch when clientId is supplied.
+     */
+    List<MessageThreadEntity> findAllByClientIdAndDiscardedAtIsNullOrderByLastMessageAtDesc(UUID clientId);
+
+    /**
      * Counts non-discarded threads for a client that have at least one unread message.
      * Used by OrderDrawer banner to detect "unread elsewhere".
      */

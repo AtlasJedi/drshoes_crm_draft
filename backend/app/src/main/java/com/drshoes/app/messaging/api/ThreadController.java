@@ -53,9 +53,20 @@ public class ThreadController {
             @RequestParam(defaultValue = "ALL") String filter,
             @RequestParam(required = false) String channel,
             @RequestParam(required = false) String q,
+            @RequestParam(required = false) UUID clientId,
             @AuthenticationPrincipal AdminPrincipal actor) {
-        log.info("op=threads.list actor={} filter={} channel={} q={}", actor.email(), filter, channel, q);
+        log.info("op=threads.list actor={} clientId={} filter={} channel={} q={}",
+            actor.email(), clientId, filter, channel, q);
         List<MessageThreadEntity> raw;
+        if (clientId != null) {
+            raw = threads.findAllByClientIdAndDiscardedAtIsNullOrderByLastMessageAtDesc(clientId);
+            Map<UUID, Client> clientsById = loadClients(raw);
+            log.info("op=threads.list actor={} clientId={} outcome=ok count={}",
+                actor.email(), clientId, raw.size());
+            return raw.stream()
+                .map(t -> toDto(t, t.getClientId() == null ? null : clientsById.get(t.getClientId())))
+                .toList();
+        }
         if (q != null && q.length() >= 2) {
             raw = threads.searchThreads(q, channel);
         } else {

@@ -269,6 +269,30 @@ class ThreadControllerIntegrationTest extends AbstractIntegrationTest {
             .andExpect(status().isForbidden());
     }
 
+    @Test
+    @DisplayName("GET /api/admin/threads?clientId= returns only threads for that client")
+    void listByClientIdReturnsMatchedThreadsOnly() throws Exception {
+        // Seed a second client with its own thread — must NOT appear in filtered result.
+        var otherClient = new Client();
+        otherClient.setFirstName("Other");
+        otherClient.setEmail("other@example.com");
+        otherClient.setPhone("+48500000999");
+        UUID otherClientId = clientRepo.save(otherClient).getId();
+
+        var otherThread = new MessageThreadEntity();
+        otherThread.setClientId(otherClientId);
+        otherThread.setChannel("SMS");
+        otherThread.setUnreadCount(0);
+        threadRepo.save(otherThread);
+
+        // Request threads for the seeded clientId — should return only matchedThread.
+        mockMvc.perform(get("/api/admin/threads?clientId=" + clientId)
+                .with(owner()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].clientId").value(clientId.toString()));
+    }
+
     // ---- helpers ----
 
     /**
