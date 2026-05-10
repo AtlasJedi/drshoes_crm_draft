@@ -7,6 +7,8 @@ import com.drshoes.app.auth.domain.UserRole;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
+import com.drshoes.app.messaging.repository.MessageThreadRepository;
+import com.drshoes.app.order.domain.OrderRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,14 @@ import java.util.UUID;
  * via SecurityMockMvcRequestPostProcessors.user(), so no HTTP login round-trip
  * is needed. The DB still has real OWNER + EMPLOYEE rows for FK integrity.
  *
+ * Teardown order (FK-correct):
+ *   audit_log (actor_id → user_) → message_thread (client_id → client)
+ *   → order_ (client_id → client) → client → user_
+ *
+ * Subclasses that seed their own dependent rows (e.g. messages, photos)
+ * MUST delete them in their own @AfterEach BEFORE this base teardown runs.
+ * JUnit 5 guarantees subclass @AfterEach runs before superclass @AfterEach.
+ *
  * Usage:
  *   loginAsOwner();
  *   mockMvc().perform(get("/api/admin/clients")).andExpect(status().isOk());
@@ -43,14 +53,20 @@ public abstract class AdminWebTestBase extends AbstractIntegrationTest {
     @Autowired private PasswordEncoder enc;
     @Autowired private ClientRepository clients;
     @Autowired private AuditLogRepository auditLogs;
+    @Autowired private OrderRepository orders;
+    @Autowired private MessageThreadRepository threads;
 
     /** Current principal injector; null = anonymous. */
     private RequestPostProcessor principalProcessor;
 
     @BeforeEach
     void seedUsers() {
-        // audit_log.actor_id is a FK to user_(id) — clear audit rows first
+        // Delete in FK-correct order before re-seeding.
+        // Subclass @AfterEach runs before this @BeforeEach on re-entry, but other
+        // test classes sharing the same Testcontainers context may leave rows behind.
         auditLogs.deleteAll();
+        threads.deleteAll();
+        orders.deleteAll();
         clients.deleteAll();
         users.deleteAll();
         principalProcessor = null;
@@ -72,8 +88,11 @@ public abstract class AdminWebTestBase extends AbstractIntegrationTest {
 
     @AfterEach
     void cleanupUsers() {
-        // audit_log.actor_id is a FK to user_(id) — clear audit rows first
+        // Delete in FK-correct order.
+        // Subclass @AfterEach deletes its own rows first (JUnit 5 guarantees this).
         auditLogs.deleteAll();
+        threads.deleteAll();
+        orders.deleteAll();
         clients.deleteAll();
         users.deleteAll();
         principalProcessor = null;
