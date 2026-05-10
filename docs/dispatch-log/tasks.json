@@ -1181,9 +1181,9 @@
     {
       "id": "6-18",
       "title": "KanbanBoard + KanbanColumn + KanbanCard (static)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "2c46cd1",
+      "dispatch_log": "docs/dispatch-log/6-18-20260510T182729Z.md"
     },
     {
       "id": "6-19",
