@@ -1314,9 +1314,9 @@
     {
       "id": "7-11",
       "title": "ClientSummaryTiles SC \u2014 4 dashboard tiles wired to /summary",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "85b3504",
+      "dispatch_log": "docs/dispatch-log/7-11-20260511T005800Z.md"
     },
     {
       "id": "7-12",
