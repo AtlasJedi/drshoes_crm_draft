@@ -105,10 +105,10 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         OrderDto created = svc.create(req("opis"));
         // first go back to WSTEPNIE_PRZYJETE to test the PRZYJETE transition
         ChangeStatusResponse r1 = svc.changeStatus(created.id(),
-            new ChangeStatusRequest(OrderStatus.WSTEPNIE_PRZYJETE, created.version()));
+            new ChangeStatusRequest(OrderStatus.WSTEPNIE_PRZYJETE, created.version(), true));
 
         ChangeStatusResponse r2 = svc.changeStatus(r1.order().id(),
-            new ChangeStatusRequest(OrderStatus.PRZYJETE, r1.order().version()));
+            new ChangeStatusRequest(OrderStatus.PRZYJETE, r1.order().version(), true));
 
         assertThat(r2.order().status()).isEqualTo(OrderStatus.PRZYJETE);
         assertThat(r2.order().receivedAt()).isNotNull();
@@ -124,7 +124,7 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         OrderDto created = svc.create(req("gotowe"));
 
         ChangeStatusResponse r = svc.changeStatus(created.id(),
-            new ChangeStatusRequest(OrderStatus.WYDANE, created.version()));
+            new ChangeStatusRequest(OrderStatus.WYDANE, created.version(), true));
 
         assertThat(r.order().status()).isEqualTo(OrderStatus.WYDANE);
         assertThat(r.order().pickedUpAt()).isNotNull();
@@ -138,7 +138,7 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         OrderDto created = svc.create(req("anuluj"));
 
         ChangeStatusResponse r = svc.changeStatus(created.id(),
-            new ChangeStatusRequest(OrderStatus.ANULOWANE, created.version()));
+            new ChangeStatusRequest(OrderStatus.ANULOWANE, created.version(), true));
 
         assertThat(r.order().status()).isEqualTo(OrderStatus.ANULOWANE);
     }
@@ -153,12 +153,12 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
 
         // advance version by doing a real status change
         svc.changeStatus(created.id(),
-            new ChangeStatusRequest(OrderStatus.W_REALIZACJI, staleVersion));
+            new ChangeStatusRequest(OrderStatus.W_REALIZACJI, staleVersion, true));
         // now version=1 in DB; staleVersion=0 is stale
 
         assertThatThrownBy(() ->
             svc.changeStatus(created.id(),
-                new ChangeStatusRequest(OrderStatus.GOTOWE_DO_ODBIORU, staleVersion)))
+                new ChangeStatusRequest(OrderStatus.GOTOWE_DO_ODBIORU, staleVersion, true)))
             .isInstanceOf(OrderVersionConflictException.class)
             .satisfies(e -> {
                 int current = ((OrderVersionConflictException) e).getCurrentVersion();
@@ -260,8 +260,8 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         OrderDto wRealizacji = svc.create(req("w realizacji order"));
         OrderDto wydane = svc.create(req("wydane order"));
 
-        svc.changeStatus(wRealizacji.id(), new ChangeStatusRequest(OrderStatus.W_REALIZACJI, wRealizacji.version()));
-        svc.changeStatus(wydane.id(), new ChangeStatusRequest(OrderStatus.WYDANE, wydane.version()));
+        svc.changeStatus(wRealizacji.id(), new ChangeStatusRequest(OrderStatus.W_REALIZACJI, wRealizacji.version(), true));
+        svc.changeStatus(wydane.id(), new ChangeStatusRequest(OrderStatus.WYDANE, wydane.version(), true));
 
         Page<OrderListRow> page = svc.list(OrderStatus.PRZYJETE, null, null, null, PageRequest.of(0, 20));
 

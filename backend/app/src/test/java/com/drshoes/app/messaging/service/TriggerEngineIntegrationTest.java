@@ -78,7 +78,7 @@ class TriggerEngineIntegrationTest extends AbstractIntegrationTest {
     void statusChangeToPRZYJETEFiresMessageOnce() {
         UUID orderId = createOrderInWstepnie();
 
-        orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.PRZYJETE, 0));
+        orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.PRZYJETE, 0, true));
 
         var msgs = messages.findAllByOrderIdOrderByCreatedAtAsc(orderId);
         assertThat(msgs).hasSize(1);
@@ -94,7 +94,7 @@ class TriggerEngineIntegrationTest extends AbstractIntegrationTest {
 
         try {
             // Wrong expectedVersion (999) forces OrderVersionConflictException → transaction rolls back
-            orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.PRZYJETE, 999));
+            orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.PRZYJETE, 999, true));
         } catch (RuntimeException expected) {
             // expected — optimistic lock collision
         }
@@ -110,13 +110,13 @@ class TriggerEngineIntegrationTest extends AbstractIntegrationTest {
         UUID orderId = createOrderInWstepnie();
 
         // version=0 → PRZYJETE (fires trigger, version becomes 1)
-        orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.PRZYJETE, 0));
+        orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.PRZYJETE, 0, true));
 
         // version=1 → W_REALIZACJI (no STATUS_CHANGE trigger for W_REALIZACJI, version becomes 2)
-        orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.W_REALIZACJI, 1));
+        orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.W_REALIZACJI, 1, true));
 
         // version=2 → PRZYJETE again (idempotency guard: discriminator "to:PRZYJETE" already claimed)
-        orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.PRZYJETE, 2));
+        orderService.changeStatus(orderId, new ChangeStatusRequest(OrderStatus.PRZYJETE, 2, true));
 
         var msgs = messages.findAllByOrderIdOrderByCreatedAtAsc(orderId);
         long przyjeteFires = msgs.stream().filter(m -> m.getTriggerId() != null).count();
