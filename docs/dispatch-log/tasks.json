@@ -1279,9 +1279,9 @@
     {
       "id": "7-6",
       "title": "ClientListSearchBox CC — debounced typeahead + tests",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "9c4b408",
+      "dispatch_log": "docs/dispatch-log/7-6-20260510T222947Z.md"
     },
     {
       "id": "7-7",
