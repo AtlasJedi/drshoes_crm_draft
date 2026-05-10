@@ -89,7 +89,7 @@ All independent — parallel-dispatchable Sonnet subagents. Each writes its own 
 - **6-12** `ReadyForPickupPanel` + `RecentMessagesPanel` + Dashboard page wiring + states. Wires all five components into the overwritten `/admin/page.tsx`. Loading skeletons + per-tile error fallback + empty states from the design export.
 
 ### W3 — Calendar FE
-- **6-13** `lib/calendar/api-server.ts` + `types.ts` + `OrderViewTabs.tsx` shared component (Lista / Kalendarz / Kanban switcher placed once and reused). The shared tabs component refactors out of `OrdersList` if needed.
+- **6-13** `lib/calendar/api-server.ts` + `types.ts` + `OrderViewTabs.tsx` shared component (Lista / Kalendarz / Kanban switcher rendered on all three Orders surface pages). New component (current `OrdersList` has no tabs); placed in `apps/web/app/(admin)/admin/orders/_components/` and added to the existing `/admin/orders/page.tsx` header in the same task.
 - **6-14** `CalendarMonthGrid.tsx` + `CalendarCell.tsx` — month grid + cells. Click-to-drawer via `?orderId=` URL param.
 - **6-15** `BezTerminuPanel.tsx` — read-only side panel of `unscheduled[]`.
 - **6-16** Calendar page wiring + states. `/admin/orders/calendar/page.tsx`, week/day toggle disabled with "wkrótce" tooltip, loading shimmer + error banner + empty grid + Bez-terminu empty.
