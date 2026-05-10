@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getOrderMessages, retryMessage } from "@/lib/messaging/api";
+import { getOrderMessages, getUnreadElsewhere, retryMessage } from "@/lib/messaging/api";
 import type { MessageDto } from "@/lib/messaging/types";
+import { UnreadElsewhereBanner } from "./OrderDrawer/UnreadElsewhereBanner";
 import { createLogger } from "@/lib/log";
 import { MessageStatusBadge } from "./MessageStatusBadge";
 
@@ -20,6 +21,7 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
   const [state, setState]   = useState<"loading" | "ok" | "err">("loading");
   const [retrying, setRetrying] = useState<Set<string>>(new Set());
   const [retryError, setRetryError] = useState<Record<string, string>>({});
+  const [unreadElsewhere, setUnreadElsewhere] = useState<{ count: number; threadId: string } | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const load = useCallback(async (silent = false) => {
@@ -43,6 +45,17 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
     });
     return () => { cancelled = true; };
   }, [load, refreshKey]);
+
+  // Fetch unread-elsewhere count once per orderId change (race-cancel guard)
+  useEffect(() => {
+    let cancelled = false;
+    void getUnreadElsewhere(orderId).then((data) => {
+      if (!cancelled && data.count > 0 && data.threadId) {
+        setUnreadElsewhere({ count: data.count, threadId: data.threadId });
+      }
+    }).catch(() => { /* non-critical — swallow */ });
+    return () => { cancelled = true; };
+  }, [orderId]);
 
   // 10s polling while drawer is mounted
   useEffect(() => {
@@ -91,6 +104,13 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
           Wyślij wiadomość
         </button>
       </div>
+
+      {unreadElsewhere && (
+        <UnreadElsewhereBanner
+          count={unreadElsewhere.count}
+          threadId={unreadElsewhere.threadId}
+        />
+      )}
 
       {state === "loading" && (
         <p className="text-xs text-admin-mute italic">Ładowanie wiadomości…</p>

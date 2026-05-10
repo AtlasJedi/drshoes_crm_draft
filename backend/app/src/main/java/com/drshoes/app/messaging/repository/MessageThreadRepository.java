@@ -39,6 +39,12 @@ public interface MessageThreadRepository extends JpaRepository<MessageThreadEnti
     long countByClientIdAndUnreadCountGreaterThan(UUID clientId, int min);
 
     /**
+     * Returns all threads for a client that have unread messages (unread_count > minCount).
+     * Used by OrderUnreadElsewhereController to find the most-recent unread thread.
+     */
+    List<MessageThreadEntity> findAllByClientIdAndUnreadCountGreaterThan(UUID clientId, int minCount);
+
+    /**
      * Counts all non-discarded threads system-wide with unread messages.
      * Used by MessagesNavItem sidebar badge.
      */

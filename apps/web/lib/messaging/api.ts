@@ -124,3 +124,13 @@ export async function sendNewToClient(
   log.info("op=sendNewToClient", { clientId, channel: req.channel });
   return api.post<MessageDto>(`/admin/clients/${clientId}/messages`, req);
 }
+
+export interface UnreadElsewhereDto {
+  count: number;
+  threadId: string | null;
+}
+
+export async function getUnreadElsewhere(orderId: string): Promise<UnreadElsewhereDto> {
+  log.info("op=getUnreadElsewhere", { orderId });
+  return api.get<UnreadElsewhereDto>(`/admin/orders/${orderId}/unread-elsewhere`);
+}
