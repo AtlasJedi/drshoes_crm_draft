@@ -30,6 +30,7 @@ public class MessageThreadEntity {
 
     /** EMAIL / SMS / WHATSAPP — per-channel threading. Added V012. */
     @Column(nullable = false, length = 16)
+    @jakarta.validation.constraints.NotNull
     private String channel = "EMAIL";
 
     /** Null for matched threads (client known). Set for unmatched inbound threads. Added V012. */

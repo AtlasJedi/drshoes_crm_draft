@@ -63,19 +63,21 @@ class MessageThreadRepositoryInboundIntegrationTest extends AbstractIntegrationT
     // ---- tests ----
 
     @Test
-    @DisplayName("findFirstByClientIdAndChannel returns most recent non-discarded thread")
+    @DisplayName("findFirstByClientIdAndChannel returns active thread and excludes discarded one")
     void findFirstByClientIdAndChannel_returnsMostRecent() {
-        OffsetDateTime older = OffsetDateTime.now(ZoneOffset.UTC).minusHours(2);
-        OffsetDateTime newer = OffsetDateTime.now(ZoneOffset.UTC).minusHours(1);
-
-        UUID olderThread = insertThread(clientId, "EMAIL", null, older, false);
-        UUID newerThread = insertThread(clientId, "EMAIL", null, newer, false);
+        // V013 unique partial index allows only one active (non-discarded) thread per (client_id, channel).
+        // Insert a discarded thread first, then the active one — finder must return only the active one.
+        UUID discardedThread = insertThread(clientId, "EMAIL", null,
+                OffsetDateTime.now(ZoneOffset.UTC).minusHours(2), true);
+        UUID activeThread = insertThread(clientId, "EMAIL", null,
+                OffsetDateTime.now(ZoneOffset.UTC).minusHours(1), false);
 
         var found = repo.findFirstByClientIdAndChannelAndDiscardedAtIsNullOrderByLastMessageAtDesc(
                 clientId, "EMAIL");
 
         assertThat(found).isPresent();
-        assertThat(found.get().getId()).isEqualTo(newerThread);
+        assertThat(found.get().getId()).isEqualTo(activeThread);
+        assertThat(found.get().getId()).isNotEqualTo(discardedThread);
     }
 
     @Test
