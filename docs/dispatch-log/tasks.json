@@ -1307,9 +1307,9 @@
     {
       "id": "7-10",
       "title": "ClientHeader SC + RodoBadge SC + EditClient island stub (real modal in 7-15)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "f1626c6",
+      "dispatch_log": "docs/dispatch-log/7-10-20260511T005200Z.md"
     },
     {
       "id": "7-11",
