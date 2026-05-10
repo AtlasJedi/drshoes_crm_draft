@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessagesHeader } from "./MessagesHeader";
 import { ThreadList } from "./ThreadList";
+import { SelectedThread } from "./SelectedThread";
 import { useThreadSelection } from "./useThreadSelection";
 
 interface Props {
@@ -11,8 +12,7 @@ interface Props {
 
 /**
  * Top-level client shell for the messages page.
- * Composes: MessagesHeader, ThreadList (sidebar), and a placeholder main area
- * that will be filled in by task 5-16 (SelectedThread / UnmatchedThreadPanel).
+ * Composes: MessagesHeader, ThreadList (sidebar), and SelectedThread in the main area.
  * NewMessageDialog will be wired in task 5-18.
  */
 export function MessagesShell({ initialThreadId }: Props) {
@@ -38,19 +38,17 @@ export function MessagesShell({ initialThreadId }: Props) {
           onQChange={sel.setQ}
         />
 
-        {/* Main content area — filled by task 5-16 (SelectedThread / UnmatchedThreadPanel) */}
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden items-center justify-center">
+        <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
           {!sel.selectedId && (
-            <div className="text-[13px] text-admin-mute">
-              {/* EmptyState ("no-selection" variant) wired in task 5-16 */}
+            <div className="flex-1 flex items-center justify-center text-[13px] text-admin-mute">
               Wybierz wątek, aby zobaczyć wiadomości
             </div>
           )}
           {sel.selectedId && (
-            <div className="text-[13px] text-admin-mute">
-              {/* SelectedThread / UnmatchedThreadPanel wired in task 5-16 */}
-              Ładowanie wątku…
-            </div>
+            <SelectedThread
+              threadId={sel.selectedId}
+              onLoaded={() => { /* sidebar refresh handled by ThreadList polling */ }}
+            />
           )}
         </main>
       </div>
