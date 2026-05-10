@@ -1060,9 +1060,9 @@
     {
       "id": "6-3",
       "title": "V013 message_thread uniqueness migration + @NotNull",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "8228905",
+      "dispatch_log": "docs/dispatch-log/6-3-20260510T154435Z.md"
     },
     {
       "id": "6-4",
