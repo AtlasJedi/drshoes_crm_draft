@@ -27,5 +27,10 @@ public enum TimelineEventKind {
     MESSAGE_FAILED,     // M4 — emitted by WebhookStatusReconciler#apply when status → FAILED
     PHOTO_UPLOADED,     // M3 — emitted by PhotoService#upload @Audited row
     PHOTO_DELETED,      // M3 — emitted by PhotoService#delete @Audited row
-    PHOTO_RELABELED     // M3 — emitted by PhotoService#relabel @Audited row
+    PHOTO_RELABELED,    // M3 — emitted by PhotoService#relabel @Audited row
+    // M5 — inbound messages + thread lifecycle
+    MESSAGE_RECEIVED,   // M5 — emitted by InboundMessageService#recordEmailInbound / #recordSmsInbound
+    THREAD_MARKED_READ, // M5 — emitted by MessageThreadService#markRead (class not yet split; see task 5-8)
+    THREAD_ASSIGNED,    // M5 — emitted by MessageThreadService#assignUnmatched
+    THREAD_DISCARDED    // M5 — emitted by MessageThreadService#discardUnmatched
 }

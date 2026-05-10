@@ -23,6 +23,10 @@ const KIND_ICONS: Record<TimelineEventKind, string> = {
   PHOTO_RELABELED:      "🏷️",
   MESSAGE_DELIVERED:    "✅",
   MESSAGE_FAILED:       "⚠️",
+  MESSAGE_RECEIVED:     "📥",
+  THREAD_MARKED_READ:   "✓",
+  THREAD_ASSIGNED:      "👤",
+  THREAD_DISCARDED:     "🗑️",
 };
 
 const KIND_LABELS_PL: Record<TimelineEventKind, string> = {
@@ -41,6 +45,10 @@ const KIND_LABELS_PL: Record<TimelineEventKind, string> = {
   PHOTO_RELABELED:      "Zmieniono etykietę zdjęcia",
   MESSAGE_DELIVERED:    "Wiadomość doręczona",
   MESSAGE_FAILED:       "Wiadomość nie doręczona",
+  MESSAGE_RECEIVED:     "Otrzymano wiadomość",
+  THREAD_MARKED_READ:   "Wątek oznaczony jako przeczytany",
+  THREAD_ASSIGNED:      "Wątek przypisany do klienta",
+  THREAD_DISCARDED:     "Wątek odrzucony",
 };
 
 const fmt = new Intl.DateTimeFormat("pl-PL", { dateStyle: "short", timeStyle: "short" });

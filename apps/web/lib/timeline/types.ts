@@ -22,7 +22,11 @@ export type TimelineEventKind =
   | "PHOTO_DELETED"        // M3 — admin deleted a photo
   | "PHOTO_RELABELED"      // M3 — admin changed a photo's label
   | "MESSAGE_DELIVERED"    // M4 — provider confirmed delivery
-  | "MESSAGE_FAILED";      // M4 — provider reported delivery failure
+  | "MESSAGE_FAILED"       // M4 — provider reported delivery failure
+  | "MESSAGE_RECEIVED"     // M5 — inbound message recorded (email or SMS)
+  | "THREAD_MARKED_READ"   // M5 — operator opened thread or clicked mark-read
+  | "THREAD_ASSIGNED"      // M5 — unmatched thread assigned to a client
+  | "THREAD_DISCARDED";    // M5 — unmatched thread soft-deleted by operator
 
 /**
  * Curated timeline event — mirrors TimelineEvent.java.

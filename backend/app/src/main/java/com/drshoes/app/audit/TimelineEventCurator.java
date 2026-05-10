@@ -74,6 +74,22 @@ public class TimelineEventCurator {
     private static final Pattern INTERNAL_PHOTO_RELABELED =
         Pattern.compile("^PhotoService#relabel$");
 
+    // M5 inbound service paths (@Audited INTERNAL rows)
+    private static final Pattern INTERNAL_EMAIL_INBOUND =
+        Pattern.compile("^InboundMessageService#recordEmailInbound$");
+    private static final Pattern INTERNAL_SMS_INBOUND =
+        Pattern.compile("^InboundMessageService#recordSmsInbound$");
+
+    // M5 thread mutation paths — class name is MessageThreadService until task 5-8 splits it
+    // into MessageThreadMutationService. Update these patterns when 5-8 ships.
+    // TODO(5-8): rename MessageThreadService → MessageThreadMutationService here after split.
+    private static final Pattern INTERNAL_THREAD_MARK_READ =
+        Pattern.compile("^MessageThreadService#markRead$");
+    private static final Pattern INTERNAL_THREAD_ASSIGN =
+        Pattern.compile("^MessageThreadService#assignUnmatched$");
+    private static final Pattern INTERNAL_THREAD_DISCARD =
+        Pattern.compile("^MessageThreadService#discardUnmatched$");
+
     // HTTP rows for photo endpoints — skip; the @Audited INTERNAL row is canonical.
     private static final Pattern PHOTOS_SEGMENT_PATTERN =
         Pattern.compile("/api/admin/orders/[^/]+/photos(?:/.*)?$");
@@ -191,6 +207,25 @@ public class TimelineEventCurator {
         }
         if (INTERNAL_PHOTO_RELABELED.matcher(path).find()) {
             return Optional.of(event(log, TimelineEventKind.PHOTO_RELABELED, actorFullName, labels));
+        }
+
+        // ── M5 inbound + thread lifecycle ────────────────────────────────────
+        // TODO(5-8): curator LOC is ~240 — over the 120-line cap. Extract a
+        // CuratorInternalDispatcher in task 5-8 hygiene split.
+        if (INTERNAL_EMAIL_INBOUND.matcher(path).find()) {
+            return Optional.of(event(log, TimelineEventKind.MESSAGE_RECEIVED, actorFullName, labels));
+        }
+        if (INTERNAL_SMS_INBOUND.matcher(path).find()) {
+            return Optional.of(event(log, TimelineEventKind.MESSAGE_RECEIVED, actorFullName, labels));
+        }
+        if (INTERNAL_THREAD_MARK_READ.matcher(path).find()) {
+            return Optional.of(event(log, TimelineEventKind.THREAD_MARKED_READ, actorFullName, labels));
+        }
+        if (INTERNAL_THREAD_ASSIGN.matcher(path).find()) {
+            return Optional.of(event(log, TimelineEventKind.THREAD_ASSIGNED, actorFullName, labels));
+        }
+        if (INTERNAL_THREAD_DISCARD.matcher(path).find()) {
+            return Optional.of(event(log, TimelineEventKind.THREAD_DISCARDED, actorFullName, labels));
         }
 
         return Optional.empty();
