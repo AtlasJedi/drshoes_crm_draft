@@ -1074,9 +1074,9 @@
     {
       "id": "6-5",
       "title": "GET /api/admin/dashboard/kpis",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "250b3ca",
+      "dispatch_log": "docs/dispatch-log/6-5-20260510T155706Z.md"
     },
     {
       "id": "6-6",
