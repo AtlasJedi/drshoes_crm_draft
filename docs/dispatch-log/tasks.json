@@ -1139,9 +1139,9 @@
     {
       "id": "6-12",
       "title": "ReadyForPickupPanel + RecentMessagesPanel + dashboard page wiring",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "5be4995",
+      "dispatch_log": "docs/dispatch-log/6-12-20260510T175734Z.md"
     },
     {
       "id": "6-13",
