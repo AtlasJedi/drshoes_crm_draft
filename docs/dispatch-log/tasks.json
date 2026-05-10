@@ -1153,9 +1153,9 @@
     {
       "id": "6-14",
       "title": "CalendarMonthGrid + CalendarCell",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "7edf9a1",
+      "dispatch_log": "docs/dispatch-log/6-14-20260510T180907Z.md"
     },
     {
       "id": "6-15",
