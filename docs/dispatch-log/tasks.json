@@ -1031,9 +1031,17 @@
     {
       "id": "5-21",
       "title": "Closure \u2014 mvn verify + frontend gates + milestone-5 tag + CLAUDE.md flip",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "TBD",
+      "dispatch_log": "docs/dispatch-log/5-21-20260510T113542Z.md",
+      "review_verdict": "APPROVED",
+      "notes": [
+        "Suite: 302 total / 0 failures / 1 error (pre-existing flake) / 0 skipped. M4 close was 201; M5 added 101 cases.",
+        "Flake: MessagesControllerIntegrationTest.emptyThreadReturnsEmptyList \u2014 AdminWebTestBase.seedUsers() clients.deleteAll() hits FK from prior test class's uncleaned order. Pre-existing since task 5-16. Fix in M6: add orderRepository.deleteAll() to AdminWebTestBase.seedUsers() before clients.deleteAll().",
+        "Frontend: typecheck 0 errors, lint 0 errors (eslint direct, not next lint), build SUCCESSFUL.",
+        "milestone-5 tag created locally. Not pushed to remote (consistent with M0b\u2013M4 precedent).",
+        "CLAUDE.md status row flipped to [x] Milestone 5: Inbound parsing + reply UI + cross-client inbox."
+      ]
     }
   ],
   "notes": [
