@@ -72,6 +72,7 @@ public class OrderController {
             @RequestParam(required = false) List<OrderStatus> status,
             @RequestParam(required = false, name = "type") List<OrderItemKind> kinds,
             @RequestParam(required = false) UUID craftsmanId,
+            @RequestParam(required = false) UUID clientId,
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String tag,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtFrom,
@@ -80,12 +81,11 @@ public class OrderController {
             Authentication auth) {
         Instant from = plannedPickupAtFrom != null
             ? plannedPickupAtFrom.atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
-        // to is exclusive: advance by one day so the entire target date is included
         Instant to = plannedPickupAtTo != null
             ? plannedPickupAtTo.plusDays(1).atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
-        log.info("op=listOrders actor={} tag={} from={} to={} outcome=ok",
-            actor(auth), tag, from, to);
-        return svc.list(status, craftsmanId, kinds, q, tag, from, to, pageable);
+        log.info("op=listOrders actor={} clientId={} tag={} from={} to={} outcome=ok",
+            actor(auth), clientId, tag, from, to);
+        return svc.list(status, craftsmanId, kinds, q, tag, from, to, clientId, pageable);
     }
 
     @GetMapping("/{id}")

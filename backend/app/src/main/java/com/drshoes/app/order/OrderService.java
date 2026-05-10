@@ -59,10 +59,11 @@ public class OrderService {
     public Page<OrderListRow> list(List<OrderStatus> statuses, UUID assigneeId,
                                    List<OrderItemKind> kinds, String q,
                                    String tag, Instant plannedPickupAtFrom,
-                                   Instant plannedPickupAtTo, Pageable pageable) {
+                                   Instant plannedPickupAtTo, UUID clientId,
+                                   Pageable pageable) {
         return orderRepo.findAll(
             OrderSpecifications.forList(statuses, assigneeId, kinds, q, tag,
-                                        plannedPickupAtFrom, plannedPickupAtTo),
+                                        plannedPickupAtFrom, plannedPickupAtTo, clientId),
             pageable).map(OrderListRow::of);
     }
 

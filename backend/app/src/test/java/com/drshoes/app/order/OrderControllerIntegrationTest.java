@@ -347,6 +347,45 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // -------------------------------------------------------------------------
+    // GET /api/admin/orders?clientId=<uuid> — client filter
+    // -------------------------------------------------------------------------
+
+    @Test
+    void listFiltersByClientId() throws Exception {
+        loginAsOwner();
+
+        // Seed a second client whose orders must NOT appear in the filtered list.
+        var otherClient = new Client();
+        otherClient.setFirstName("Other");
+        otherClient.setPhone("+48 600 999 111");
+        UUID otherClientId = clientRepository.save(otherClient).getId();
+
+        // Create one order for our seeded clientId and one for otherClientId.
+        String orderForClient = """
+            {"clientId":"%s","description":"for main client"}""".formatted(clientId);
+        String orderForOther  = """
+            {"clientId":"%s","description":"for other client"}""".formatted(otherClientId);
+
+        mockMvc().perform(post("/api/admin/orders")
+                .contentType("application/json")
+                .content(orderForClient)
+                .with(csrf()))
+            .andExpect(status().isCreated());
+
+        mockMvc().perform(post("/api/admin/orders")
+                .contentType("application/json")
+                .content(orderForOther)
+                .with(csrf()))
+            .andExpect(status().isCreated());
+
+        // GET /api/admin/orders?clientId=<clientId> must return exactly 1 row.
+        mockMvc().perform(get("/api/admin/orders?clientId=" + clientId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpect(jsonPath("$.content[0].description").value("for main client"));
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 

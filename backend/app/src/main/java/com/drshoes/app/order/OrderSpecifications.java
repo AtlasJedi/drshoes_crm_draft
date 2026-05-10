@@ -14,7 +14,7 @@ import java.util.UUID;
 
 /**
  * Static factory for JPA Specifications used when listing Orders.
- * Extracted per the granular-code rule — keeps OrderService and OrderQueryService
+ * Extracted per the granular-code rule — keeps OrderService and OrderController
  * under the 120 LOC ceiling.
  *
  * Tag predicate uses {@code jsonb_contains(tags, jsonb_build_array(tag))} which
@@ -25,10 +25,15 @@ public final class OrderSpecifications {
 
     private OrderSpecifications() {}
 
+    /**
+     * Builds a Specification that combines all optional filter predicates.
+     *
+     * @param clientId when non-null, restricts results to orders for that client (M7)
+     */
     public static Specification<Order> forList(List<OrderStatus> statuses, UUID assigneeId,
                                                List<OrderItemKind> kinds, String q,
                                                String tag, Instant plannedPickupAtFrom,
-                                               Instant plannedPickupAtTo) {
+                                               Instant plannedPickupAtTo, UUID clientId) {
         return (root, query, cb) -> {
             List<Predicate> preds = new ArrayList<>();
             preds.add(cb.isNull(root.get("deletedAt")));
@@ -51,8 +56,6 @@ public final class OrderSpecifications {
                     cb.like(cb.lower(root.get("description")), like)));
             }
             if (tag != null && !tag.isBlank()) {
-                // jsonb_contains(tags, jsonb_build_array(tag)) ≡ tags @> '["tag"]'
-                // Hibernate passes unknown SQL function names through to the DB.
                 preds.add(cb.isTrue(
                     cb.function("jsonb_contains", Boolean.class,
                         root.get("tags"),
@@ -63,6 +66,8 @@ public final class OrderSpecifications {
                 preds.add(cb.greaterThanOrEqualTo(root.get("plannedPickupAt"), plannedPickupAtFrom));
             if (plannedPickupAtTo != null)
                 preds.add(cb.lessThan(root.get("plannedPickupAt"), plannedPickupAtTo));
+            if (clientId != null)
+                preds.add(cb.equal(root.get("clientId"), clientId));
             return cb.and(preds.toArray(new Predicate[0]));
         };
     }
