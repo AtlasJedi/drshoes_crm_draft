@@ -25,16 +25,15 @@ polish + Dashboard with live data become the next active milestone(s).
 | **M3** | Photos — upload (R2/MinIO), order_photo, actor resolution | `milestone-3` |
 | **M4** | Real providers — Postmark + SmsApi + webhooks + delivery reconciliation + retry | `milestone-4` |
 | **M5** | Inbound replies — message_thread, parsing, reply UI, unread badge, /admin/messages page | `milestone-5` |
+| **M6** | Order processing polish + Dashboard — KPIs, charts, calendar, kanban (DnD), bulk actions, filter presets, row quick-actions | `milestone-6` |
 
 ## In flight
 
-| Milestone | Scope | Status | Plan |
-|---|---|---|---|
-| **M6** | Order processing polish + Dashboard — Calendar + Kanban + bulk + presets + W0 hygiene | **0/23** (planning complete; W0 ready to dispatch) | `docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md` |
+_(none — M6 closed 2026-05-10; M7 next)_
 
 ## Next — locked priority
 
-### M6 — Order Processing Polish + Dashboard
+### M6 — Order Processing Polish + Dashboard (delivered)
 
 **Theme:** Make the daily Misza-flow smooth. Orders + Dashboard.
 
