@@ -1255,9 +1255,9 @@
     {
       "id": "7-3",
       "title": "Add clientId filter to ThreadController.list + new MessageThreadRepository derived method",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "c34e533",
+      "dispatch_log": "docs/dispatch-log/7-3-20260510T213807Z.md"
     },
     {
       "id": "7-4",
