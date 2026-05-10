@@ -1286,9 +1286,9 @@
     {
       "id": "7-7",
       "title": "ClientListTable SC — paginated rows + inline RODO pill (placeholder until 7-10)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "4dbafe3",
+      "dispatch_log": "docs/dispatch-log/7-7-20260511T003400Z.md"
     },
     {
       "id": "7-8",
