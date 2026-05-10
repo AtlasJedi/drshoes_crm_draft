@@ -950,9 +950,16 @@
     {
       "id": "5-16",
       "title": "ThreadHeader + MessageBubble + SelectedThread (10s polling)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "05de133",
+      "dispatch_log": "docs/dispatch-log/5-16-20260510T103110Z.md",
+      "fixup_sha": "d52b74e",
+      "deviations_from_plan": [
+        "ThreadDto \u2192 MessageThreadDto + ThreadDetailDto unpacking (plan literal mismatch).",
+        "ReplyComposer.tsx stub created at the 5-17 path because SelectedThread imports it; 5-17 will overwrite.",
+        "type='button' added to IconBtn + MessageBubble retry button per project convention.",
+        "SelectedThread originally landed at 86 LOC (6 over 80 cap). Extracted polling concern to useThreadPoller.ts in fixup d52b74e \u2014 SelectedThread now 48 LOC, useThreadPoller 59 LOC."
+      ]
     },
     {
       "id": "5-17",
