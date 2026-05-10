@@ -1188,9 +1188,23 @@
     {
       "id": "6-19",
       "title": "useKanbanDnd + StatusChangeTriggerDialog extraction + drag flow (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "stage_1_sha": "15d54b5",
+      "fixup_sha": "5b50c01",
+      "commit_sha": "15d54b5",
+      "dispatch_log": "docs/dispatch-log/6-19-stage1-20260510T182729Z.md",
+      "review_mode": "two-stage",
+      "review_verdict": "NEEDS-FIXUP",
+      "stage2_log": "docs/dispatch-log/6-19-stage2-20260510T184056Z.md",
+      "review_followups_resolved": [
+        "KanbanColumn drop-target ring-2 ring-[var(--pink)] — fixed in 5b50c01",
+        "StatusChangeConfirm.tsx orphan deleted — 5b50c01"
+      ],
+      "deferred_followups": [
+        "Wire useKanbanDnd into kanban page (6-20 scope)",
+        "sendTriggers full wiring to single-order endpoint (M7 scope)",
+        "errorToast UI rendering (6-20 scope)"
+      ]
     },
     {
       "id": "6-20",
