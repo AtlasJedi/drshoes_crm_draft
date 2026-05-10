@@ -53,4 +53,54 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     /** Sum total_price_cents for non-deleted orders whose received_at falls within [from, to). */
     @Query("SELECT COALESCE(SUM(o.totalPriceCents), 0) FROM Order o WHERE o.deletedAt IS NULL AND o.receivedAt >= :from AND o.receivedAt < :to")
     long sumRevenueBetween(@Param("from") Instant from, @Param("to") Instant to);
+
+    /**
+     * Returns order counts per ISO week for the last N weeks ending with (and including) weekStart.
+     * weekStart is the Monday of the most-recent week (UTC midnight).
+     * Returns rows: [week_iso TEXT, repairs BIGINT, custom_ BIGINT].
+     * An order is "repair" if ANY of its items has kind='NAPRAWA'; else "custom".
+     * Weeks with no orders are NOT returned — caller must zero-fill the 8-slot window.
+     */
+    @Query(value = """
+        SELECT
+            TO_CHAR(DATE_TRUNC('week', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'IYYY-"W"IW') AS week_iso,
+            COUNT(*) FILTER (WHERE EXISTS (
+                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
+            )) AS repairs,
+            COUNT(*) FILTER (WHERE NOT EXISTS (
+                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
+            )) AS custom_
+        FROM order_ o
+        WHERE o.deleted_at IS NULL
+          AND o.received_at >= :windowStart
+        GROUP BY week_iso
+        ORDER BY week_iso
+        """, nativeQuery = true)
+    List<Object[]> countPerIsoWeek(@Param("windowStart") Instant windowStart);
+
+    /**
+     * Returns per-kind order counts for the mix donut.
+     * An order's kind is determined by its first NAPRAWA item (→ NAPRAWA bucket),
+     * else the kind of its first item overall; orders with no items go to a synthetic "NONE" bucket.
+     * Simpler rule consistent with spec §6-6: NAPRAWA bucket = orders with ANY NAPRAWA item;
+     * remaining orders are split by first non-NAPRAWA item kind (CUSTOM_BUTY, CUSTOM_KURTKA).
+     * Returns rows: [kind TEXT, cnt BIGINT].
+     */
+    @Query(value = """
+        SELECT
+            CASE
+                WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA')
+                     THEN 'NAPRAWA'
+                WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'CUSTOM_BUTY')
+                     THEN 'CUSTOM_BUTY'
+                WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'CUSTOM_KURTKA')
+                     THEN 'CUSTOM_KURTKA'
+                ELSE 'NONE'
+            END AS kind,
+            COUNT(*) AS cnt
+        FROM order_ o
+        WHERE o.deleted_at IS NULL
+        GROUP BY kind
+        """, nativeQuery = true)
+    List<Object[]> countByItemKind();
 }
