@@ -13,10 +13,17 @@ import java.util.UUID;
  *
  * NOTE: max-size enforcement is intentionally absent from @NotEmpty to keep validation simple.
  * The 100-ID cap is enforced by BulkStatusController and returns 413 (not 400) per API contract.
+ *
+ * sendTriggers defaults to true via boxed Boolean + compact constructor (null → true).
+ * reason: accepted for API symmetry, currently unused (no storage target defined).
  */
 public record BulkStatusRequestDto(
     @NotEmpty List<@NotNull UUID> orderIds,
     @NotNull OrderStatus newStatus,
     String reason,
-    boolean sendTriggers
-) {}
+    Boolean sendTriggers
+) {
+    public BulkStatusRequestDto {
+        if (sendTriggers == null) sendTriggers = Boolean.TRUE;
+    }
+}

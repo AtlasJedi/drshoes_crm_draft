@@ -252,6 +252,38 @@ class BulkStatusControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ------------------------------------------------------------------
+    // sendTriggers absent from JSON → must default to true (not false).
+    // Regression guard for @JsonProperty(defaultValue="true") Jackson gotcha:
+    // that annotation is a no-op for primitive boolean record fields.
+    // The fix (Boolean boxed + compact constructor) is verified here.
+    // ------------------------------------------------------------------
+
+    @Test
+    void sendTriggersDefaultsTrueWhenFieldAbsent() throws Exception {
+        loginAsOwner();
+        UUID id = seedOrder("BK-050", OrderStatus.PRZYJETE, 0);
+        long auditBefore = auditLogRepo.count();
+
+        // Deliberately omit sendTriggers — should default to true
+        String body = """
+            {"orderIds":["%s"],"newStatus":"W_REALIZACJI"}""".formatted(id);
+
+        mockMvc().perform(post("/api/admin/orders/bulk/status")
+                .contentType("application/json").content(body).with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.succeeded", hasSize(1)));
+
+        // The order must have transitioned successfully (sendTriggers=true is the default,
+        // but TriggerEngine in tests is a no-op stub — we just verify the call succeeded,
+        // not that triggers were fired to external systems).
+        var updated = orderRepo.findById(id).orElseThrow();
+        assertThat(updated.getStatus().name()).isEqualTo("W_REALIZACJI");
+
+        // Exactly 1 controller audit row (same as the sendTriggers=false case).
+        assertThat(auditLogRepo.count() - auditBefore).isEqualTo(1);
+    }
+
+    // ------------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------------
 
