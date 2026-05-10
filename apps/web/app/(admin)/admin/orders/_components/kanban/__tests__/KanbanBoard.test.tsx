@@ -5,6 +5,7 @@ import type { KanbanColumnDto } from "@/lib/kanban/types";
 
 vi.mock("@dnd-kit/core", () => ({
   DndContext: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  DragOverlay: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   PointerSensor: class {},
   useSensor: vi.fn(),
   useSensors: vi.fn(() => []),

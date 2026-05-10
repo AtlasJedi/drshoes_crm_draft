@@ -7,8 +7,9 @@ import { getTriggers } from "@/lib/messaging/api";
 import { STATUS_LABELS_PL, STATUS_ORDER, STATUS_PILL_CLASS } from "@/lib/orders/status";
 import type { OrderDto, OrderStatus } from "@/lib/orders/types";
 import type { TriggerDto } from "@/lib/messaging/types";
-import { StatusChangeConfirm } from "./StatusChangeConfirm";
-import type { TriggerPreview } from "./StatusChangeConfirm";
+import { previewForStatus } from "@/lib/orders/triggerPreview";
+import { StatusChangeTriggerDialog } from "./StatusChangeTriggerDialog";
+import type { TriggerPreview } from "./StatusChangeTriggerDialog";
 
 const log = createLogger("status-changer");
 
@@ -17,41 +18,9 @@ interface Props {
   onOrderUpdated: (updated: OrderDto) => void;
 }
 
-/**
- * Compute a trigger preview for the prospective status transition.
- * Looks for a STATUS_CHANGE trigger whose eventParams.toStatus matches targetStatus.
- */
-function previewFor(targetStatus: string, triggers: TriggerDto[]): TriggerPreview {
-  const matched = triggers.find((t) => {
-    if (t.event !== "STATUS_CHANGE") return false;
-    try {
-      const params = JSON.parse(t.eventParams) as { toStatus?: string };
-      return params.toStatus === targetStatus;
-    } catch {
-      return false;
-    }
-  });
-  if (!matched) return { kind: "none" };
-  if (!matched.enabled) return { kind: "disabled", triggerName: matched.name };
-  let channels: string[] = [];
-  try {
-    channels = JSON.parse(matched.channels) as string[];
-  } catch {
-    // leave channels empty if parse fails
-  }
-  return {
-    kind: "match",
-    templateName: matched.templateName,
-    channels,
-    delayMinutes: matched.delayMinutes,
-    requiresManualConfirmation: matched.requiresManualConfirmation,
-  };
-}
-
 export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
   const [target, setTarget] = useState<OrderStatus | null>(null);
   const [conflict, setConflict] = useState(false);
-  const [busy, setBusy] = useState(false);
   const [triggers, setTriggers] = useState<TriggerDto[]>([]);
 
   // Fetch all triggers once on mount; preview is computed client-side
@@ -74,7 +43,6 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
 
   async function handleConfirm() {
     if (!target) return;
-    setBusy(true);
     try {
       const res = await changeStatus(order.id, target, order.version);
       log.info("op=changeStatus outcome=ok", { orderId: order.id, to: target });
@@ -88,13 +56,11 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
       } else {
         log.error("op=changeStatus outcome=error", { orderId: order.id, to: target });
       }
-    } finally {
-      setBusy(false);
     }
   }
 
   // Compute preview for the currently selected target status
-  const triggerPreview: TriggerPreview = target ? previewFor(target, triggers) : { kind: "none" };
+  const triggerPreview: TriggerPreview = target ? previewForStatus(target, triggers) : { kind: "none" };
 
   return (
     <div className="px-6 py-4 border-t border-admin-line space-y-3">
@@ -117,13 +83,13 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
         </p>
       )}
 
-      <StatusChangeConfirm
+      <StatusChangeTriggerDialog
         open={target !== null}
-        from={order.status}
-        to={target}
-        busy={busy}
+        fromStatus={order.status}
+        toStatus={target}
+        orderId={order.id}
         triggerPreview={triggerPreview}
-        onConfirm={handleConfirm}
+        onConfirm={() => { void handleConfirm(); }}
         onCancel={() => setTarget(null)}
       />
     </div>
