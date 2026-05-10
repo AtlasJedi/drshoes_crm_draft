@@ -60,6 +60,7 @@ export interface MessageDto {
   errorMessage: string | null;
   retryOfMessageId: string | null;
   retryAttempt: number;
+  threadId: string;
 }
 
 export interface SendMessageRequest {

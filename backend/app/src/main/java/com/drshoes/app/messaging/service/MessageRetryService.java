@@ -104,6 +104,7 @@ public class MessageRetryService {
             e.getSentAt(), e.getCreatedAt(),
             e.getErrorCode(), e.getErrorMessage(),
             e.getRetryOfMessageId(),
-            e.getRetryAttempt() == null ? 1 : e.getRetryAttempt());
+            e.getRetryAttempt() == null ? 1 : e.getRetryAttempt(),
+            e.getThreadId());
     }
 }

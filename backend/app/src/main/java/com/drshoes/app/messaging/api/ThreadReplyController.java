@@ -83,6 +83,7 @@ public class ThreadReplyController {
             m.getChannel(), m.getTemplateId(), m.getTriggerId(), m.getSubject(), m.getBody(),
             m.getDeliveryStatus(), m.getProviderMessageId(), m.getSentAt(), m.getCreatedAt(),
             m.getErrorCode(), m.getErrorMessage(), m.getRetryOfMessageId(),
-            m.getRetryAttempt() == null ? 1 : m.getRetryAttempt());
+            m.getRetryAttempt() == null ? 1 : m.getRetryAttempt(),
+            m.getThreadId());
     }
 }

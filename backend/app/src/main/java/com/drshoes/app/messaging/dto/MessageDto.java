@@ -20,4 +20,5 @@ public record MessageDto(
     String errorCode,
     String errorMessage,
     UUID retryOfMessageId,
-    int retryAttempt) {}
+    int retryAttempt,
+    UUID threadId) {}
