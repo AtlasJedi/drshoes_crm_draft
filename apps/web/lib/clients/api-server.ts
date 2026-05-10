@@ -62,7 +62,9 @@ export async function getClientServer(id: string): Promise<ClientDto> {
   });
   if (!resp.ok) {
     log.warn("op=getClientServer outcome=error", { id, status: resp.status });
-    throw new Error(`clients/get failed: ${resp.status}`);
+    const err = new Error(`clients/get failed: ${resp.status}`) as Error & { status: number };
+    err.status = resp.status;
+    throw err;
   }
   return (await resp.json()) as ClientDto;
 }
