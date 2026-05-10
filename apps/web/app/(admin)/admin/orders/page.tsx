@@ -7,16 +7,20 @@ import { OrdersFilters } from "./_components/OrdersFilters";
 import { OrdersTable } from "./_components/OrdersTable";
 import { OrderDrawer } from "./_components/OrderDrawer";
 import { OrderViewTabs } from "./_components/OrderViewTabs";
+import { SavedFilterPresets } from "./_components/SavedFilterPresets";
 
 const log = createLogger("admin-orders-page");
 
 interface SearchParams {
-  status?: string;
+  status?: string | string[];
   type?: string | string[];
   craftsmanId?: string;
   q?: string;
   page?: string;
   orderId?: string;
+  tag?: string;
+  plannedPickupAtFrom?: string;
+  plannedPickupAtTo?: string;
 }
 
 export default async function OrdersPage({
@@ -27,12 +31,17 @@ export default async function OrdersPage({
   const sp = await searchParams;
 
   // Coerce params
-  const status = sp.status as OrderStatus | undefined;
+  const status = sp.status
+    ? (Array.isArray(sp.status) ? sp.status : [sp.status]) as OrderStatus[]
+    : undefined;
   const type = sp.type
     ? (Array.isArray(sp.type) ? sp.type : [sp.type]) as OrderItemKind[]
     : undefined;
   const craftsmanId = sp.craftsmanId;
   const q = sp.q;
+  const tag = sp.tag;
+  const plannedPickupAtFrom = sp.plannedPickupAtFrom;
+  const plannedPickupAtTo = sp.plannedPickupAtTo;
   const page = Math.max(0, parseInt(sp.page ?? "0", 10) || 0);
   const orderId = sp.orderId;
 
@@ -47,7 +56,7 @@ export default async function OrdersPage({
       ReturnType<typeof listUsersServer>,
       ...Array<Promise<OrderDto>>,
     ] = [
-      listOrdersServer({ status, type, craftsmanId, q }, page, 25),
+      listOrdersServer({ status, type, craftsmanId, q, tag, plannedPickupAtFrom, plannedPickupAtTo }, page, 25),
       listUsersServer(),
     ];
     if (orderId) fetches.push(getOrderServer(orderId));
@@ -61,7 +70,7 @@ export default async function OrdersPage({
   }
 
   const filtersInitial = {
-    status,
+    status: status?.[0],
     type: type ?? [],
     craftsmanId,
     q,
@@ -91,6 +100,7 @@ export default async function OrdersPage({
         </div>
       ) : (
         <>
+          <SavedFilterPresets />
           <OrdersFilters initial={filtersInitial} users={users} />
 
           {pageData && pageData.content.length === 0 ? (
