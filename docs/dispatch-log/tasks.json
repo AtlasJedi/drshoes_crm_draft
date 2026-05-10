@@ -1032,7 +1032,7 @@
       "id": "5-21",
       "title": "Closure \u2014 mvn verify + frontend gates + milestone-5 tag + CLAUDE.md flip",
       "status": "completed",
-      "commit_sha": "TBD",
+      "commit_sha": "061f99a",
       "dispatch_log": "docs/dispatch-log/5-21-20260510T113542Z.md",
       "review_verdict": "APPROVED",
       "notes": [
