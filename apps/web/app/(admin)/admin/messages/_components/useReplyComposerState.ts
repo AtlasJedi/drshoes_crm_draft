@@ -21,9 +21,15 @@ export interface ReplyComposerState {
 /**
  * Extracts composer state from ReplyComposer to keep the component under 80 LOC.
  * Caller provides defaultChannel derived from thread.channel.
+ * If defaultChannel is not EMAIL or SMS (e.g. WHATSAPP — out of M5 scope),
+ * we defensively fall back to EMAIL so the toggle always has an active state.
  */
+function resolveDefault(ch: Channel): Channel {
+  return ch === "EMAIL" || ch === "SMS" ? ch : "EMAIL";
+}
+
 export function useReplyComposerState(defaultChannel: Channel): ReplyComposerState {
-  const [channel, setChannel] = useState<Channel>(defaultChannel);
+  const [channel, setChannel] = useState<Channel>(resolveDefault(defaultChannel));
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
