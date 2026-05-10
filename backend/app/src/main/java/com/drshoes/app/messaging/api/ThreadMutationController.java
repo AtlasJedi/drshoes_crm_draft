@@ -1,6 +1,7 @@
 package com.drshoes.app.messaging.api;
 
 import com.drshoes.app.auth.principal.AdminPrincipal;
+import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
 import com.drshoes.app.messaging.domain.MessageThreadEntity;
 import com.drshoes.app.messaging.dto.AssignThreadRequest;
@@ -68,13 +69,16 @@ public class ThreadMutationController {
     // ---- private helpers ----
 
     private MessageThreadDto toDto(MessageThreadEntity t) {
-        String clientName = t.getClientId() == null ? null
-            : clients.findById(t.getClientId())
-                .map(c -> c.getFullName()).orElse(null);
+        Client client = t.getClientId() == null ? null
+            : clients.findById(t.getClientId()).orElse(null);
         return new MessageThreadDto(
             t.getId(), t.getClientId(), t.getRawSender(), t.getChannel(), t.getSubject(),
             t.getLastMessageAt(), t.getUnreadCount(), t.getCreatedAt(), t.getUpdatedAt(),
             null /* lastMessagePreview — not stored on entity */,
-            t.getClientId() == null, clientName, t.getDiscardedAt());
+            t.getClientId() == null,
+            client == null ? null : client.getFullName(),
+            client == null ? null : client.getEmail(),
+            client == null ? null : client.getPhone(),
+            t.getDiscardedAt());
     }
 }

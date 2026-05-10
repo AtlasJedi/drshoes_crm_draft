@@ -16,5 +16,7 @@ public record MessageThreadDto(
     String lastMessagePreview,
     boolean unmatched,
     String clientName,
+    String clientEmail,
+    String clientPhone,
     OffsetDateTime discardedAt
 ) {}

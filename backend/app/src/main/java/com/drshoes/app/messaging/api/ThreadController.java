@@ -65,10 +65,10 @@ public class ThreadController {
                 default          -> threads.findAllActiveOrderByLastMessageAtDesc(channel);
             };
         }
-        Map<UUID, String> clientNames = loadClientNames(raw);
+        Map<UUID, Client> clientsById = loadClients(raw);
         log.info("op=threads.list actor={} outcome=ok count={}", actor.email(), raw.size());
         return raw.stream()
-            .map(t -> toDto(t, t.getClientId() == null ? null : clientNames.get(t.getClientId())))
+            .map(t -> toDto(t, t.getClientId() == null ? null : clientsById.get(t.getClientId())))
             .toList();
     }
 
@@ -78,30 +78,34 @@ public class ThreadController {
         log.info("op=threads.get actor={} threadId={}", actor.email(), id);
         var t = threads.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Thread not found"));
-        String clientName = t.getClientId() == null ? null
-            : clients.findById(t.getClientId()).map(Client::getFullName).orElse(null);
+        Client client = t.getClientId() == null ? null
+            : clients.findById(t.getClientId()).orElse(null);
         var msgs = messages.findAllByThreadIdOrderByCreatedAtAsc(id)
             .stream().map(this::toMessageDto).toList();
         log.info("op=threads.get actor={} threadId={} outcome=ok messages={}", actor.email(), id, msgs.size());
-        return new ThreadDetailDto(toDto(t, clientName), msgs);
+        return new ThreadDetailDto(toDto(t, client), msgs);
     }
 
     // ---- private helpers ----
 
-    private Map<UUID, String> loadClientNames(List<MessageThreadEntity> ts) {
+    private Map<UUID, Client> loadClients(List<MessageThreadEntity> ts) {
         var ids = ts.stream().map(MessageThreadEntity::getClientId)
             .filter(Objects::nonNull).collect(Collectors.toSet());
         if (ids.isEmpty()) return Map.of();
         return clients.findAllById(ids).stream()
-            .collect(Collectors.toMap(Client::getId, Client::getFullName));
+            .collect(Collectors.toMap(Client::getId, c -> c));
     }
 
-    private MessageThreadDto toDto(MessageThreadEntity t, String clientName) {
+    private MessageThreadDto toDto(MessageThreadEntity t, Client client) {
         return new MessageThreadDto(
             t.getId(), t.getClientId(), t.getRawSender(), t.getChannel(), t.getSubject(),
             t.getLastMessageAt(), t.getUnreadCount(), t.getCreatedAt(), t.getUpdatedAt(),
             null /* lastMessagePreview — not stored on entity */,
-            t.getClientId() == null, clientName, t.getDiscardedAt());
+            t.getClientId() == null,
+            client == null ? null : client.getFullName(),
+            client == null ? null : client.getEmail(),
+            client == null ? null : client.getPhone(),
+            t.getDiscardedAt());
     }
 
     private MessageDto toMessageDto(MessageEntity m) {

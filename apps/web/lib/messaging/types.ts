@@ -83,6 +83,8 @@ export interface MessageThreadDto {
   lastMessagePreview: string | null;
   unmatched: boolean;
   clientName: string | null;
+  clientEmail: string | null;
+  clientPhone: string | null;
   discardedAt: string | null;
 }
 
