@@ -26,7 +26,7 @@ placeholders. Real implementations have no calendar slot and are deferred.
 |---|---|
 | D1 | Job-to-be-done = **lookup-first** (returning customer dossier). Edit is secondary, in a modal. |
 | D2 | List page has **search box only** — typeahead via existing `/api/admin/clients/search`. Below: alphabetical paginated full list. No filter chips, no sort columns. |
-| D3 | Detail page projection = **aggregate header + reuse existing list endpoints**. New `GET /api/admin/clients/{id}/summary` for header tiles (counts). Orders + threads come from `GET /api/admin/orders?clientId=…` and `GET /api/admin/messaging/threads?clientId=…` — both new query params on existing endpoints. |
+| D3 | Detail page projection = **aggregate header + reuse existing list endpoints**. New `GET /api/admin/clients/{id}/summary` for header tiles (counts). Orders + threads come from `GET /api/admin/orders?clientId=…` and `GET /api/admin/threads?clientId=…` — both new query params on existing endpoints. |
 | D4 | Edit surface = **single "Edytuj" modal** — full form (name, phone, email, channel, RODO toggle, notes). One PATCH on save. |
 | D5 | RODO toggle = **toggle + visible badge, no side-effects.** ON sets `rodoConsentAt=now()`, OFF sets `null`. No automatic message-blocking. Audit-logged via existing aspect. |
 | D6 | Sklep + Aktualności = **single placeholder card per page.** "Do implementacji w przyszłości" + 1-line note. Sidebar links work, no 404s. |
@@ -68,27 +68,35 @@ Structured log line includes `rodoChanged=true|false` when the toggle moved.
 ### 3.2 `OrderController.list` — new param
 
 Add `@RequestParam(required = false) UUID clientId` to the existing list method.
-Plumbed through `OrderService.list(...)` (or whichever query class exists at the
-moment of implementation) into the JPA Specification chain. When `clientId`
-is present, append a `client.id = :clientId` predicate.
+Plumbed through `OrderService.list(...)` into `OrderSpecifications.forList(...)`.
+The Specification gets a new `clientId` parameter at the end of its arg list;
+when non-null, it appends `cb.equal(root.get("clientId"), clientId)` to
+`preds`. No change to response shape, RBAC, or pagination defaults.
 
-No change to response shape, RBAC, or pagination defaults.
-
-Plan-time research note (writing-plans must verify):
-- Confirm the exact method signature on `OrderService` and the
-  Specification class name. Memory says JPA Specifications were used in M1
-  (`OrderSpecifications` was the working name in 1-7). Verify in the live
-  code before plan tasks are sized.
+**Resolved by inline plan-time research (commit f3f33e6 + this revision):**
+- `OrderService.list(List<OrderStatus> statuses, UUID assigneeId, List<OrderItemKind> kinds, String q, String tag, Instant plannedPickupAtFrom, Instant plannedPickupAtTo, Pageable pageable)` — extend with `UUID clientId` (positioned wherever feels least disruptive — recommend right after `assigneeId`).
+- `OrderSpecifications.forList(...)` — same extension. Predicate template:
+  ```java
+  if (clientId != null)
+      preds.add(cb.equal(root.get("clientId"), clientId));
+  ```
 
 ### 3.3 `ThreadController.list` — new param
 
-Add `@RequestParam(required = false) UUID clientId`. Plumbed through whichever
-query service backs `ThreadController.list` today (memory says
-`ThreadQueryService`-style class introduced in M5 task 5-6). When present,
-filter `message_thread.client_id = :clientId`.
+Endpoint prefix is **`/api/admin/threads`** (NOT `/api/admin/messaging/threads`
+— spec previously got the prefix wrong; this revision corrects it).
+
+Add `@RequestParam(required = false) UUID clientId`. The current list method
+delegates directly to `MessageThreadRepository` derived methods (no Spec
+class). When `clientId` is present, ignore `filter` / `channel` / `q` and use
+a new repo method:
+
+```java
+List<MessageThreadEntity> findAllByClientIdAndDiscardedAtIsNullOrderByLastMessageAtDesc(UUID clientId);
+```
 
 No change to response shape, RBAC, pagination, or the existing
-`filter`/`channel`/`q` params.
+`filter`/`channel`/`q` params for the no-clientId path.
 
 ### 3.4 New endpoint — `GET /api/admin/clients/{id}/summary`
 
