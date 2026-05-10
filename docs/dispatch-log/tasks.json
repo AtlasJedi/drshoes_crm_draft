@@ -1321,9 +1321,9 @@
     {
       "id": "7-12",
       "title": "/admin/clients/[id]/page.tsx \u2014 overview tab (parallel fetches, 404 guard)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "df5e55d",
+      "dispatch_log": "docs/dispatch-log/7-12-20260511T010200Z.md"
     },
     {
       "id": "7-13",
