@@ -1146,9 +1146,9 @@
     {
       "id": "6-13",
       "title": "lib/calendar + OrderViewTabs shared component",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "785d2cc",
+      "dispatch_log": "docs/dispatch-log/6-13-20260510T180400Z.md"
     },
     {
       "id": "6-14",
