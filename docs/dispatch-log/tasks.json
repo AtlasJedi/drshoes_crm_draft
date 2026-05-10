@@ -985,9 +985,17 @@
     {
       "id": "5-18",
       "title": "ThreadClientPanel (right rail)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "95c8498",
+      "dispatch_log": "docs/dispatch-log/5-18-20260510T110926Z.md",
+      "review_verdict": "APPROVED",
+      "notes": [
+        "Plan errata: ThreadDto → MessageThreadDto; recentOrderId/Code/Status/totalOrders fields not on DTO so the active-order card always renders the placeholder branch (— per plan footnote line 7028) and the totals grid renders — for both cells.",
+        "WHATSAPP chip color promoted to 3-way switch: EMAIL=blue, SMS=violet, WHATSAPP=emerald.",
+        "MessagesShell wiring: setLoadedThread setter passed directly as the SelectedThread onLoaded prop (signature matches); right rail guarded at parent by selectedId && loadedThread && loadedThread.clientId so unmatched threads don't render the panel at all.",
+        "ThreadClientPanel landed at 129 LOC (over 80 cap) — JSX-density across 4 sections; within the 142 LOC precedent set by 5-17 ReplyComposer. MessagesShell at 67 LOC.",
+        "TS strict-mode self-fix: string[0] indexing replaced with charAt(0) in initials computation (avoids string|undefined in noUncheckedIndexedAccess)."
+      ]
     },
     {
       "id": "5-19",
