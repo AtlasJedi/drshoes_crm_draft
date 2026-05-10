@@ -2,6 +2,8 @@ package com.drshoes.app.messaging.repository;
 
 import com.drshoes.app.messaging.domain.MessageThreadEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,4 +57,64 @@ public interface MessageThreadRepository extends JpaRepository<MessageThreadEnti
      */
     Optional<MessageThreadEntity> findFirstByRawSenderAndChannelOrderByCreatedAtAsc(
             String rawSender, String channel);
+
+    /** Active = not discarded. Optionally filtered by channel. */
+    @Query(value = """
+        SELECT * FROM message_thread
+        WHERE discarded_at IS NULL
+          AND (:channel IS NULL OR channel = :channel)
+        ORDER BY last_message_at DESC NULLS LAST
+        LIMIT 50
+        """, nativeQuery = true)
+    List<MessageThreadEntity> findAllActiveOrderByLastMessageAtDesc(@Param("channel") String channel);
+
+    /** Unread = not discarded, unread_count > 0. Optionally filtered by channel. */
+    @Query(value = """
+        SELECT * FROM message_thread
+        WHERE discarded_at IS NULL AND unread_count > 0
+          AND (:channel IS NULL OR channel = :channel)
+        ORDER BY last_message_at DESC NULLS LAST
+        LIMIT 50
+        """, nativeQuery = true)
+    List<MessageThreadEntity> findAllWithUnreadOrderByLastMessageAtDesc(@Param("channel") String channel);
+
+    /** Unmatched = not discarded, client_id IS NULL. Optionally filtered by channel. */
+    @Query(value = """
+        SELECT * FROM message_thread
+        WHERE discarded_at IS NULL AND client_id IS NULL
+          AND (:channel IS NULL OR channel = :channel)
+        ORDER BY last_message_at DESC NULLS LAST
+        LIMIT 50
+        """, nativeQuery = true)
+    List<MessageThreadEntity> findAllUnmatchedOrderByLastMessageAtDesc(@Param("channel") String channel);
+
+    /**
+     * Full-text search: matches client name/phone/email, raw_sender, or latest 3 message bodies.
+     * Uses a subquery inside EXISTS for body search (Postgres 9.3+ compatible, no LATERAL keyword needed).
+     */
+    @Query(value = """
+        SELECT DISTINCT t.* FROM message_thread t
+        LEFT JOIN client c ON c.id = t.client_id
+        WHERE t.discarded_at IS NULL
+          AND (:channel IS NULL OR t.channel = :channel)
+          AND (
+               c.first_name ILIKE '%' || :q || '%'
+            OR c.last_name  ILIKE '%' || :q || '%'
+            OR c.phone      ILIKE '%' || :q || '%'
+            OR c.email      ILIKE '%' || :q || '%'
+            OR t.raw_sender ILIKE '%' || :q || '%'
+            OR EXISTS (
+                 SELECT 1 FROM (
+                   SELECT body FROM message
+                   WHERE thread_id = t.id
+                   ORDER BY created_at DESC
+                   LIMIT 3
+                 ) recent
+                 WHERE recent.body ILIKE '%' || :q || '%'
+               )
+          )
+        ORDER BY t.last_message_at DESC NULLS LAST
+        LIMIT 50
+        """, nativeQuery = true)
+    List<MessageThreadEntity> searchThreads(@Param("q") String q, @Param("channel") String channel);
 }

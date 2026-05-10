@@ -57,4 +57,10 @@ public interface MessageRepository extends JpaRepository<MessageEntity, UUID> {
             @Param("errorCode")     String errorCode,
             @Param("errorMessage")  String errorMessage,
             @Param("deliveredAt")   java.time.OffsetDateTime deliveredAt);
+
+    /**
+     * Returns all messages for a thread ordered by creation time ascending.
+     * Used by ThreadController.getThread to populate the ThreadDetailDto messages list.
+     */
+    List<MessageEntity> findAllByThreadIdOrderByCreatedAtAsc(UUID threadId);
 }

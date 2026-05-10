@@ -76,4 +76,10 @@ public class Client {
 
     public Instant getDeletedAt() { return deletedAt; }
     public void setDeletedAt(Instant v) { this.deletedAt = v; }
+
+    public String getFullName() {
+        if (firstName == null) return lastName == null ? "" : lastName;
+        if (lastName == null) return firstName;
+        return firstName + " " + lastName;
+    }
 }
