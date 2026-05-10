@@ -860,9 +860,9 @@
     {
       "id": "5-7",
       "title": "Timeline kinds + curator wiring + frontend label/icon",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "1b8aed8",
+      "dispatch_log": "docs/dispatch-log/5-7-2026-05-10T01:02:43Z.md"
     },
     {
       "id": "5-8",
