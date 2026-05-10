@@ -1094,9 +1094,10 @@
     {
       "id": "6-7",
       "title": "GET /api/admin/orders/calendar",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "3428f2a",
+      "dispatch_log": "docs/dispatch-log/6-7-20260510T161335Z.md",
+      "review_verdict": "APPROVED"
     },
     {
       "id": "6-8",
