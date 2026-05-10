@@ -20,7 +20,7 @@ describe("BulkResultModal", () => {
       />,
     );
     expect(screen.getByText("DR-01")).toBeInTheDocument();
-    expect(screen.getByText(/W_REALIZACJI/i)).toBeInTheDocument();
+    expect(screen.getByText(/W realizacji/i)).toBeInTheDocument();
   });
 
   it("renders failure rows with error reason", () => {

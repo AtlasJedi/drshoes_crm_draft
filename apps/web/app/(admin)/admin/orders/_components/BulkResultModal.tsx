@@ -11,6 +11,7 @@ import type {
   BulkSuccessRow,
   BulkFailureRow,
 } from "@/lib/orders/bulk-api";
+import { STATUS_LABELS_PL } from "@/lib/orders/status";
 
 interface Props {
   open: boolean;
@@ -63,7 +64,7 @@ export function BulkResultModal({ open, result, onClose }: Props) {
                   {row.code}
                 </span>
                 <span className="text-xs text-green-700">
-                  {row.fromStatus} → {row.toStatus}
+                  {STATUS_LABELS_PL[row.fromStatus]} → {STATUS_LABELS_PL[row.toStatus]}
                 </span>
               </div>
             ))}
