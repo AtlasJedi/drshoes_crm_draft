@@ -2,14 +2,11 @@ package com.drshoes.app.messaging.service;
 
 import com.drshoes.app.audit.Audited;
 import com.drshoes.app.auth.principal.AdminPrincipal;
-import com.drshoes.app.client.domain.Client;
-import com.drshoes.app.client.domain.ClientRepository;
 import com.drshoes.app.messaging.domain.DeliveryStatus;
 import com.drshoes.app.messaging.domain.MessageDirection;
 import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageTemplateRepository;
-import com.drshoes.lib.messaging.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,18 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 /**
- * Single outbound send pipeline. Two public entry points:
- *   - sendManual  — operator-initiated from MessagesController / MessageComposerModal
- *   - sendForTrigger — called by TriggerEngine after status-change post-commit hook
+ * Single outbound send pipeline. Five public entry points:
+ *   - sendManual         — operator-initiated from MessagesController / MessageComposerModal
+ *   - sendForTrigger     — called by TriggerEngine after status-change post-commit hook
+ *   - sendRetry          — called by MessageRetryService; bypasses template re-render
+ *   - sendReply          — operator reply on an existing thread (no template)
+ *   - sendNewToClient    — cross-thread first-contact compose (no template)
  *
- * Both delegate to a private send(...) that:
- *   1. loads template + builds TemplateContext via TemplateContextBuilder
- *   2. renders subject + body
- *   3. find-or-create message thread
- *   4. persists MessageEntity with deliveryStatus=QUEUED
- *   5. delegates to MessageGatewayDispatcher (gateway call + status update + thread bump)
- *
- * Logging contract: exactly ONE INFO log per call at step 5 with outcome=SENT|FAILED.
+ * Recipient resolution is delegated to {@link MessageRecipientResolver}.
+ * Gateway dispatch is delegated to {@link MessageGatewayDispatcher}.
+ * Logging contract: exactly ONE INFO log per public call with outcome=SENT|FAILED.
  */
 @Service
 public class MessageRouter {
@@ -41,7 +36,7 @@ public class MessageRouter {
     private final MessageThreadService threadService;
     private final TemplateRenderer renderer;
     private final TemplateContextBuilder contextBuilder;
-    private final ClientRepository clients;
+    private final MessageRecipientResolver recipientResolver;
     private final MessageGatewayDispatcher dispatcher;
 
     public MessageRouter(
@@ -50,14 +45,14 @@ public class MessageRouter {
             MessageThreadService threadService,
             TemplateRenderer renderer,
             TemplateContextBuilder contextBuilder,
-            ClientRepository clients,
+            MessageRecipientResolver recipientResolver,
             MessageGatewayDispatcher dispatcher) {
         this.messages = messages;
         this.templates = templates;
         this.threadService = threadService;
         this.renderer = renderer;
         this.contextBuilder = contextBuilder;
-        this.clients = clients;
+        this.recipientResolver = recipientResolver;
         this.dispatcher = dispatcher;
     }
 
@@ -89,136 +84,62 @@ public class MessageRouter {
     }
 
     /**
-     * Retry entry point. Bypasses template lookup — uses the stored body/subject from the
-     * original message directly. This is needed because seeded/manual messages may have
-     * {@code templateId=null}, which would cause {@code sendManual} to throw.
-     *
-     * <p>The {@code @Audited} on {@code MessageRetryService#retry} handles audit for retries;
-     * this method intentionally has no @Audited to avoid a double audit row.
-     *
-     * @param orig    the original FAILED MessageEntity (body/subject/channel/clientId/orderId)
-     * @param actorId the authenticated admin's UUID
-     * @return id of the newly persisted retry message row
+     * Retry entry point. Bypasses template lookup — uses stored body/subject from the original
+     * message. No @Audited here; MessageRetryService#retry handles the audit row.
      */
     @Transactional
     public UUID sendRetry(MessageEntity orig, UUID actorId) {
         var thread = threadService.findOrCreateForClient(orig.getClientId());
+        String recipient = recipientResolver.resolve(orig.getClientId(), orig.getChannel());
 
-        var msg = MessageEntity.newMessage();
-        msg.setThreadId(thread.getId());
-        msg.setOrderId(orig.getOrderId());
-        msg.setClientId(orig.getClientId());
-        msg.setDirection(MessageDirection.OUTBOUND.name());
-        msg.setChannel(orig.getChannel());
-        msg.setTemplateId(orig.getTemplateId());   // may be null — no re-render needed
-        msg.setSubject(orig.getSubject());
-        msg.setBody(orig.getBody());
-        msg.setDeliveryStatus(DeliveryStatus.QUEUED.name());
-        msg.setSentBy(actorId);
-        var saved = messages.saveAndFlush(msg);
-
-        Channel ch = Channel.valueOf(orig.getChannel());
-        String recipient = switch (ch) {
-            case EMAIL -> clients.findById(orig.getClientId()).map(Client::getEmail).orElse(null);
-            case SMS   -> clients.findById(orig.getClientId()).map(Client::getPhone).orElse(null);
-            default    -> throw new IllegalArgumentException("Unsupported channel: " + orig.getChannel());
-        };
-
-        MessageEntity persisted = dispatcher.dispatch(saved, recipient, orig.getSubject(), orig.getBody());
+        var msg = buildOutbound(thread.getId(), orig.getOrderId(), orig.getClientId(),
+                orig.getChannel(), orig.getTemplateId(), null,
+                orig.getSubject(), orig.getBody(), actorId);
+        var persisted = dispatcher.dispatch(msg, recipient, orig.getSubject(), orig.getBody());
 
         log.info("op=message.sendRetry outcome={} orderId={} newMessageId={} channel={}",
                 persisted.getDeliveryStatus(), orig.getOrderId(), persisted.getId(), orig.getChannel());
-
         return persisted.getId();
     }
 
     /**
-     * Reply send entry point — operator sends a freeform message on an existing thread.
-     * Unlike sendManual, no template is required; body and subject are provided directly.
-     * The controller pre-validates the thread (exists, matched, not discarded, channel match)
-     * and passes the resolved clientId and threadId here.
-     *
-     * @param threadId  the validated existing thread to post the message on
-     * @param clientId  the client owning the thread (pre-validated non-null by controller)
-     * @param channel   EMAIL or SMS (pre-validated to match thread by controller)
-     * @param subject   email subject (null for SMS)
-     * @param body      message body
-     * @param orderId   optional order context (may be null)
-     * @param actor     the authenticated admin performing the send
-     * @return id of the persisted message row
+     * Reply send entry point — operator freeform message on an existing thread.
+     * Body/subject provided directly; no template.
      */
     @Transactional
     public UUID sendReply(UUID threadId, UUID clientId, String channel, String subject,
                           String body, UUID orderId, AdminPrincipal actor) {
-        Channel ch = Channel.valueOf(channel);
-        String recipient = switch (ch) {
-            case EMAIL -> clients.findById(clientId).map(Client::getEmail).orElse(null);
-            case SMS   -> clients.findById(clientId).map(Client::getPhone).orElse(null);
-            default    -> throw new IllegalArgumentException("Unsupported channel: " + channel);
-        };
+        String recipient = recipientResolver.resolve(clientId, channel);
+        UUID actorId = actor == null ? null : actor.userId();
 
-        var msg = MessageEntity.newMessage();
-        msg.setThreadId(threadId);
-        msg.setOrderId(orderId);
-        msg.setClientId(clientId);
-        msg.setDirection(MessageDirection.OUTBOUND.name());
-        msg.setChannel(channel);
-        msg.setSubject(subject);
-        msg.setBody(body);
-        msg.setDeliveryStatus(DeliveryStatus.QUEUED.name());
-        msg.setSentBy(actor == null ? null : actor.userId());
-        var saved = messages.saveAndFlush(msg);
-
-        MessageEntity persisted = dispatcher.dispatch(saved, recipient, subject, body);
+        var msg = buildOutbound(threadId, orderId, clientId, channel,
+                null, null, subject, body, actorId);
+        var persisted = dispatcher.dispatch(msg, recipient, subject, body);
 
         log.info("op=message.sendReply outcome={} threadId={} messageId={} channel={} actor={}",
                 persisted.getDeliveryStatus(), threadId, persisted.getId(), channel,
                 actor == null ? "system" : actor.email());
-
         return persisted.getId();
     }
 
     /**
-     * Cross-thread "Nowa wiadomość" compose — operator initiates first contact with a client.
-     * Unlike sendManual, no template is required; body and subject are provided directly.
-     * Unlike sendReply, no existing thread is needed — find-or-create for the client+channel pair.
-     *
-     * @param clientId the target client (must exist, channel availability pre-validated by controller)
-     * @param channel  EMAIL or SMS
-     * @param subject  email subject (null for SMS)
-     * @param body     message body
-     * @param actor    the authenticated admin performing the send
-     * @return id of the persisted message row
+     * Cross-thread "Nowa wiadomość" compose — first-contact with a client on a given channel.
+     * Find-or-create thread; body/subject provided directly.
      */
     @Transactional
     public UUID sendNewToClient(UUID clientId, String channel, String subject,
                                 String body, AdminPrincipal actor) {
-        Channel ch = Channel.valueOf(channel);
-        String recipient = switch (ch) {
-            case EMAIL -> clients.findById(clientId).map(Client::getEmail).orElse(null);
-            case SMS   -> clients.findById(clientId).map(Client::getPhone).orElse(null);
-            default    -> throw new IllegalArgumentException("Unsupported channel: " + channel);
-        };
-
+        String recipient = recipientResolver.resolve(clientId, channel);
         var thread = threadService.findOrCreateForClient(clientId, channel);
+        UUID actorId = actor == null ? null : actor.userId();
 
-        var msg = MessageEntity.newMessage();
-        msg.setThreadId(thread.getId());
-        msg.setClientId(clientId);
-        msg.setDirection(MessageDirection.OUTBOUND.name());
-        msg.setChannel(channel);
-        msg.setSubject(subject);
-        msg.setBody(body);
-        msg.setDeliveryStatus(DeliveryStatus.QUEUED.name());
-        msg.setSentBy(actor == null ? null : actor.userId());
-        var saved = messages.saveAndFlush(msg);
-
-        MessageEntity persisted = dispatcher.dispatch(saved, recipient, subject, body);
+        var msg = buildOutbound(thread.getId(), null, clientId, channel,
+                null, null, subject, body, actorId);
+        var persisted = dispatcher.dispatch(msg, recipient, subject, body);
 
         log.info("op=message.sendNewToClient outcome={} clientId={} channel={} threadId={} messageId={} actor={}",
                 persisted.getDeliveryStatus(), clientId, channel, thread.getId(), persisted.getId(),
                 actor == null ? "system" : actor.email());
-
         return persisted.getId();
     }
 
@@ -235,38 +156,37 @@ public class MessageRouter {
         String renderedBody = renderer.render(template.getBody(), ctx);
 
         var thread = threadService.findOrCreateForClient(clientId);
+        String recipient = recipientResolver.resolve(clientId, channel);
 
+        if (recipient == null || recipient.isBlank()) {
+            log.warn("op=message.send outcome=FAILED orderId={} channel={} cause=null_or_blank_recipient",
+                    orderId, channel);
+        }
+
+        var msg = buildOutbound(thread.getId(), orderId, clientId, channel,
+                templateId, triggerId, renderedSubject, renderedBody, actorId);
+        var persisted = dispatcher.dispatch(msg, recipient, renderedSubject, renderedBody);
+
+        log.info("op=message.send outcome={} orderId={} messageId={} channel={} triggerId={}",
+                persisted.getDeliveryStatus(), orderId, persisted.getId(), channel, triggerId);
+        return persisted.getId();
+    }
+
+    private MessageEntity buildOutbound(UUID threadId, UUID orderId, UUID clientId,
+                                        String channel, UUID templateId, UUID triggerId,
+                                        String subject, String body, UUID actorId) {
         var msg = MessageEntity.newMessage();
-        msg.setThreadId(thread.getId());
+        msg.setThreadId(threadId);
         msg.setOrderId(orderId);
         msg.setClientId(clientId);
         msg.setDirection(MessageDirection.OUTBOUND.name());
         msg.setChannel(channel);
         msg.setTemplateId(templateId);
         msg.setTriggerId(triggerId);
-        msg.setSubject(renderedSubject);
-        msg.setBody(renderedBody);
+        msg.setSubject(subject);
+        msg.setBody(body);
         msg.setDeliveryStatus(DeliveryStatus.QUEUED.name());
         msg.setSentBy(actorId);
-        var saved = messages.saveAndFlush(msg);
-
-        Channel ch = Channel.valueOf(channel);
-        String recipient = switch (ch) {
-            case EMAIL -> clients.findById(clientId).map(Client::getEmail).orElse(null);
-            case SMS   -> clients.findById(clientId).map(Client::getPhone).orElse(null);
-            default    -> throw new IllegalArgumentException("Unsupported channel: " + channel);
-        };
-
-        if (recipient == null || recipient.isBlank()) {
-            log.warn("op=message.send outcome=FAILED orderId={} messageId={} channel={} cause=null_or_blank_recipient",
-                    orderId, saved.getId(), channel);
-        }
-
-        MessageEntity persisted = dispatcher.dispatch(saved, recipient, renderedSubject, renderedBody);
-
-        log.info("op=message.send outcome={} orderId={} messageId={} channel={} triggerId={}",
-                persisted.getDeliveryStatus(), orderId, persisted.getId(), channel, triggerId);
-
-        return persisted.getId();
+        return messages.saveAndFlush(msg);
     }
 }
