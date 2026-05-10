@@ -7,6 +7,12 @@ import type {
   TriggerDto,
   MessageDto,
   SendMessageRequest,
+  MessageThreadDto,
+  ThreadDetailDto,
+  ThreadFilter,
+  Channel,
+  SendReplyRequest,
+  SendNewRequest,
 } from "./types";
 
 const log = createLogger("messaging.api");
@@ -64,4 +70,57 @@ export async function sendMessage(orderId: string, req: SendMessageRequest): Pro
 export async function retryMessage(id: string): Promise<MessageDto> {
   log.info("op=retryMessage", { id });
   return api.post<MessageDto>(`/admin/messages/${id}/retry`);
+}
+
+export async function listThreads(
+  filter?: ThreadFilter,
+  channel?: Channel,
+  q?: string,
+): Promise<MessageThreadDto[]> {
+  const params = new URLSearchParams();
+  if (filter) params.set("filter", filter);
+  if (channel) params.set("channel", channel);
+  if (q && q.length >= 2) params.set("q", q);
+  const qs = params.toString();
+  log.info("op=listThreads", { filter, channel, q });
+  return api.get<MessageThreadDto[]>(`/admin/threads${qs ? "?" + qs : ""}`);
+}
+
+export async function getThread(id: string): Promise<ThreadDetailDto> {
+  log.info("op=getThread", { id });
+  return api.get<ThreadDetailDto>(`/admin/threads/${id}`);
+}
+
+export async function sendReply(
+  threadId: string,
+  req: SendReplyRequest,
+): Promise<MessageDto> {
+  log.info("op=sendReply", { threadId, channel: req.channel });
+  return api.post<MessageDto>(`/admin/threads/${threadId}/messages`, req);
+}
+
+export async function markThreadRead(threadId: string): Promise<MessageThreadDto> {
+  log.info("op=markThreadRead", { threadId });
+  return api.post<MessageThreadDto>(`/admin/threads/${threadId}/mark-read`);
+}
+
+export async function assignUnmatched(
+  threadId: string,
+  clientId: string,
+): Promise<MessageThreadDto> {
+  log.info("op=assignUnmatched", { threadId, clientId });
+  return api.post<MessageThreadDto>(`/admin/threads/${threadId}/assign`, { clientId });
+}
+
+export async function discardUnmatched(threadId: string): Promise<MessageThreadDto> {
+  log.info("op=discardUnmatched", { threadId });
+  return api.post<MessageThreadDto>(`/admin/threads/${threadId}/discard`);
+}
+
+export async function sendNewToClient(
+  clientId: string,
+  req: SendNewRequest,
+): Promise<MessageDto> {
+  log.info("op=sendNewToClient", { clientId, channel: req.channel });
+  return api.post<MessageDto>(`/admin/clients/${clientId}/messages`, req);
 }

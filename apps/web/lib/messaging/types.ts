@@ -67,3 +67,39 @@ export interface SendMessageRequest {
   channel: Channel;
   subject?: string | null;
 }
+
+export type ThreadFilter = "ALL" | "UNREAD" | "UNMATCHED";
+
+export interface MessageThreadDto {
+  id: string;
+  clientId: string | null;
+  rawSender: string | null;
+  channel: Channel;
+  subject: string | null;
+  lastMessageAt: string | null;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
+  lastMessagePreview: string | null;
+  unmatched: boolean;
+  clientName: string | null;
+  discardedAt: string | null;
+}
+
+export interface ThreadDetailDto {
+  thread: MessageThreadDto;
+  messages: MessageDto[];
+}
+
+export interface SendReplyRequest {
+  channel: Channel;
+  subject?: string | null;
+  body: string;
+  orderId?: string | null;
+}
+
+export interface SendNewRequest {
+  channel: Channel;
+  subject?: string | null;
+  body: string;
+}
