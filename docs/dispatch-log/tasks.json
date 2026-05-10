@@ -1115,10 +1115,12 @@
     {
       "id": "6-9",
       "title": "POST /api/admin/orders/bulk/status (TWO-STAGE)",
-      "status": "stage_1_done",
-      "commit_sha": null,
+      "status": "completed",
+      "commit_sha": "f81c188",
       "stage_1_sha": "f81c188",
-      "dispatch_log": "docs/dispatch-log/6-9-20260510T163138Z.md"
+      "fixup_sha": "00084b0",
+      "dispatch_log": "docs/dispatch-log/6-9-20260510T163138Z.md",
+      "stage2_log": "docs/dispatch-log/6-9-stage2-20260510T164315Z.md"
     },
     {
       "id": "6-10",
