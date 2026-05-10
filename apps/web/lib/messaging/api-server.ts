@@ -68,3 +68,12 @@ export async function listThreadsServer(
     "listThreadsServer",
   );
 }
+
+/** GET /api/admin/threads?clientId= — threads for a single client, server-side. */
+export async function listThreadsForClientServer(clientId: string): Promise<MessageThreadDto[]> {
+  log.info("op=listThreadsForClientServer", { clientId });
+  return serverGet<MessageThreadDto[]>(
+    `/api/admin/threads?clientId=${encodeURIComponent(clientId)}`,
+    "listThreadsForClientServer",
+  );
+}

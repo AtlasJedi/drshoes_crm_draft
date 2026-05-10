@@ -83,3 +83,26 @@ export async function getClientSummaryServer(id: string): Promise<ClientSummary>
   }
   return (await resp.json()) as ClientSummary;
 }
+
+/** GET /api/admin/orders?clientId= — paginated order list filtered by client, server-side. */
+export async function listOrdersServer(
+  opts: { clientId: string; page?: number; size?: number },
+): Promise<Page<import("@/lib/orders/types").OrderListRow>> {
+  const p = new URLSearchParams();
+  p.set("clientId", opts.clientId);
+  p.set("page", String(opts.page ?? 0));
+  p.set("size", String(opts.size ?? 25));
+  const cookie = await cookieHeader();
+  log.info("op=listOrdersServer(clientId)", { ...opts });
+  const resp = await fetch(`${base()}/api/admin/orders?${p.toString()}`, {
+    headers: { cookie },
+    cache: "no-store",
+  });
+  if (!resp.ok) {
+    log.warn("op=listOrdersServer(clientId) outcome=error", { ...opts, status: resp.status });
+    const e = new Error(`listOrders failed: ${resp.status}`) as Error & { status: number };
+    e.status = resp.status;
+    throw e;
+  }
+  return (await resp.json()) as Page<import("@/lib/orders/types").OrderListRow>;
+}
