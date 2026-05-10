@@ -1081,9 +1081,15 @@
     {
       "id": "6-6",
       "title": "GET /api/admin/dashboard/charts",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "d8dc017",
+      "dispatch_log": "docs/dispatch-log/6-6-20260510T160357Z.md",
+      "review_verdict": "APPROVED",
+      "notes": [
+        "Separate DashboardChartsController created (merged DashboardController would be ~130 LOC > 120 cap).",
+        "Plan test ordersPerWeek[0].repairs corrected to filter-based assertion — controller zero-fills oldest→newest so current-week order lands at index 7, not 0.",
+        "Window calc simplified: toLocalDate().with(DayOfWeek.MONDAY).minusWeeks(7) vs plan's IsoFields manipulation — same result, cleaner code."
+      ]
     },
     {
       "id": "6-7",
