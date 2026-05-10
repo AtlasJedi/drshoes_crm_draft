@@ -1224,9 +1224,12 @@
     {
       "id": "6-22",
       "title": "useOrderRowSelection + BulkActionBar + BulkResultModal (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "6044f49",
+      "stage_1_sha": "f8d23ee",
+      "fixup_sha": "6044f49",
+      "dispatch_log": "docs/dispatch-log/6-22-stage1-20260510T190347Z.md",
+      "stage2_log": "docs/dispatch-log/6-22-stage2-20260510T190936Z.md"
     },
     {
       "id": "6-23",
