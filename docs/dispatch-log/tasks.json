@@ -1167,9 +1167,9 @@
     {
       "id": "6-16",
       "title": "Calendar page wiring + states",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "964fc74",
+      "dispatch_log": "docs/dispatch-log/6-16-20260510T181835Z.md"
     },
     {
       "id": "6-17",
