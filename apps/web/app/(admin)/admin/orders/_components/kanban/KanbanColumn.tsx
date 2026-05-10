@@ -47,7 +47,7 @@ export function KanbanColumn({ column }: Props) {
       <div
         ref={setNodeRef}
         className={`flex-1 min-h-[200px] border-2 border-t-0 border-ink bg-black/[.03] p-2 flex flex-col gap-2 transition-colors ${
-          isOver ? "bg-black/10" : ""
+          isOver ? "ring-2 ring-[var(--pink)] ring-offset-2 ring-offset-transparent" : ""
         }`}
       >
         <SortableContext
