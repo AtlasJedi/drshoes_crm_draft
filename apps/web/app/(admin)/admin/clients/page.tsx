@@ -4,6 +4,7 @@ import { ClientListSearchBox } from "./_components/ClientListSearchBox";
 import { ClientListTable } from "./_components/ClientListTable";
 import type { ClientSearchResult } from "@/lib/clients/types";
 import Link from "next/link";
+import type { Route } from "next";
 
 const log = createLogger("apps/web/app/(admin)/admin/clients/page");
 
@@ -99,7 +100,7 @@ function ClientSearchResultsTable({ results }: { results: ClientSearchResult[] }
             >
               <td className={tdCls}>
                 <Link
-                  href={`/admin/clients/${r.id}`}
+                  href={`/admin/clients/${r.id}` as Route}
                   className="font-medium hover:underline"
                 >
                   {r.fullName}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import type { Route } from "next";
 
 interface Props {
   initialQ: string;
@@ -19,9 +20,9 @@ export function ClientListSearchBox({ initialQ }: Props) {
   useEffect(() => {
     const id = setTimeout(() => {
       if (value.length === 0) {
-        router.push("/admin/clients");
+        router.push("/admin/clients" as Route);
       } else {
-        router.push(`/admin/clients?q=${encodeURIComponent(value)}`);
+        router.push(`/admin/clients?q=${encodeURIComponent(value)}` as Route);
       }
     }, 250);
     return () => clearTimeout(id);

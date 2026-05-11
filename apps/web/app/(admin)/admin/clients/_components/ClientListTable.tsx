@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import type { ClientDto, Page } from "@/lib/clients/types";
 
 interface Props {
@@ -55,7 +56,7 @@ function ClientListPagination({
   return (
     <div className="flex items-center justify-between mt-4 text-sm">
       {currentPage > 0 ? (
-        <Link href={prevHref} className="px-3 py-1 rounded border border-admin-line text-admin-ink hover:bg-acid/10">
+        <Link href={prevHref as Route} className="px-3 py-1 rounded border border-admin-line text-admin-ink hover:bg-acid/10">
           ← Poprzednia
         </Link>
       ) : (
@@ -63,7 +64,7 @@ function ClientListPagination({
       )}
       <span className="text-admin-mute">Strona {currentPage + 1} z {totalPages}</span>
       {currentPage < totalPages - 1 ? (
-        <Link href={nextHref} className="px-3 py-1 rounded border border-admin-line text-admin-ink hover:bg-acid/10">
+        <Link href={nextHref as Route} className="px-3 py-1 rounded border border-admin-line text-admin-ink hover:bg-acid/10">
           Następna →
         </Link>
       ) : (
@@ -105,7 +106,7 @@ export function ClientListTable({ page, currentPage, q }: Props) {
               >
                 <td className={tdCls}>
                   <Link
-                    href={`/admin/clients/${client.id}`}
+                    href={`/admin/clients/${client.id}` as Route}
                     className="font-medium hover:underline"
                   >
                     {client.lastName ? `${client.lastName}, ${client.firstName}` : client.firstName}
