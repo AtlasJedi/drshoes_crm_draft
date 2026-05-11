@@ -9,6 +9,7 @@ import com.drshoes.lib.messaging.Channel;
 import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.drshoes.lib.messaging.OutboundMessage;
 import com.drshoes.lib.sms.SmsGateway;
+import com.drshoes.lib.whatsapp.WhatsAppGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ class MessageGatewayDispatcherTest {
 
     @Mock EmailGateway emailGateway;
     @Mock SmsGateway smsGateway;
+    @Mock WhatsAppGateway whatsAppGateway;
     @Mock MessageRepository messages;
     @Mock MessageThreadRepository threads;
 
@@ -36,7 +38,7 @@ class MessageGatewayDispatcherTest {
 
     @BeforeEach
     void setUp() {
-        dispatcher = new MessageGatewayDispatcher(emailGateway, smsGateway, messages, threads);
+        dispatcher = new MessageGatewayDispatcher(emailGateway, smsGateway, whatsAppGateway, messages, threads);
     }
 
     private MessageEntity buildMessage(String channel) {
@@ -105,18 +107,35 @@ class MessageGatewayDispatcherTest {
     }
 
     @Test
-    @DisplayName("dispatch unknown channel throws IllegalArgumentException")
-    void dispatch_unknownChannel_throwsIllegalArgument() {
-        var msg = buildMessage("WHATSAPP");
+    @DisplayName("dispatch unknown channel string throws IllegalArgumentException")
+    void dispatch_unknownChannelString_throwsIllegalArgument() {
+        var msg = buildMessage("SMS"); // valid channel to pass buildMessage, overridden below
+        msg.setChannel("PIGEON");      // force an unrecognised raw string
         msg.setThreadId(UUID.randomUUID());
 
-        // OutboundMessage rejects blank subject for EMAIL only; WHATSAPP is not EMAIL.
-        // But WHATSAPP is not handled in the switch — expect IllegalArgumentException from
-        // the switch default arm, not from OutboundMessage validation.
-        // Note: OutboundMessage requires non-blank recipient AND body.
+        // Channel.valueOf("PIGEON") throws IllegalArgumentException before reaching the switch.
         assertThatThrownBy(() -> dispatcher.dispatch(msg, "+48500000001", null, "Hello"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("unknown channel");
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("dispatch WHATSAPP happy path: marks SENT, sets providerMessageId, bumps thread")
+    void dispatch_whatsappHappyPath_marksSent() {
+        var msg = buildMessage("WHATSAPP");
+        UUID threadId = UUID.randomUUID();
+        msg.setThreadId(threadId);
+
+        var thread = new MessageThreadEntity();
+        when(threads.findById(threadId)).thenReturn(Optional.of(thread));
+        when(whatsAppGateway.send(any(OutboundMessage.class)))
+                .thenReturn(DeliveryReceipt.accepted("log-wa-test-provider-id"));
+
+        var result = dispatcher.dispatch(msg, "+48500600700", null, "Cześć, twoje zamówienie jest gotowe.");
+
+        assertThat(result.getDeliveryStatus()).isEqualTo("SENT");
+        assertThat(result.getProviderMessageId()).isEqualTo("log-wa-test-provider-id");
+        assertThat(result.getSentAt()).isNotNull();
+        verify(threads).save(thread);
     }
 
     @Test

@@ -79,6 +79,11 @@
     </dependency>
     <dependency>
       <groupId>com.drshoes</groupId>
+      <artifactId>whatsapp-gateway</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.drshoes</groupId>
       <artifactId>storage</artifactId>
       <version>${project.version}</version>
     </dependency>

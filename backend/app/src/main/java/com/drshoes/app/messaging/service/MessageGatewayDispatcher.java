@@ -8,6 +8,7 @@ import com.drshoes.lib.messaging.Channel;
 import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.drshoes.lib.messaging.OutboundMessage;
 import com.drshoes.lib.sms.SmsGateway;
+import com.drshoes.lib.whatsapp.WhatsAppGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,13 +34,16 @@ public class MessageGatewayDispatcher {
 
     private final EmailGateway emailGateway;
     private final SmsGateway smsGateway;
+    private final WhatsAppGateway whatsAppGateway;
     private final MessageRepository messages;
     private final MessageThreadRepository threads;
 
     public MessageGatewayDispatcher(EmailGateway emailGateway, SmsGateway smsGateway,
+                                    WhatsAppGateway whatsAppGateway,
                                     MessageRepository messages, MessageThreadRepository threads) {
         this.emailGateway = emailGateway;
         this.smsGateway = smsGateway;
+        this.whatsAppGateway = whatsAppGateway;
         this.messages = messages;
         this.threads = threads;
     }
@@ -63,9 +67,9 @@ public class MessageGatewayDispatcher {
 
         try {
             DeliveryReceipt receipt = switch (ch) {
-                case EMAIL -> emailGateway.send(outbound);
-                case SMS   -> smsGateway.send(outbound);
-                default    -> throw new IllegalArgumentException("unknown channel: " + saved.getChannel());
+                case EMAIL    -> emailGateway.send(outbound);
+                case SMS      -> smsGateway.send(outbound);
+                case WHATSAPP -> whatsAppGateway.send(outbound);
             };
             saved.setDeliveryStatus("SENT");
             saved.setProviderMessageId(receipt.providerMessageId());
