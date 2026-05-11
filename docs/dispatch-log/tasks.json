@@ -1477,10 +1477,12 @@
     {
       "id": "8-15",
       "title": "Browser OTel client + /api/otlp Next proxy route (TWO-STAGE)",
-      "status": "stage_1_complete",
-      "commit_sha": null,
+      "status": "completed",
+      "commit_sha": "7f86f63",
       "dispatch_log": "docs/dispatch-log/8-15-20260511T215458Z.md",
-      "stage_1_sha": "7f86f63"
+      "stage_1_sha": "7f86f63",
+      "stage2_log": "docs/dispatch-log/8-15-stage2-20260511T220113Z.md",
+      "stage2_verdict": "APPROVED-WITH-FOLLOWUP"
     },
     {
       "id": "8-16",
