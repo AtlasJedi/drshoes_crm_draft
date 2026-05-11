@@ -55,7 +55,25 @@ drshoes:
     provider: NOOP
   sms:
     provider: NOOP
+  demo:
+    seed:
+      enabled: ${DRSHOES_DEMO_SEED_ENABLED:false}
 
 logging:
   pattern:
     level: "%5p [trace=%X{traceId:-},span=%X{spanId:-}]"
+
+otel:
+  sdk:
+    disabled: false
+  exporter:
+    otlp:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318}
+      protocol: http/protobuf
+  resource:
+    attributes:
+      service.name: drshoes-app
+      service.namespace: drshoes
+      deployment.environment: ${DEPLOYMENT_ENV:local}
+  traces:
+    sampler: always_on

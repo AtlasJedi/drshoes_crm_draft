@@ -17,3 +17,14 @@ drshoes:
     secret-key: ${DRSHOES_STORAGE_SECRET_KEY:drshoes-dev-secret}
     region: us-east-1
     path-style-access: true
+  demo:
+    seed:
+      enabled: true
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://jaeger:4318
+  resource:
+    attributes:
+      deployment.environment: local
