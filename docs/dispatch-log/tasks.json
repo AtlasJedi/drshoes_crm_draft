@@ -1487,9 +1487,9 @@
     {
       "id": "8-16",
       "title": "End-to-end OTel propagation smoke test (backend IT + frontend vitest)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "783a6a9",
+      "dispatch_log": "docs/dispatch-log/8-16-20260511T220619Z.md"
     },
     {
       "id": "8-17",
