@@ -1522,9 +1522,9 @@
     {
       "id": "8-21",
       "title": "Playwright setup in apps/web (config + smoke spec + .gitignore)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "1f62fea",
+      "dispatch_log": "docs/dispatch-log/8-21-20260511T222750Z.md"
     },
     {
       "id": "8-22",
