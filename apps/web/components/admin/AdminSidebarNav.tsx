@@ -8,6 +8,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { MessagesNavItem } from "@/app/(admin)/admin/_components/Sidebar/MessagesNavItem";
+import { ReportIssueButton } from "@/components/admin/ReportIssueButton";
 import { createLogger } from "@/lib/log";
 
 const log = createLogger("admin.sidebar.nav");
@@ -39,7 +40,11 @@ function NavLink({ href, label, exact = false }: NavLinkProps) {
   );
 }
 
-export function AdminSidebarNav() {
+interface Props {
+  userEmail: string;
+}
+
+export function AdminSidebarNav({ userEmail }: Props) {
   log.debug("op=AdminSidebarNav.render");
   return (
     <nav className="space-y-1 text-sm flex-1">
@@ -54,6 +59,10 @@ export function AdminSidebarNav() {
       <div className="text-admin-mute uppercase text-xs tracking-wide mt-4">Sklep</div>
       <NavLink href="/admin/sklep" label="Sklep" />
       <NavLink href="/admin/aktualnosci" label="Aktualności" />
+
+      <div className="border-t border-admin-line mt-4 pt-3">
+        <ReportIssueButton user={userEmail} />
+      </div>
     </nav>
   );
 }

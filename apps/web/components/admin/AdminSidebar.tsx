@@ -11,7 +11,7 @@ export function AdminSidebar({ me }: Props) {
     <aside className="w-60 border-r border-admin-line bg-admin-surface p-4 flex flex-col">
       <div className="font-display text-lg mb-6">Dr Shoes</div>
 
-      <AdminSidebarNav />
+      <AdminSidebarNav userEmail={me.email} />
 
       <div className="mt-8 pt-4 border-t border-admin-line text-xs text-admin-mute">
         Zalogowany jako
