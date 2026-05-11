@@ -26,3 +26,7 @@ hs_err_pid*.log
 
 # External tooling clone (per CLAUDE.md: cd .superpowers && git pull)
 .superpowers/
+
+# Playwright E2E artifacts (binaries live in ~/.cache/ms-playwright, not here)
+apps/web/test-results/
+apps/web/playwright-report/
