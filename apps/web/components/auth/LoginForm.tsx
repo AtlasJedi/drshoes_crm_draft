@@ -29,8 +29,12 @@ export function LoginForm() {
     try {
       await api.post("/admin/auth/login", { email, password });
       log.info("login attempt", { op: "login", outcome: "ok" });
-      router.push(next as AnyRoute);
-      router.refresh();
+      // Use window.location.href for a full-page navigation after login.
+      // router.push() triggers a client-side RSC fetch that Chromium sometimes aborts
+      // (ERR_ABORTED on the RSC stream) leaving the user on a broken page.
+      // A hard navigation ensures the session cookie is sent with a fresh GET request
+      // and the server renders the full page cleanly.
+      window.location.href = next;
     } catch (err) {
       const msg = resolveLoginError(err);
       const isCredentials = msg === "Niepoprawny email lub hasło.";
