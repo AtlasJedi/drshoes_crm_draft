@@ -1470,9 +1470,9 @@
     {
       "id": "8-14",
       "title": "Frontend OTel deps + instrumentation.ts (Next register hook)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "1e54ff2",
+      "dispatch_log": "docs/dispatch-log/8-14-20260511T215120Z.md"
     },
     {
       "id": "8-15",
