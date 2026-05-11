@@ -10,6 +10,12 @@ spring:
         format_sql: true
 
 drshoes:
+  auth:
+    throttle:
+      # Local/E2E: high capacity so test retries don't exhaust the bucket.
+      # Production default (5 per 15 min) is set in LoginThrottleConfig.
+      capacity: 1000
+      window-minutes: 1
   storage:
     endpoint: ${DRSHOES_STORAGE_ENDPOINT:http://localhost:9000}
     bucket: ${DRSHOES_STORAGE_BUCKET:drshoes-dev}
