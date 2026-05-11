@@ -1529,9 +1529,9 @@
     {
       "id": "8-22",
       "title": "Full demo-flow E2E spec \u2014 new-order \u2192 process \u2192 deliver + trace assertion (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "stage_1_complete",
+      "stage_1_sha": "57009db",
+      "dispatch_log": "docs/dispatch-log/8-22-20260511T223140Z.md"
     },
     {
       "id": "8-23",
