@@ -1371,9 +1371,9 @@
     {
       "id": "8-2",
       "title": "Wire WhatsApp into MessageGatewayDispatcher switch + recipient-hash util",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "5f08092",
+      "dispatch_log": "docs/dispatch-log/8-2-20260511T201110Z.md"
     },
     {
       "id": "8-3",
