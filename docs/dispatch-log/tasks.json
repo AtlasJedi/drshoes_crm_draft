@@ -1430,9 +1430,14 @@
     {
       "id": "8-9",
       "title": "Seed clients + orders + photos via service layer (TWO-STAGE)",
-      "status": "stage_1_complete",
+      "status": "completed",
       "stage_1_sha": "527a0f1",
-      "dispatch_log": "docs/dispatch-log/8-9-20260511T212730Z.md"
+      "commit_sha": "527a0f1",
+      "dispatch_log": "docs/dispatch-log/8-9-20260511T212730Z.md",
+      "stage2_log": "docs/dispatch-log/8-9-stage2-20260511T213436Z.md",
+      "fixup_sha": null,
+      "review_mode": "two-stage",
+      "review_verdict": "APPROVED-WITH-FOLLOWUP"
     },
     {
       "id": "8-10",
