@@ -1341,13 +1341,11 @@
     },
     {
       "id": "7-15",
-      "title": "EditClientModal CC + useEditClientModalForm hook + RTL tests (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null,
-      "stage_1_sha": null,
-      "stage2_log": null,
-      "fixup_sha": null
+      "title": "EditClientModal CC + useEditClientModalForm hook + RTL tests",
+      "status": "completed",
+      "commit_sha": "a2d2ce1",
+      "dispatch_log": "docs/dispatch-log/7-15-20260510T232139Z.md",
+      "review_mode": "combined-single-stage (owner-directed; TWO-STAGE flag in plan superseded by anti-bloat directive)"
     },
     {
       "id": "7-16",
