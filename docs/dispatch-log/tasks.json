@@ -1399,9 +1399,12 @@
     {
       "id": "8-6",
       "title": "Manual span on MessageGatewayDispatcher.dispatch (TWO-STAGE)",
-      "status": "pending",
+      "status": "stage_1_complete",
+      "stage_1_sha": "cf18f9b",
+      "stage_1_completed_at": "2026-05-11T20:51:56Z",
       "commit_sha": null,
-      "dispatch_log": null
+      "dispatch_log": "docs/dispatch-log/8-6-20260511T205156Z.md",
+      "stage2_log": null
     },
     {
       "id": "8-7",
