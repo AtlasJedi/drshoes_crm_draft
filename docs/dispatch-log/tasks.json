@@ -1350,16 +1350,16 @@
     {
       "id": "7-16",
       "title": "PlaceholderCard SC + /admin/sklep + /admin/aktualnosci stub pages + smoke tests",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "311666d",
+      "dispatch_log": "docs/dispatch-log/7-16-20260510T232140Z.md"
     },
     {
       "id": "7-17",
-      "title": "Sidebar wiring verify + active-state + smoke UAT + milestone-7 tag",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "title": "Sidebar wiring + active-state (manual UAT skipped; milestone-7 tag deferred to owner)",
+      "status": "completed",
+      "commit_sha": "ad4babb",
+      "dispatch_log": "docs/dispatch-log/7-17-20260510T232141Z.md"
     }
   ],
   "notes": [
