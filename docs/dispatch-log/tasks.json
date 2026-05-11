@@ -1423,9 +1423,9 @@
     {
       "id": "8-8",
       "title": "DemoSeedRunner skeleton (@Profile local + @ConditionalOnProperty + idempotent guard)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "6bcdca7",
+      "dispatch_log": "docs/dispatch-log/8-8-20260511T212214Z.md"
     },
     {
       "id": "8-9",
