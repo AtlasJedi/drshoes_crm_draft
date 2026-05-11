@@ -1392,9 +1392,9 @@
     {
       "id": "8-5",
       "title": "OTel YAML configuration in application.yaml + application-local.yaml",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "350eac5",
+      "dispatch_log": "docs/dispatch-log/8-5-20260511T202245Z.md"
     },
     {
       "id": "8-6",
