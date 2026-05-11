@@ -1430,9 +1430,9 @@
     {
       "id": "8-9",
       "title": "Seed clients + orders + photos via service layer (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "stage_1_complete",
+      "stage_1_sha": "527a0f1",
+      "dispatch_log": "docs/dispatch-log/8-9-20260511T212730Z.md"
     },
     {
       "id": "8-10",
