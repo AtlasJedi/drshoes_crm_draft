@@ -1,15 +1,11 @@
 package com.drshoes.app.audit;
 
-import com.drshoes.app.auth.principal.AdminPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -20,40 +16,39 @@ import java.util.UUID;
 /**
  * AOP aspect with two responsibilities:
  *
- * 1. Controller audit (existing): intercepts all public controller methods and writes
+ * 1. Controller audit: intercepts all public controller methods and writes
  *    an audit row per HTTP request. Transaction REQUIRES_NEW ensures audit persists
  *    even when the wrapped operation rolls back.
  *
- * 2. @Audited service audit (new): intercepts methods annotated with @Audited, evaluates
+ * 2. @Audited service audit: intercepts methods annotated with @Audited, evaluates
  *    the parent() SpEL expression (via AuditedParentResolver) to obtain a parent UUID,
  *    and writes an audit row that links the operation to its parent entity.
+ *
+ * Persistence + OTel span logic delegated to AuditWriteCoordinator (task 8-7 extraction).
  *
  * PII: IP is persisted (acceptable security event per RODO exception for security logs).
  * Passwords, hashes, and session IDs are never stored or logged.
  *
- * Logging: one INFO line per intercepted call (op=audit actor=... outcome=persisted),
- * WARN on DB or SpEL failure (never lets audit failure crash the wrapped method).
+ * Excludes @ExceptionHandler methods: only one audit row per failed request.
  */
 @Aspect
 @Component
 public class AuditLogAspect {
 
-    private static final Logger log = LoggerFactory.getLogger(AuditLogAspect.class);
-
-    private final AuditLogWriter writer;
     private final AuditedParentResolver parentResolver;
+    private final AuditWriteCoordinator coordinator;
 
-    public AuditLogAspect(AuditLogWriter writer, AuditedParentResolver parentResolver) {
-        this.writer = writer;
+    public AuditLogAspect(AuditedParentResolver parentResolver,
+                          AuditWriteCoordinator coordinator) {
         this.parentResolver = parentResolver;
+        this.coordinator = coordinator;
     }
 
     // Exclude @ExceptionHandler methods: when the primary handler throws, the aspect
     // already logs status=500 and rethrows; Spring MVC then dispatches to the
     // exception handler, which would be intercepted again and produce a second row
     // with the actual response status (e.g. 401). Two rows per failed request — the
-    // 500 one is factually wrong. The pointcut now matches only the primary handler;
-    // the catch block in audit() captures the correct status mapping for failures.
+    // 500 one is factually wrong. The pointcut matches only the primary handler.
     @Around("execution(public * com.drshoes.app..api..*Controller.*(..)) "
         + "&& !@annotation(org.springframework.web.bind.annotation.ExceptionHandler)")
     public Object audit(ProceedingJoinPoint pjp) throws Throwable {
@@ -84,7 +79,7 @@ public class AuditLogAspect {
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
         // Pass return value so SpEL expressions like "#result.orderId" or "#result" work.
         UUID parentId = parentResolver.resolve(method, pjp.getArgs(), out, audited.parent());
-        persistAnnotated(method, parentId);
+        coordinator.persistAnnotated(method, parentId);
         return out;
     }
 
@@ -93,49 +88,6 @@ public class AuditLogAspect {
     private void persistHttp(ServletRequestAttributes attrs, int status) {
         if (attrs == null) return;
         HttpServletRequest r = attrs.getRequest();
-        String actorName = resolveActorName();
-        UUID actorId = resolveActorId();
-        try {
-            writer.write(r.getMethod(), r.getRequestURI(), status,
-                         r.getRemoteAddr(), r.getHeader("User-Agent"), null, actorId);
-            log.info("op=audit actor={} actorId={} method={} path={} status={} outcome=persisted",
-                     actorName, actorId, r.getMethod(), r.getRequestURI(), status);
-        } catch (Exception ex) {
-            log.warn("op=audit actor={} method={} path={} status={} outcome=skipped reason={}",
-                     actorName, r.getMethod(), r.getRequestURI(), status, ex.getMessage());
-        }
-    }
-
-    private void persistAnnotated(Method method, UUID parentId) {
-        String actorName = resolveActorName();
-        UUID actorId = resolveActorId();
-        String syntheticPath = method.getDeclaringClass().getSimpleName() + "#" + method.getName();
-        try {
-            writer.write("INTERNAL", syntheticPath, 0, null, null, parentId, actorId);
-            log.info("op=auditAnnotated actor={} actorId={} target={} parentEntityId={} outcome=persisted",
-                     actorName, actorId, syntheticPath, parentId);
-        } catch (Exception ex) {
-            log.warn("op=auditAnnotated actor={} target={} outcome=skipped reason={}",
-                     actorName, syntheticPath, ex.getMessage());
-        }
-    }
-
-    private static String resolveActorName() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        return (auth != null && auth.isAuthenticated()) ? auth.getName() : "anonymous";
-    }
-
-    /**
-     * Resolves the actor's UUID from the current SecurityContext.
-     * Returns the userId if the principal is an AdminPrincipal, null otherwise
-     * (e.g. anonymous requests, login endpoint, or legacy String principals).
-     */
-    private static UUID resolveActorId() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated()
-                && auth.getPrincipal() instanceof AdminPrincipal p) {
-            return p.userId();
-        }
-        return null;
+        coordinator.persistHttp(r, status);
     }
 }
