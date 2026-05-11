@@ -10,12 +10,15 @@ import java.time.Duration;
  * Registers the LoginThrottle bean.
  *
  * Production: 5 attempts per 15-minute window (interval refill).
- * Local/E2E: configurable via drshoes.auth.throttle.capacity (default 1000)
- * and drshoes.auth.throttle.window-minutes (default 1) so E2E test suites
- * don't exhaust the bucket across retries.
+ * Local/E2E/dev: set drshoes.auth.throttle.enabled=false to disable the
+ * throttle entirely — tryConsume returns true unconditionally. capacity/
+ * window-minutes remain configurable but are ignored when disabled.
  */
 @Configuration
 public class LoginThrottleConfig {
+
+    @Value("${drshoes.auth.throttle.enabled:true}")
+    private boolean enabled;
 
     @Value("${drshoes.auth.throttle.capacity:5}")
     private long capacity;
@@ -25,6 +28,10 @@ public class LoginThrottleConfig {
 
     @Bean
     LoginThrottle loginThrottle() {
-        return new LoginThrottle(capacity, Duration.ofMinutes(windowMinutes));
+        return new LoginThrottle(
+                capacity,
+                Duration.ofMinutes(windowMinutes),
+                io.github.bucket4j.TimeMeter.SYSTEM_NANOTIME,
+                enabled);
     }
 }

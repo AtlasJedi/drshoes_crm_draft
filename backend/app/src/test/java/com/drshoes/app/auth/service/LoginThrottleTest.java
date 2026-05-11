@@ -30,6 +30,16 @@ class LoginThrottleTest {
         assertThat(throttle.tryConsume("9.9.9.9")).isTrue();
     }
 
+    // Disabled throttle: tryConsume always returns true, no capacity check
+    @Test
+    void disabled_throttle_always_allows() {
+        var throttle = new LoginThrottle(1, Duration.ofMinutes(15),
+                TimeMeter.SYSTEM_NANOTIME, false);
+        for (int i = 0; i < 100; i++) {
+            assertThat(throttle.tryConsume("9.9.9.9")).isTrue();
+        }
+    }
+
     // (c) bucket refills after window — uses injected clock to avoid Thread.sleep
     @Test
     void bucket_refills_after_window_elapses() {

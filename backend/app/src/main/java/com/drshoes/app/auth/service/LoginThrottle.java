@@ -27,27 +27,39 @@ public class LoginThrottle {
     private final long capacity;
     private final Duration window;
     private final TimeMeter timeMeter;
+    private final boolean enabled;
     private final ConcurrentMap<String, Bucket> buckets = new ConcurrentHashMap<>();
 
-    /** Production constructor — uses system nanosecond clock. */
+    /** Production constructor — uses system nanosecond clock; throttle enabled. */
     public LoginThrottle(long capacity, Duration window) {
-        this(capacity, window, TimeMeter.SYSTEM_NANOTIME);
+        this(capacity, window, TimeMeter.SYSTEM_NANOTIME, true);
     }
 
     /** Test constructor — accepts an injectable clock for deterministic time control. */
     public LoginThrottle(long capacity, Duration window, TimeMeter timeMeter) {
+        this(capacity, window, timeMeter, true);
+    }
+
+    /** Full constructor — allows disabling the throttle entirely (local/dev). */
+    public LoginThrottle(long capacity, Duration window, TimeMeter timeMeter, boolean enabled) {
         this.capacity = capacity;
         this.window = window;
         this.timeMeter = timeMeter;
+        this.enabled = enabled;
     }
 
     /**
      * Attempts to consume one token from the bucket keyed by {@code ip}.
      *
      * @param ip client IP address (or any string key)
-     * @return {@code true} if the attempt is allowed; {@code false} if throttled
+     * @return {@code true} if the attempt is allowed; {@code false} if throttled.
+     *         When throttle is disabled, always returns {@code true}.
      */
     public boolean tryConsume(String ip) {
+        if (!enabled) {
+            log.debug("op=loginThrottleCheck key={} outcome=allowed-disabled", ip);
+            return true;
+        }
         var bucket = buckets.computeIfAbsent(ip, this::newBucket);
         var probe = bucket.tryConsumeAndReturnRemaining(1);
         boolean allowed = probe.isConsumed();

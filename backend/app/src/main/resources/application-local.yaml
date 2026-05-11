@@ -12,8 +12,10 @@ spring:
 drshoes:
   auth:
     throttle:
-      # Local/E2E: high capacity so test retries don't exhaust the bucket.
-      # Production default (5 per 15 min) is set in LoginThrottleConfig.
+      # Local/dev/E2E: throttle disabled entirely so debugging and test
+      # retries are not blocked by the 429 wall.
+      # Production default (enabled, 5 per 15 min) is set in LoginThrottleConfig.
+      enabled: false
       capacity: 1000
       window-minutes: 1
   storage:
