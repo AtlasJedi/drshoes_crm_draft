@@ -190,18 +190,23 @@ class MessageGatewayDispatcherTest {
     }
 
     @Test
-    @DisplayName("dispatch gateway failure emits span named messaging.dispatch")
-    void dispatch_gatewayFailure_emitsSpan() {
+    @DisplayName("dispatch gateway failure sets span status ERROR (soft-fail: exception swallowed, delivery FAILED)")
+    void dispatch_softFailMarksSpanError() {
         var msg = buildMessage("EMAIL");
         msg.setThreadId(UUID.randomUUID());
         when(emailGateway.send(any())).thenThrow(new RuntimeException("SMTP timeout"));
 
         // Dispatcher catches the gateway exception internally (marks FAILED, does not rethrow).
-        // The span helper sets ERROR on the exception before the dispatcher catch clause re-catches it.
-        dispatcher.dispatch(msg, "client@example.com", "Subject", "Body");
+        // The dispatcher inspects persisted.getDeliveryStatus() and explicitly sets ERROR on
+        // Span.current() before returning — so Jaeger can filter failed dispatches by span status.
+        var result = dispatcher.dispatch(msg, "client@example.com", "Subject", "Body");
+
+        assertThat(result.getDeliveryStatus()).isEqualTo("FAILED");
 
         List<SpanData> spans = otelTesting.getSpans();
         assertThat(spans).hasSize(1);
-        assertThat(spans.get(0).getName()).isEqualTo("messaging.dispatch");
+        SpanData span = spans.get(0);
+        assertThat(span.getName()).isEqualTo("messaging.dispatch");
+        assertThat(span.getStatus().getStatusCode()).isEqualTo(StatusCode.ERROR);
     }
 }

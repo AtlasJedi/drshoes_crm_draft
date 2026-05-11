@@ -9,6 +9,7 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -33,7 +34,7 @@ public class MessagingSpanHelper {
 
     /**
      * Runs {@code action} inside a span named {@code messaging.dispatch}.
-     * Sets ERROR status on exception (rethrows). Sets attributes before the call.
+     * Sets ERROR status on exception (rethrows). Sets OK on success.
      *
      * @param channel    channel string (EMAIL / SMS / WHATSAPP)
      * @param messageId  UUID of the MessageEntity
@@ -44,6 +45,25 @@ public class MessagingSpanHelper {
      */
     public <T> T dispatchWithSpan(String channel, UUID messageId, String recipient,
                                    Supplier<T> action) {
+        return dispatchWithSpan(channel, messageId, recipient, action, t -> false);
+    }
+
+    /**
+     * Runs {@code action} inside a span named {@code messaging.dispatch}.
+     * Sets ERROR status on exception (rethrows) or when {@code softFailurePredicate} returns true.
+     * Use the predicate to signal domain-level failures that are caught internally
+     * (e.g. gateway send failure that marks deliveryStatus=FAILED without rethrowing).
+     *
+     * @param channel              channel string (EMAIL / SMS / WHATSAPP)
+     * @param messageId            UUID of the MessageEntity
+     * @param recipient            raw recipient — hashed before attaching to span
+     * @param action               the actual gateway dispatch
+     * @param softFailurePredicate returns true if the result represents a soft failure
+     * @param <T>                  return type of action
+     * @return the result of action
+     */
+    public <T> T dispatchWithSpan(String channel, UUID messageId, String recipient,
+                                   Supplier<T> action, Predicate<T> softFailurePredicate) {
         Span span = tracer.spanBuilder("messaging.dispatch")
                 .setAttribute(CHANNEL, channel)
                 .setAttribute(MESSAGE_ID, messageId != null ? messageId.toString() : "null")
@@ -51,7 +71,11 @@ public class MessagingSpanHelper {
                 .startSpan();
         try (Scope ignored = span.makeCurrent()) {
             T result = action.get();
-            span.setStatus(StatusCode.OK);
+            if (softFailurePredicate.test(result)) {
+                span.setStatus(StatusCode.ERROR, "soft delivery failure");
+            } else {
+                span.setStatus(StatusCode.OK);
+            }
             return result;
         } catch (Exception e) {
             span.setStatus(StatusCode.ERROR, e.getMessage());

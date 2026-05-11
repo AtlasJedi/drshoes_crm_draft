@@ -101,7 +101,7 @@ public class MessageGatewayDispatcher {
             }
 
             return persisted;
-        });
+        }, persisted -> "FAILED".equals(persisted.getDeliveryStatus()));
     }
 
     private static String truncate(String s, int max) {
