@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "active_milestone": "7",
-  "active_plan": "docs/superpowers/plans/2026-05-10-milestone-07-clients.md",
+  "active_milestone": "8",
+  "active_plan": "docs/superpowers/plans/2026-05-11-milestone-08-demo-ready.md",
   "tasks": [
     {
       "id": "0b-1",
@@ -1360,6 +1360,167 @@
       "status": "completed",
       "commit_sha": "ad4babb",
       "dispatch_log": "docs/dispatch-log/7-17-20260510T232141Z.md"
+    },
+    {
+      "id": "8-1",
+      "title": "New whatsapp-gateway Maven module (interface + Logging impl + autoconfig)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-2",
+      "title": "Wire WhatsApp into MessageGatewayDispatcher switch + recipient-hash util",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-3",
+      "title": "V014 — add trace_id column to audit_log (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-4",
+      "title": "Backend OTel dependencies (Spring Boot starter + OTLP exporter + JDBC instr)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-5",
+      "title": "OTel YAML configuration in application.yaml + application-local.yaml",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-6",
+      "title": "Manual span on MessageGatewayDispatcher.dispatch (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-7",
+      "title": "AuditLogAspect — trace_id capture + audit.write manual span + LOC extraction (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-8",
+      "title": "DemoSeedRunner skeleton (@Profile local + @ConditionalOnProperty + idempotent guard)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-9",
+      "title": "Seed clients + orders + photos via service layer (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-10",
+      "title": "Seed sample MessageThread with 4 alternating messages",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-11",
+      "title": "Add Jaeger all-in-one to docker-compose.yml + OTLP env wiring",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-12",
+      "title": "make demo Makefile target + colored banner output",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-13",
+      "title": "README 'Run the demo' section + .env.example",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-14",
+      "title": "Frontend OTel deps + instrumentation.ts (Next register hook)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-15",
+      "title": "Browser OTel client + /api/otlp Next proxy route (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-16",
+      "title": "End-to-end OTel propagation smoke test (backend IT + frontend vitest)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-17",
+      "title": "docs/MODULE_MAP.md — feature-to-file lookup table",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-18",
+      "title": "tools/where-is bash script + make target",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-19",
+      "title": "ReportIssueButton client component + clipboard JSON + vitest",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-20",
+      "title": "Sidebar wire-up for 'Zgłoś problem' button",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-21",
+      "title": "Playwright setup in apps/web (config + smoke spec + .gitignore)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-22",
+      "title": "Full demo-flow E2E spec — new-order → process → deliver + trace assertion (TWO-STAGE)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "8-23",
+      "title": "Self-verification fix-loop + milestone-8 tag + DEMO-HANDOVER doc",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
     }
   ],
   "notes": [
@@ -1368,6 +1529,7 @@
     "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml — contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
     "PII flag (from 0b-5 inline review): LoginThrottle logs raw client IP at INFO on throttle events. Polish RODO/GDPR treats IP as personal data. Acceptable for now (security event); revisit during AuditLogAspect (0b-8) to apply a unified PII-redaction or hashing policy across security-event logs.",
     "M6 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md (10,462 lines, 23 tasks). Two TWO-STAGE reviews planned (6-9 bulk-status, 6-19 kanban drag flow + dialog extraction); rest combined single-stage. Inline backend slice 6-21a will fire (W5 author confirmed OrderController.list() lacks tag/date-range/multi-status params) — not a separate task ID. W4 may also fire an inline KanbanCardDto version-field slice (decision pinned at 6-20 dispatch). Resume next session by dispatching 6-1 cold per dispatch protocol.",
-    "M7 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-07-clients.md (4,783 lines, 17 tasks). Spec: docs/superpowers/specs/2026-05-10-milestone-07-clients-design.md (commits f3f33e6 + 1a51d0a). Authored via 4 parallel slice subagents (A backend, B lib+list, C detail+tabs, D modal+stubs+scaffold). Two TWO-STAGE reviews planned (7-4 ClientSummaryService SQL correctness, 7-15 EditClientModal form + a11y); rest combined single-stage. Awaiting Claude.ai design export per spec §13–§14 — DOM details for tasks 7-7, 7-8, 7-10, 7-11, 7-12, 7-15 may need minor refinement once export lands; no impact on task IDs or contracts. M5/M6 hygiene carry-forward (AuditLogAspect flake, send/sendRetry dedup) deferred to a future hygiene milestone. Resume next session by dispatching 7-1 cold per dispatch protocol."
+    "M7 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-07-clients.md (4,783 lines, 17 tasks). Spec: docs/superpowers/specs/2026-05-10-milestone-07-clients-design.md (commits f3f33e6 + 1a51d0a). Authored via 4 parallel slice subagents (A backend, B lib+list, C detail+tabs, D modal+stubs+scaffold). Two TWO-STAGE reviews planned (7-4 ClientSummaryService SQL correctness, 7-15 EditClientModal form + a11y); rest combined single-stage. Awaiting Claude.ai design export per spec §13–§14 — DOM details for tasks 7-7, 7-8, 7-10, 7-11, 7-12, 7-15 may need minor refinement once export lands; no impact on task IDs or contracts. M5/M6 hygiene carry-forward (AuditLogAspect flake, send/sendRetry dedup) deferred to a future hygiene milestone. Resume next session by dispatching 7-1 cold per dispatch protocol.",
+    "M8 planning complete 2026-05-11. Plan: docs/superpowers/plans/2026-05-11-milestone-08-demo-ready.md (4,350 lines, 23 tasks). Spec: docs/superpowers/specs/2026-05-11-milestone-08-demo-ready-design.md (8af58ee). Authored via 3 parallel slice subagents (A backend foundations + instrumentation, B seeds + compose + frontend OTel, C smart-fix + verification). Six TWO-STAGE reviews planned (8-3 V014, 8-6 dispatch span, 8-7 audit aspect + LOC extraction, 8-9 seed data, 8-15 browser OTel + /api/otlp proxy, 8-22 Playwright E2E); rest combined single-stage per anti-bloat directive. Owner directive 2026-05-11 reframes M8 as 'demo-ready foundation': one-command local boot + extensive OTel observability + mockable providers (email/SMS already there, WhatsApp new) + smart-fix primitives + Playwright E2E gate before owner dogfooding. Resume next session by dispatching 8-1 cold per dispatch protocol. Wave 1 (8-1..8-5) and Wave 2 (8-6..8-7) can mostly parallelize after 8-1 lands (8-4/8-5 OTel deps are independent of WhatsApp work)."
   ]
 }
