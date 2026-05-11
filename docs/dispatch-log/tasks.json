@@ -1494,9 +1494,9 @@
     {
       "id": "8-17",
       "title": "docs/MODULE_MAP.md \u2014 feature-to-file lookup table",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e892fd1",
+      "dispatch_log": "docs/dispatch-log/8-17-20260511T221215Z.md"
     },
     {
       "id": "8-18",
