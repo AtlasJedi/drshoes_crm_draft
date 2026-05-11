@@ -42,6 +42,23 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>
+    <!-- OpenTelemetry — auto-instruments controllers, JDBC, RestClient; exports OTLP/HTTP -->
+    <dependency>
+      <groupId>io.opentelemetry.instrumentation</groupId>
+      <artifactId>opentelemetry-spring-boot-starter</artifactId>
+      <version>${otel.instrumentation.version}</version>
+    </dependency>
+    <!-- OTel API for manual span creation (MessageGatewayDispatcher, AuditLogAspect) -->
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+    </dependency>
+    <!-- In-memory OTel SDK for unit tests asserting span emission -->
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-testing</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.bucket4j</groupId>
       <artifactId>bucket4j-core</artifactId>

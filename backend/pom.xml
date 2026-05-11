@@ -29,6 +29,7 @@
     <spring-boot.version>3.4.0</spring-boot.version>
     <testcontainers.version>1.20.4</testcontainers.version>
     <aws-sdk.version>2.29.20</aws-sdk.version>
+    <otel.instrumentation.version>2.10.0</otel.instrumentation.version>
   </properties>
 
   <dependencyManagement>
