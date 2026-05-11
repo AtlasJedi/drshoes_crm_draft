@@ -1378,9 +1378,9 @@
     {
       "id": "8-3",
       "title": "V014 \u2014 add trace_id column to audit_log (TWO-STAGE)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "9530b1c",
+      "dispatch_log": "docs/dispatch-log/8-3-20260511T201504Z.md"
     },
     {
       "id": "8-4",
