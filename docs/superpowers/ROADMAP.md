@@ -1,6 +1,6 @@
 # Dr Shoes — Forward Roadmap
 
-**Last updated:** 2026-05-10
+**Last updated:** 2026-05-11
 **Source of truth for milestone scope after the BRIEF.md handoff.**
 
 ## Scope rule (locked 2026-05-10 by owner)
@@ -26,10 +26,11 @@ polish + Dashboard with live data become the next active milestone(s).
 | **M4** | Real providers — Postmark + SmsApi + webhooks + delivery reconciliation + retry | `milestone-4` |
 | **M5** | Inbound replies — message_thread, parsing, reply UI, unread badge, /admin/messages page | `milestone-5` |
 | **M6** | Order processing polish + Dashboard — KPIs, charts, calendar, kanban (DnD), bulk actions, filter presets, row quick-actions | `milestone-6` |
+| **M7** | Clients UI (list, detail, sub-tabs, edit modal) + minimal Sklep/Aktualności stubs + sidebar nav | _(tag deferred to owner)_ |
 
 ## In flight
 
-_(none — M6 closed 2026-05-10; M7 next)_
+_(none — M7 implementation closed 2026-05-11; awaiting owner sign-off + `milestone-7` tag)_
 
 ## Next — locked priority
 
@@ -90,3 +91,4 @@ _(none — M6 closed 2026-05-10; M7 next)_
 ## Decision log
 
 - **2026-05-10** — Sklep + Aktualności deprioritized to stubs by owner directive. Resources reallocated to Dashboard + order-processing polish (M6) and Clients UI (M7). Reasoning: daily Misza workflow is order-processing, not catalog/news authoring.
+- **2026-05-11** — M7 closed under owner anti-bloat directive: TWO-STAGE flag on 7-15 (EditClientModal) collapsed to combined single-stage; 7-16 + 7-17 executed inline by main session instead of dispatched. Saves ~3 subagent roundtrips for ~250 LOC of pure-config UI work. Pattern locked: substantial-form modals without security/business logic do not require TWO-STAGE.
