@@ -1385,9 +1385,9 @@
     {
       "id": "8-4",
       "title": "Backend OTel dependencies (Spring Boot starter + OTLP exporter + JDBC instr)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "6012d44",
+      "dispatch_log": "docs/dispatch-log/8-4-20260511T201924Z.md"
     },
     {
       "id": "8-5",
