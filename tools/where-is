@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# tools/where-is — search MODULE_MAP.md for features matching all given keywords.
+# Usage: tools/where-is <keyword> [keyword ...]
+# Prints matching file paths, one per line, deduplicated.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MAP_FILE="${SCRIPT_DIR}/../docs/MODULE_MAP.md"
+
+usage() {
+  cat >&2 <<'USAGE'
+Usage: tools/where-is <keyword> [keyword ...]
+
+Searches docs/MODULE_MAP.md for table rows whose Feature column contains ALL
+given keywords (case-insensitive), then prints every file path found in that
+row, one per line, deduplicated.
+
+Examples:
+  tools/where-is order drawer       # OrderDrawer family
+  tools/where-is messages thread    # Messages thread files
+  tools/where-is auth login         # Auth / login files
+  tools/where-is photos             # Photos upload files
+
+Tip: add as a Makefile target:
+  make where-is feat="order drawer"
+USAGE
+  exit 0
+}
+
+if [[ $# -eq 0 ]] || [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]]; then
+  usage
+fi
+
+if [[ ! -f "$MAP_FILE" ]]; then
+  echo "ERROR: docs/MODULE_MAP.md not found at $MAP_FILE" >&2
+  exit 1
+fi
+
+# Build a single grep pattern: each keyword becomes a separate grep pipe
+# We extract table body rows (lines starting with `|` that are not the header or separator)
+# then filter by each keyword against the Feature column (first pipe-delimited field).
+
+# Extract data rows: lines that start with |, skip header/separator, skip comment rows
+extract_rows() {
+  grep -E '^\|[^-]' "$MAP_FILE" \
+    | grep -vE '^\| Feature' \
+    | grep -vE '^\|---'
+}
+
+# Filter rows: keep only rows where the Feature cell (field 2) matches all keywords
+filter_rows() {
+  local rows="$1"
+  shift
+  local result="$rows"
+  for kw in "$@"; do
+    result=$(echo "$result" | awk -F'|' -v kw="$kw" 'tolower($2) ~ tolower(kw)')
+  done
+  echo "$result"
+}
+
+# Extract file paths from a set of matched rows.
+# Columns 4 (frontend), 5 (backend), 6 (tests) each contain comma-separated backtick-quoted paths.
+extract_paths() {
+  # Strip backticks, split on commas, trim whitespace
+  echo "$1" \
+    | awk -F'|' '{print $4; print $5; print $6}' \
+    | tr ',' '\n' \
+    | sed 's/`//g' \
+    | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' \
+    | grep -v '^$' \
+    | sort -u
+}
+
+rows=$(extract_rows)
+matched=$(filter_rows "$rows" "$@")
+
+if [[ -z "$matched" ]]; then
+  echo "No features matched keywords: $*" >&2
+  exit 1
+fi
+
+extract_paths "$matched"

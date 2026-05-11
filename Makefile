@@ -1,4 +1,4 @@
-.PHONY: up up-deps down test test-backend test-web build clean logs psql demo demo-banner
+.PHONY: up up-deps down test test-backend test-web build clean logs psql demo demo-banner where-is
 
 up-deps:
 	docker compose up -d postgres minio minio-init
@@ -45,3 +45,8 @@ demo-banner: ## Print the demo access banner
 	@printf "   Hasło:      \033[1;36mchange-me-on-first-login\033[0m\n"
 	@printf "   Jaeger UI:  \033[1;36mhttp://localhost:16686\033[0m\n"
 	@printf "   MinIO:      \033[1;36mhttp://localhost:9001\033[0m  (drshoes / drshoes-dev-secret)\n\n"
+
+## tools/where-is: search MODULE_MAP for feature file paths
+## Usage: make where-is feat="order drawer"
+where-is:
+	@tools/where-is $(feat)
