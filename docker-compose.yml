@@ -45,6 +45,19 @@ services:
       exit 0;
       "
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.62
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "${JAEGER_OTLP_HTTP_PORT:-4318}:4318"
+      - "${JAEGER_UI_PORT:-16686}:16686"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:14269/"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
   backend:
     build:
       context: ./backend
@@ -54,6 +67,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      jaeger:
+        condition: service_started
     environment:
       SPRING_PROFILES_ACTIVE: local
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-drshoes}
@@ -63,6 +78,8 @@ services:
       DRSHOES_STORAGE_BUCKET: ${MINIO_BUCKET:-drshoes-dev}
       DRSHOES_STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER:-drshoes}
       DRSHOES_STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-drshoes-dev-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+      DRSHOES_DEMO_SEED_ENABLED: ${DRSHOES_DEMO_SEED_ENABLED:-false}
     ports:
       - "${BACKEND_PORT:-8080}:8080"
     healthcheck:
@@ -79,9 +96,13 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+      jaeger:
+        condition: service_started
     environment:
       NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-/api}
       INTERNAL_API_BASE: http://backend:8080
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+      NEXT_PUBLIC_OTLP_ENDPOINT: /api/otlp
     ports:
       - "${WEB_PORT:-3000}:3000"
 
