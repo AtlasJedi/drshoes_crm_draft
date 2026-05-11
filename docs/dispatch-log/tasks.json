@@ -1501,9 +1501,9 @@
     {
       "id": "8-18",
       "title": "tools/where-is bash script + make target",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "b59861b",
+      "dispatch_log": "docs/dispatch-log/8-18-20260511T221626Z.md"
     },
     {
       "id": "8-19",
