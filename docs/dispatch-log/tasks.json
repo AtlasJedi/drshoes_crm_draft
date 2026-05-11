@@ -1399,12 +1399,15 @@
     {
       "id": "8-6",
       "title": "Manual span on MessageGatewayDispatcher.dispatch (TWO-STAGE)",
-      "status": "stage_1_complete",
+      "status": "completed",
       "stage_1_sha": "cf18f9b",
       "stage_1_completed_at": "2026-05-11T20:51:56Z",
-      "commit_sha": null,
+      "commit_sha": "89e804e",
       "dispatch_log": "docs/dispatch-log/8-6-20260511T205156Z.md",
-      "stage2_log": null
+      "stage2_log": "docs/dispatch-log/8-6-stage2-20260511T205939Z.md",
+      "fixup_sha": "89e804e",
+      "review_mode": "two-stage",
+      "review_verdict": "NEEDS-FIXUP"
     },
     {
       "id": "8-7",
