@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { getMe } from "@/lib/auth/session";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { BrowserOtelInit } from "@/components/admin/BrowserOtelInit";
 import { createLogger } from "@/lib/log";
 
 const log = createLogger("admin-layout");
@@ -25,6 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-admin-bg text-admin-ink flex">
+      <BrowserOtelInit />
       <AdminSidebar me={me} />
       <main className="flex-1 p-8">{children}</main>
     </div>
