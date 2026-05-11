@@ -53,6 +53,14 @@ public class AuditLog {
     @Column(name = "parent_entity_id")
     private UUID parentEntityId;
 
+    /**
+     * OpenTelemetry trace ID captured at the time of the audit event.
+     * 32-char lowercase hex string (128-bit trace ID per W3C traceparent spec).
+     * NULL when no active span context is present (background jobs, startup hooks).
+     */
+    @Column(name = "trace_id", length = 32)
+    private String traceId;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
@@ -72,5 +80,7 @@ public class AuditLog {
     public void setBodyHash(String bodyHash) { this.bodyHash = bodyHash; }
     public UUID getParentEntityId() { return parentEntityId; }
     public void setParentEntityId(UUID parentEntityId) { this.parentEntityId = parentEntityId; }
+    public String getTraceId() { return traceId; }
+    public void setTraceId(String traceId) { this.traceId = traceId; }
     public Instant getCreatedAt() { return createdAt; }
 }

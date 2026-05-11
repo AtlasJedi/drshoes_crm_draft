@@ -49,16 +49,28 @@ public class AuditLogWriter {
     /**
      * Full variant: persists both parent_entity_id and actor_id.
      * actorId comes from AdminPrincipal.userId() resolved in AuditLogAspect.
+     * Delegates to the 8-param overload with null traceId for backward compatibility.
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(String method, String path, int status, String ip, String userAgent,
                       UUID parentEntityId, UUID actorId) {
+        write(method, path, status, ip, userAgent, parentEntityId, actorId, null);
+    }
+
+    /**
+     * Full variant with traceId: persists parent_entity_id, actor_id, and OTel trace_id.
+     * traceId is the 32-char lowercase hex W3C trace ID; pass null when no span context is present.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void write(String method, String path, int status, String ip, String userAgent,
+                      UUID parentEntityId, UUID actorId, String traceId) {
         em.createNativeQuery("""
             INSERT INTO audit_log
-                (id, actor_id, method, path, status, ip, user_agent, request_id, created_at, parent_entity_id)
+                (id, actor_id, method, path, status, ip, user_agent, request_id,
+                 created_at, parent_entity_id, trace_id)
             VALUES
                 (:id, :actorId, :method, :path, :status, CAST(:ip AS inet), :userAgent, :requestId,
-                 :createdAt, :parentEntityId)
+                 :createdAt, :parentEntityId, :traceId)
             """)
             .setParameter("id", UUID.randomUUID())
             .setParameter("actorId", actorId)
@@ -70,6 +82,7 @@ public class AuditLogWriter {
             .setParameter("requestId", UUID.randomUUID())
             .setParameter("createdAt", Instant.now())
             .setParameter("parentEntityId", parentEntityId)
+            .setParameter("traceId", traceId)
             .executeUpdate();
     }
 }
