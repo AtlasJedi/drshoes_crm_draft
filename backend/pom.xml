@@ -15,6 +15,7 @@
     <module>libs/messaging-core</module>
     <module>libs/email-gateway</module>
     <module>libs/sms-gateway</module>
+    <module>libs/whatsapp-gateway</module>
     <module>libs/storage</module>
     <module>app</module>
   </modules>
