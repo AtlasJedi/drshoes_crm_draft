@@ -16,6 +16,11 @@ COPY --from=deps /workspace ./
 COPY apps/web ./apps/web
 COPY packages/ui ./packages/ui
 COPY packages/api-types ./packages/api-types
+# INTERNAL_API_BASE must be available at build time so next.config.mjs async rewrites()
+# can bake the /api/:path* → backend rewrite into the standalone build. Without it the
+# routes-manifest contains empty rewrite arrays and all /api/* calls return 404.
+ARG INTERNAL_API_BASE=http://backend:8080
+ENV INTERNAL_API_BASE=${INTERNAL_API_BASE}
 RUN pnpm --filter @drshoes/web build
 
 FROM node:20-alpine AS runtime
