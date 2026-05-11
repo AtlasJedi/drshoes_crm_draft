@@ -1463,9 +1463,9 @@
     {
       "id": "8-13",
       "title": "README 'Run the demo' section + .env.example",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "2da81d0",
+      "dispatch_log": "docs/dispatch-log/8-13-20260511T214912Z.md"
     },
     {
       "id": "8-14",
