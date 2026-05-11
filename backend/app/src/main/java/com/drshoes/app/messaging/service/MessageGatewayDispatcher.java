@@ -9,6 +9,7 @@ import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.drshoes.lib.messaging.OutboundMessage;
 import com.drshoes.lib.sms.SmsGateway;
 import com.drshoes.lib.whatsapp.WhatsAppGateway;
+import io.opentelemetry.api.OpenTelemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,15 +36,18 @@ public class MessageGatewayDispatcher {
     private final EmailGateway emailGateway;
     private final SmsGateway smsGateway;
     private final WhatsAppGateway whatsAppGateway;
+    private final MessagingSpanHelper spanHelper;
     private final MessageRepository messages;
     private final MessageThreadRepository threads;
 
     public MessageGatewayDispatcher(EmailGateway emailGateway, SmsGateway smsGateway,
                                     WhatsAppGateway whatsAppGateway,
+                                    OpenTelemetry otel,
                                     MessageRepository messages, MessageThreadRepository threads) {
         this.emailGateway = emailGateway;
         this.smsGateway = smsGateway;
         this.whatsAppGateway = whatsAppGateway;
+        this.spanHelper = new MessagingSpanHelper(otel);
         this.messages = messages;
         this.threads = threads;
     }
@@ -62,40 +66,42 @@ public class MessageGatewayDispatcher {
      * @throws IllegalArgumentException if channel is not EMAIL or SMS, or if recipient/body blank
      */
     public MessageEntity dispatch(MessageEntity saved, String recipient, String subject, String body) {
-        Channel ch = Channel.valueOf(saved.getChannel());
-        var outbound = new OutboundMessage(ch, recipient, subject, body, null, null);
+        return spanHelper.dispatchWithSpan(saved.getChannel(), saved.getId(), recipient, () -> {
+            Channel ch = Channel.valueOf(saved.getChannel());
+            var outbound = new OutboundMessage(ch, recipient, subject, body, null, null);
 
-        try {
-            DeliveryReceipt receipt = switch (ch) {
-                case EMAIL    -> emailGateway.send(outbound);
-                case SMS      -> smsGateway.send(outbound);
-                case WHATSAPP -> whatsAppGateway.send(outbound);
-            };
-            saved.setDeliveryStatus("SENT");
-            saved.setProviderMessageId(receipt.providerMessageId());
-            saved.setSentAt(OffsetDateTime.now(ZoneOffset.UTC));
-            log.info("op=gateway.dispatch outcome=ok messageId={} channel={} providerId={}",
-                    saved.getId(), saved.getChannel(), receipt.providerMessageId());
-        } catch (IllegalArgumentException e) {
-            throw e; // propagate unknown-channel and OutboundMessage validation errors
-        } catch (Exception e) {
-            saved.setDeliveryStatus("FAILED");
-            saved.setErrorCode(truncate(e.getClass().getSimpleName(), 60));
-            saved.setErrorMessage(truncate(e.getMessage(), 1000));
-            log.warn("op=gateway.dispatch outcome=failed messageId={} channel={} err={}",
-                    saved.getId(), saved.getChannel(), e.toString());
-        }
+            try {
+                DeliveryReceipt receipt = switch (ch) {
+                    case EMAIL    -> emailGateway.send(outbound);
+                    case SMS      -> smsGateway.send(outbound);
+                    case WHATSAPP -> whatsAppGateway.send(outbound);
+                };
+                saved.setDeliveryStatus("SENT");
+                saved.setProviderMessageId(receipt.providerMessageId());
+                saved.setSentAt(OffsetDateTime.now(ZoneOffset.UTC));
+                log.info("op=gateway.dispatch outcome=ok messageId={} channel={} providerId={}",
+                        saved.getId(), saved.getChannel(), receipt.providerMessageId());
+            } catch (IllegalArgumentException e) {
+                throw e; // propagate unknown-channel and OutboundMessage validation errors
+            } catch (Exception e) {
+                saved.setDeliveryStatus("FAILED");
+                saved.setErrorCode(truncate(e.getClass().getSimpleName(), 60));
+                saved.setErrorMessage(truncate(e.getMessage(), 1000));
+                log.warn("op=gateway.dispatch outcome=failed messageId={} channel={} err={}",
+                        saved.getId(), saved.getChannel(), e.toString());
+            }
 
-        MessageEntity persisted = messages.save(saved);
+            MessageEntity persisted = messages.save(saved);
 
-        if ("SENT".equals(persisted.getDeliveryStatus())) {
-            threads.findById(persisted.getThreadId()).ifPresent(t -> {
-                t.setLastMessageAt(persisted.getSentAt());
-                threads.save(t);
-            });
-        }
+            if ("SENT".equals(persisted.getDeliveryStatus())) {
+                threads.findById(persisted.getThreadId()).ifPresent(t -> {
+                    t.setLastMessageAt(persisted.getSentAt());
+                    threads.save(t);
+                });
+            }
 
-        return persisted;
+            return persisted;
+        });
     }
 
     private static String truncate(String s, int max) {

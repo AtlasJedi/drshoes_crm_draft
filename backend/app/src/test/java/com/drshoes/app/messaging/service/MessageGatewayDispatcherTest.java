@@ -10,13 +10,19 @@ import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.drshoes.lib.messaging.OutboundMessage;
 import com.drshoes.lib.sms.SmsGateway;
 import com.drshoes.lib.whatsapp.WhatsAppGateway;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
+import io.opentelemetry.sdk.trace.data.SpanData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,6 +34,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MessageGatewayDispatcherTest {
 
+    @RegisterExtension
+    static final OpenTelemetryExtension otelTesting = OpenTelemetryExtension.create();
+
     @Mock EmailGateway emailGateway;
     @Mock SmsGateway smsGateway;
     @Mock WhatsAppGateway whatsAppGateway;
@@ -38,7 +47,10 @@ class MessageGatewayDispatcherTest {
 
     @BeforeEach
     void setUp() {
-        dispatcher = new MessageGatewayDispatcher(emailGateway, smsGateway, whatsAppGateway, messages, threads);
+        dispatcher = new MessageGatewayDispatcher(
+                emailGateway, smsGateway, whatsAppGateway,
+                otelTesting.getOpenTelemetry(),
+                messages, threads);
     }
 
     private MessageEntity buildMessage(String channel) {
@@ -150,5 +162,46 @@ class MessageGatewayDispatcherTest {
 
         // Gateway must not have been called.
         verifyNoInteractions(smsGateway);
+    }
+
+    // ── OTel span-emission tests ──────────────────────────────────────────────
+
+    @Test
+    @DisplayName("dispatch EMAIL emits one messaging.dispatch span with channel, message_id, recipient_hash")
+    void dispatch_emitsSpan_withChannelAttribute() {
+        var msg = buildMessage("EMAIL");
+        msg.setThreadId(UUID.randomUUID());
+        when(threads.findById(any())).thenReturn(Optional.of(new MessageThreadEntity()));
+        when(emailGateway.send(any())).thenReturn(DeliveryReceipt.accepted("pm-span-test"));
+
+        dispatcher.dispatch(msg, "client@example.com", "Subject", "Body");
+
+        List<SpanData> spans = otelTesting.getSpans();
+        assertThat(spans).hasSize(1);
+        SpanData span = spans.get(0);
+        assertThat(span.getName()).isEqualTo("messaging.dispatch");
+        assertThat(span.getAttributes().get(AttributeKey.stringKey("messaging.channel")))
+                .isEqualTo("EMAIL");
+        assertThat(span.getAttributes().get(AttributeKey.stringKey("messaging.message_id")))
+                .isNotNull();
+        assertThat(span.getAttributes().get(AttributeKey.stringKey("messaging.recipient_hash")))
+                .hasSize(8);
+        assertThat(span.getStatus().getStatusCode()).isEqualTo(StatusCode.OK);
+    }
+
+    @Test
+    @DisplayName("dispatch gateway failure emits span named messaging.dispatch")
+    void dispatch_gatewayFailure_emitsSpan() {
+        var msg = buildMessage("EMAIL");
+        msg.setThreadId(UUID.randomUUID());
+        when(emailGateway.send(any())).thenThrow(new RuntimeException("SMTP timeout"));
+
+        // Dispatcher catches the gateway exception internally (marks FAILED, does not rethrow).
+        // The span helper sets ERROR on the exception before the dispatcher catch clause re-catches it.
+        dispatcher.dispatch(msg, "client@example.com", "Subject", "Body");
+
+        List<SpanData> spans = otelTesting.getSpans();
+        assertThat(spans).hasSize(1);
+        assertThat(spans.get(0).getName()).isEqualTo("messaging.dispatch");
     }
 }
