@@ -1442,9 +1442,9 @@
     {
       "id": "8-10",
       "title": "Seed sample MessageThread with 4 alternating messages",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "2cbba62",
+      "dispatch_log": "docs/dispatch-log/8-10-20260511T214025Z.md"
     },
     {
       "id": "8-11",
