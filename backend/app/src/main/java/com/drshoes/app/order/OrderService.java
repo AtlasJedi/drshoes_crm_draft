@@ -82,6 +82,8 @@ public class OrderService {
         o.setReceivedAt(req.receivedAt() != null ? req.receivedAt() : Instant.now());
         o.setPlannedPickupAt(req.plannedPickupAt());
         o.setAssignedCraftsmanId(req.assignedCraftsmanId());
+        o.setQuotedPriceCents(req.quotedPriceCents() != null ? req.quotedPriceCents() : 0);
+        o.setAdvancePaidCents(req.advancePaidCents() != null ? req.advancePaidCents() : 0);
         Order saved = orderRepo.save(o);
         UUID savedId = saved.getId();
         if (req.items() != null) {
@@ -105,6 +107,8 @@ public class OrderService {
         if (req.currentStorageLocationId() != null) o.setCurrentStorageLocationId(req.currentStorageLocationId());
         if (req.cancelledReason() != null)          o.setCancelledReason(req.cancelledReason());
         if (req.tags() != null)                     o.setTags(req.tags());
+        if (req.quotedPriceCents() != null)         o.setQuotedPriceCents(req.quotedPriceCents());
+        if (req.advancePaidCents() != null)         o.setAdvancePaidCents(req.advancePaidCents());
         log.info("op=updateOrder orderId={} outcome=ok", id);
         return toDto(orderRepo.save(o));
     }

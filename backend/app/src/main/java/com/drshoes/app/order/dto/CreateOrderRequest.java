@@ -13,5 +13,7 @@ public record CreateOrderRequest(
     Instant plannedPickupAt,
     UUID assignedCraftsmanId,
     OrderSource source,
-    List<CreateOrderItemRequest> items
+    List<CreateOrderItemRequest> items,
+    Integer quotedPriceCents,
+    Integer advancePaidCents
 ) {}

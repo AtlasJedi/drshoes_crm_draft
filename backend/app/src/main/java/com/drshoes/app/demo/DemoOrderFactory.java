@@ -95,7 +95,8 @@ public class DemoOrderFactory {
 
         var item = new CreateOrderItemRequest(kind, description, null, 0);
         var req  = new CreateOrderRequest(
-            client.getId(), description, receivedAt, plannedPickup, null, null, List.of(item)
+            client.getId(), description, receivedAt, plannedPickup, null, null, List.of(item),
+            null, null  // quotedPriceCents, advancePaidCents — default to 0 in service
         );
         var dto = orderService.create(req);
 

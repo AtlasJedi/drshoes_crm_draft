@@ -147,7 +147,7 @@ class AuditLogAspectIntegrationTest extends AdminWebTestBase {
     @Test
     void auditedAnnotationPopulatesParentEntityId() {
         var order = orderService.create(new CreateOrderRequest(
-            clientId, "test order", null, null, null, OrderSource.ADMIN, null));
+            clientId, "test order", null, null, null, OrderSource.ADMIN, null, null, null));
         UUID orderId = order.id();
 
         auditLog.deleteAll(); // clear create-order row(s)

@@ -10,5 +10,7 @@ public record UpdateOrderRequest(
     UUID currentStorageLocationId,
     String cancelledReason,
     String tags,
-    Integer version
+    Integer version,
+    Integer quotedPriceCents,
+    Integer advancePaidCents
 ) {}

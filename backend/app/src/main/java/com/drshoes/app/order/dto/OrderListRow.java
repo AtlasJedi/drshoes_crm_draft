@@ -16,12 +16,19 @@ public record OrderListRow(
     String description,
     Instant plannedPickupAt,
     int version,
-    Instant updatedAt
+    Instant updatedAt,
+    Instant createdAt,
+    Instant receivedAt,
+    Instant pickedUpAt,
+    int quotedPriceCents,
+    int advancePaidCents
 ) {
     public static OrderListRow of(Order o) {
         return new OrderListRow(
             o.getId(), o.getCode(), o.getClientId(), o.getStatus(),
             o.getTotalPriceCents(), o.getCurrency(), o.getDescription(),
-            o.getPlannedPickupAt(), o.getVersion(), o.getUpdatedAt());
+            o.getPlannedPickupAt(), o.getVersion(), o.getUpdatedAt(),
+            o.getCreatedAt(), o.getReceivedAt(), o.getPickedUpAt(),
+            o.getQuotedPriceCents(), o.getAdvancePaidCents());
     }
 }

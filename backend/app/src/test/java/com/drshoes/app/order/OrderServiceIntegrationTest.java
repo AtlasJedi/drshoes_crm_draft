@@ -39,14 +39,19 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         clientId = clientRepo.save(c).getId();
     }
 
-    // ---- helper ----
+    // ---- helpers ----
 
     private CreateOrderRequest req(String description) {
-        return new CreateOrderRequest(clientId, description, null, null, null, OrderSource.ADMIN, null);
+        return new CreateOrderRequest(clientId, description, null, null, null, OrderSource.ADMIN, null, null, null);
+    }
+
+    private CreateOrderRequest reqWithQuote(String description, int quotedPriceCents, Integer advancePaidCents) {
+        return new CreateOrderRequest(clientId, description, null, null, null, OrderSource.ADMIN, null,
+            quotedPriceCents, advancePaidCents);
     }
 
     private CreateOrderRequest reqWithItems(String description, List<CreateOrderItemRequest> items) {
-        return new CreateOrderRequest(clientId, description, null, null, null, OrderSource.ADMIN, items);
+        return new CreateOrderRequest(clientId, description, null, null, null, OrderSource.ADMIN, items, null, null);
     }
 
     // ============================================================
@@ -290,7 +295,7 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         OrderDto created = svc.create(req("do usuniecia"));
         svc.softDelete(created.id());
 
-        UpdateOrderRequest updateReq = new UpdateOrderRequest("nowy opis", null, null, null, null, null, null);
+        UpdateOrderRequest updateReq = new UpdateOrderRequest("nowy opis", null, null, null, null, null, null, null, null);
 
         assertThatThrownBy(() -> svc.update(created.id(), updateReq))
             .isInstanceOf(OrderAlreadyDeletedException.class);
@@ -336,5 +341,53 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
 
         ChangeStatusResponse resp = svc.changeStatus(created.id(), req);
         assertThat(resp.order().status()).isEqualTo(OrderStatus.W_REALIZACJI);
+    }
+
+    // ============================================================
+    // Test 18: create with quotedPriceCents + advancePaidCents round-trips correctly
+    // (task ux-4 — V016 migration)
+    // ============================================================
+    @Test
+    void createOrder_withQuoteAndAdvance_roundTrips() {
+        OrderDto created = svc.create(reqWithQuote("but ze skóry", 35000, 10000));
+
+        assertThat(created.quotedPriceCents()).isEqualTo(35000);
+        assertThat(created.advancePaidCents()).isEqualTo(10000);
+
+        OrderDto fetched = svc.get(created.id());
+        assertThat(fetched.quotedPriceCents()).isEqualTo(35000);
+        assertThat(fetched.advancePaidCents()).isEqualTo(10000);
+    }
+
+    // ============================================================
+    // Test 19: advancePaidCents defaults to 0 when not provided
+    // (task ux-4 — null advance → service defaults to 0)
+    // ============================================================
+    @Test
+    void createOrder_nullAdvance_defaultsToZero() {
+        OrderDto created = svc.create(reqWithQuote("naprawa obcasa", 15000, null));
+
+        assertThat(created.quotedPriceCents()).isEqualTo(15000);
+        assertThat(created.advancePaidCents()).isEqualTo(0);
+    }
+
+    // ============================================================
+    // Test 20: update patches quotedPriceCents and advancePaidCents
+    // (task ux-4 — patch via UpdateOrderRequest)
+    // ============================================================
+    @Test
+    void updateOrder_patchesQuoteAndAdvance() {
+        OrderDto created = svc.create(req("renowacja butów"));
+
+        UpdateOrderRequest patchReq = new UpdateOrderRequest(
+            null, null, null, null, null, null, null, 50000, 20000);
+        OrderDto updated = svc.update(created.id(), patchReq);
+
+        assertThat(updated.quotedPriceCents()).isEqualTo(50000);
+        assertThat(updated.advancePaidCents()).isEqualTo(20000);
+
+        OrderDto fetched = svc.get(updated.id());
+        assertThat(fetched.quotedPriceCents()).isEqualTo(50000);
+        assertThat(fetched.advancePaidCents()).isEqualTo(20000);
     }
 }

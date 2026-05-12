@@ -61,6 +61,12 @@ public class Order {
     @Column(name = "total_price_cents", nullable = false)
     private int totalPriceCents = 0;
 
+    @Column(name = "quoted_price_cents", nullable = false)
+    private int quotedPriceCents = 0;
+
+    @Column(name = "advance_paid_cents", nullable = false)
+    private int advancePaidCents = 0;
+
     @Column(name = "currency", nullable = false, length = 3)
     private String currency = "PLN";
 
@@ -123,6 +129,12 @@ public class Order {
 
     public int getTotalPriceCents() { return totalPriceCents; }
     public void setTotalPriceCents(int totalPriceCents) { this.totalPriceCents = totalPriceCents; }
+
+    public int getQuotedPriceCents() { return quotedPriceCents; }
+    public void setQuotedPriceCents(int quotedPriceCents) { this.quotedPriceCents = quotedPriceCents; }
+
+    public int getAdvancePaidCents() { return advancePaidCents; }
+    public void setAdvancePaidCents(int advancePaidCents) { this.advancePaidCents = advancePaidCents; }
 
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }

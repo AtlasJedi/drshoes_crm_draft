@@ -27,7 +27,9 @@ public record OrderDto(
     int version,
     Instant createdAt,
     Instant updatedAt,
-    List<OrderItemDto> items
+    List<OrderItemDto> items,
+    int quotedPriceCents,
+    int advancePaidCents
 ) {
     public static OrderDto of(Order o, List<OrderItemDto> items) {
         return new OrderDto(
@@ -37,6 +39,7 @@ public record OrderDto(
             o.getTags(), o.getTotalPriceCents(), o.getCurrency(),
             o.getDescription(), o.getCancelledReason(),
             o.getVersion(), o.getCreatedAt(), o.getUpdatedAt(),
-            items);
+            items,
+            o.getQuotedPriceCents(), o.getAdvancePaidCents());
     }
 }
