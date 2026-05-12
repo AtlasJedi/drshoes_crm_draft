@@ -27,8 +27,11 @@ import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xm
 function initBrowserOtel() {
   if (typeof window === "undefined") return; // SSR guard
 
-  const endpoint =
-    process.env.NEXT_PUBLIC_OTLP_ENDPOINT ?? "/api/otlp";
+  const raw = process.env.NEXT_PUBLIC_OTLP_ENDPOINT ?? "/api/otlp";
+  // OTLPTraceExporter requires an absolute URL. If the env var is a relative
+  // path (e.g. "/api/otlp"), resolve it against the current origin so that the
+  // exporter works both on localhost:3000 and from inside Docker (web:3000).
+  const endpoint = raw.startsWith("http") ? raw : window.location.origin + raw;
 
   const exporter = new OTLPTraceExporter({ url: endpoint });
 
