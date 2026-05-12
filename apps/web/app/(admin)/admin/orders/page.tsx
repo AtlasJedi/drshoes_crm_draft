@@ -21,6 +21,7 @@ interface SearchParams {
   tag?: string;
   plannedPickupAtFrom?: string;
   plannedPickupAtTo?: string;
+  sort?: string;
 }
 
 export default async function OrdersPage({
@@ -44,6 +45,7 @@ export default async function OrdersPage({
   const plannedPickupAtTo = sp.plannedPickupAtTo;
   const page = Math.max(0, parseInt(sp.page ?? "0", 10) || 0);
   const orderId = sp.orderId;
+  const sort = sp.sort;
 
   let pageData = null;
   let users: UserStubDto[] = [];
@@ -56,7 +58,7 @@ export default async function OrdersPage({
       ReturnType<typeof listUsersServer>,
       ...Array<Promise<OrderDto>>,
     ] = [
-      listOrdersServer({ status, type, craftsmanId, q, tag, plannedPickupAtFrom, plannedPickupAtTo }, page, 25),
+      listOrdersServer({ status, type, craftsmanId, q, tag, plannedPickupAtFrom, plannedPickupAtTo }, page, 25, sort),
       listUsersServer(),
     ];
     if (orderId) fetches.push(getOrderServer(orderId));

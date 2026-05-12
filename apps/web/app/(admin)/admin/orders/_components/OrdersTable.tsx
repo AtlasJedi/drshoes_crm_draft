@@ -6,6 +6,7 @@ import { createLogger } from "@/lib/log";
 import { STATUS_LABELS_PL, STATUS_PILL_CLASS } from "@/lib/orders/status";
 import type { OrderListRow } from "@/lib/orders/types";
 import { RowQuickActionsMenu } from "./RowQuickActionsMenu";
+import { SortableColumnHeader } from "./SortableColumnHeader";
 
 const log = createLogger("orders-table");
 
@@ -78,12 +79,25 @@ export function OrdersTable({
                   />
                 )}
               </th>
-              <th className={thCls}>Kod</th>
-              <th className={thCls}>Status</th>
+              <th className={thCls}>
+                <SortableColumnHeader field="code" label="Kod" />
+              </th>
+              <th className={thCls}>
+                <SortableColumnHeader field="status" label="Status" />
+              </th>
               <th className={thCls}>Klient</th>
               <th className={thCls}>Pozycje</th>
+              <th className={thCls}>
+                <SortableColumnHeader field="receivedAt" label="Przyjęto" />
+              </th>
               <th className={thCls}>Termin odbioru</th>
+              <th className={thCls}>
+                <SortableColumnHeader field="pickedUpAt" label="Wydano" />
+              </th>
               <th className={thCls}>Wykonawca</th>
+              <th className={thCls + " text-right"}>
+                <SortableColumnHeader field="createdAt" label="Utworzono" className="justify-end" />
+              </th>
               <th className={thCls + " text-right"}>Suma</th>
               <th className={thCls + " w-10 text-right"}>
                 {/* actions */}
@@ -118,7 +132,13 @@ export function OrdersTable({
                 </td>
                 <td className={tdCls + " text-admin-mute"}>{row.clientId.slice(0, 8)}…</td>
                 <td className={tdCls + " text-admin-mute"}>{row.description ?? "—"}</td>
+                {/* receivedAt — not in OrderListRow projection; sort is server-side only */}
+                <td className={tdCls + " text-admin-mute"}>—</td>
                 <td className={tdCls}>{fmtDate(row.plannedPickupAt)}</td>
+                {/* pickedUpAt — not in OrderListRow projection; sort is server-side only */}
+                <td className={tdCls + " text-admin-mute"}>—</td>
+                <td className={tdCls + " text-admin-mute"}>—</td>
+                {/* createdAt — not in OrderListRow projection; sort is server-side only */}
                 <td className={tdCls + " text-admin-mute"}>—</td>
                 <td className={tdCls + " text-right font-mono"}>{pricePLN(row.totalPriceCents)}</td>
                 <td

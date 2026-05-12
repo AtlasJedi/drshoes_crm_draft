@@ -10,7 +10,16 @@ import type { OrderListRow, OrderListFilters } from "./types";
 
 const log = createLogger("orders-api-server");
 
-function buildQuery(filters: OrderListFilters, page: number, size: number): string {
+const ALLOWED_SORT_FIELDS = new Set([
+  "createdAt", "receivedAt", "code", "status", "pickedUpAt",
+]);
+
+function buildQuery(
+  filters: OrderListFilters,
+  page: number,
+  size: number,
+  sort?: string,
+): string {
   const p = new URLSearchParams();
   if (filters.status) {
     if (Array.isArray(filters.status)) {
@@ -27,6 +36,13 @@ function buildQuery(filters: OrderListFilters, page: number, size: number): stri
   if (filters.plannedPickupAtTo) p.set("plannedPickupAtTo", filters.plannedPickupAtTo);
   p.set("page", String(page));
   p.set("size", String(size));
+  // Forward sort param if valid (backend validates; we do a client-side pre-check too)
+  if (sort) {
+    const field = sort.split(",")[0] ?? "";
+    if (ALLOWED_SORT_FIELDS.has(field)) {
+      p.set("sort", sort);
+    }
+  }
   return p.toString();
 }
 
@@ -34,13 +50,14 @@ export async function listOrdersServer(
   filters: OrderListFilters = {},
   page = 0,
   size = 25,
+  sort?: string,
 ): Promise<Page<OrderListRow>> {
   const base = process.env["INTERNAL_API_BASE"] ?? "http://localhost:8080";
   const c = await cookies();
   const cookieHeader = c.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
-  const qs = buildQuery(filters, page, size);
+  const qs = buildQuery(filters, page, size, sort);
 
-  log.info("op=listOrdersServer", { page, size, ...filters });
+  log.info("op=listOrdersServer", { page, size, sort, ...filters });
 
   const resp = await fetch(`${base}/api/admin/orders?${qs}`, {
     headers: { cookie: cookieHeader },

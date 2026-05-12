@@ -1,20 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { createLogger } from "@/lib/log";
 import { resolveLoginError } from "@/lib/auth/login-error";
-// typedRoutes is enabled; `next` is a runtime string from searchParams, so we cast.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyRoute = any;
 
 const log = createLogger("login-form");
 
 const ERROR_ID = "login-error";
 
 export function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/admin";
   const [email, setEmail] = useState("");
