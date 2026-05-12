@@ -231,6 +231,7 @@ public class TimelineEventCurator {
 
     private static TimelineEvent event(AuditLog log, TimelineEventKind kind,
                                         String actorFullName, Map<String, String> labels) {
-        return new TimelineEvent(log.getId(), kind, log.getCreatedAt(), actorFullName, labels);
+        return new TimelineEvent(log.getId(), kind, log.getCreatedAt(), actorFullName, labels,
+            log.getNote());
     }
 }

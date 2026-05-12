@@ -53,6 +53,7 @@ public class AuditLogAspect {
         + "&& !@annotation(org.springframework.web.bind.annotation.ExceptionHandler)")
     public Object audit(ProceedingJoinPoint pjp) throws Throwable {
         var attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        Object[] args = pjp.getArgs();
         Object out;
         int status = 200;
         try {
@@ -60,10 +61,10 @@ public class AuditLogAspect {
             if (out instanceof ResponseEntity<?> re) status = re.getStatusCode().value();
         } catch (RuntimeException e) {
             status = 500;
-            persistHttp(attrs, status);
+            persistHttp(attrs, status, args);
             throw e;
         }
-        persistHttp(attrs, status);
+        persistHttp(attrs, status, args);
         return out;
     }
 
@@ -85,9 +86,10 @@ public class AuditLogAspect {
 
     // ---- private helpers ----
 
-    private void persistHttp(ServletRequestAttributes attrs, int status) {
+    private void persistHttp(ServletRequestAttributes attrs, int status, Object[] args) {
         if (attrs == null) return;
         HttpServletRequest r = attrs.getRequest();
-        coordinator.persistHttp(r, status);
+        String note = AuditWriteCoordinator.extractNote(args);
+        coordinator.persistHttp(r, status, note);
     }
 }

@@ -37,6 +37,14 @@ public class AuditWriteCoordinator {
 
     /** Persists an HTTP audit row, capturing the active OTel trace ID. */
     public void persistHttp(HttpServletRequest r, int status) {
+        persistHttp(r, status, null);
+    }
+
+    /**
+     * Persists an HTTP audit row with an optional note.
+     * note is extracted from method args by AuditLogAspect when a HasAuditNote arg is present.
+     */
+    public void persistHttp(HttpServletRequest r, int status, String note) {
         String actorName = resolveActorName();
         UUID actorId = resolveActorId();
         String traceId = spanHelper.currentTraceId();
@@ -47,9 +55,9 @@ public class AuditWriteCoordinator {
                 null, actorName,
                 () -> writer.write(method, path, status,
                     r.getRemoteAddr(), r.getHeader("User-Agent"),
-                    null, actorId, traceId));
-            log.info("op=audit actor={} actorId={} method={} path={} status={} traceId={} outcome=persisted",
-                actorName, actorId, method, path, status, traceId);
+                    null, actorId, traceId, note));
+            log.info("op=audit actor={} actorId={} method={} path={} status={} traceId={} hasNote={} outcome=persisted",
+                actorName, actorId, method, path, status, traceId, note != null);
         } catch (Exception ex) {
             log.warn("op=audit actor={} method={} path={} status={} outcome=skipped reason={}",
                 actorName, method, path, status, ex.getMessage());
@@ -101,6 +109,21 @@ public class AuditWriteCoordinator {
         if (auth != null && auth.isAuthenticated()
             && auth.getPrincipal() instanceof AdminPrincipal p) {
             return p.userId();
+        }
+        return null;
+    }
+
+    /**
+     * Scans joinpoint args for the first {@link HasAuditNote} instance and returns its note.
+     * Returns null if no arg implements HasAuditNote or the note itself is null/blank.
+     */
+    static String extractNote(Object[] args) {
+        if (args == null) return null;
+        for (Object arg : args) {
+            if (arg instanceof HasAuditNote h) {
+                String n = h.auditNote();
+                return (n != null && !n.isBlank()) ? n : null;
+            }
         }
         return null;
     }

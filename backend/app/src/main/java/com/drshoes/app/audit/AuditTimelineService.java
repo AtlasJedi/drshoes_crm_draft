@@ -108,7 +108,8 @@ public class AuditTimelineService {
                 TimelineEventKind.ORDER_CREATED,
                 order.getCreatedAt(),
                 creatorName,
-                Map.of()
+                Map.of(),
+                null
             );
             events.add(0, created);
         }

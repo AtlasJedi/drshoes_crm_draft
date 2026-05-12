@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.UUID;
@@ -41,6 +42,7 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
     @Autowired private OrderRepository orderRepository;
     @Autowired private OrderItemRepository orderItemRepository;
     @Autowired private ObjectMapper objectMapper;
+    @Autowired private JdbcTemplate jdbc;
 
     private UUID clientId;
 
@@ -387,6 +389,46 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
 
     // -------------------------------------------------------------------------
     // Helpers
+    // -------------------------------------------------------------------------
+    // POST /api/admin/orders/{id}/status — audit_log.note persistence (M8 m8-fb-1b)
+    // -------------------------------------------------------------------------
+
+    @Test
+    void changeStatus_persistsNoteOnAuditRow() throws Exception {
+        loginAsOwner();
+        UUID orderId = createOrderAndReturnId("Note test order");
+
+        mockMvc().perform(post("/api/admin/orders/" + orderId + "/status")
+                .contentType("application/json")
+                .content("""
+                    {"targetStatus":"W_REALIZACJI","expectedVersion":0,"note":"Klient zapłacił z góry"}""")
+                .with(csrf()))
+            .andExpect(status().isOk());
+
+        String storedNote = jdbc.queryForObject(
+            "SELECT note FROM audit_log WHERE path = ? ORDER BY created_at DESC LIMIT 1",
+            String.class, "/api/admin/orders/" + orderId + "/status");
+        assertThat(storedNote).isEqualTo("Klient zapłacił z góry");
+    }
+
+    @Test
+    void changeStatus_nullNoteLeavesAuditNoteNull() throws Exception {
+        loginAsOwner();
+        UUID orderId = createOrderAndReturnId("No note order");
+
+        mockMvc().perform(post("/api/admin/orders/" + orderId + "/status")
+                .contentType("application/json")
+                .content("""
+                    {"targetStatus":"W_REALIZACJI","expectedVersion":0}""")
+                .with(csrf()))
+            .andExpect(status().isOk());
+
+        String storedNote = jdbc.queryForObject(
+            "SELECT note FROM audit_log WHERE path = ? ORDER BY created_at DESC LIMIT 1",
+            String.class, "/api/admin/orders/" + orderId + "/status");
+        assertThat(storedNote).isNull();
+    }
+
     // -------------------------------------------------------------------------
 
     private UUID createOrderAndReturnId(String description) throws Exception {

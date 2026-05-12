@@ -117,7 +117,8 @@ public class MessageSentTimelineHandler {
                 TimelineEventKind.MESSAGE_SENT,
                 row.getCreatedAt(),
                 actorFullName,
-                Map.copyOf(labels)
+                Map.copyOf(labels),
+                null
         );
     }
 

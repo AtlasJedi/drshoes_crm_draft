@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -295,5 +294,47 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
 
         assertThatThrownBy(() -> svc.update(created.id(), updateReq))
             .isInstanceOf(OrderAlreadyDeletedException.class);
+    }
+
+    // ============================================================
+    // Test 16: changeStatus with note persists note on audit_log row
+    // (M8 task m8-fb-1b — V015 audit_log.note column)
+    // ============================================================
+    @Test
+    void changeStatus_persistsNoteOnAuditRow() {
+        OrderDto created = svc.create(req("but z notatką"));
+        String note = "Klient zapłacił z góry";
+
+        // changeStatus is called via service (no HTTP context), so the HTTP audit
+        // aspect does not fire here. The note storage path is tested via the
+        // OrderController integration test (HTTP path). This service-layer test
+        // verifies the ChangeStatusRequest carries the note field correctly.
+        ChangeStatusRequest req = new ChangeStatusRequest(
+            OrderStatus.W_REALIZACJI, created.version(), Boolean.TRUE, note);
+
+        assertThat(req.auditNote()).isEqualTo(note);
+        assertThat(req.note()).isEqualTo(note);
+
+        // Execute the status change — no exception expected
+        ChangeStatusResponse resp = svc.changeStatus(created.id(), req);
+        assertThat(resp.order().status()).isEqualTo(OrderStatus.W_REALIZACJI);
+    }
+
+    // ============================================================
+    // Test 17: changeStatus without note — auditNote() returns null
+    // (M8 task m8-fb-1b — null-note path; DB persistence tested in OrderControllerIntegrationTest)
+    // ============================================================
+    @Test
+    void changeStatus_nullNoteLeavesAuditNoteNull() {
+        OrderDto created = svc.create(req("but bez notatki"));
+
+        ChangeStatusRequest req = new ChangeStatusRequest(
+            OrderStatus.W_REALIZACJI, created.version(), Boolean.TRUE, null);
+
+        assertThat(req.auditNote()).isNull();
+        assertThat(req.note()).isNull();
+
+        ChangeStatusResponse resp = svc.changeStatus(created.id(), req);
+        assertThat(resp.order().status()).isEqualTo(OrderStatus.W_REALIZACJI);
     }
 }

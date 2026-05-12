@@ -61,6 +61,15 @@ public class AuditLog {
     @Column(name = "trace_id", length = 32)
     private String traceId;
 
+    /**
+     * Optional free-text note provided by the operator at the time of the action.
+     * Populated only for STATUS_CHANGED rows where the operator filled the note field.
+     * Max 1000 characters (enforced via @Size on ChangeStatusRequest.note).
+     * Added by V015 migration (M8 task m8-fb-1b).
+     */
+    @Column(name = "note", columnDefinition = "TEXT")
+    private String note;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
@@ -82,5 +91,7 @@ public class AuditLog {
     public void setParentEntityId(UUID parentEntityId) { this.parentEntityId = parentEntityId; }
     public String getTraceId() { return traceId; }
     public void setTraceId(String traceId) { this.traceId = traceId; }
+    public String getNote() { return note; }
+    public void setNote(String note) { this.note = note; }
     public Instant getCreatedAt() { return createdAt; }
 }

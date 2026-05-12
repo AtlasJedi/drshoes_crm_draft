@@ -60,17 +60,29 @@ public class AuditLogWriter {
     /**
      * Full variant with traceId: persists parent_entity_id, actor_id, and OTel trace_id.
      * traceId is the 32-char lowercase hex W3C trace ID; pass null when no span context is present.
+     * Delegates to the 9-param overload with null note for backward compatibility.
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(String method, String path, int status, String ip, String userAgent,
                       UUID parentEntityId, UUID actorId, String traceId) {
+        write(method, path, status, ip, userAgent, parentEntityId, actorId, traceId, null);
+    }
+
+    /**
+     * Full variant with note: persists all fields including the operator's free-text note.
+     * note is stored in audit_log.note (TEXT NULL, added by V015 migration).
+     * Pass null when no note is present (all non-status-change audit rows).
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void write(String method, String path, int status, String ip, String userAgent,
+                      UUID parentEntityId, UUID actorId, String traceId, String note) {
         em.createNativeQuery("""
             INSERT INTO audit_log
                 (id, actor_id, method, path, status, ip, user_agent, request_id,
-                 created_at, parent_entity_id, trace_id)
+                 created_at, parent_entity_id, trace_id, note)
             VALUES
                 (:id, :actorId, :method, :path, :status, CAST(:ip AS inet), :userAgent, :requestId,
-                 :createdAt, :parentEntityId, :traceId)
+                 :createdAt, :parentEntityId, :traceId, :note)
             """)
             .setParameter("id", UUID.randomUUID())
             .setParameter("actorId", actorId)
@@ -83,6 +95,7 @@ public class AuditLogWriter {
             .setParameter("createdAt", Instant.now())
             .setParameter("parentEntityId", parentEntityId)
             .setParameter("traceId", traceId)
+            .setParameter("note", note)
             .executeUpdate();
     }
 }
