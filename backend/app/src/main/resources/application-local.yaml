@@ -10,6 +10,11 @@ spring:
         format_sql: true
 
 drshoes:
+  security:
+    # Disable CSRF in local/dev/E2E — Playwright bypasses the browser login page
+    # so the XSRF-TOKEN cookie is never received, causing all POSTs to fail 403.
+    # Production default (true) is set by the absence of this property.
+    csrf-enabled: false
   auth:
     throttle:
       # Local/dev/E2E: throttle disabled entirely so debugging and test

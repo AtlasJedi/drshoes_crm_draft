@@ -2,6 +2,7 @@ package com.drshoes.app.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,17 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 public class SecurityConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+
+    /**
+     * When false, CSRF protection is disabled entirely.
+     * Set drshoes.security.csrf-enabled=false in application-local.yaml for
+     * local dev / E2E tests (Playwright bypasses the browser login page so it
+     * never receives the XSRF-TOKEN cookie that Spring sets lazily on the first
+     * GET through the CSRF filter, causing POST requests to fail with 403).
+     * Production default: true (unchanged).
+     */
+    @Value("${drshoes.security.csrf-enabled:true}")
+    private boolean csrfEnabled;
 
     // Public routes that must never require authentication
     private static final String[] PUBLIC_MATCHERS = {
@@ -71,11 +83,20 @@ public class SecurityConfig {
         var csrfHandler = new CsrfTokenRequestAttributeHandler();
         csrfHandler.setCsrfRequestAttributeName("_csrf");
 
+        if (!csrfEnabled) {
+            log.warn("op=securityFilterChainConfigured csrfMode=DISABLED — local/E2E profile only");
+        }
+
         http
-            .csrf(c -> c
-                .csrfTokenRepository(csrfTokenRepository)
-                .csrfTokenRequestHandler(csrfHandler)
-                .ignoringRequestMatchers(CSRF_IGNORED))
+            .csrf(c -> {
+                if (!csrfEnabled) {
+                    c.disable();
+                } else {
+                    c.csrfTokenRepository(csrfTokenRepository)
+                     .csrfTokenRequestHandler(csrfHandler)
+                     .ignoringRequestMatchers(CSRF_IGNORED);
+                }
+            })
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(a -> a
                 .requestMatchers(PUBLIC_MATCHERS).permitAll()
