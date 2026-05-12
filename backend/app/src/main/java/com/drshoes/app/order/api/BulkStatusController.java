@@ -89,7 +89,8 @@ public class BulkStatusController {
                 ChangeStatusRequest singleReq = new ChangeStatusRequest(
                     req.newStatus(),
                     order.getVersion(),
-                    req.sendTriggers()
+                    req.sendTriggers(),
+                    null  // bulk status changes carry no per-order note
                 );
                 ChangeStatusResponse resp = orderService.changeStatus(orderId, singleReq);
                 succeeded.add(new SucceededItem(orderId, resp.order().code(), fromStatus, req.newStatus()));

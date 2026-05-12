@@ -123,8 +123,9 @@ public class OrderService {
         if (req.targetStatus() == OrderStatus.WYDANE && o.getPickedUpAt() == null)
             o.setPickedUpAt(Instant.now());
         Order saved = orderRepo.save(o);
-        log.info("op=changeOrderStatus orderId={} fromStatus={} toStatus={} sendTriggers={} outcome=ok",
-            id, old, req.targetStatus(), req.sendTriggers());
+        log.info("op=changeOrderStatus orderId={} fromStatus={} toStatus={} sendTriggers={} noteLen={} outcome=ok",
+            id, old, req.targetStatus(), req.sendTriggers(),
+            req.note() != null ? req.note().length() : 0);
         if (Boolean.TRUE.equals(req.sendTriggers())) {
             triggerEngine.onStatusChange(saved.getId(), old.name(), req.targetStatus().name());
         }
