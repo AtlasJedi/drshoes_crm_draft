@@ -103,8 +103,46 @@ services:
       INTERNAL_API_BASE: http://backend:8080
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
       NEXT_PUBLIC_OTLP_ENDPOINT: /api/otlp
+      # Fix Docker Desktop macOS ERR_ABORTED on chunked RSC streaming:
+      # keepAliveTimeout=0 forces Connection: close on each response so
+      # Docker Desktop's host port-forward proxy never drops a mid-stream
+      # TCP connection (which Chromium is sensitive to, unlike curl).
+      KEEP_ALIVE_TIMEOUT: 0
     ports:
       - "${WEB_PORT:-3000}:3000"
+
+  # E2E runner — only active under `docker compose --profile e2e run playwright`.
+  # Runs Playwright tests from INSIDE the Docker network (web:3000) so chunked
+  # RSC streaming is not filtered through Docker Desktop's macOS host port-forward,
+  # which drops TCP connections mid-stream causing ERR_ABORTED in headless Chromium.
+  #
+  # Usage:
+  #   docker compose --profile e2e run --rm playwright
+  #
+  # Results land on the host at apps/web/test-results/ via the bind mount.
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.60.0-noble
+    profiles: ["e2e"]
+    depends_on:
+      web:
+        condition: service_started
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    environment:
+      # Internal Docker DNS — bypasses Docker Desktop macOS port-forward proxy
+      BASE_URL: http://web:3000
+      JAEGER_URL: http://jaeger:16686
+      # pnpm store inside the container
+      PNPM_HOME: /workspace/.pnpm-store
+    command: >
+      bash -c "
+        corepack enable &&
+        corepack prepare pnpm@9.12.3 --activate &&
+        pnpm install --frozen-lockfile &&
+        pnpm --filter @drshoes/web exec playwright install chromium &&
+        pnpm --filter @drshoes/web test:e2e
+      "
 
 volumes:
   db_data:
