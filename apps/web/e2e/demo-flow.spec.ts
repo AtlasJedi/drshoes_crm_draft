@@ -45,7 +45,12 @@ async function login(page: Page, request: APIRequestContext, email: string, pass
   if (resp.status() !== 204) {
     throw new Error(`Login failed: HTTP ${resp.status()}`);
   }
-  // Copy cookies from request context (which has dr_session) into page context
+  // GET /api/admin/auth/me to trigger Spring Security to issue the XSRF-TOKEN cookie.
+  // Spring CSRF uses a lazy token materialisation strategy — the token cookie is only
+  // written on the first request that accesses it. Without this GET, the browser context
+  // has no XSRF-TOKEN and POST requests (e.g. create order) get a 403 CSRF rejection.
+  await request.get("/api/admin/auth/me");
+  // Copy all cookies (dr_session + XSRF-TOKEN) into the page browser context
   const state = await request.storageState();
   if (state.cookies.length > 0) {
     await page.context().addCookies(state.cookies);
@@ -136,28 +141,24 @@ test.describe("Demo flow — admin order lifecycle", () => {
     }
 
     // ── Step 6: Record initial timeline count ─────────────────────────────────
+    // Admin-sourced orders start at PRZYJETE (not WSTEPNIE_PRZYJETE — that is
+    // the initial state only for public/self-service submissions).
     let timelineBefore = await getTimelineCount(page);
     expect(timelineBefore).toBeGreaterThanOrEqual(1); // ORDER_CREATED event
 
-    // ── Step 7: Transition WSTEPNIE_PRZYJETE → PRZYJETE ──────────────────────
-    await changeOrderStatus(page, "Przyjęte");
+    // ── Step 7: Transition PRZYJETE → W_REALIZACJI ───────────────────────────
+    await changeOrderStatus(page, "W realizacji");
     let timelineAfter = await getTimelineCount(page);
     expect(timelineAfter).toBeGreaterThanOrEqual(timelineBefore);
     timelineBefore = timelineAfter;
 
-    // ── Step 8: Transition PRZYJETE → W_REALIZACJI ───────────────────────────
-    await changeOrderStatus(page, "W realizacji");
-    timelineAfter = await getTimelineCount(page);
-    expect(timelineAfter).toBeGreaterThanOrEqual(timelineBefore);
-    timelineBefore = timelineAfter;
-
-    // ── Step 9: Transition W_REALIZACJI → GOTOWE_DO_ODBIORU ─────────────────
+    // ── Step 8: Transition W_REALIZACJI → GOTOWE_DO_ODBIORU ─────────────────
     await changeOrderStatus(page, "Gotowe do odbioru");
     timelineAfter = await getTimelineCount(page);
     expect(timelineAfter).toBeGreaterThanOrEqual(timelineBefore);
     timelineBefore = timelineAfter;
 
-    // ── Step 10: Transition GOTOWE_DO_ODBIORU → WYDANE ───────────────────────
+    // ── Step 9: Transition GOTOWE_DO_ODBIORU → WYDANE ────────────────────────
     await changeOrderStatus(page, "Wydane");
     timelineAfter = await getTimelineCount(page);
     expect(timelineAfter).toBeGreaterThanOrEqual(timelineBefore);
@@ -172,9 +173,11 @@ test.describe("Demo flow — admin order lifecycle", () => {
 async function assertJaegerHasTraces(request: APIRequestContext): Promise<void> {
   // Give OTel exporter time to flush
   await new Promise<void>((r) => setTimeout(r, 2_000));
+  // JAEGER_URL env allows override when running inside Docker (http://jaeger:16686)
+  const jaegerBase = process.env["JAEGER_URL"] ?? "http://localhost:16686";
   try {
     const jaegerResp = await request.get(
-      "http://localhost:16686/api/traces?service=drshoes-web&limit=20",
+      `${jaegerBase}/api/traces?service=drshoes-web&limit=20`,
       { timeout: 8_000 },
     );
     if (!jaegerResp.ok()) {

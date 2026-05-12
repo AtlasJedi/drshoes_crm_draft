@@ -2,8 +2,14 @@ import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Playwright configuration for Dr Shoes admin E2E tests.
- * Prerequisite: stack running via `make demo` on http://localhost:3000.
- * Chromium only — headless by default, headed via `--headed` flag.
+ *
+ * Prerequisite: stack running via `make demo` on http://localhost:3000, OR
+ * running inside Docker via `docker compose --profile e2e run playwright`.
+ *
+ * BASE_URL env var controls the target (default: http://localhost:3000).
+ * When running inside Docker the compose service sets BASE_URL=http://web:3000
+ * so requests go over the internal Docker network (bypassing macOS port-forwarding
+ * which drops chunked RSC streams mid-flight on Docker Desktop).
  */
 export default defineConfig({
   testDir: "./e2e",
@@ -13,7 +19,7 @@ export default defineConfig({
   workers: 1,
   reporter: "list",
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: process.env["BASE_URL"] ?? "http://localhost:3000",
     headless: true,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
