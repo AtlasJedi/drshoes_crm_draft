@@ -32,6 +32,7 @@ export type TimelineEventKind =
  * Curated timeline event — mirrors TimelineEvent.java.
  * id: null for synthetic events (e.g. ORDER_CREATED without audit_log row).
  * labels: display metadata key-value map (e.g. actorFullName, path).
+ * note: optional operator note — present only on STATUS_CHANGED rows where a note was provided.
  */
 export interface TimelineEvent {
   id: string | null;
@@ -39,4 +40,5 @@ export interface TimelineEvent {
   occurredAt: string;              // ISO-8601
   actorFullName: string | null;
   labels: Record<string, string>;
+  note?: string | null;
 }

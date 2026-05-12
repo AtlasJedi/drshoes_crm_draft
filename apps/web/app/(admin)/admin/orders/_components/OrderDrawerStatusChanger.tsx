@@ -41,11 +41,11 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
     setTarget(s);
   }
 
-  async function handleConfirm() {
+  async function handleConfirm(note: string) {
     if (!target) return;
     try {
-      const res = await changeStatus(order.id, target, order.version);
-      log.info("op=changeStatus outcome=ok", { orderId: order.id, to: target });
+      const res = await changeStatus(order.id, target, order.version, note);
+      log.info("op=changeStatus outcome=ok", { orderId: order.id, to: target, hasNote: note.trim().length > 0 });
       onOrderUpdated(res.order);
       setTarget(null);
     } catch (err: unknown) {
@@ -89,7 +89,7 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
         toStatus={target}
         orderId={order.id}
         triggerPreview={triggerPreview}
-        onConfirm={() => { void handleConfirm(); }}
+        onConfirm={(_sendTriggers, note) => { void handleConfirm(note); }}
         onCancel={() => setTarget(null)}
       />
     </div>

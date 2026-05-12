@@ -116,6 +116,11 @@ export function OrderDrawerTimeline({ orderId, refreshKey }: Props) {
                   <span className="text-admin-mute"> · {ev.actorFullName}</span>
                 )}
                 <div className="text-admin-mute">{formatTs(ev.occurredAt)}</div>
+                {ev.note && (
+                  <blockquote className="mt-1 border-l-2 border-gray-300 pl-2 text-sm text-gray-700">
+                    {ev.note}
+                  </blockquote>
+                )}
               </div>
             </li>
           ))}

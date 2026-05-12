@@ -1,6 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
+import { useState } from "react";
 import { createLogger } from "@/lib/log";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
 import type { OrderStatus } from "@/lib/orders/types";
@@ -21,8 +22,8 @@ interface Props {
   orderId: string;
   clientName?: string;
   triggerPreview: TriggerPreview;
-  /** Called with true → send triggers; false → status-only */
-  onConfirm: (sendTriggers: boolean) => void;
+  /** Called with sendTriggers flag and optional operator note. */
+  onConfirm: (sendTriggers: boolean, note: string) => void;
   onCancel: () => void;
 }
 
@@ -46,19 +47,27 @@ export function StatusChangeTriggerDialog({
   onCancel,
 }: Props) {
   const hasTrigger = triggerPreview.kind === "match";
+  const [note, setNote] = useState("");
 
   function handleSend() {
-    log.info("op=confirmWithTrigger", { orderId, from: fromStatus, to: toStatus });
-    onConfirm(true);
+    log.info("op=confirmWithTrigger", { orderId, from: fromStatus, to: toStatus, hasNote: note.trim().length > 0 });
+    onConfirm(true, note);
   }
 
   function handleStatusOnly() {
-    log.info("op=confirmStatusOnly", { orderId, from: fromStatus, to: toStatus });
-    onConfirm(false);
+    log.info("op=confirmStatusOnly", { orderId, from: fromStatus, to: toStatus, hasNote: note.trim().length > 0 });
+    onConfirm(false, note);
+  }
+
+  function handleOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      setNote("");
+      onCancel();
+    }
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={(isOpen) => { if (!isOpen) onCancel(); }}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-50" />
         <Dialog.Content className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-paper border-2 border-ink shadow-[5px_5px_0_var(--pink),5px_5px_0_1.5px_var(--ink)] w-full max-w-sm p-5 space-y-4">
@@ -108,6 +117,23 @@ export function StatusChangeTriggerDialog({
                 Brak skonfigurowanego wyzwalacza dla tego przejścia.
               </p>
             )}
+          </div>
+
+          {/* Note input */}
+          <div className="space-y-1">
+            <label htmlFor="status-change-note" className="text-xs font-medium text-admin-mute">
+              Notatka (opcjonalnie)
+            </label>
+            <textarea
+              id="status-change-note"
+              name="note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              maxLength={1000}
+              rows={3}
+              className="w-full px-2 py-1.5 text-sm border-2 border-ink bg-paper text-ink resize-none focus:outline-none focus:ring-1 focus:ring-ink"
+              placeholder="Dodaj notatkę do tej zmiany statusu…"
+            />
           </div>
 
           {/* Action buttons */}

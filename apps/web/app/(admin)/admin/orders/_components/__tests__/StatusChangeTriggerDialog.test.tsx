@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { StatusChangeTriggerDialog } from "../StatusChangeTriggerDialog";
 import type { TriggerPreview } from "../StatusChangeTriggerDialog";
 
@@ -73,7 +73,7 @@ describe("StatusChangeTriggerDialog", () => {
     expect(screen.getByText("Tylko zmień status")).toBeTruthy();
   });
 
-  it("calls onConfirm(true) when Wyślij is clicked", () => {
+  it("calls onConfirm(true, '') when Wyślij is clicked with no note", () => {
     const onConfirm = vi.fn();
     render(
       <StatusChangeTriggerDialog
@@ -87,10 +87,10 @@ describe("StatusChangeTriggerDialog", () => {
       />,
     );
     fireEvent.click(screen.getByText("Wyślij wiadomość"));
-    expect(onConfirm).toHaveBeenCalledWith(true);
+    expect(onConfirm).toHaveBeenCalledWith(true, "");
   });
 
-  it("calls onConfirm(false) when Tylko-zmień is clicked", () => {
+  it("calls onConfirm(false, '') when Tylko-zmień is clicked with no note", () => {
     const onConfirm = vi.fn();
     render(
       <StatusChangeTriggerDialog
@@ -104,7 +104,43 @@ describe("StatusChangeTriggerDialog", () => {
       />,
     );
     fireEvent.click(screen.getByText("Tylko zmień status"));
-    expect(onConfirm).toHaveBeenCalledWith(false);
+    expect(onConfirm).toHaveBeenCalledWith(false, "");
+  });
+
+  it("renders note textarea with correct label", () => {
+    render(
+      <StatusChangeTriggerDialog
+        open={true}
+        fromStatus="PRZYJETE"
+        toStatus="W_REALIZACJI"
+        orderId="uuid-1"
+        triggerPreview={noopPreview}
+        onConfirm={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+    expect(screen.getByLabelText("Notatka (opcjonalnie)")).toBeTruthy();
+    const textarea = screen.getByRole("textbox");
+    expect((textarea as HTMLTextAreaElement).maxLength).toBe(1000);
+  });
+
+  it("passes note value to onConfirm when submitted", () => {
+    const onConfirm = vi.fn();
+    render(
+      <StatusChangeTriggerDialog
+        open={true}
+        fromStatus="PRZYJETE"
+        toStatus="W_REALIZACJI"
+        orderId="uuid-1"
+        triggerPreview={noopPreview}
+        onConfirm={onConfirm}
+        onCancel={vi.fn()}
+      />,
+    );
+    const textarea = screen.getByRole("textbox");
+    act(() => { fireEvent.change(textarea, { target: { value: "Klient zapłacił z góry" } }); });
+    fireEvent.click(screen.getByText("Tylko zmień status"));
+    expect(onConfirm).toHaveBeenCalledWith(false, "Klient zapłacił z góry");
   });
 
   it("calls onCancel when Anuluj is clicked", () => {

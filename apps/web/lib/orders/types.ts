@@ -130,6 +130,8 @@ export interface UpdateOrderRequest {
 export interface ChangeStatusRequest {
   targetStatus: OrderStatus;
   expectedVersion: number;
+  /** Optional operator note (max 1000 chars). Omit or pass undefined to send no note. */
+  note?: string;
 }
 
 /** PATCH /admin/orders/{id}/items/{itemId} — mirrors UpdateOrderItemRequest.java. */
