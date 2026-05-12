@@ -1555,6 +1555,15 @@
       "commit_sha": "106e245",
       "dispatch_log": "docs/dispatch-log/m8-fb-1a-20260512T094056Z.md",
       "verdict": "APPROVED"
+    },
+    {
+      "id": "m8-fb-1b",
+      "title": "Status-change note: V015 migration + aspect wiring + dialog + timeline display",
+      "status": "completed",
+      "commit_sha": "102f46b",
+      "backend_commit_sha": "9cc0780",
+      "dispatch_log": "docs/dispatch-log/m8-fb-1b-20260512T094056Z.md",
+      "verdict": "APPROVED"
     }
   ],
   "notes": [
