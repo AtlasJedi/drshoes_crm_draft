@@ -10,6 +10,7 @@ import type { ClientDto } from "@/lib/clients/types";
 import type { UserStubDto } from "@/lib/users/types";
 import { ClientPicker } from "@/components/clients/ClientPicker";
 import { NewOrderItemRow, type ItemRowState } from "./NewOrderItemRow";
+import { plnToCents } from "@/lib/orders/money";
 
 const log = createLogger("new-order-form");
 
@@ -21,13 +22,6 @@ function makeFreshItem(): ItemRowState {
   return { kind: "NAPRAWA", description: "", pricePln: "" };
 }
 
-/** Convert PLN display string to integer cents. Returns 0 for invalid/empty. */
-function plnToCents(pln: string): number {
-  const n = parseFloat(pln.replace(",", "."));
-  if (!Number.isFinite(n) || n < 0) return 0;
-  return Math.round(n * 100);
-}
-
 export function NewOrderForm({ users }: Props) {
   const router = useRouter();
 
@@ -36,6 +30,8 @@ export function NewOrderForm({ users }: Props) {
   const [description, setDescription] = useState("");
   const [plannedPickupAt, setPlannedPickupAt] = useState("");
   const [assignedCraftsmanId, setAssignedCraftsmanId] = useState("");
+  const [quotedPricePln, setQuotedPricePln] = useState("");
+  const [advancePaidPln, setAdvancePaidPln] = useState("");
   const [items, setItems] = useState<ItemRowState[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -77,6 +73,8 @@ export function NewOrderForm({ users }: Props) {
         : {}),
       ...(assignedCraftsmanId ? { assignedCraftsmanId } : {}),
       ...(builtItems.length > 0 ? { items: builtItems } : {}),
+      quotedPriceCents: plnToCents(quotedPricePln),
+      advancePaidCents: plnToCents(advancePaidPln),
     };
 
     log.info("op=submit attempt", { clientId: client.id, itemCount: builtItems.length });
@@ -159,6 +157,61 @@ export function NewOrderForm({ users }: Props) {
           ))}
         </select>
       </div>
+
+      {/* Wycena + Zaliczka */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="quotedPricePln" className={labelCls}>
+            Wycena (zł)
+          </label>
+          <input
+            id="quotedPricePln"
+            type="text"
+            inputMode="decimal"
+            value={quotedPricePln}
+            disabled={submitting}
+            onChange={(e) => setQuotedPricePln(e.target.value)}
+            placeholder="0,00"
+            className={inputCls}
+          />
+          <p className="mt-1 text-xs text-admin-mute">Łączna kwota za zlecenie</p>
+        </div>
+        <div>
+          <label htmlFor="advancePaidPln" className={labelCls}>
+            Zaliczka (zł)
+          </label>
+          <input
+            id="advancePaidPln"
+            type="text"
+            inputMode="decimal"
+            value={advancePaidPln}
+            disabled={submitting}
+            onChange={(e) => setAdvancePaidPln(e.target.value)}
+            placeholder="0,00"
+            className={inputCls}
+          />
+          <p className="mt-1 text-xs text-admin-mute">Pozostawiamy puste, jeśli klient nie wpłacił zaliczki</p>
+        </div>
+      </div>
+
+      {/* Do zapłaty przy odbiorze */}
+      {(() => {
+        const quoted = plnToCents(quotedPricePln);
+        const advance = plnToCents(advancePaidPln);
+        const balance = Math.max(0, quoted - advance);
+        const hasQuote = quotedPricePln.trim() !== "";
+        if (!hasQuote) return null;
+        const balancePln = (balance / 100).toLocaleString("pl-PL", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        const colorCls = balance > 0 ? "text-magenta" : "text-green";
+        return (
+          <p className={`text-sm font-medium ${colorCls}`}>
+            Do zapłaty przy odbiorze: {balancePln} zł
+          </p>
+        );
+      })()}
 
       {/* Items */}
       <div>

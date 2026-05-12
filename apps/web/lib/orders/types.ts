@@ -66,6 +66,8 @@ export interface OrderDto {
   createdAt: string;            // ISO-8601
   updatedAt: string;            // ISO-8601
   items: OrderItemDto[];
+  quotedPriceCents: number;     // workshop quoted price in PLN cents; 0 = TBD
+  advancePaidCents: number;     // advance already collected; 0 = none
 }
 
 /** Paginated list row — mirrors OrderListRow.java. */
@@ -79,7 +81,12 @@ export interface OrderListRow {
   description: string | null;
   plannedPickupAt: string | null; // ISO-8601
   version: number;
-  updatedAt: string;            // ISO-8601
+  updatedAt: string;              // ISO-8601 — always set
+  createdAt: string;              // ISO-8601 — always set at creation
+  receivedAt: string | null;      // ISO-8601 — null until status leaves WSTEPNIE_PRZYJETE
+  pickedUpAt: string | null;      // ISO-8601 — null until status becomes WYDANE
+  quotedPriceCents: number;       // workshop quoted price in PLN cents; 0 = TBD
+  advancePaidCents: number;       // advance already collected; 0 = none
 }
 
 /**
@@ -113,6 +120,8 @@ export interface CreateOrderRequest {
   assignedCraftsmanId?: string | null;
   source?: OrderSource;
   items?: CreateOrderItemRequest[];
+  quotedPriceCents?: number;        // PLN cents; omit = 0 in service
+  advancePaidCents?: number;        // PLN cents; omit = 0 in service
 }
 
 /** PATCH /admin/orders/{id} — mirrors UpdateOrderRequest.java. All fields optional. */
@@ -124,6 +133,8 @@ export interface UpdateOrderRequest {
   cancelledReason?: string | null;
   tags?: string | null;
   version?: number;
+  quotedPriceCents?: number;        // PLN cents; patch only when provided
+  advancePaidCents?: number;        // PLN cents; patch only when provided
 }
 
 /** POST /admin/orders/{id}/status — mirrors ChangeStatusRequest.java. */
