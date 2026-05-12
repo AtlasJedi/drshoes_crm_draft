@@ -151,6 +151,29 @@ class CalendarControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ----------------------------------------------------------
+    // ux-2: scheduled entry must have receivedAt populated (not null)
+    // ----------------------------------------------------------
+
+    @Test
+    void scheduledEntryHasReceivedAtPopulated() throws Exception {
+        loginAsOwner();
+        ZoneId warsaw = ZoneId.of("Europe/Warsaw");
+        Instant tomorrow = ZonedDateTime.now(warsaw).toLocalDate().plusDays(1)
+            .atStartOfDay(warsaw).toInstant();
+        // seedOrder sets receivedAt = Instant.now() when param is null
+        seedOrder("K-REC", OrderStatus.PRZYJETE, tomorrow, null);
+
+        // Use a dedicated window containing only this one order so [0] is reliable
+        mockMvc().perform(get("/api/admin/orders/calendar?from=" + today + "&to=" + nextWeek))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-REC')]").exists())
+            // receivedAt must be a non-null string (ISO instant) on scheduled entries
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-REC')].receivedAt").isArray())
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-REC')].receivedAt",
+                hasItem(notNullValue())));
+    }
+
+    // ----------------------------------------------------------
     // Unauthenticated → 401
     // ----------------------------------------------------------
 

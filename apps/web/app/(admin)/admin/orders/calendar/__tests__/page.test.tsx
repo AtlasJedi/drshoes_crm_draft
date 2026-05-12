@@ -56,6 +56,16 @@ vi.mock("../../_components/calendar/CalendarMonthGrid", () => ({
     <div data-testid="month-grid" data-count={scheduled.length} />
   ),
 }));
+vi.mock("../../_components/calendar/CalendarWeekGrid", () => ({
+  CalendarWeekGrid: ({ scheduled }: { scheduled: unknown[] }) => (
+    <div data-testid="week-grid" data-count={scheduled.length} />
+  ),
+}));
+vi.mock("../../_components/calendar/CalendarDayGrid", () => ({
+  CalendarDayGrid: ({ scheduled }: { scheduled: unknown[] }) => (
+    <div data-testid="day-grid" data-count={scheduled.length} />
+  ),
+}));
 vi.mock("../../_components/calendar/BezTerminuPanel", () => ({
   BezTerminuPanel: ({ unscheduled }: { unscheduled: unknown[] }) => (
     <div data-testid="bez-terminu" data-count={unscheduled.length} />
@@ -156,15 +166,52 @@ describe("CalendarPage", () => {
     expect(drawer).toHaveAttribute("data-order-id", "drawer-order-id");
   });
 
-  it("renders week/day toggle buttons as disabled with wkrótce tooltip", async () => {
+  it("renders mode toggle as three enabled links with miesiąc active by default", async () => {
     mockFetch.mockResolvedValueOnce({ scheduled: [], unscheduled: [] });
     const jsx = await CalendarPage({ searchParams: Promise.resolve({}) });
     render(jsx as React.ReactElement);
-    const tydzienBtn = screen.getByRole("button", { name: "tydzień" });
-    const dzienBtn = screen.getByRole("button", { name: "dzień" });
-    expect(tydzienBtn).toBeDisabled();
-    expect(dzienBtn).toBeDisabled();
-    expect(tydzienBtn).toHaveAttribute("title", "wkrótce");
-    expect(dzienBtn).toHaveAttribute("title", "wkrótce");
+    // All three mode toggles are <Link> → rendered as <a> by the mock
+    const miesiacLink = screen.getByRole("link", { name: "miesiąc" });
+    const tydzienLink = screen.getByRole("link", { name: "tydzień" });
+    const dzienLink = screen.getByRole("link", { name: "dzień" });
+    expect(miesiacLink).toBeInTheDocument();
+    expect(tydzienLink).toBeInTheDocument();
+    expect(dzienLink).toBeInTheDocument();
+    // Active mode has aria-current="page"
+    expect(miesiacLink).toHaveAttribute("aria-current", "page");
+    expect(tydzienLink).not.toHaveAttribute("aria-current");
+    expect(dzienLink).not.toHaveAttribute("aria-current");
+  });
+
+  it("renders week-grid when ?mode=week is set", async () => {
+    const order = {
+      id: "w1", code: "DR-W01", clientName: "A", status: "PRZYJETE",
+      plannedPickupAt: "2026-05-14T10:00:00Z",
+      receivedAt: "2026-05-12T09:00:00Z",
+      itemSummary: "x", urgent: false,
+    };
+    mockFetch.mockResolvedValueOnce({ scheduled: [order], unscheduled: [] });
+    const jsx = await CalendarPage({
+      searchParams: Promise.resolve({ mode: "week", date: "2026-05-12" }),
+    });
+    render(jsx as React.ReactElement);
+    expect(screen.getByTestId("week-grid")).toBeInTheDocument();
+    expect(screen.queryByTestId("month-grid")).not.toBeInTheDocument();
+  });
+
+  it("renders day-grid when ?mode=day is set", async () => {
+    const order = {
+      id: "d1", code: "DR-D01", clientName: "B", status: "PRZYJETE",
+      plannedPickupAt: "2026-05-12T15:00:00Z",
+      receivedAt: "2026-05-12T09:00:00Z",
+      itemSummary: "y", urgent: false,
+    };
+    mockFetch.mockResolvedValueOnce({ scheduled: [order], unscheduled: [] });
+    const jsx = await CalendarPage({
+      searchParams: Promise.resolve({ mode: "day", date: "2026-05-12" }),
+    });
+    render(jsx as React.ReactElement);
+    expect(screen.getByTestId("day-grid")).toBeInTheDocument();
+    expect(screen.queryByTestId("month-grid")).not.toBeInTheDocument();
   });
 });

@@ -2,10 +2,11 @@
  * TypeScript mirrors of CalendarResponseDto / CalendarOrderDto (backend 6-7).
  * Source: backend/app/src/main/java/com/drshoes/app/order/dto/CalendarResponseDto.java
  *
- * Reality note (6-13): the backend uses a single unified CalendarOrderDto for both
- * scheduled and unscheduled entries. plannedPickupAt is null for unscheduled;
- * receivedAt is null for scheduled. The plan's separate UnscheduledOrderDto does
- * not exist on the backend — using a single DTO with nullable fields instead.
+ * Contract updated ux-2 (2026-05-12): receivedAt is now ALWAYS populated on both
+ * scheduled and unscheduled entries. This allows week/day views to render the same
+ * order as two distinct markers:
+ *   - acid dot anchored to receivedAt date
+ *   - magenta dot anchored to plannedPickupAt date
  */
 
 import type { OrderStatus } from "@/lib/orders/types";
@@ -13,7 +14,7 @@ import type { OrderStatus } from "@/lib/orders/types";
 /**
  * Unified DTO for both scheduled and unscheduled calendar entries.
  * Returned by GET /api/admin/orders/calendar?from=&to=
- * - Scheduled entries: plannedPickupAt non-null, receivedAt null
+ * - Scheduled entries: plannedPickupAt non-null, receivedAt non-null
  * - Unscheduled entries: plannedPickupAt null, receivedAt non-null
  */
 export interface CalendarOrderDto {
@@ -23,7 +24,7 @@ export interface CalendarOrderDto {
   status: OrderStatus;
   /** ISO-8601. Non-null for scheduled entries, null for unscheduled. */
   plannedPickupAt: string | null;
-  /** ISO-8601. Non-null for unscheduled entries, null for scheduled. */
+  /** ISO-8601. Always non-null (both scheduled and unscheduled entries). */
   receivedAt: string | null;
   itemSummary: string;
   urgent: boolean;

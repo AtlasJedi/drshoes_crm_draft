@@ -12,7 +12,15 @@ public record CalendarResponseDto(
 ) {
     /**
      * Unified DTO for both scheduled and unscheduled calendar entries.
-     * plannedPickupAt is non-null for scheduled; receivedAt is non-null for unscheduled.
+     *
+     * <p>Contract (updated ux-2 2026-05-12):</p>
+     * <ul>
+     *   <li>Scheduled entries: {@code plannedPickupAt} non-null, {@code receivedAt} non-null
+     *       — both timestamps are always populated so week/day views can render the same
+     *       order as two distinct markers (received marker on received date, pickup marker
+     *       on planned pickup date).</li>
+     *   <li>Unscheduled entries: {@code plannedPickupAt} null, {@code receivedAt} non-null.</li>
+     * </ul>
      * urgent follows the same derivation as OrderMapper.toDto (tag "pilne" OR within 48h of plannedPickupAt).
      */
     public record CalendarOrderDto(
@@ -21,7 +29,7 @@ public record CalendarResponseDto(
         String clientName,
         OrderStatus status,
         Instant plannedPickupAt,  // null for unscheduled entries
-        Instant receivedAt,        // null for scheduled entries
+        Instant receivedAt,        // always non-null (both scheduled and unscheduled)
         String itemSummary,
         boolean urgent
     ) {}

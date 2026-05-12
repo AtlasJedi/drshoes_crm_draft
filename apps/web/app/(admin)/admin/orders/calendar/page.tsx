@@ -1,14 +1,19 @@
 /**
- * /admin/orders/calendar — Month-only read-only calendar view.
- * Server Component: resolves ?date= param → fetchCalendarWindow,
- * renders CalendarMonthGrid + BezTerminuPanel in a 2-column layout.
+ * /admin/orders/calendar — Month / Week / Day calendar view.
+ * Server Component: resolves ?mode= and ?date= params, fetches the window,
+ * renders the correct grid + BezTerminuPanel in a 2-column layout.
  *
  * URL params:
- *   date=YYYY-MM-DD  → month to display (defaults to current month)
- *   orderId=<uuid>   → opens OrderDrawer overlay (M1 pattern)
+ *   mode=month|week|day   → which grid to render (defaults to "month")
+ *   date=YYYY-MM-DD       → anchor date for the window (defaults to today)
+ *   orderId=<uuid>        → opens OrderDrawer overlay (M1 pattern)
  *
- * Design: admin.jsx:481-617; states use shared state primitives from
- * apps/web/components/state/ (shipped 6-12, override approved by owner).
+ * Modes:
+ *   month — CalendarMonthGrid, window = full month of `date`
+ *   week  — CalendarWeekGrid,  window = ISO week (Mon–Sun) containing `date`
+ *   day   — CalendarDayGrid,   window = single day `date`
+ *
+ * Design: admin.jsx:481-617.
  */
 
 import Link from "next/link";
@@ -18,8 +23,18 @@ import { fetchCalendarWindow } from "@/lib/calendar/api-server";
 import { getOrderServer } from "@/lib/orders/api-server";
 import type { OrderDto } from "@/lib/orders/types";
 import type { CalendarResponseDto } from "@/lib/calendar/types";
+import {
+  toLocalDate,
+  parseLocalDate,
+  mondayOfWeek,
+  sundayOfWeek,
+  weekWindow,
+  dayWindow,
+} from "@/lib/calendar/window";
 import { OrderViewTabs } from "../_components/OrderViewTabs";
 import { CalendarMonthGrid } from "../_components/calendar/CalendarMonthGrid";
+import { CalendarWeekGrid } from "../_components/calendar/CalendarWeekGrid";
+import { CalendarDayGrid } from "../_components/calendar/CalendarDayGrid";
 import { BezTerminuPanel } from "../_components/calendar/BezTerminuPanel";
 import { OrderDrawer } from "../_components/OrderDrawer";
 import { ErrorBanner } from "@/components/state/ErrorBanner";
@@ -27,21 +42,15 @@ import { EmptyState } from "@/components/state/EmptyState";
 
 const log = createLogger("calendar-page");
 
+type CalendarMode = "month" | "week" | "day";
+
 interface SearchParams {
+  mode?: string;
   date?: string;
   orderId?: string;
 }
 
-/** Format a Date as YYYY-MM-DD (local, no tz shift — server-side only). */
-function toLocalDate(d: Date): string {
-  return [
-    d.getFullYear(),
-    String(d.getMonth() + 1).padStart(2, "0"),
-    String(d.getDate()).padStart(2, "0"),
-  ].join("-");
-}
-
-/** Polish month names for header label. */
+/** Polish month names for the month-mode header label. */
 const MONTHS_PL = [
   "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
   "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień",
@@ -51,10 +60,47 @@ function monthLabel(date: Date): string {
   return `${MONTHS_PL[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-/** Build YYYY-MM-01 string for prev/next month Link hrefs. */
-function adjacentMonthParam(base: Date, delta: number): string {
-  const d = new Date(base.getFullYear(), base.getMonth() + delta, 1);
+/** Polish abbreviated day-of-week + day-of-month, e.g. "Wt 12". */
+function weekDayShortLabel(date: Date): string {
+  const names = ["Nd", "Pon", "Wt", "Śr", "Czw", "Pt", "Sob"];
+  return `${names[date.getDay()]} ${date.getDate()}`;
+}
+
+/** Build the navigation label for the current window. */
+function windowLabel(mode: CalendarMode, anchor: Date): string {
+  if (mode === "month") return monthLabel(anchor);
+  if (mode === "week") {
+    const mon = mondayOfWeek(anchor);
+    const sun = sundayOfWeek(anchor);
+    return `${weekDayShortLabel(mon)} – ${weekDayShortLabel(sun)}`;
+  }
+  // day
+  const names = ["Nd", "Pon", "Wt", "Śr", "Czw", "Pt", "Sob"];
+  return `${names[anchor.getDay()]} ${anchor.getDate()} ${MONTHS_PL[anchor.getMonth()]}`;
+}
+
+/** Build YYYY-MM-DD param for the previous/next navigation button. */
+function adjacentParam(mode: CalendarMode, anchor: Date, delta: number): string {
+  const d = new Date(anchor);
+  if (mode === "month") {
+    d.setMonth(d.getMonth() + delta, 1);
+  } else if (mode === "week") {
+    d.setDate(d.getDate() + delta * 7);
+  } else {
+    d.setDate(d.getDate() + delta);
+  }
   return toLocalDate(d);
+}
+
+/** Resolve the window boundaries for fetch based on mode and anchor date. */
+function resolveWindow(mode: CalendarMode, anchor: Date): { from: string; to: string } {
+  if (mode === "month") {
+    const from = toLocalDate(new Date(anchor.getFullYear(), anchor.getMonth(), 1));
+    const to = toLocalDate(new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0));
+    return { from, to };
+  }
+  if (mode === "week") return weekWindow(anchor);
+  return dayWindow(anchor);
 }
 
 export default async function CalendarPage({
@@ -64,20 +110,26 @@ export default async function CalendarPage({
 }) {
   const sp = await searchParams;
 
-  // Resolve the month to display; fall back to current month if param absent/invalid
-  let monthDate: Date;
+  // --- Resolve mode ---
+  const rawMode = sp.mode;
+  const mode: CalendarMode =
+    rawMode === "week" || rawMode === "day" ? rawMode : "month";
+
+  // --- Resolve anchor date ---
+  let anchor: Date;
   if (sp.date && /^\d{4}-\d{2}-\d{2}$/.test(sp.date)) {
-    const [y, m] = sp.date.split("-").map(Number);
-    monthDate = new Date(y!, m! - 1, 1);
+    anchor = parseLocalDate(sp.date);
   } else {
     const now = new Date();
-    monthDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    // For month mode default to day-1 of current month; week/day default to today
+    if (mode === "month") {
+      anchor = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else {
+      anchor = now;
+    }
   }
 
-  // from = first day, to = last day of the month
-  const from = toLocalDate(monthDate);
-  const to = toLocalDate(new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0));
-
+  const { from, to } = resolveWindow(mode, anchor);
   const orderId = sp.orderId;
 
   let calendarData: CalendarResponseDto | null = null;
@@ -96,67 +148,77 @@ export default async function CalendarPage({
       calendarData = await fetchCalendarWindow(from, to);
     }
   } catch (err) {
-    log.error("op=fetchCalendar outcome=error", { message: String(err), from, to });
+    log.error("op=fetchCalendar outcome=error", { message: String(err), from, to, mode });
     fetchError = true;
   }
 
-  const prevParam = adjacentMonthParam(monthDate, -1);
-  const nextParam = adjacentMonthParam(monthDate, 1);
+  const prevParam = adjacentParam(mode, anchor, -1);
+  const nextParam = adjacentParam(mode, anchor, 1);
 
   const scheduled = calendarData?.scheduled ?? [];
   const unscheduled = calendarData?.unscheduled ?? [];
-  // Empty state: fetch succeeded but no scheduled orders this month
   const isCalendarEmpty = !fetchError && calendarData !== null && scheduled.length === 0;
+
+  /** Build the href for a mode toggle button, preserving the current anchor date. */
+  function modeHref(m: CalendarMode): Route {
+    const dateParam = toLocalDate(anchor);
+    return `/admin/orders/calendar?mode=${m}&date=${dateParam}` as Route;
+  }
+
+  const MODE_LABELS: Record<CalendarMode, string> = {
+    month: "miesiąc",
+    week: "tydzień",
+    day: "dzień",
+  };
 
   return (
     <div className="flex flex-col h-full">
-      {/* Top bar: view tabs + view-mode toggle + month navigation */}
+      {/* Top bar: view tabs + mode toggle + navigation */}
       <div className="px-6 pt-4 pb-0 flex justify-between items-center gap-4">
         <OrderViewTabs active="calendar" />
 
         <div className="flex items-center gap-4">
-          {/* Month / Week / Day toggle — Week + Day disabled in M6 (wkrótce) */}
+          {/* Month / Week / Day toggle — all three enabled */}
           <div className="inline-flex border-[1.5px] border-ink bg-white">
-            {(["miesiąc", "tydzień", "dzień"] as const).map((v, idx, arr) => {
-              const isActive = v === "miesiąc";
-              const isDisabled = v !== "miesiąc";
+            {(["month", "week", "day"] as const).map((m, idx, arr) => {
+              const isActive = m === mode;
               return (
-                <button
-                  key={v}
-                  type="button"
-                  disabled={isDisabled}
-                  title={isDisabled ? "wkrótce" : undefined}
+                <Link
+                  key={m}
+                  href={modeHref(m)}
                   className={[
                     "px-3 py-1.5 font-mono text-[11px] font-bold tracking-wide uppercase",
                     idx < arr.length - 1 ? "border-r border-admin-line" : "",
-                    isActive ? "bg-acid text-ink" : "bg-transparent text-ink",
-                    isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer",
+                    isActive
+                      ? "bg-acid text-ink"
+                      : "bg-transparent text-ink hover:bg-ink/5",
                   ]
                     .filter(Boolean)
                     .join(" ")}
+                  aria-current={isActive ? "page" : undefined}
                 >
-                  {v}
-                </button>
+                  {MODE_LABELS[m]}
+                </Link>
               );
             })}
           </div>
 
-          {/* Month navigation: prev ← label → next */}
+          {/* Navigation: prev ← label → next */}
           <div className="flex items-center gap-2.5">
             <Link
-              href={`/admin/orders/calendar?date=${prevParam}` as Route}
+              href={`/admin/orders/calendar?mode=${mode}&date=${prevParam}` as Route}
               className="p-1.5 hover:bg-ink/5 rounded"
-              aria-label="Poprzedni miesiąc"
+              aria-label="Poprzedni"
             >
               ←
             </Link>
             <span className="font-display text-2xl text-ink leading-none">
-              {monthLabel(monthDate)}
+              {windowLabel(mode, anchor)}
             </span>
             <Link
-              href={`/admin/orders/calendar?date=${nextParam}` as Route}
+              href={`/admin/orders/calendar?mode=${mode}&date=${nextParam}` as Route}
               className="p-1.5 hover:bg-ink/5 rounded"
-              aria-label="Następny miesiąc"
+              aria-label="Następny"
             >
               →
             </Link>
@@ -171,24 +233,28 @@ export default async function CalendarPage({
         </div>
       )}
 
-      {/* Main content: 2-column layout (grid + side panel) */}
+      {/* Main content */}
       {!fetchError && (
         <div className="flex-1 px-6 pt-4 pb-6 grid grid-cols-[1fr_280px] gap-5 overflow-hidden min-h-0">
-          {/* Month grid column */}
+          {/* Grid column */}
           <div className="admin-card overflow-hidden flex flex-col p-0">
             {isCalendarEmpty ? (
-              <EmptyState message="Brak zamówień w tym miesiącu." />
+              <EmptyState message="Brak zamówień w tym okresie." />
+            ) : mode === "month" ? (
+              <CalendarMonthGrid date={anchor} scheduled={scheduled} />
+            ) : mode === "week" ? (
+              <CalendarWeekGrid date={anchor} scheduled={scheduled} />
             ) : (
-              <CalendarMonthGrid date={monthDate} scheduled={scheduled} />
+              <CalendarDayGrid date={anchor} scheduled={scheduled} />
             )}
           </div>
 
-          {/* Bez terminu side panel */}
+          {/* Bez terminu side panel (shown in all modes) */}
           <BezTerminuPanel unscheduled={unscheduled} />
         </div>
       )}
 
-      {/* Drawer overlay — mounts when ?orderId= is present and order is fetched */}
+      {/* Drawer overlay */}
       {drawerOrder && <OrderDrawer initialOrder={drawerOrder} users={[]} />}
     </div>
   );

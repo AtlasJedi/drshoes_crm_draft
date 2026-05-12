@@ -95,6 +95,11 @@ public class CalendarController {
         return new CalendarResponseDto(scheduledDtos, unscheduledDtos);
     }
 
+    /**
+     * Maps an Order to CalendarOrderDto.
+     * receivedAt is ALWAYS populated (ux-2 contract: both timestamps needed for week/day markers).
+     * plannedPickupAt is populated only for scheduled entries (unscheduled have null).
+     */
     private CalendarOrderDto toDto(Order o, Map<UUID, String> clientNames,
                                    Map<UUID, String> summaries, boolean includePickup) {
         String clientName = clientNames.getOrDefault(o.getClientId(), "");
@@ -103,7 +108,7 @@ public class CalendarController {
         return new CalendarOrderDto(
             o.getId(), o.getCode(), clientName, o.getStatus(),
             includePickup ? o.getPlannedPickupAt() : null,
-            includePickup ? null : o.getReceivedAt(),
+            o.getReceivedAt(),  // always populated — week/day views need both timestamps
             summary, urgent);
     }
 
