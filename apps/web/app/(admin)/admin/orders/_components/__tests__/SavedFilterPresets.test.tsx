@@ -3,17 +3,22 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SavedFilterPresets } from "../SavedFilterPresets";
 
-// next/navigation stub
+// ── Controllable next/navigation mock ───────────────────────────────────────
+// mockSearchParamsString is read at render time via useSearchParams().
+// Tests can set it before rendering to simulate active URL params.
 const mockReplace = vi.fn();
+let mockSearchParamsString = "";
+
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mockReplace }),
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams(mockSearchParamsString),
   usePathname: () => "/admin/orders",
 }));
 
 describe("SavedFilterPresets", () => {
   beforeEach(() => {
     mockReplace.mockReset();
+    mockSearchParamsString = "";
     vi.useFakeTimers();
     // Fix today's date for deterministic URL assertions
     vi.setSystemTime(new Date("2026-06-02T08:00:00Z"));
@@ -71,13 +76,76 @@ describe("SavedFilterPresets", () => {
   });
 
   it("active chip has visual highlight class when its params match current URL", () => {
-    vi.mock("next/navigation", () => ({
-      useRouter: () => ({ replace: mockReplace }),
-      useSearchParams: () => new URLSearchParams("status=GOTOWE_DO_ODBIORU"),
-      usePathname: () => "/admin/orders",
-    }));
+    mockSearchParamsString = "status=GOTOWE_DO_ODBIORU";
     render(<SavedFilterPresets />);
     const chip = screen.getByText(/gotowe do odbioru/i).closest("button");
-    expect(chip?.className).toMatch(/active|bg-ink|text-paper/);
+    expect(chip?.className).toMatch(/bg-ink|text-paper/);
+  });
+});
+
+// ── Preset toggle-off + Wszystkie chip ─────────────────────────────────────
+
+describe("SavedFilterPresets — toggle-off and Wszystkie chip", () => {
+  beforeEach(() => {
+    mockReplace.mockReset();
+    mockSearchParamsString = "";
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-06-02T08:00:00Z"));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("'Wszystkie' reset chip is hidden when no filter params are active", () => {
+    mockSearchParamsString = "";
+    render(<SavedFilterPresets />);
+    expect(
+      screen.queryByRole("button", { name: /wyczyść wszystkie filtry/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("'Wszystkie' reset chip is visible when a filter param is present", () => {
+    mockSearchParamsString = "status=PRZYJETE";
+    render(<SavedFilterPresets />);
+    expect(
+      screen.getByRole("button", { name: /wyczyść wszystkie filtry/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("clicking 'Wszystkie' reset chip navigates to /admin/orders (no query)", () => {
+    mockSearchParamsString = "status=PRZYJETE";
+    render(<SavedFilterPresets />);
+    fireEvent.click(screen.getByRole("button", { name: /wyczyść wszystkie filtry/i }));
+    expect(mockReplace).toHaveBeenCalledWith("/admin/orders");
+  });
+
+  it("clicking a non-active preset applies its params", () => {
+    mockSearchParamsString = "";
+    render(<SavedFilterPresets />);
+    fireEvent.click(screen.getByText(/gotowe do odbioru/i));
+    expect(mockReplace).toHaveBeenCalledWith(
+      expect.stringContaining("status=GOTOWE_DO_ODBIORU"),
+    );
+  });
+
+  it("clicking an active preset a second time clears the URL (toggle-off)", () => {
+    // Simulate "Gotowe do odbioru" preset being active
+    mockSearchParamsString = "status=GOTOWE_DO_ODBIORU";
+    render(<SavedFilterPresets />);
+    const chip = screen.getByText(/gotowe do odbioru/i).closest("button")!;
+    // chip should be aria-pressed=true (active)
+    expect(chip).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(chip);
+    // Should navigate to /admin/orders (no query) — toggle-off
+    expect(mockReplace).toHaveBeenCalledWith("/admin/orders");
+  });
+
+  it("clicking an inactive preset does NOT clear the URL", () => {
+    mockSearchParamsString = "";
+    render(<SavedFilterPresets />);
+    fireEvent.click(screen.getByText(/pilne na ten tydzień/i));
+    // Should apply the preset, not clear
+    expect(mockReplace).toHaveBeenCalledWith(expect.stringContaining("tag=pilne"));
   });
 });

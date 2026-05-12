@@ -4,9 +4,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useRef } from "react";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
-import { STATUS_ORDER, STATUS_LABELS_PL, KIND_LABELS_PL } from "@/lib/orders/status";
+import { KIND_LABELS_PL } from "@/lib/orders/status";
 import type { OrderStatus, OrderItemKind } from "@/lib/orders/types";
 import type { UserStubDto } from "@/lib/users/types";
+import { StatusMultiSelect } from "./StatusMultiSelect";
 
 const log = createLogger("orders-filters");
 
@@ -14,7 +15,7 @@ const ALL_KINDS: OrderItemKind[] = ["NAPRAWA", "CUSTOM_BUTY", "CUSTOM_KURTKA"];
 
 interface Props {
   initial: {
-    status?: OrderStatus;
+    status?: OrderStatus[];
     type?: string[];
     craftsmanId?: string;
     q?: string;
@@ -39,8 +40,8 @@ export function OrdersFilters({ initial, users }: Props) {
     router.replace(`/admin/orders?${p.toString()}` as Route);
   }
 
-  function onStatus(e: React.ChangeEvent<HTMLSelectElement>) {
-    push({ status: e.target.value || undefined });
+  function onStatus(statuses: OrderStatus[]) {
+    push({ status: statuses.length ? statuses : undefined });
   }
 
   function onKind(kind: OrderItemKind, checked: boolean) {
@@ -64,16 +65,11 @@ export function OrdersFilters({ initial, users }: Props) {
 
   return (
     <div className="flex flex-wrap gap-4 items-end mb-6 p-4 border border-admin-line rounded bg-admin-surface">
-      {/* Status */}
-      <label className="flex flex-col gap-1 text-xs text-admin-mute">
-        Status
-        <select className={selectCls} value={initial.status ?? ""} onChange={onStatus}>
-          <option value="">Wszystkie</option>
-          {STATUS_ORDER.map((s) => (
-            <option key={s} value={s}>{STATUS_LABELS_PL[s]}</option>
-          ))}
-        </select>
-      </label>
+      {/* Status multi-select */}
+      <StatusMultiSelect
+        selected={initial.status ?? []}
+        onSelect={onStatus}
+      />
 
       {/* Kind checkboxes */}
       <fieldset className="flex flex-col gap-1">

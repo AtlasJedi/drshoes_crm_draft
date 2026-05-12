@@ -68,6 +68,15 @@ function isActive(preset: Preset, current: URLSearchParams): boolean {
   return true;
 }
 
+/** Returns true if any filter param is present in the current search params. */
+function hasAnyFilter(params: URLSearchParams): boolean {
+  const filterKeys = [
+    "status", "type", "craftsmanId", "q", "tag",
+    "plannedPickupAtFrom", "plannedPickupAtTo", "sort",
+  ];
+  return filterKeys.some((k) => params.has(k));
+}
+
 export function SavedFilterPresets() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -87,7 +96,13 @@ export function SavedFilterPresets() {
     router.replace(`/admin/orders?${p.toString()}`);
   }
 
+  function clearAllFilters() {
+    log.info("op=clearAllFilters");
+    router.replace("/admin/orders");
+  }
+
   const activeIdx = presets.findIndex((pr) => isActive(pr, searchParams));
+  const anyFilterActive = hasAnyFilter(searchParams);
 
   const chipBase =
     "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border border-admin-line transition-colors cursor-pointer select-none";
@@ -96,12 +111,26 @@ export function SavedFilterPresets() {
   const chipPink = chipBase + " bg-pink-100 text-pink-800 border-pink-200 hover:bg-pink-200";
   const chipDisabled =
     chipBase + " bg-transparent border-dashed text-admin-mute cursor-not-allowed opacity-60";
+  const chipWszystkie =
+    chipBase + " bg-acid/20 text-ink border-acid/40 hover:bg-acid/30";
 
   return (
     <div className="flex flex-wrap items-center gap-2 mb-3 px-1">
       <span className="font-mono text-[11px] text-admin-mute uppercase tracking-widest">
         Presety:
       </span>
+
+      {/* "Wszystkie" reset chip — visible only when any filter is active */}
+      {anyFilterActive && (
+        <button
+          type="button"
+          className={chipWszystkie}
+          onClick={clearAllFilters}
+          aria-label="Wyczyść wszystkie filtry"
+        >
+          Wszystkie
+        </button>
+      )}
 
       {presets.map((preset, i) => {
         const isFirstPreset = i === 0; // "Pilne" — pink accent per admin.jsx:268
@@ -112,7 +141,15 @@ export function SavedFilterPresets() {
             key={preset.label}
             type="button"
             className={cls}
-            onClick={() => applyPreset(preset)}
+            onClick={() => {
+              if (active) {
+                // Toggle off: clicking an active preset clears all params
+                log.info("op=toggleOffPreset", { label: preset.label });
+                router.replace("/admin/orders");
+              } else {
+                applyPreset(preset);
+              }
+            }}
             aria-pressed={active}
           >
             {preset.label}

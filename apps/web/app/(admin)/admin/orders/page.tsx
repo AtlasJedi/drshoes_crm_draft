@@ -72,7 +72,7 @@ export default async function OrdersPage({
   }
 
   const filtersInitial = {
-    status: status?.[0],
+    status: status ?? [],
     type: type ?? [],
     craftsmanId,
     q,
@@ -82,17 +82,17 @@ export default async function OrdersPage({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-admin-ink">Zlecenia</h1>
+      <div className="flex items-center justify-between mb-7">
+        <h1 className="text-[28px] font-bold text-admin-ink tracking-tight">Zlecenia</h1>
         <Link
           href={newHref}
-          className="inline-flex items-center gap-1 px-4 py-2 rounded bg-acid text-ink text-sm font-medium hover:bg-acid/80 transition-colors"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-acid text-ink text-[15px] font-semibold hover:bg-acid/80 transition-colors shadow-sm"
         >
           + Nowe zlecenie
         </Link>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <OrderViewTabs active="list" />
       </div>
 
