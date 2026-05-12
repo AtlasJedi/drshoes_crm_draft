@@ -38,7 +38,7 @@ const cols: KanbanColumnDto[] = STATUSES.map((s) => ({
   cards: [
     {
       id: `id-${s}`, code: `DR-${s}`, clientName: `Klient ${s}`,
-      itemSummary: "item", plannedPickupAt: null, urgent: false,
+      itemSummary: "item", plannedPickupAt: null, receivedAt: null, urgent: false,
     },
   ],
   hasMore: false,

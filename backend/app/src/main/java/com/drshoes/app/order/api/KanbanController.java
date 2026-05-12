@@ -107,6 +107,7 @@ public class KanbanController {
                 clientNames.getOrDefault(o.getClientId(), ""),
                 summaries.getOrDefault(o.getId(), ""),
                 o.getPlannedPickupAt(),
+                o.getReceivedAt(),
                 isUrgent(o)
             )).toList();
 

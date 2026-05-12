@@ -55,7 +55,9 @@ export function KanbanCard({ card }: Props) {
       {...listeners}
       onClick={openDrawer}
       data-card-id={card.id}
-      className="admin-card p-2.5 cursor-grab active:cursor-grabbing select-none"
+      className={`admin-card p-2.5 cursor-grab active:cursor-grabbing select-none${
+        card.urgent ? " border-l-[3px] border-l-[var(--pink)]" : ""
+      }`}
     >
       <div className="flex justify-between items-center">
         <span className="font-mono text-[10px] text-ink/50">{card.code}</span>

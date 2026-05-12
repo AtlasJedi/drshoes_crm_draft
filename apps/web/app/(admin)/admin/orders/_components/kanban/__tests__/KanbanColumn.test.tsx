@@ -30,7 +30,7 @@ const col: KanbanColumnDto = {
   cards: [
     {
       id: "u1", code: "DR-1001", clientName: "Jan K.",
-      itemSummary: "Vibram", plannedPickupAt: null, urgent: false,
+      itemSummary: "Vibram", plannedPickupAt: null, receivedAt: null, urgent: false,
     },
   ],
   hasMore: true,

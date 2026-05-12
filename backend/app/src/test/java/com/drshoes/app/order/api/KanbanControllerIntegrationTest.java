@@ -143,6 +143,26 @@ class KanbanControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ----------------------------------------------------------
+    // receivedAt is populated in the card projection (ux-3 errata)
+    // ----------------------------------------------------------
+
+    @Test
+    void cardProjectionIncludesReceivedAt() throws Exception {
+        loginAsOwner();
+        Instant received = Instant.parse("2026-05-01T09:00:00Z");
+        var o = new Order();
+        o.setCode("KB-RCV");
+        o.setClientId(clientId);
+        o.setStatus(OrderStatus.PRZYJETE);
+        o.setReceivedAt(received);
+        orderRepo.save(o);
+
+        mockMvc().perform(get("/api/admin/orders/kanban"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.columns[0].cards[0].receivedAt").value("2026-05-01T09:00:00Z"));
+    }
+
+    // ----------------------------------------------------------
     // Unauthenticated → 401
     // ----------------------------------------------------------
 

@@ -27,6 +27,8 @@ export interface KanbanCardDto {
   itemSummary: string;
   /** ISO-8601 or null when no planned pickup date */
   plannedPickupAt: string | null;
+  /** ISO-8601 or null for legacy/draft orders. Added in ux-3. */
+  receivedAt: string | null;
   /** true when tagged "pilne" OR plannedPickupAt within 48 h */
   urgent: boolean;
 }

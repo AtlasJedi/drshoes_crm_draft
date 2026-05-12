@@ -31,6 +31,7 @@ const card: KanbanCardDto = {
   clientName: "Magdalena K.",
   itemSummary: "DM 1460 — Vibram",
   plannedPickupAt: "2026-05-08T10:00:00Z",
+  receivedAt: "2026-05-01T09:00:00Z",
   urgent: true,
 };
 

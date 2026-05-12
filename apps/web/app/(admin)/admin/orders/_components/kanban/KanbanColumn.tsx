@@ -4,6 +4,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { KanbanCard } from "./KanbanCard";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
+import { sortKanbanCards } from "@/lib/kanban/sort";
 import type { KanbanColumnDto } from "@/lib/kanban/types";
 
 /** CSS variable per column status — matches admin.jsx:625-631 */
@@ -25,6 +26,10 @@ export function KanbanColumn({ column }: Props) {
   // Make the body droppable so cards can be dropped into an empty column
   const { setNodeRef, isOver } = useDroppable({ id: column.status });
 
+  // Client-side sort: urgent first (oldest→newest), then non-urgent (oldest→newest).
+  // Null receivedAt sorts to bottom of its group. Sort is the source of truth post-drop.
+  const sortedCards = sortKanbanCards(column.cards);
+
   return (
     <div className="flex flex-col min-w-0">
       {/* Column header */}
@@ -38,9 +43,18 @@ export function KanbanColumn({ column }: Props) {
         >
           {STATUS_LABELS_PL[column.status]}
         </span>
-        <span className="font-mono text-[11px] font-bold bg-white/85 text-ink px-1.5 py-0 rounded-full">
-          {column.total}
-        </span>
+        <div className="flex items-center gap-2">
+          {/* Auto-sort indicator */}
+          <span
+            className="font-mono text-[9px] text-white/60 tracking-tight select-none hidden sm:block"
+            title="Sortowanie: pilne pierwsze, potem najstarsze"
+          >
+            Pilne ↑ · Najstarsze ↑
+          </span>
+          <span className="font-mono text-[11px] font-bold bg-white/85 text-ink px-1.5 py-0 rounded-full">
+            {column.total}
+          </span>
+        </div>
       </div>
 
       {/* Column body */}
@@ -51,10 +65,10 @@ export function KanbanColumn({ column }: Props) {
         }`}
       >
         <SortableContext
-          items={column.cards.map((c) => c.id)}
+          items={sortedCards.map((c) => c.id)}
           strategy={verticalListSortingStrategy}
         >
-          {column.cards.map((card) => (
+          {sortedCards.map((card) => (
             <KanbanCard key={card.id} card={card} />
           ))}
         </SortableContext>
