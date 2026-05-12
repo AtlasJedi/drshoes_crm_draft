@@ -1547,6 +1547,14 @@
       "status": "pending",
       "commit_sha": null,
       "dispatch_log": null
+    },
+    {
+      "id": "m8-fb-1a",
+      "title": "Frontend sort UI for orders list",
+      "status": "completed",
+      "commit_sha": "106e245",
+      "dispatch_log": "docs/dispatch-log/m8-fb-1a-20260512T094056Z.md",
+      "verdict": "APPROVED"
     }
   ],
   "notes": [
