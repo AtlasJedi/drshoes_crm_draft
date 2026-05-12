@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -77,14 +79,15 @@ public class OrderController {
             @RequestParam(required = false) String tag,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtFrom,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtTo,
-            Pageable pageable,
+            @PageableDefault(size = 25, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             Authentication auth) {
+        OrderSortValidator.validate(pageable);
         Instant from = plannedPickupAtFrom != null
             ? plannedPickupAtFrom.atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
         Instant to = plannedPickupAtTo != null
             ? plannedPickupAtTo.plusDays(1).atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
-        log.info("op=listOrders actor={} clientId={} tag={} from={} to={} outcome=ok",
-            actor(auth), clientId, tag, from, to);
+        log.info("op=listOrders actor={} clientId={} tag={} from={} to={} sort={} outcome=ok",
+            actor(auth), clientId, tag, from, to, pageable.getSort());
         return svc.list(status, craftsmanId, kinds, q, tag, from, to, clientId, pageable);
     }
 
@@ -109,8 +112,9 @@ public class OrderController {
                                              @Valid @RequestBody ChangeStatusRequest req,
                                              Authentication auth) {
         ChangeStatusResponse resp = svc.changeStatus(id, req);
-        log.info("op=changeOrderStatus actor={} orderId={} targetStatus={} outcome=ok",
-            actor(auth), id, req.targetStatus());
+        log.info("op=changeOrderStatus actor={} orderId={} targetStatus={} noteLen={} outcome=ok",
+            actor(auth), id, req.targetStatus(),
+            req.note() != null ? req.note().length() : 0);
         return resp;
     }
 

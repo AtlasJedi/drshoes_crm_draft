@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +57,16 @@ public class OrderExceptionHandler {
         log.info("op=orderItemNotFound message={} outcome=404", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(error("ORDER_ITEM_NOT_FOUND", e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidSortFieldException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidSort(InvalidSortFieldException e) {
+        log.info("op=invalidSortField field={} outcome=400", e.getField());
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("code", "INVALID_SORT_FIELD");
+        body.put("message", e.getMessage());
+        body.put("allowed", List.copyOf(e.getAllowed()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
     private static Map<String, Object> error(String code, String message) {
