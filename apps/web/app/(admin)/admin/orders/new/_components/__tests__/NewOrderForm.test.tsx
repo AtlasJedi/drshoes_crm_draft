@@ -146,7 +146,7 @@ describe("NewOrderForm — quote/advance fields", () => {
     });
 
     expect(mockCreateOrder).toHaveBeenCalledOnce();
-    const req = mockCreateOrder.mock.calls[0][0];
+    const req = mockCreateOrder.mock.calls[0]![0]!;
     expect(req.quotedPriceCents).toBe(35000);
     expect(req.advancePaidCents).toBe(10000);
   });
@@ -162,7 +162,7 @@ describe("NewOrderForm — quote/advance fields", () => {
     });
 
     expect(mockCreateOrder).toHaveBeenCalledOnce();
-    const req = mockCreateOrder.mock.calls[0][0];
+    const req = mockCreateOrder.mock.calls[0]![0]!;
     expect(req.quotedPriceCents).toBe(0);
     expect(req.advancePaidCents).toBe(0);
   });

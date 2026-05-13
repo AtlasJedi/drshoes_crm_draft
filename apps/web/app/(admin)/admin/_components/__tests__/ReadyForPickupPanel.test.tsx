@@ -24,6 +24,11 @@ const ROWS: OrderListRow[] = [
     plannedPickupAt: null,
     version: 1,
     updatedAt: "2026-05-10T10:00:00Z",
+    createdAt: "2026-05-01T08:00:00Z",
+    receivedAt: "2026-05-01T08:00:00Z",
+    pickedUpAt: null,
+    quotedPriceCents: 0,
+    advancePaidCents: 0,
   },
 ];
 

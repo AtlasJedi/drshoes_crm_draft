@@ -15,11 +15,11 @@ import { changeStatus } from "@/lib/orders/api";
 
 const card1 = {
   id: "card-a", code: "DR-1001", clientName: "Jan K.",
-  itemSummary: "item", plannedPickupAt: null, urgent: false,
+  itemSummary: "item", plannedPickupAt: null, receivedAt: null, urgent: false,
 };
 const card2 = {
   id: "card-b", code: "DR-1002", clientName: "Ala K.",
-  itemSummary: "item2", plannedPickupAt: null, urgent: false,
+  itemSummary: "item2", plannedPickupAt: null, receivedAt: null, urgent: false,
 };
 
 function makeColumns(): KanbanColumnDto[] {

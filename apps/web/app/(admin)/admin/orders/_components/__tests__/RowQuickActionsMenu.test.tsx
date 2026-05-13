@@ -36,6 +36,11 @@ const row: OrderListRow = {
   plannedPickupAt: null,
   version: 0,
   updatedAt: new Date().toISOString(),
+  createdAt: new Date().toISOString(),
+  receivedAt: null,
+  pickedUpAt: null,
+  quotedPriceCents: 0,
+  advancePaidCents: 0,
 };
 
 describe("RowQuickActionsMenu", () => {
