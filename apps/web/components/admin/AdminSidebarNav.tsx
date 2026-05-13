@@ -29,7 +29,7 @@ function NavLink({ href, label, exact = false }: NavLinkProps) {
     <Link
       href={href as Route}
       className={
-        "block px-2 py-1 rounded text-sm font-medium transition-colors " +
+        "block px-3 py-2 rounded-md text-[15px] font-medium transition-colors " +
         (active
           ? "bg-acid/30 text-ink"
           : "text-admin-mute hover:bg-acid/10 hover:text-ink")
@@ -47,20 +47,24 @@ interface Props {
 export function AdminSidebarNav({ userEmail }: Props) {
   log.debug("op=AdminSidebarNav.render");
   return (
-    <nav className="space-y-1 text-sm flex-1">
-      <div className="text-admin-mute uppercase text-xs tracking-wide">Pulpit</div>
+    <nav className="space-y-1 text-[15px] flex-1">
+      <div className="text-admin-mute uppercase text-[11px] font-semibold tracking-[0.08em] px-1 mb-1">Pulpit</div>
       <NavLink href="/admin" label="Dashboard" exact />
 
-      <div className="text-admin-mute uppercase text-xs tracking-wide mt-4">Operacje</div>
+      <div className="text-admin-mute uppercase text-[11px] font-semibold tracking-[0.08em] px-1 mt-5 mb-1">Operacje</div>
       <NavLink href="/admin/orders" label="Zamówienia" />
       <NavLink href="/admin/clients" label="Klienci" />
       <MessagesNavItem />
 
-      <div className="text-admin-mute uppercase text-xs tracking-wide mt-4">Sklep</div>
+      <div className="text-admin-mute uppercase text-[11px] font-semibold tracking-[0.08em] px-1 mt-5 mb-1">Komunikacja</div>
+      <NavLink href="/admin/triggers" label="Trigery" />
+      <NavLink href="/admin/templates" label="Szablony wiadomości" />
+
+      <div className="text-admin-mute uppercase text-[11px] font-semibold tracking-[0.08em] px-1 mt-5 mb-1">Sklep</div>
       <NavLink href="/admin/sklep" label="Sklep" />
       <NavLink href="/admin/aktualnosci" label="Aktualności" />
 
-      <div className="border-t border-admin-line mt-4 pt-3">
+      <div className="border-t border-admin-line mt-5 pt-4">
         <ReportIssueButton user={userEmail} />
       </div>
     </nav>

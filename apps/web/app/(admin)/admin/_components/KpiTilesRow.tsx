@@ -17,14 +17,14 @@ function StatTile({ label, value, sub, accent, testId }: TileProps) {
   return (
     <div
       data-testid={testId}
-      className="admin-card p-5 flex flex-col gap-2"
-      style={{ borderTop: `3px solid ${accent}` }}
+      className="admin-card p-6 flex flex-col gap-2.5"
+      style={{ borderTop: `4px solid ${accent}` }}
     >
-      <div className="t-mono text-[11px] uppercase text-admin-mute leading-none">
+      <div className="t-mono text-[12px] font-semibold uppercase text-admin-mute leading-none tracking-[0.08em]">
         {label}
       </div>
-      <div className="font-display text-[2.25rem] leading-none">{value}</div>
-      <div className="t-mono text-[11px] text-admin-mute">{sub}</div>
+      <div className="font-display text-[2.75rem] leading-none">{value}</div>
+      <div className="t-mono text-[12px] text-admin-mute">{sub}</div>
     </div>
   );
 }

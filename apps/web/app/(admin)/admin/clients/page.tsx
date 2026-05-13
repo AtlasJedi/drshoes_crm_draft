@@ -41,11 +41,11 @@ export default async function ClientsPage({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-admin-ink">Klienci</h1>
+      <div className="flex items-center justify-between mb-7">
+        <h1 className="text-[28px] font-bold text-admin-ink tracking-tight">Klienci</h1>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <ClientListSearchBox initialQ={q} />
       </div>
 
@@ -80,8 +80,8 @@ function ClientSearchResultsTable({ results }: { results: ClientSearchResult[] }
     );
   }
   const thCls =
-    "px-3 py-2 text-left text-xs font-medium text-admin-mute uppercase tracking-wide";
-  const tdCls = "px-3 py-3 text-sm text-admin-ink";
+    "px-4 py-3 text-left text-[11px] font-semibold text-admin-mute uppercase tracking-[0.08em]";
+  const tdCls = "px-4 py-3.5 text-[15px] text-admin-ink";
   return (
     <div className="overflow-x-auto border border-admin-line rounded">
       <table className="w-full border-collapse">

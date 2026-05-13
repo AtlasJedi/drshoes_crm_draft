@@ -51,8 +51,8 @@ export default async function ClientOrdersPage({ params, searchParams }: Props) 
   }
 
   const { content: rows, totalPages, number: currentPage } = ordersPage;
-  const thCls = "px-3 py-2 text-left text-xs font-medium text-admin-mute uppercase tracking-wide";
-  const tdCls = "px-3 py-3 text-sm text-admin-ink";
+  const thCls = "px-4 py-3 text-left text-[11px] font-semibold text-admin-mute uppercase tracking-[0.08em]";
+  const tdCls = "px-4 py-3.5 text-[15px] text-admin-ink";
   const baseHref = `/admin/clients/${id}/zlecenia` as Route;
 
   return (
@@ -77,9 +77,9 @@ export default async function ClientOrdersPage({ params, searchParams }: Props) 
             <tbody>
               {rows.map((row) => (
                 <tr key={row.id} className="border-b border-admin-line hover:bg-acid/5 transition-colors">
-                  <td className={tdCls + " font-mono text-xs"}>{row.code}</td>
+                  <td className={tdCls + " font-mono text-[13px]"}>{row.code}</td>
                   <td className={tdCls}>
-                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${STATUS_PILL_CLASS[row.status as OrderStatus]}`}>
+                    <span className={`inline-block px-3 py-1 rounded-md text-[12px] font-semibold uppercase tracking-wide ${STATUS_PILL_CLASS[row.status as OrderStatus]}`}>
                       {STATUS_LABELS_PL[row.status as OrderStatus]}
                     </span>
                   </td>
@@ -93,11 +93,11 @@ export default async function ClientOrdersPage({ params, searchParams }: Props) 
       )}
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 text-sm">
+        <div className="flex items-center justify-between mt-5 text-[15px]">
           <Link
             href={currentPage === 0 ? ("#" as Route) : (`${baseHref}?page=${currentPage - 1}` as Route)}
             aria-disabled={currentPage === 0}
-            className={`px-3 py-1 rounded border border-admin-line text-admin-ink ${currentPage === 0 ? "opacity-40 pointer-events-none" : "hover:bg-acid/10"}`}
+            className={`px-4 py-2 rounded-md border border-admin-line text-admin-ink font-medium ${currentPage === 0 ? "opacity-40 pointer-events-none" : "hover:bg-acid/10"}`}
           >
             ← Poprzednia
           </Link>
@@ -105,7 +105,7 @@ export default async function ClientOrdersPage({ params, searchParams }: Props) 
           <Link
             href={currentPage >= totalPages - 1 ? ("#" as Route) : (`${baseHref}?page=${currentPage + 1}` as Route)}
             aria-disabled={currentPage >= totalPages - 1}
-            className={`px-3 py-1 rounded border border-admin-line text-admin-ink ${currentPage >= totalPages - 1 ? "opacity-40 pointer-events-none" : "hover:bg-acid/10"}`}
+            className={`px-4 py-2 rounded-md border border-admin-line text-admin-ink font-medium ${currentPage >= totalPages - 1 ? "opacity-40 pointer-events-none" : "hover:bg-acid/10"}`}
           >
             Następna →
           </Link>

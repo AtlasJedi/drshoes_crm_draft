@@ -75,15 +75,15 @@ export default async function ClientOverviewPage({ params }: Props) {
             <ul className="divide-y divide-admin-line">
               {recentOrders.map((o) => (
                 <li key={o.id} className="py-2.5 flex items-center gap-3">
-                  <span className="font-mono text-xs text-admin-mute w-24 shrink-0">
+                  <span className="font-mono text-[13px] text-admin-mute w-24 shrink-0">
                     {o.code}
                   </span>
                   <span
-                    className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${STATUS_PILL_CLASS[o.status as OrderStatus]}`}
+                    className={`inline-block px-3 py-1 rounded-md text-[12px] font-semibold uppercase tracking-wide ${STATUS_PILL_CLASS[o.status as OrderStatus]}`}
                   >
                     {STATUS_LABELS_PL[o.status as OrderStatus]}
                   </span>
-                  <span className="ml-auto text-xs text-admin-mute">
+                  <span className="ml-auto text-sm text-admin-mute">
                     {fmtDate(o.plannedPickupAt)}
                   </span>
                 </li>

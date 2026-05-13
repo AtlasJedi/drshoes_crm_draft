@@ -23,6 +23,15 @@ function fmtDate(iso: string | null): string {
   });
 }
 
+/** Format ISO timestamp as dd.MM.yyyy HH:mm in Polish locale — used for createdAt audit. */
+function fmtDateTime(iso: string | null): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  const date = d.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const time = d.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
+  return `${date} ${time}`;
+}
+
 interface Props {
   rows: OrderListRow[];
   totalPages: number;
@@ -59,8 +68,8 @@ export function OrdersTable({
     router.push(`/admin/orders?${params.toString()}` as Route);
   }
 
-  const thCls = "px-3 py-2 text-left text-xs font-medium text-admin-mute uppercase tracking-wide";
-  const tdCls = "px-3 py-3 text-sm text-admin-ink";
+  const thCls = "px-4 py-3 text-left text-[11px] font-semibold text-admin-mute uppercase tracking-[0.08em]";
+  const tdCls = "px-4 py-3.5 text-[15px] text-admin-ink";
 
   return (
     <div>
@@ -113,36 +122,33 @@ export function OrdersTable({
                 onClick={() => onRowActivate(row.id)}
                 onKeyDown={(e) => e.key === "Enter" && onRowActivate(row.id)}
               >
-                <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
                   {onToggleRow && (
                     <input
                       type="checkbox"
                       checked={selectedIds?.includes(row.id) ?? false}
                       onChange={() => onToggleRow(row.id)}
-                      className="accent-acid"
+                      className="accent-acid h-4 w-4"
                       aria-label={`Zaznacz zlecenie ${row.code}`}
                     />
                   )}
                 </td>
-                <td className={tdCls + " font-mono text-xs"}>{row.code}</td>
+                <td className={tdCls + " font-mono text-[13px]"}>{row.code}</td>
                 <td className={tdCls}>
-                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${STATUS_PILL_CLASS[row.status]}`}>
+                  <span className={`inline-block px-3 py-1 rounded-md text-[12px] font-semibold uppercase tracking-wide ${STATUS_PILL_CLASS[row.status]}`}>
                     {STATUS_LABELS_PL[row.status]}
                   </span>
                 </td>
                 <td className={tdCls + " text-admin-mute"}>{row.clientId.slice(0, 8)}…</td>
                 <td className={tdCls + " text-admin-mute"}>{row.description ?? "—"}</td>
-                {/* receivedAt — not in OrderListRow projection; sort is server-side only */}
+                <td className={tdCls + " text-admin-mute font-mono text-[13px]"}>{fmtDate(row.receivedAt)}</td>
+                <td className={tdCls + " font-mono text-[13px]"}>{fmtDate(row.plannedPickupAt)}</td>
+                <td className={tdCls + " text-admin-mute font-mono text-[13px]"}>{fmtDate(row.pickedUpAt)}</td>
                 <td className={tdCls + " text-admin-mute"}>—</td>
-                <td className={tdCls}>{fmtDate(row.plannedPickupAt)}</td>
-                {/* pickedUpAt — not in OrderListRow projection; sort is server-side only */}
-                <td className={tdCls + " text-admin-mute"}>—</td>
-                <td className={tdCls + " text-admin-mute"}>—</td>
-                {/* createdAt — not in OrderListRow projection; sort is server-side only */}
-                <td className={tdCls + " text-admin-mute"}>—</td>
+                <td className={tdCls + " text-right text-admin-mute font-mono text-[13px] whitespace-nowrap"}>{fmtDateTime(row.createdAt)}</td>
                 <td className={tdCls + " text-right font-mono"}>{pricePLN(row.totalPriceCents)}</td>
                 <td
-                  className="px-2 py-3 text-right"
+                  className="px-3 py-3.5 text-right"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <RowQuickActionsMenu
@@ -161,11 +167,11 @@ export function OrdersTable({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 text-sm">
+        <div className="flex items-center justify-between mt-5 text-[15px]">
           <button
             disabled={currentPage === 0}
             onClick={() => goToPage(currentPage - 1)}
-            className="px-3 py-1 rounded border border-admin-line text-admin-ink disabled:opacity-40 disabled:cursor-not-allowed hover:bg-acid/10"
+            className="px-4 py-2 rounded-md border border-admin-line text-admin-ink disabled:opacity-40 disabled:cursor-not-allowed hover:bg-acid/10 font-medium"
           >
             ← Poprzednia
           </button>
@@ -175,7 +181,7 @@ export function OrdersTable({
           <button
             disabled={currentPage >= totalPages - 1}
             onClick={() => goToPage(currentPage + 1)}
-            className="px-3 py-1 rounded border border-admin-line text-admin-ink disabled:opacity-40 disabled:cursor-not-allowed hover:bg-acid/10"
+            className="px-4 py-2 rounded-md border border-admin-line text-admin-ink disabled:opacity-40 disabled:cursor-not-allowed hover:bg-acid/10 font-medium"
           >
             Następna →
           </button>

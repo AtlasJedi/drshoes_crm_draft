@@ -16,11 +16,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,6 +72,42 @@ public class AuthController {
         session.setAttribute("authenticated", true);
         log.info("op=login actor={} userId={} outcome=success", u.getEmail(), u.getId());
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * DEMO / HANDOFF CONVENIENCE — auth bypass.
+     * GET /api/admin/auth/quicklogin → mints a session for test@test.pl (OWNER) and
+     * 302-redirects to /admin. Anyone with the URL is admin. Remove after demo.
+     *
+     * Uses GET + 302 (no JS, no form, no CSRF token) so any browser handles it natively.
+     */
+    @GetMapping("/quicklogin")
+    @Transactional
+    public ResponseEntity<Void> quicklogin(HttpServletRequest request,
+                                           HttpServletResponse response,
+                                           HttpSession session) {
+        final String email = "test@test.pl";
+        User u = users.findActiveByEmailIgnoreCase(email)
+            .orElseThrow(() -> {
+                log.warn("op=quicklogin actor={} outcome=user_not_found", email);
+                return new InvalidCredentialsException();
+            });
+
+        u.setLastLoginAt(Instant.now());
+        users.save(u);
+
+        var principal = new AdminPrincipal(u.getId(), u.getEmail(), u.getRole().name());
+        var auth = new UsernamePasswordAuthenticationToken(
+            principal, null,
+            List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole().name())));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        CONTEXT_REPO.saveContext(SecurityContextHolder.getContext(), request, response);
+        session.setAttribute("authenticated", true);
+
+        log.warn("op=quicklogin actor={} userId={} outcome=success WARN=auth-bypass-active",
+            u.getEmail(), u.getId());
+
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/admin")).build();
     }
 
     @PostMapping("/logout")

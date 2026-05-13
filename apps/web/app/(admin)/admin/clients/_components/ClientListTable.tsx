@@ -27,13 +27,13 @@ function channelLabel(ch: ClientDto["preferredChannel"]): string {
 function RodoInline({ rodoConsentAt }: { rodoConsentAt: string | null }) {
   if (rodoConsentAt) {
     return (
-      <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+      <span className="inline-block px-3 py-1 rounded-md text-[12px] font-semibold uppercase tracking-wide bg-green/10 text-green">
         zgoda · {fmtRodoDate(rodoConsentAt)}
       </span>
     );
   }
   return (
-    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+    <span className="inline-block px-3 py-1 rounded-md text-[12px] font-semibold uppercase tracking-wide bg-orange/10 text-orange">
       brak zgody RODO
     </span>
   );
@@ -54,28 +54,28 @@ function ClientListPagination({
   const prevHref = `/admin/clients?page=${currentPage - 1}${qParam}`;
   const nextHref = `/admin/clients?page=${currentPage + 1}${qParam}`;
   return (
-    <div className="flex items-center justify-between mt-4 text-sm">
+    <div className="flex items-center justify-between mt-5 text-[15px]">
       {currentPage > 0 ? (
-        <Link href={prevHref as Route} className="px-3 py-1 rounded border border-admin-line text-admin-ink hover:bg-acid/10">
+        <Link href={prevHref as Route} className="px-4 py-2 rounded-md border border-admin-line text-admin-ink hover:bg-acid/10 font-medium">
           ← Poprzednia
         </Link>
       ) : (
-        <span className="px-3 py-1 opacity-40">← Poprzednia</span>
+        <span className="px-4 py-2 opacity-40">← Poprzednia</span>
       )}
       <span className="text-admin-mute">Strona {currentPage + 1} z {totalPages}</span>
       {currentPage < totalPages - 1 ? (
-        <Link href={nextHref as Route} className="px-3 py-1 rounded border border-admin-line text-admin-ink hover:bg-acid/10">
+        <Link href={nextHref as Route} className="px-4 py-2 rounded-md border border-admin-line text-admin-ink hover:bg-acid/10 font-medium">
           Następna →
         </Link>
       ) : (
-        <span className="px-3 py-1 opacity-40">Następna →</span>
+        <span className="px-4 py-2 opacity-40">Następna →</span>
       )}
     </div>
   );
 }
 
-const thCls = "px-3 py-2 text-left text-xs font-medium text-admin-mute uppercase tracking-wide";
-const tdCls = "px-3 py-3 text-sm text-admin-ink";
+const thCls = "px-4 py-3 text-left text-[11px] font-semibold text-admin-mute uppercase tracking-[0.08em]";
+const tdCls = "px-4 py-3.5 text-[15px] text-admin-ink";
 
 /**
  * Server Component.
@@ -115,7 +115,7 @@ export function ClientListTable({ page, currentPage, q }: Props) {
                 <td className={tdCls + " text-admin-mute"}>{client.phone ?? "—"}</td>
                 <td className={tdCls + " text-admin-mute"}>{client.email ?? "—"}</td>
                 <td className={tdCls}>
-                  <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-admin-surface border border-admin-line">
+                  <span className="inline-block px-3 py-1 rounded-md text-[12px] font-semibold uppercase tracking-wide bg-admin-bg border border-admin-line text-admin-ink">
                     {channelLabel(client.preferredChannel)}
                   </span>
                 </td>

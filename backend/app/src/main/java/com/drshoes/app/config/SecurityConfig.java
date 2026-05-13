@@ -55,6 +55,7 @@ public class SecurityConfig {
         "/api/public/**",
         "/api/webhooks/**",
         "/api/admin/auth/login",
+        "/api/admin/auth/quicklogin", // DEMO: auth-bypass link — remove after handoff
         "/api/health"
     };
 

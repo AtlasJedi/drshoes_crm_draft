@@ -12,7 +12,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const path = h.get("x-pathname") ?? "";
 
   // Login page is nested under (admin)/admin/ — skip auth guard to avoid redirect loop.
-  if (path.startsWith("/admin/login")) {
+  // Quicklogin is a demo/handoff convenience page that auto-submits the test admin creds.
+  if (path.startsWith("/admin/login") || path.startsWith("/admin/quicklogin")) {
     return <>{children}</>;
   }
 
