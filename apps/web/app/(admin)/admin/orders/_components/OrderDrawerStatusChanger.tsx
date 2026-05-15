@@ -30,26 +30,30 @@ const MAIN_FLOW: OrderStatus[] = [
   "WYDANE",
 ];
 
-/** Filled (current) per-status color, paired with readable foreground. */
+/** Filled (current) per-status color, paired with readable foreground.
+ * Colours match pill-* tokens from globals.css / packages/ui/tokens.ts:
+ *   W_REALIZACJI      → orange (#ff5a1f)  — was acid, now correct per M9 token
+ *   GOTOWE_DO_ODBIORU → green  (#18b06b)  — was magenta, now correct per M9 token
+ */
 const FILLED_CLASS: Record<OrderStatus, string> = {
   WSTEPNIE_PRZYJETE: "bg-admin-mute text-white",
   PRZYJETE:          "bg-blue text-white",
-  W_REALIZACJI:      "bg-acid text-ink",
+  W_REALIZACJI:      "bg-orange text-white",
   CZEKA_NA_KLIENTA:  "bg-orange text-white",
-  GOTOWE_DO_ODBIORU: "bg-magenta text-white",
-  WYDANE:            "bg-green text-white",
-  ANULOWANE:         "bg-orange text-white",
+  GOTOWE_DO_ODBIORU: "bg-green text-white",
+  WYDANE:            "bg-ink-2 text-white",
+  ANULOWANE:         "bg-red text-white",
 };
 
 /** Idle (non-current) per-status accent — colored text on white surface. */
 const IDLE_CLASS: Record<OrderStatus, string> = {
   WSTEPNIE_PRZYJETE: "text-admin-mute hover:bg-admin-line/40",
   PRZYJETE:          "text-blue hover:bg-blue/10",
-  W_REALIZACJI:      "text-ink hover:bg-acid/30",
+  W_REALIZACJI:      "text-orange hover:bg-orange/10",
   CZEKA_NA_KLIENTA:  "text-orange hover:bg-orange/10",
-  GOTOWE_DO_ODBIORU: "text-magenta hover:bg-magenta/10",
-  WYDANE:            "text-green hover:bg-green/10",
-  ANULOWANE:         "text-orange hover:bg-orange/10",
+  GOTOWE_DO_ODBIORU: "text-green hover:bg-green/10",
+  WYDANE:            "text-ink-2 hover:bg-admin-line/40",
+  ANULOWANE:         "text-red hover:bg-red/10",
 };
 
 /**

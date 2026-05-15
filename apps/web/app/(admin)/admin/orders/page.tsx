@@ -87,16 +87,6 @@ export default async function OrdersPage({
         activeCount={pageData?.totalElements ?? 0}
         readyCount={0}
       />
-      <div className="flex items-center justify-between mb-7">
-        <h1 className="text-[28px] font-bold text-admin-ink tracking-tight">Zlecenia</h1>
-        <Link
-          href={newHref}
-          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-acid text-ink text-[15px] font-semibold hover:bg-acid/80 transition-colors shadow-sm"
-        >
-          + Nowe zlecenie
-        </Link>
-      </div>
-
       <div className="mb-5">
         <OrderViewTabs active="list" />
       </div>
@@ -108,7 +98,12 @@ export default async function OrdersPage({
       ) : (
         <>
           <SavedFilterPresets />
-          <OrdersFilters initial={filtersInitial} users={users} />
+          <OrdersFilters
+            initial={filtersInitial}
+            users={users}
+            visible={pageData?.content.length ?? 0}
+            total={pageData?.totalElements ?? 0}
+          />
 
           {pageData && pageData.content.length === 0 ? (
             <div className="p-8 text-center border border-admin-line rounded text-admin-mute">

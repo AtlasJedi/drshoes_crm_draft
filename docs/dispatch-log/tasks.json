@@ -1729,9 +1729,9 @@
     {
       "id": "9-23",
       "title": "Orders list page reskin (.tbl + Pill + Chip filters)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "pending",
+      "dispatch_log": "docs/dispatch-log/9-23-2026-05-15T2012Z.md"
     },
     {
       "id": "9-24",

@@ -3,16 +3,16 @@
 /**
  * Hard-coded saved-filter preset chip row.
  * Three presets per spec §7 (locked). The "+ zapisz widok" chip renders disabled.
- * Chip styles mirror admin.jsx:266-272.
+ * Uses <Chip> from @repo/ui per M9 design-parity reskin.
  */
 import { useRouter, useSearchParams } from "next/navigation";
 import { createLogger } from "@/lib/log";
+import { Chip } from "@repo/ui";
 
 const log = createLogger("saved-filter-presets");
 
 interface Preset {
   label: string;
-  /** Returns URLSearchParams entries for this preset. */
   params: () => Record<string, string | string[]>;
 }
 
@@ -28,11 +28,7 @@ function buildPresets(): Preset[] {
         const today = new Date();
         const plus7 = new Date(today);
         plus7.setDate(plus7.getDate() + 7);
-        return {
-          tag: "pilne",
-          plannedPickupAtFrom: toIsoDate(today),
-          plannedPickupAtTo: toIsoDate(plus7),
-        };
+        return { tag: "pilne", plannedPickupAtFrom: toIsoDate(today), plannedPickupAtTo: toIsoDate(plus7) };
       },
     },
     {
@@ -44,16 +40,12 @@ function buildPresets(): Preset[] {
       params: () => {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        return {
-          plannedPickupAtTo: toIsoDate(yesterday),
-          status: ["W_REALIZACJI", "GOTOWE_DO_ODBIORU"],
-        };
+        return { plannedPickupAtTo: toIsoDate(yesterday), status: ["W_REALIZACJI", "GOTOWE_DO_ODBIORU"] };
       },
     },
   ];
 }
 
-/** Returns true when the current search params satisfy all of the preset's required params. */
 function isActive(preset: Preset, current: URLSearchParams): boolean {
   const required = preset.params();
   for (const [k, v] of Object.entries(required)) {
@@ -68,12 +60,8 @@ function isActive(preset: Preset, current: URLSearchParams): boolean {
   return true;
 }
 
-/** Returns true if any filter param is present in the current search params. */
 function hasAnyFilter(params: URLSearchParams): boolean {
-  const filterKeys = [
-    "status", "type", "craftsmanId", "q", "tag",
-    "plannedPickupAtFrom", "plannedPickupAtTo", "sort",
-  ];
+  const filterKeys = ["status", "type", "craftsmanId", "q", "tag", "plannedPickupAtFrom", "plannedPickupAtTo", "sort"];
   return filterKeys.some((k) => params.has(k));
 }
 
@@ -84,13 +72,9 @@ export function SavedFilterPresets() {
 
   function applyPreset(preset: Preset) {
     const p = new URLSearchParams();
-    const entries = preset.params();
-    for (const [k, v] of Object.entries(entries)) {
-      if (Array.isArray(v)) {
-        v.forEach((x) => p.append(k, x));
-      } else {
-        p.set(k, v);
-      }
+    for (const [k, v] of Object.entries(preset.params())) {
+      if (Array.isArray(v)) v.forEach((x) => p.append(k, x));
+      else p.set(k, v);
     }
     log.info("op=applyPreset", { label: preset.label, params: p.toString() });
     router.replace(`/admin/orders?${p.toString()}`);
@@ -104,68 +88,47 @@ export function SavedFilterPresets() {
   const activeIdx = presets.findIndex((pr) => isActive(pr, searchParams));
   const anyFilterActive = hasAnyFilter(searchParams);
 
-  const chipBase =
-    "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border border-admin-line transition-colors cursor-pointer select-none";
-  const chipDefault = chipBase + " bg-admin-surface text-admin-ink hover:bg-acid/10";
-  const chipActive = chipBase + " bg-ink text-paper border-ink";
-  const chipPink = chipBase + " bg-pink-100 text-pink-800 border-pink-200 hover:bg-pink-200";
-  const chipDisabled =
-    chipBase + " bg-transparent border-dashed text-admin-mute cursor-not-allowed opacity-60";
-  const chipWszystkie =
-    chipBase + " bg-acid/20 text-ink border-acid/40 hover:bg-acid/30";
-
   return (
     <div className="flex flex-wrap items-center gap-2 mb-3 px-1">
-      <span className="font-mono text-[11px] text-admin-mute uppercase tracking-widest">
-        Presety:
-      </span>
+      <span className="font-mono text-[11px] text-admin-mute uppercase tracking-widest">Presety:</span>
 
-      {/* "Wszystkie" reset chip — visible only when any filter is active */}
       {anyFilterActive && (
-        <button
-          type="button"
-          className={chipWszystkie}
-          onClick={clearAllFilters}
-          aria-label="Wyczyść wszystkie filtry"
-        >
+        <Chip onClick={clearAllFilters} aria-label="Wyczyść wszystkie filtry">
           Wszystkie
-        </button>
+        </Chip>
       )}
 
       {presets.map((preset, i) => {
-        const isFirstPreset = i === 0; // "Pilne" — pink accent per admin.jsx:268
         const active = i === activeIdx;
-        const cls = active ? chipActive : isFirstPreset ? chipPink : chipDefault;
+        const isFirst = i === 0;
         return (
-          <button
+          <Chip
             key={preset.label}
-            type="button"
-            className={cls}
+            active={active}
+            color={isFirst ? "pink" : "default"}
+            aria-pressed={active}
             onClick={() => {
               if (active) {
-                // Toggle off: clicking an active preset clears all params
                 log.info("op=toggleOffPreset", { label: preset.label });
                 router.replace("/admin/orders");
               } else {
                 applyPreset(preset);
               }
             }}
-            aria-pressed={active}
           >
             {preset.label}
-          </button>
+          </Chip>
         );
       })}
 
-      <button
-        type="button"
-        className={chipDisabled}
+      <Chip
         disabled
         title="Wkrótce: możliwość zapisywania własnych widoków"
         aria-label="Zapisz widok (wkrótce)"
+        style={{ borderStyle: "dashed", background: "transparent" }}
       >
         + zapisz widok
-      </button>
+      </Chip>
     </div>
   );
 }

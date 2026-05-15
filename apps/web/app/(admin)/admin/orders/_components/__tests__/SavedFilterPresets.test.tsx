@@ -79,7 +79,14 @@ describe("SavedFilterPresets", () => {
     mockSearchParamsString = "status=GOTOWE_DO_ODBIORU";
     render(<SavedFilterPresets />);
     const chip = screen.getByText(/gotowe do odbioru/i).closest("button");
-    expect(chip?.className).toMatch(/bg-ink|text-paper/);
+    expect(chip?.className).toMatch(/active|bg-ink|text-paper/);
+  });
+
+  it("first preset chip (Pilne) renders with pink color variant (data-color or class)", () => {
+    render(<SavedFilterPresets />);
+    const pilne = screen.getByText(/pilne na ten tydzień/i).closest("button");
+    // After reskin, SavedFilterPresets wraps presets in <Chip color="pink">
+    expect(pilne?.getAttribute("data-color") ?? pilne?.className).toMatch(/pink/);
   });
 });
 

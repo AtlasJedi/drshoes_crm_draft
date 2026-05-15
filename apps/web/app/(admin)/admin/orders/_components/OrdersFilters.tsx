@@ -1,13 +1,13 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
-import { KIND_LABELS_PL } from "@/lib/orders/status";
+import { KIND_LABELS_PL, STATUS_LABELS_PL } from "@/lib/orders/status";
 import type { OrderStatus, OrderItemKind } from "@/lib/orders/types";
 import type { UserStubDto } from "@/lib/users/types";
-import { StatusMultiSelect } from "./StatusMultiSelect";
+import { Chip } from "@repo/ui";
 
 const log = createLogger("orders-filters");
 
@@ -21,16 +21,19 @@ interface Props {
     q?: string;
   };
   users: UserStubDto[];
+  visible?: number;
+  total?: number;
 }
 
-export function OrdersFilters({ initial, users }: Props) {
+export function OrdersFilters({ initial, users, visible, total }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   function push(updates: Record<string, string | string[] | undefined>) {
     const p = new URLSearchParams(searchParams.toString());
-    p.delete("page"); // reset to page 0 on filter change
+    p.delete("page");
     for (const [k, v] of Object.entries(updates)) {
       p.delete(k);
       if (Array.isArray(v)) v.forEach((x) => p.append(k, x));
@@ -40,77 +43,78 @@ export function OrdersFilters({ initial, users }: Props) {
     router.replace(`/admin/orders?${p.toString()}` as Route);
   }
 
-  function onStatus(statuses: OrderStatus[]) {
-    push({ status: statuses.length ? statuses : undefined });
-  }
-
-  function onKind(kind: OrderItemKind, checked: boolean) {
+  function onKind(kind: OrderItemKind) {
     const current = initial.type ?? [];
-    const next = checked ? [...current, kind] : current.filter((k) => k !== kind);
+    const next = current.includes(kind) ? current.filter((k) => k !== kind) : [...current, kind];
     push({ type: next.length ? next : undefined });
-  }
-
-  function onCraftsman(e: React.ChangeEvent<HTMLSelectElement>) {
-    push({ craftsmanId: e.target.value || undefined });
   }
 
   function onQ(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => push({ q: val || undefined }), 250);
+    debounceRef.current = setTimeout(() => {
+      push({ q: val || undefined });
+      if (!val) setSearchOpen(false);
+    }, 250);
   }
 
-  const selectCls =
-    "border border-admin-line rounded px-2 py-1 text-sm bg-admin-surface text-admin-ink focus:outline-none focus:ring-1 focus:ring-acid";
+  const statusActive = (initial.status ?? []).length > 0;
+  const searchActive = !!initial.q;
 
   return (
-    <div className="flex flex-wrap gap-4 items-end mb-6 p-4 border border-admin-line rounded bg-admin-surface">
-      {/* Status multi-select */}
-      <StatusMultiSelect
-        selected={initial.status ?? []}
-        onSelect={onStatus}
-      />
+    <div className="flex flex-wrap gap-2.5 items-center px-1 py-3" style={{ borderBottom: "1px solid var(--line, rgba(10,10,10,0.18))" }}>
+      {/* Status summary chip — read-only display; full multi-select remains in StatusMultiSelect */}
+      <Chip active={statusActive}>
+        {statusActive
+          ? (initial.status ?? []).map((s) => STATUS_LABELS_PL[s]).join(", ")
+          : "status: wszystkie"}
+      </Chip>
 
-      {/* Kind checkboxes */}
-      <fieldset className="flex flex-col gap-1">
-        <legend className="text-xs text-admin-mute mb-1">Typ</legend>
-        <div className="flex gap-3">
-          {ALL_KINDS.map((k) => (
-            <label key={k} className="flex items-center gap-1 text-sm text-admin-ink cursor-pointer">
-              <input
-                type="checkbox"
-                checked={(initial.type ?? []).includes(k)}
-                onChange={(e) => onKind(k, e.target.checked)}
-                className="accent-acid"
-              />
-              {KIND_LABELS_PL[k]}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      {/* Kind chips */}
+      {ALL_KINDS.map((k) => (
+        <Chip
+          key={k}
+          active={(initial.type ?? []).includes(k)}
+          onClick={() => onKind(k)}
+        >
+          {KIND_LABELS_PL[k]}
+        </Chip>
+      ))}
 
-      {/* Assignee */}
-      <label className="flex flex-col gap-1 text-xs text-admin-mute">
-        Wykonawca
-        <select className={selectCls} value={initial.craftsmanId ?? ""} onChange={onCraftsman}>
-          <option value="">Wszyscy</option>
-          {users.map((u) => (
-            <option key={u.id} value={u.id}>{u.fullName}</option>
-          ))}
-        </select>
-      </label>
+      {/* Craftsman chip — display only; full select via dropdown TODO */}
+      <Chip active={!!initial.craftsmanId}>
+        {initial.craftsmanId
+          ? (users.find((u) => u.id === initial.craftsmanId)?.fullName ?? "wybrany")
+          : "rzemieślnik: każdy"}
+      </Chip>
 
-      {/* Search */}
-      <label className="flex flex-col gap-1 text-xs text-admin-mute">
-        Szukaj
+      {/* Date chip — placeholder, wired in M10 */}
+      <Chip>przyjęcie: wszystkie</Chip>
+
+      {/* Search chip + inline input */}
+      {searchOpen ? (
         <input
+          autoFocus
           type="search"
           defaultValue={initial.q ?? ""}
           onChange={onQ}
+          onBlur={() => { if (!initial.q) setSearchOpen(false); }}
           placeholder="Szukaj…"
-          className={selectCls + " w-52"}
+          className="border border-ink px-2 py-1 font-mono text-[12px] w-40 focus:outline-none focus:ring-1 focus:ring-ink"
         />
-      </label>
+      ) : (
+        <Chip active={searchActive} onClick={() => setSearchOpen(true)}>
+          {searchActive ? `szukaj: ${initial.q}` : "szukaj"}
+        </Chip>
+      )}
+
+      {/* Spacer + counter */}
+      <div style={{ flex: 1 }} />
+      {visible != null && total != null && (
+        <span className="font-mono text-[11px] text-admin-mute">
+          {visible} z {total} zleceń
+        </span>
+      )}
     </div>
   );
 }

@@ -3,29 +3,24 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
-import { STATUS_LABELS_PL, STATUS_PILL_CLASS } from "@/lib/orders/status";
 import type { OrderListRow } from "@/lib/orders/types";
+import { Pill, PhImg } from "@repo/ui";
 import { RowQuickActionsMenu } from "./RowQuickActionsMenu";
 import { SortableColumnHeader } from "./SortableColumnHeader";
 
 const log = createLogger("orders-table");
 
-/** Polish currency formatter: 1234 cents → "12,34 zł" */
 function pricePLN(cents: number): string {
   return (cents / 100).toFixed(2).replace(".", ",") + " zł";
 }
 
-/** Format ISO date as dd.MM.yyyy in Polish locale */
 const TZ = "Europe/Warsaw";
 
 function fmtDate(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("pl-PL", {
-    day: "2-digit", month: "2-digit", year: "numeric", timeZone: TZ,
-  });
+  return new Date(iso).toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: TZ });
 }
 
-/** Format ISO timestamp as dd.MM.yyyy HH:mm in Polish locale — used for createdAt audit. */
 function fmtDateTime(iso: string | null): string {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -38,22 +33,13 @@ interface Props {
   rows: OrderListRow[];
   totalPages: number;
   currentPage: number;
-  // Selection props — optional; injected by OrdersPageClient when BulkActionBar is active
   selectedIds?: string[];
   isAllSelected?: boolean;
   onToggleRow?: (id: string) => void;
   onToggleAll?: () => void;
 }
 
-export function OrdersTable({
-  rows,
-  totalPages,
-  currentPage,
-  selectedIds,
-  isAllSelected,
-  onToggleRow,
-  onToggleAll,
-}: Props) {
+export function OrdersTable({ rows, totalPages, currentPage, selectedIds, isAllSelected, onToggleRow, onToggleAll }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -70,49 +56,29 @@ export function OrdersTable({
     router.push(`/admin/orders?${params.toString()}` as Route);
   }
 
-  const thCls = "px-4 py-3 text-left text-[11px] font-semibold text-admin-mute uppercase tracking-[0.08em]";
-  const tdCls = "px-4 py-3.5 text-[15px] text-admin-ink";
-
   return (
     <div>
-      <div className="overflow-x-auto border border-admin-line rounded">
-        <table className="w-full border-collapse">
-          <thead className="bg-admin-surface border-b border-admin-line">
+      <div className="overflow-x-auto">
+        <table className="tbl">
+          <thead>
             <tr>
-              <th className={thCls + " w-10"}>
+              <th style={{ width: 40 }}>
                 {onToggleAll && (
-                  <input
-                    type="checkbox"
-                    checked={isAllSelected ?? false}
-                    onChange={onToggleAll}
-                    className="accent-acid"
-                    aria-label="Zaznacz wszystkie"
-                  />
+                  <input type="checkbox" checked={isAllSelected ?? false} onChange={onToggleAll} className="accent-acid" aria-label="Zaznacz wszystkie" />
                 )}
               </th>
-              <th className={thCls}>
-                <SortableColumnHeader field="code" label="Kod" />
-              </th>
-              <th className={thCls}>
-                <SortableColumnHeader field="status" label="Status" />
-              </th>
-              <th className={thCls}>Klient</th>
-              <th className={thCls}>Pozycje</th>
-              <th className={thCls}>
-                <SortableColumnHeader field="receivedAt" label="Przyjęto" />
-              </th>
-              <th className={thCls}>Termin odbioru</th>
-              <th className={thCls}>
-                <SortableColumnHeader field="pickedUpAt" label="Wydano" />
-              </th>
-              <th className={thCls}>Wykonawca</th>
-              <th className={thCls + " text-right"}>
-                <SortableColumnHeader field="createdAt" label="Utworzono" className="justify-end" />
-              </th>
-              <th className={thCls + " text-right"}>Suma</th>
-              <th className={thCls + " w-10 text-right"}>
-                {/* actions */}
-              </th>
+              <th><SortableColumnHeader field="code" label="Kod" /></th>
+              <th><SortableColumnHeader field="status" label="Status" /></th>
+              <th>Klient</th>
+              <th>Pozycje</th>
+              <th><SortableColumnHeader field="receivedAt" label="Przyjęto" /></th>
+              <th>Termin odbioru</th>
+              <th><SortableColumnHeader field="pickedUpAt" label="Wydano" /></th>
+              <th>Wykonawca</th>
+              <th style={{ width: 50 }}>Foto</th>
+              <th style={{ textAlign: "right" }}><SortableColumnHeader field="createdAt" label="Utworzono" className="justify-end" /></th>
+              <th style={{ textAlign: "right" }}>Suma</th>
+              <th style={{ width: 40 }} />
             </tr>
           </thead>
           <tbody>
@@ -120,46 +86,27 @@ export function OrdersTable({
               <tr
                 key={row.id}
                 tabIndex={0}
-                className="border-b border-admin-line hover:bg-acid/5 cursor-pointer focus:outline-none focus:bg-acid/10 transition-colors"
                 onClick={() => onRowActivate(row.id)}
                 onKeyDown={(e) => e.key === "Enter" && onRowActivate(row.id)}
               >
-                <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
+                <td onClick={(e) => e.stopPropagation()}>
                   {onToggleRow && (
-                    <input
-                      type="checkbox"
-                      checked={selectedIds?.includes(row.id) ?? false}
-                      onChange={() => onToggleRow(row.id)}
-                      className="accent-acid h-4 w-4"
-                      aria-label={`Zaznacz zlecenie ${row.code}`}
-                    />
+                    <input type="checkbox" checked={selectedIds?.includes(row.id) ?? false} onChange={() => onToggleRow(row.id)} className="accent-acid h-4 w-4" aria-label={`Zaznacz zlecenie ${row.code}`} />
                   )}
                 </td>
-                <td className={tdCls + " font-mono text-[13px]"}>{row.code}</td>
-                <td className={tdCls}>
-                  <span className={`inline-block px-3 py-1 rounded-md text-[12px] font-semibold uppercase tracking-wide ${STATUS_PILL_CLASS[row.status]}`}>
-                    {STATUS_LABELS_PL[row.status]}
-                  </span>
-                </td>
-                <td className={tdCls + " text-admin-mute"}>{row.clientName}</td>
-                <td className={tdCls + " text-admin-mute"}>{row.description ?? "—"}</td>
-                <td className={tdCls + " text-admin-mute font-mono text-[13px]"}>{fmtDate(row.receivedAt)}</td>
-                <td className={tdCls + " font-mono text-[13px]"}>{fmtDate(row.plannedPickupAt)}</td>
-                <td className={tdCls + " text-admin-mute font-mono text-[13px]"}>{fmtDate(row.pickedUpAt)}</td>
-                <td className={tdCls + " text-admin-mute"}>—</td>
-                <td className={tdCls + " text-right text-admin-mute font-mono text-[13px] whitespace-nowrap"}>{fmtDateTime(row.createdAt)}</td>
-                <td className={tdCls + " text-right font-mono"}>{pricePLN(row.totalPriceCents)}</td>
-                <td
-                  className="px-3 py-3.5 text-right"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <RowQuickActionsMenu
-                    row={row}
-                    onOrderUpdated={() => {
-                      // Reload page data via Next.js Server Component re-render
-                      router.refresh();
-                    }}
-                  />
+                <td className="font-mono text-[13px]">{row.code}</td>
+                <td><Pill status={row.status} /></td>
+                <td className="text-admin-mute">{row.clientName}</td>
+                <td className="text-admin-mute">{row.description ?? "—"}</td>
+                <td className="text-admin-mute font-mono text-[13px]">{fmtDate(row.receivedAt)}</td>
+                <td className="font-mono text-[13px]">{fmtDate(row.plannedPickupAt)}</td>
+                <td className="text-admin-mute font-mono text-[13px]">{fmtDate(row.pickedUpAt)}</td>
+                <td className="text-admin-mute">—</td>
+                <td><PhImg label="" style={{ width: 36, height: 36, border: "1.5px solid var(--ink, #0a0a0a)" }} /></td>
+                <td className="text-right text-admin-mute font-mono text-[13px] whitespace-nowrap">{fmtDateTime(row.createdAt)}</td>
+                <td className="text-right font-mono">{pricePLN(row.totalPriceCents)}</td>
+                <td className="text-right" onClick={(e) => e.stopPropagation()}>
+                  <RowQuickActionsMenu row={row} onOrderUpdated={() => router.refresh()} />
                 </td>
               </tr>
             ))}
@@ -167,24 +114,13 @@ export function OrdersTable({
         </table>
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-5 text-[15px]">
-          <button
-            disabled={currentPage === 0}
-            onClick={() => goToPage(currentPage - 1)}
-            className="px-4 py-2 rounded-md border border-admin-line text-admin-ink disabled:opacity-40 disabled:cursor-not-allowed hover:bg-acid/10 font-medium"
-          >
+          <button disabled={currentPage === 0} onClick={() => goToPage(currentPage - 1)} className="px-4 py-2 rounded-md border border-admin-line text-admin-ink disabled:opacity-40 disabled:cursor-not-allowed hover:bg-acid/10 font-medium">
             ← Poprzednia
           </button>
-          <span className="text-admin-mute">
-            Strona {currentPage + 1} z {totalPages}
-          </span>
-          <button
-            disabled={currentPage >= totalPages - 1}
-            onClick={() => goToPage(currentPage + 1)}
-            className="px-4 py-2 rounded-md border border-admin-line text-admin-ink disabled:opacity-40 disabled:cursor-not-allowed hover:bg-acid/10 font-medium"
-          >
+          <span className="text-admin-mute">Strona {currentPage + 1} z {totalPages}</span>
+          <button disabled={currentPage >= totalPages - 1} onClick={() => goToPage(currentPage + 1)} className="px-4 py-2 rounded-md border border-admin-line text-admin-ink disabled:opacity-40 disabled:cursor-not-allowed hover:bg-acid/10 font-medium">
             Następna →
           </button>
         </div>
