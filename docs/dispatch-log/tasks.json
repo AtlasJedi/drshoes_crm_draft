@@ -1750,9 +1750,9 @@
     {
       "id": "9-26",
       "title": "OrderDrawer photo grid + items + tags reskin",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "b60b6ee",
+      "dispatch_log": "docs/dispatch-log/9-26-2026-05-15T2215Z.md"
     },
     {
       "id": "9-27",
