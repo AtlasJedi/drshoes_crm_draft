@@ -7,6 +7,7 @@ import { useState } from "react";
 import { createLogger } from "@/lib/log";
 import { Tape, PhImg, Chip, I } from "@repo/ui";
 import type { ProductDto, ProductStatus } from "@/lib/sklep/types";
+import { ReservationsQueue } from "./ReservationsQueue";
 
 const log = createLogger("sklep.producteditpanel");
 const STATUSES: ProductStatus[] = ["dostępne", "zarezerwowane", "sprzedane"];
@@ -83,7 +84,8 @@ export function ProductEditPanel({ product, onClose }: Props) {
         </div>
       </div>
 
-      {/* ReservationsQueue inserted by task 9-34 below the status chips */}
+      {/* ReservationsQueue — live fetch from GET /api/admin/sklep/{productId}/reservations */}
+      <ReservationsQueue productId={product.id} />
 
       {/* Actions */}
       <div className="flex gap-2 mt-3.5">
