@@ -1,68 +1,51 @@
 /**
  * Four KPI stat tiles — top row of the Dashboard.
- * Layout: admin.jsx:86-91. Pure server component (no client state).
- * ~60 LOC.
+ * Uses <StatTile> primitive from @drshoes/ui with accent blob.
+ * Pure server component (no client state).
+ * ~45 LOC.
  */
+import { StatTile } from "@drshoes/ui";
 import type { DashboardKpiDto } from "@/lib/dashboard/types";
-
-interface TileProps {
-  label: string;
-  value: string | number;
-  sub: string;
-  accent: string;
-  testId: string;
-}
-
-function StatTile({ label, value, sub, accent, testId }: TileProps) {
-  return (
-    <div
-      data-testid={testId}
-      className="admin-card p-6 flex flex-col gap-2.5"
-      style={{ borderTop: `4px solid ${accent}` }}
-    >
-      <div className="t-mono text-[12px] font-semibold uppercase text-admin-mute leading-none tracking-[0.08em]">
-        {label}
-      </div>
-      <div className="font-display text-[2.75rem] leading-none">{value}</div>
-      <div className="t-mono text-[12px] text-admin-mute">{sub}</div>
-    </div>
-  );
-}
 
 interface Props {
   kpis: DashboardKpiDto;
 }
 
 export function KpiTilesRow({ kpis }: Props) {
+  const monthLabel = new Date().toLocaleString("pl-PL", {
+    month: "long",
+    timeZone: "Europe/Warsaw",
+  });
+
   return (
     <div className="grid grid-cols-4 gap-[18px]">
       <StatTile
-        testId="kpi-tile-in-progress"
+        data-testid="kpi-tile-in-progress"
         label="W realizacji"
-        value={kpis.inProgressCount}
+        value={String(kpis.inProgressCount)}
         sub="zlecenia aktywne"
-        accent="var(--acid)"
+        accent="acid"
       />
       <StatTile
-        testId="kpi-tile-ready"
+        data-testid="kpi-tile-ready"
         label="Gotowe do odbioru"
-        value={kpis.readyForPickupCount}
+        value={String(kpis.readyForPickupCount)}
         sub="czekają na klienta"
-        accent="var(--pink)"
+        accent="pink"
       />
       <StatTile
-        testId="kpi-tile-intake"
+        data-testid="kpi-tile-intake"
         label="Nowe rezerwacje (7d)"
-        value={kpis.todayIntakeCount}
+        value={String(kpis.todayIntakeCount)}
         sub="ostatnie 7 dni"
-        accent="var(--blue)"
+        accent="blue"
       />
       <StatTile
-        testId="kpi-tile-revenue"
-        label={`Przychód · ${new Date().toLocaleString("pl-PL", { month: "long", timeZone: "Europe/Warsaw" })}`}
+        data-testid="kpi-tile-revenue"
+        label={`Przychód · ${monthLabel}`}
         value={kpis.monthRevenueFormatted}
         sub="ten miesiąc"
-        accent="var(--acid)"
+        accent="acid"
       />
     </div>
   );

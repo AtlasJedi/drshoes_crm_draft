@@ -5,7 +5,7 @@
 
 import React from "react";
 
-export interface StatTileProps {
+export interface StatTileProps extends React.HTMLAttributes<HTMLDivElement> {
   label: string;
   value: string | number;
   sub?: string;
@@ -13,11 +13,13 @@ export interface StatTileProps {
   className?: string;
 }
 
-export function StatTile({ label, value, sub, accent, className = "" }: StatTileProps) {
+export function StatTile({ label, value, sub, accent, className = "", ...rest }: StatTileProps) {
   return (
     <div
+      data-accent={accent}
       className={`admin-card ${className}`.trim()}
       style={{ padding: 18, position: "relative", overflow: "hidden" }}
+      {...rest}
     >
       <div
         style={{
@@ -55,14 +57,16 @@ export function StatTile({ label, value, sub, accent, className = "" }: StatTile
         </div>
       )}
       <div
-        data-accent
+        data-accent-blob
         style={{
           position: "absolute",
           top: -10,
           right: -10,
           width: 60,
           height: 60,
-          background: accent,
+          background: accent.startsWith("#") || accent.startsWith("rgb") || accent.startsWith("var(")
+            ? accent
+            : `var(--${accent})`,
           transform: "rotate(15deg)",
         }}
       />

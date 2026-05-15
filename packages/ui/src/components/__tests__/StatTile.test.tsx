@@ -20,15 +20,19 @@ describe("StatTile", () => {
 
   it("does not render sub when omitted", () => {
     const { container } = render(<StatTile label="x" value="0" accent="#d8ff3a" />);
-    // No sub element present
     expect(container.querySelectorAll("[data-sub]").length).toBe(0);
   });
 
-  it("renders the accent colour box with correct background", () => {
+  it("renders the accent colour blob with correct background (hex)", () => {
     const { container } = render(<StatTile label="x" value="0" accent="#ff2e7e" />);
-    // accent decorative element carries the color in style
-    const accentEl = container.querySelector("[data-accent]") as HTMLElement;
-    expect(accentEl.style.background).toBe("rgb(255, 46, 126)");
+    // accent blob carries the hex color in style
+    const blob = container.querySelector("[data-accent-blob]") as HTMLElement;
+    expect(blob.style.background).toBe("rgb(255, 46, 126)");
+  });
+
+  it("sets data-accent on root element for semantic accent names", () => {
+    const { container } = render(<StatTile label="x" value="0" accent="acid" />);
+    expect((container.firstChild as HTMLElement).getAttribute("data-accent")).toBe("acid");
   });
 
   it("has .admin-card wrapper", () => {

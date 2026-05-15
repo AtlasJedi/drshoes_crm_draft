@@ -35,4 +35,21 @@ describe("KpiTilesRow", () => {
     expect(screen.getByTestId("kpi-tile-intake")).toBeInTheDocument();
     expect(screen.getByTestId("kpi-tile-revenue")).toBeInTheDocument();
   });
+
+  it("acid tile has data-accent=acid", () => {
+    render(<KpiTilesRow kpis={kpis} />);
+    // StatTile from @drshoes/ui sets data-accent on the tile root
+    expect(screen.getByTestId("kpi-tile-in-progress")).toHaveAttribute("data-accent", "acid");
+    expect(screen.getByTestId("kpi-tile-revenue")).toHaveAttribute("data-accent", "acid");
+  });
+
+  it("pink tile has data-accent=pink", () => {
+    render(<KpiTilesRow kpis={kpis} />);
+    expect(screen.getByTestId("kpi-tile-ready")).toHaveAttribute("data-accent", "pink");
+  });
+
+  it("blue tile has data-accent=blue", () => {
+    render(<KpiTilesRow kpis={kpis} />);
+    expect(screen.getByTestId("kpi-tile-intake")).toHaveAttribute("data-accent", "blue");
+  });
 });
