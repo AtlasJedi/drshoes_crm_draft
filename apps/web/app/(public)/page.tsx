@@ -1,9 +1,21 @@
+import { StickyNav } from "./_components/StickyNav";
+import { Hero } from "./_components/Hero";
+import { Services } from "./_components/Services";
+import { NewsTeaser } from "./_components/NewsTeaser";
+import { SklepTeaser } from "./_components/SklepTeaser";
+import { Contact } from "./_components/Contact";
+import { Footer } from "./_components/Footer";
+
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-ink text-paper p-8 gap-6">
-      <h1 className="font-display text-6xl md:text-8xl tracking-tight">DR SHOES</h1>
-      <p className="font-marker text-2xl text-acid">customy. naprawy. malowanie.</p>
-      <p className="font-mono text-sm opacity-60">Strona w budowie. /admin też.</p>
-    </main>
+    <>
+      <StickyNav />
+      <Hero />
+      <Services />
+      <NewsTeaser />
+      <SklepTeaser />
+      <Contact />
+      <Footer />
+    </>
   );
 }
