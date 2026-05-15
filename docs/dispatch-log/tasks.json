@@ -1595,9 +1595,9 @@
     {
       "id": "9-4",
       "title": "<Sticker> primitive",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "1626320",
+      "dispatch_log": "docs/dispatch-log/9-4-2026-05-15T213547Z.md"
     },
     {
       "id": "9-5",
