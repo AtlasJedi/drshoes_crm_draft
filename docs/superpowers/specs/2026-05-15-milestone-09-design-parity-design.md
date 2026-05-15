@@ -2,7 +2,7 @@
 
 **Status:** spec written 2026-05-15 — awaiting owner review
 **Goal:** Bring the live application up to parity with `handoff/design/` (admin.jsx + landing.jsx + styles.css). Current admin is functional but visually trimmed-down ("ewidentnie okrojony"); current public site is a placeholder.
-**Approach selected:** **A · Fundament-first** (8 waves, design system before view rewrites)
+**Approach selected:** **A · Fundament-first** (8 waves, 43 tasks, design system before view rewrites)
 **Owner directive:** "chcemy mieć super produkt"
 
 ---
@@ -344,48 +344,59 @@ Stubs `/sklep` and `/aktualnosci` keep their existing M7 implementation (which i
 
 ### 6.1 Wave breakdown
 
-8 waves, ~42 tasks. Each task ≤ 80 LOC frontend or ≤ 120 LOC if it includes a backend slice.
+8 waves, 43 tasks (`9-1` through `9-43`). Each task ≤ 80 LOC frontend or ≤ 120 LOC if it includes a backend slice.
 
-- **Wave 1 — Design system** (~13 tasks)
-  - 9-1 Tokens + fonts + Tailwind preset + globals.css utility classes (combined, ~150 LOC; fundament-first dispatch — solo, then rest of wave 1 parallel)
-  - 9-2..9-13 One task per primitive component (`Tape`, `Stamp`, `Sticker`, `Pill`, `Chip`, `Splatter`, `PhImg`, `DrShoesMark`, `AdminCard`, `StatTile`, `Toggle`, `Button`)
-  - 9-13b icons.tsx (~200 LOC, single file but small per-icon SVG; dispatched as standalone)
-- **Wave 2 — Admin shell** (~3 tasks)
-  - 9-14 `AdminSidebar` rewrite
-  - 9-15 `AdminTopbar` + `AdminPageHeaderContext`
-  - 9-16 `AdminLayout` integration + page.tsx callsites use `usePageHeader`
-- **Wave 3 — Dashboard** (~5 tasks)
-  - 9-17 `<StatTile>` integration in `KpiTilesRow` restyle
-  - 9-18 `<OrdersWeekChart>` restyle (stacked bar + chip toggles)
-  - 9-19 `<MixDonut>` restyle (3-segment + legend)
-  - 9-20 `<ReadyForPickupPanel>` restyle + `<RecentMessagesPanel>` restyle (combined; both small)
-  - 9-21 `<FreshReservationsPanel>` NEW
-- **Wave 4 — Orders list + drawer** (~5 tasks)
-  - 9-22 Orders list page reskin (.tbl + Pill + Chip filters)
-  - 9-23 OrderDrawer step-timeline NEW
-  - 9-24 OrderDrawer sticky-notes NEW (`<OrderDrawerNotes>`)
-  - 9-25 OrderDrawer photo grid + items + tags reskin
-  - 9-26 OrderDrawer footer actions + header reskin
-- **Wave 5 — Calendar + Kanban** (~2 tasks)
-  - 9-27 Calendar reskin + `<UnscheduledOrdersPanel>` NEW
-  - 9-28 Kanban reskin + post-drag status-change popup integration
-- **Wave 6 — Messages + Triggers + Templates + Sklep** (~5 tasks)
-  - 9-29 Messages 3-col layout + `<ClientMiniProfile>` NEW
-  - 9-30 Triggers `<TriggerEditPanel>` NEW + placeholder chips + manual-confirm toggle + "test do siebie"
-  - 9-31 Templates editor parity
-  - 9-32 Sklep admin product grid + edit panel reskin
-  - 9-33 Sklep admin `<ReservationsQueue>` NEW
-- **Wave 7 — Public landing** (~6 tasks)
-  - 9-34 `<StickyNav>`
-  - 9-35 `<Hero>` (+ `<Splatter>` use)
-  - 9-36 `<Services>`
-  - 9-37 `<NewsTeaser>`
-  - 9-38 `<SklepTeaser>`
-  - 9-39 `<Contact>` + `<Footer>` (combined)
-- **Wave 8 — Polish + audit + tag** (~3 tasks)
-  - 9-40 Parity audit with screenshots (Playwright sweep, compare to design renders side-by-side, file issues)
-  - 9-41 Clients reskin (post-audit, addresses what audit finds)
-  - 9-42 milestone-9 README update + git tag local
+- **Wave 1 — Design system** (14 tasks)
+  - 9-1 Tokens + fonts + Tailwind preset + `apps/web/app/layout.tsx` font wiring + `globals.css` utility classes (combined, ~250 LOC; fundament-first dispatch — solo, then rest of wave 1 parallel)
+  - 9-2 `Tape.tsx`
+  - 9-3 `Stamp.tsx`
+  - 9-4 `Sticker.tsx`
+  - 9-5 `Pill.tsx`
+  - 9-6 `Chip.tsx`
+  - 9-7 `Splatter.tsx`
+  - 9-8 `PhImg.tsx`
+  - 9-9 `DrShoesMark.tsx`
+  - 9-10 `AdminCard.tsx`
+  - 9-11 `StatTile.tsx`
+  - 9-12 `Toggle.tsx`
+  - 9-13 `Button.tsx`
+  - 9-14 `icons.tsx`
+- **Wave 2 — Admin shell** (3 tasks)
+  - 9-15 `AdminSidebar` rewrite
+  - 9-16 `AdminTopbar` + `AdminPageHeaderContext`
+  - 9-17 `AdminLayout` integration + page.tsx callsites use `usePageHeader`
+- **Wave 3 — Dashboard** (5 tasks)
+  - 9-18 `<StatTile>` integration in `KpiTilesRow` restyle
+  - 9-19 `<OrdersWeekChart>` restyle (stacked bar + chip toggles)
+  - 9-20 `<MixDonut>` restyle (3-segment + legend)
+  - 9-21 `<ReadyForPickupPanel>` restyle + `<RecentMessagesPanel>` restyle (combined; both small)
+  - 9-22 `<FreshReservationsPanel>` NEW
+- **Wave 4 — Orders list + drawer** (5 tasks)
+  - 9-23 Orders list page reskin (.tbl + Pill + Chip filters)
+  - 9-24 OrderDrawer step-timeline NEW
+  - 9-25 OrderDrawer sticky-notes NEW (`<OrderDrawerNotes>`)
+  - 9-26 OrderDrawer photo grid + items + tags reskin
+  - 9-27 OrderDrawer footer actions + header reskin
+- **Wave 5 — Calendar + Kanban** (2 tasks)
+  - 9-28 Calendar reskin + `<UnscheduledOrdersPanel>` NEW
+  - 9-29 Kanban reskin + post-drag status-change popup integration
+- **Wave 6 — Messages + Triggers + Templates + Sklep** (5 tasks)
+  - 9-30 Messages 3-col layout + `<ClientMiniProfile>` NEW
+  - 9-31 Triggers `<TriggerEditPanel>` NEW + placeholder chips + manual-confirm toggle + "test do siebie"
+  - 9-32 Templates editor parity
+  - 9-33 Sklep admin product grid + edit panel reskin
+  - 9-34 Sklep admin `<ReservationsQueue>` NEW
+- **Wave 7 — Public landing** (6 tasks)
+  - 9-35 `<StickyNav>`
+  - 9-36 `<Hero>` (+ `<Splatter>` use)
+  - 9-37 `<Services>`
+  - 9-38 `<NewsTeaser>`
+  - 9-39 `<SklepTeaser>`
+  - 9-40 `<Contact>` + `<Footer>` (combined)
+- **Wave 8 — Polish + audit + tag** (3 tasks)
+  - 9-41 Parity audit with screenshots (Playwright sweep, compare to design renders side-by-side, file issues)
+  - 9-42 Clients reskin (post-audit, addresses what audit finds)
+  - 9-43 milestone-9 README update + git tag local
 
 ### 6.2 Dispatch protocol
 
@@ -401,7 +412,7 @@ Per dispatch-protocol directive (memory: `feedback_dispatch_protocol.md`, 2026-0
 
 ### 6.3 Estimated size
 
-- ~42 tasks across 8 waves.
+- 43 tasks across 8 waves.
 - ~3000 LOC frontend, ~0 backend (unless audit finds a gap).
 - +50 vitest snapshot tests + view-level smoke.
 - +3 Playwright specs (admin sidebar nav sweep, dashboard parity smoke, public landing smoke).
