@@ -1794,9 +1794,9 @@
     {
       "id": "9-32",
       "title": "Templates editor parity",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "dbf668aa4577fd6ee2c09d1cfd8bd9793c701b69",
+      "dispatch_log": "docs/dispatch-log/9-32-2026-05-15T2028Z.md"
     },
     {
       "id": "9-33",
