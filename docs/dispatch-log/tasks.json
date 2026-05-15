@@ -1772,9 +1772,9 @@
     {
       "id": "9-29",
       "title": "Kanban reskin + post-drag status-change popup",
-      "status": "pending",
+      "status": "in_progress",
       "commit_sha": null,
-      "dispatch_log": null
+      "dispatch_log": "docs/dispatch-log/9-29-2026-05-15T202121Z.md"
     },
     {
       "id": "9-30",

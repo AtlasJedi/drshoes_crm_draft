@@ -1,9 +1,15 @@
 "use client";
 
+// KanbanCard — sortable drag card.
+// Uses PhImg for 40×40 photo placeholder and I.calendar before due date.
+// Craftsman initial uses first letter of clientName as fallback.
+// ~80 LOC.
+
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { Route } from "next";
+import { PhImg, I } from "@repo/ui";
 import { createLogger } from "@/lib/log";
 import type { KanbanCardDto } from "@/lib/kanban/types";
 
@@ -47,6 +53,9 @@ export function KanbanCard({ card }: Props) {
     router.push(`${pathname}?${params.toString()}` as Route);
   }
 
+  // Craftsman initial: first letter of clientName until real craftsman data exists
+  const initial = card.clientName?.[0]?.toUpperCase() ?? "?";
+
   return (
     <div
       ref={setNodeRef}
@@ -59,6 +68,7 @@ export function KanbanCard({ card }: Props) {
         card.urgent ? " border-l-[3px] border-l-[var(--pink)]" : ""
       }`}
     >
+      {/* Top row: DR-ID + urgent badge */}
       <div className="flex justify-between items-center">
         <span className="font-mono text-[10px] text-ink/50">{card.code}</span>
         {card.urgent && (
@@ -68,10 +78,11 @@ export function KanbanCard({ card }: Props) {
         )}
       </div>
 
+      {/* Middle row: photo + client + description */}
       <div className="flex gap-2 mt-1.5">
-        <div
-          className="w-10 h-10 border border-ink/30 flex-shrink-0 bg-paper-2"
-          aria-hidden="true"
+        <PhImg
+          label=""
+          style={{ width: 40, height: 40, border: "1.5px solid var(--ink)", flexShrink: 0 }}
         />
         <div className="min-w-0">
           <div className="font-semibold text-xs truncate">{card.clientName}</div>
@@ -81,15 +92,17 @@ export function KanbanCard({ card }: Props) {
         </div>
       </div>
 
+      {/* Bottom row: dashed divider + calendar icon + due date + craftsman avatar */}
       <div className="flex justify-between items-center mt-2 pt-1.5 border-t border-dashed border-line">
-        <span className="font-mono text-[10px] text-ink/55">
+        <span className="font-mono text-[10px] text-ink/55 flex items-center gap-1">
+          {I.calendar}
           {shortDate(card.plannedPickupAt)}
         </span>
         <span
           className="w-5 h-5 rounded-full bg-paper-2 border border-ink/50 text-[9px] font-mono font-bold flex items-center justify-center"
           aria-hidden="true"
         >
-          T
+          {initial}
         </span>
       </div>
     </div>

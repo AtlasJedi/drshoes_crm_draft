@@ -5,6 +5,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { KanbanCard } from "./KanbanCard";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
 import { sortKanbanCards } from "@/lib/kanban/sort";
+import { I } from "@repo/ui";
 import type { KanbanColumnDto } from "@/lib/kanban/types";
 
 /** CSS variable per column status — matches admin.jsx:625-631 */
@@ -84,6 +85,24 @@ export function KanbanColumn({ column }: Props) {
             +{column.total - column.cards.length} więcej
           </p>
         )}
+
+        {/* "+ dodaj" stub — TODO M10: open new-order modal pre-filled with this column's status */}
+        <button
+          className="btn-clean"
+          style={{
+            padding: "6px 8px",
+            justifyContent: "center",
+            fontSize: 11,
+            opacity: 0.7,
+            borderStyle: "dashed",
+            boxShadow: "none",
+            width: "100%",
+          }}
+          onClick={() => console.warn("new-order wkrótce", column.status)}
+          aria-label={`Dodaj zlecenie do ${column.status}`}
+        >
+          {I.plus} dodaj
+        </button>
       </div>
     </div>
   );

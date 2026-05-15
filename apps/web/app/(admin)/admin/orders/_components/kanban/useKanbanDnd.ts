@@ -12,6 +12,8 @@ const log = createLogger("kanban.dnd");
 
 export interface PendingMove {
   cardId: string;
+  /** Display code e.g. "DR-1042" for popup header */
+  cardCode: string;
   fromStatus: KanbanStatus;
   toStatus: KanbanStatus;
   orderVersion: number;
@@ -83,6 +85,7 @@ export function useKanbanDnd(
 
         setPendingMove({
           cardId,
+          cardCode: card?.code ?? "",
           fromStatus,
           toStatus,
           orderVersion: version,

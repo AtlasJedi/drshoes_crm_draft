@@ -1,5 +1,9 @@
 "use client";
 
+// KanbanBoard — DndContext wrapper + 5-column grid + post-drag inline popup.
+// StatusChangeTriggerDialog (Radix modal) replaced by KanbanDragPopup (fixed div).
+// ~80 LOC.
+
 import {
   DndContext,
   DragOverlay,
@@ -12,16 +16,12 @@ import {
 import { useState } from "react";
 import { KanbanColumn } from "./KanbanColumn";
 import { KanbanCard } from "./KanbanCard";
-import { StatusChangeTriggerDialog } from "../StatusChangeTriggerDialog";
+import { KanbanDragPopup } from "./KanbanDragPopup";
 import type { KanbanColumnDto } from "@/lib/kanban/types";
 import type { PendingMove } from "./useKanbanDnd";
 
 interface Props {
   columns: KanbanColumnDto[];
-  /**
-   * Called when a drag completes between two different columns.
-   * Wired by 6-19; 6-18 left the default no-op slot in place.
-   */
   onDragEnd?: (cardId: string, fromStatus: string, toStatus: string) => void;
   pendingMove?: PendingMove | null;
   onConfirm?: (sendTriggers: boolean) => Promise<void>;
@@ -41,7 +41,6 @@ export function KanbanBoard({
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
-  // Find the card being dragged for the DragOverlay ghost
   const activeCard = activeCardId
     ? columns.flatMap((c) => c.cards).find((c) => c.id === activeCardId) ?? null
     : null;
@@ -59,7 +58,7 @@ export function KanbanBoard({
       col.cards.some((c) => c.id === String(active.id)),
     );
     if (!fromColumn) return;
-    if (fromColumn.status === String(over.id)) return; // same column — no-op
+    if (fromColumn.status === String(over.id)) return;
 
     onDragEnd?.(String(active.id), fromColumn.status, String(over.id));
   }
@@ -80,7 +79,6 @@ export function KanbanBoard({
           ))}
         </div>
 
-        {/* Ghost card shown while dragging — opacity-90 + rotate-1 + shadow-lg per token rules */}
         <DragOverlay>
           {activeCard && (
             <div className="opacity-90 rotate-1 shadow-lg">
@@ -91,13 +89,8 @@ export function KanbanBoard({
       </DndContext>
 
       {pendingMove && onConfirm && onCancel && (
-        <StatusChangeTriggerDialog
-          open={true}
-          fromStatus={pendingMove.fromStatus}
-          toStatus={pendingMove.toStatus}
-          orderId={pendingMove.cardId}
-          clientName={pendingMove.clientName}
-          triggerPreview={pendingMove.triggerPreview}
+        <KanbanDragPopup
+          pendingMove={pendingMove}
           onConfirm={onConfirm}
           onCancel={onCancel}
         />
