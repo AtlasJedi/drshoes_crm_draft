@@ -13,7 +13,7 @@
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import type { CalendarOrderDto } from "@/lib/calendar/types";
-import { isoToDateStr, toLocalDate, DAY_HEADERS_PL } from "@/lib/calendar/window";
+import { isoToDateStr, toLocalDate } from "@/lib/calendar/window";
 
 interface CalendarDayGridProps {
   /** The exact date to display. */
