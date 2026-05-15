@@ -14,7 +14,9 @@ import { OrderDrawerItems } from "./OrderDrawerItems";
 import { OrderDrawerTimeline } from "./OrderDrawerTimeline";
 import { OrderDrawerMessages } from "./OrderDrawerMessages";
 import { OrderDrawerPhotos } from "./OrderDrawerPhotos";
+import { OrderDrawerNotes } from "./OrderDrawerNotes";
 import { MessageComposerModal } from "./MessageComposerModal";
+import { OrderDrawerStatusTimeline } from "./OrderDrawerStatusTimeline";
 
 const log = createLogger("order-drawer");
 
@@ -63,6 +65,7 @@ export function OrderDrawer({ initialOrder, users }: Props) {
           <OrderDrawerHeader code={order.code} status={order.status} />
 
           <div className="flex-1 overflow-y-auto">
+            <OrderDrawerStatusTimeline currentStatus={order.status} />
             <OrderDrawerCoreFields order={order} users={users} onOrderUpdate={handleOrderUpdated} />
 
             <OrderDrawerStatusChanger order={order} onOrderUpdated={handleOrderUpdated} />
@@ -74,6 +77,7 @@ export function OrderDrawer({ initialOrder, users }: Props) {
               </p>
               <OrderDrawerPhotos orderId={order.id} />
             </section>
+            <OrderDrawerNotes orderId={order.id} refreshKey={refreshKey} />
             <OrderDrawerMessages
               orderId={order.id}
               refreshKey={refreshKey}
