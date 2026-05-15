@@ -1,9 +1,10 @@
 /**
  * Stacked bar chart — orders per week for last 8 ISO weeks.
- * SVG adapted directly from admin.jsx:108-131.
- * Pure server component.
- * ~75 LOC.
+ * Chip row (tydzień/miesiąc/kwartał) is visual-only for M9; behaviour deferred to M10.
+ * Pure server component — chip toggle state is not interactive.
+ * ~70 LOC.
  */
+import { Chip } from "@drshoes/ui";
 import type { OrdersPerWeekRowDto } from "@/lib/dashboard/types";
 
 interface Props {
@@ -12,7 +13,13 @@ interface Props {
 
 const VIEW_H = 220;
 const BAR_BOTTOM = 190;
-const SCALE = 7; // pixels per unit
+const SCALE = 7;
+
+const CHIPS = [
+  { label: "tydzień", active: true },
+  { label: "miesiąc", active: false },
+  { label: "kwartał", active: false },
+];
 
 export function OrdersWeekChart({ rows }: Props) {
   return (
@@ -21,6 +28,18 @@ export function OrdersWeekChart({ rows }: Props) {
         <div>
           <div className="t-display text-[22px]">Zlecenia / tydzień</div>
           <div className="t-mono text-[11px] text-admin-mute">ostatnie 8 tygodni</div>
+        </div>
+        {/* Chip toggles — visual only; M10 backlog item wires time-range filter */}
+        <div className="flex gap-1.5">
+          {CHIPS.map((c) => (
+            <Chip
+              key={c.label}
+              active={c.active}
+              onClick={() => console.warn("chart range wkrótce")}
+            >
+              {c.label}
+            </Chip>
+          ))}
         </div>
       </div>
 
@@ -35,14 +54,13 @@ export function OrdersWeekChart({ rows }: Props) {
           const x = 30 + i * 86;
           const repairTop = BAR_BOTTOM - row.repairs * SCALE;
           const customTop = repairTop - row.custom * SCALE;
-          const label = row.weekIso.replace(/^\d{4}-/, ""); // "W11"
+          const label = row.weekIso.replace(/^\d{4}-/, "");
           return (
             <g key={row.weekIso}>
               <rect x={x} y={repairTop} width="40" height={BAR_BOTTOM - repairTop} fill="var(--ink)" />
               <rect x={x} y={customTop} width="40" height={repairTop - customTop} fill="var(--acid)" stroke="var(--ink)" />
-              <text x={x + 20} y="210" textAnchor="middle" fontSize="10" fontFamily="JetBrains Mono" fill="rgba(0,0,0,0.5)">
-                {label}
-              </text>
+              <text x={x + 20} y="210" textAnchor="middle" fontSize="10"
+                fontFamily="JetBrains Mono" fill="rgba(0,0,0,0.5)">{label}</text>
             </g>
           );
         })}

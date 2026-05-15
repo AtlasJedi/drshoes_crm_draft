@@ -6,7 +6,7 @@ import type { OrdersPerWeekRowDto } from "@/lib/dashboard/types";
 const rows: OrdersPerWeekRowDto[] = [
   { weekIso: "2026-W10", repairs: 12, custom: 8 },
   { weekIso: "2026-W11", repairs: 14, custom: 6 },
-  { weekIso: "2026-W12", repairs: 9, custom: 11 },
+  { weekIso: "2026-W12", repairs: 9,  custom: 11 },
   { weekIso: "2026-W13", repairs: 16, custom: 10 },
   { weekIso: "2026-W14", repairs: 11, custom: 14 },
   { weekIso: "2026-W15", repairs: 18, custom: 9 },
@@ -33,7 +33,6 @@ describe("OrdersWeekChart", () => {
 
   it("renders a bar for each row", () => {
     const { container } = render(<OrdersWeekChart rows={rows} />);
-    // Each week produces 2 <rect> elements (repairs + custom)
     const rects = container.querySelectorAll("rect");
     expect(rects.length).toBe(rows.length * 2);
   });
@@ -41,5 +40,20 @@ describe("OrdersWeekChart", () => {
   it("handles empty rows gracefully", () => {
     render(<OrdersWeekChart rows={[]} />);
     expect(screen.getByText("Zlecenia / tydzień")).toBeInTheDocument();
+  });
+
+  it("renders three chip toggles", () => {
+    render(<OrdersWeekChart rows={rows} />);
+    expect(screen.getByText("tydzień")).toBeInTheDocument();
+    expect(screen.getByText("miesiąc")).toBeInTheDocument();
+    expect(screen.getByText("kwartał")).toBeInTheDocument();
+  });
+
+  it("first chip has active class by default", () => {
+    render(<OrdersWeekChart rows={rows} />);
+    // Chip component renders with className containing "active" when active=true
+    const chips = screen.getAllByRole("button");
+    const tygodzenChip = chips.find((b) => b.textContent?.includes("tydzień"));
+    expect(tygodzenChip?.className).toMatch(/active/);
   });
 });
