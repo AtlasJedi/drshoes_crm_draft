@@ -23,7 +23,17 @@ export function PhotoCard({ photo, onClick, onRelabel, onDelete }: Props) {
         className="h-full w-full cursor-zoom-in object-cover"
         onClick={onClick}
       />
-      <span className="absolute left-2 top-2 rounded bg-black/70 px-2 py-1 text-xs text-white">
+      <span
+        className="absolute rounded px-1.5 py-0.5 text-xs text-white font-medium"
+        style={{
+          bottom: 3,
+          left: 3,
+          background:
+            photo.label === "before" ? "var(--blue, #2563eb)"
+            : photo.label === "trakcie" ? "var(--orange, #f97316)"
+            : "var(--green, #16a34a)",
+        }}
+      >
         {PHOTO_LABEL_PL[photo.label]}
       </span>
       <button

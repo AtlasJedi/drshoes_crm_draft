@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createLogger } from "@/lib/log";
+import { AdminCard, I } from "@repo/ui";
 import { addOrderItem, updateOrderItem, removeOrderItem, getOrder } from "@/lib/orders/api";
 import type { OrderDto, OrderItemDto, OrderItemKind } from "@/lib/orders/types";
 import { ItemEditRow, type ItemEditState } from "./ItemEditRow";
@@ -60,24 +61,41 @@ export function OrderDrawerItems({ order, onOrderUpdated }: Props) {
     await run(async () => { await removeOrderItem(order.id, itemId); setRemoveId(null); }, "removeItem", itemId);
   }
 
+  const total = order.items.length;
+
   return (
-    <div className="px-6 py-4 border-t border-admin-line space-y-3">
-      <p className="text-xs font-medium text-admin-mute uppercase tracking-wide">Pozycje</p>
-      {order.items.map((item) =>
-        editingId === item.id
-          ? <ItemEditRow key={item.id} value={editState} onChange={setEditState} onSave={() => handleEdit(item.id)} onCancel={() => setEditingId(null)} busy={busy} />
-          : <OrderItemRow key={item.id} item={item} removeId={removeId}
-              onEdit={() => { setEditingId(item.id); setEditState(toState(item)); setConflict(false); }}
-              onRemove={() => setRemoveId(item.id)}
-              onRemoveConfirm={() => handleRemove(item.id)}
-              onRemoveCancel={() => setRemoveId(null)}
-              busy={busy} />
-      )}
-      {addOpen
-        ? <ItemEditRow value={addState} onChange={setAddState} onSave={handleAdd} onCancel={() => { setAddOpen(false); setAddState(BLANK); }} busy={busy} />
-        : <button type="button" onClick={() => { setAddOpen(true); setAddState(BLANK); setConflict(false); }} className="text-xs text-acid hover:underline font-medium">+ Dodaj pozycję</button>
-      }
-      {conflict && <p role="alert" aria-live="assertive" className="text-xs text-red-600">Konflikt — odśwież</p>}
+    <div className="px-5 py-4 border-t border-admin-line">
+      <AdminCard padding={14}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div className="t-stencil" style={{ fontSize: 14, letterSpacing: ".1em" }}>
+            Item · {total === 0 ? "0/0" : `1/${total}`}
+          </div>
+          <button
+            type="button"
+            className="btn-clean"
+            style={{ fontSize: 11, padding: "4px 10px", display: "flex", alignItems: "center", gap: 4 }}
+            onClick={() => { setAddOpen(true); setAddState(BLANK); setConflict(false); }}
+          >
+            {I.plus} dodaj item
+          </button>
+        </div>
+        <div className="space-y-3">
+          {order.items.map((item) =>
+            editingId === item.id
+              ? <ItemEditRow key={item.id} value={editState} onChange={setEditState} onSave={() => handleEdit(item.id)} onCancel={() => setEditingId(null)} busy={busy} />
+              : <OrderItemRow key={item.id} item={item} removeId={removeId}
+                  onEdit={() => { setEditingId(item.id); setEditState(toState(item)); setConflict(false); }}
+                  onRemove={() => setRemoveId(item.id)}
+                  onRemoveConfirm={() => handleRemove(item.id)}
+                  onRemoveCancel={() => setRemoveId(null)}
+                  busy={busy} />
+          )}
+          {addOpen && (
+            <ItemEditRow value={addState} onChange={setAddState} onSave={handleAdd} onCancel={() => { setAddOpen(false); setAddState(BLANK); }} busy={busy} />
+          )}
+          {conflict && <p role="alert" aria-live="assertive" className="text-xs text-red-600">Konflikt — odśwież</p>}
+        </div>
+      </AdminCard>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 // packages/ui/src/components/Chip.tsx
 // Filter chip — toggleable pill with active/pink/dashed variants from globals.css.
-// < 40 LOC per granulate directive. No log.debug (presentational, no lib/log.ts dep).
+// < 50 LOC per granulate directive. No log.debug (presentational, no lib/log.ts dep).
 
 import React from "react";
 
@@ -13,8 +13,13 @@ export interface ChipProps {
   color?: ChipColor;
   variant?: ChipVariant;
   onClick?: () => void;
+  disabled?: boolean;
+  title?: string;
   icon?: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
+  "aria-pressed"?: boolean;
+  "aria-label"?: string;
 }
 
 export function Chip({
@@ -23,8 +28,13 @@ export function Chip({
   color = "default",
   variant = "solid",
   onClick,
+  disabled = false,
+  title,
   icon,
   className = "",
+  style,
+  "aria-pressed": ariaPressedProp,
+  "aria-label": ariaLabel,
 }: ChipProps) {
   const cls = [
     "chip",
@@ -36,11 +46,34 @@ export function Chip({
     .filter(Boolean)
     .join(" ");
 
+  const ariaPressed = ariaPressedProp ?? (onClick ? active : undefined);
+
+  // Render as button when interactive or disabled (so :disabled state works)
+  if (onClick || disabled) {
+    return (
+      <button
+        type="button"
+        className={cls}
+        onClick={disabled ? undefined : onClick}
+        disabled={disabled}
+        title={title}
+        data-color={color}
+        style={style}
+        aria-pressed={ariaPressed}
+        aria-label={ariaLabel}
+      >
+        {icon && <span className="flex items-center">{icon}</span>}
+        {children}
+      </button>
+    );
+  }
+
   return (
     <span
       className={cls}
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
+      title={title}
+      data-color={color}
+      style={style}
     >
       {icon && <span className="flex items-center">{icon}</span>}
       {children}

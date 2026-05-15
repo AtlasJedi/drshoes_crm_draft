@@ -1757,9 +1757,9 @@
     {
       "id": "9-27",
       "title": "OrderDrawer footer actions + header reskin",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "f46cc5d",
+      "dispatch_log": "docs/dispatch-log/9-27-2026-05-15T2210Z.md"
     },
     {
       "id": "9-28",
