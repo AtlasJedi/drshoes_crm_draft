@@ -1743,9 +1743,9 @@
     {
       "id": "9-25",
       "title": "<OrderDrawerNotes> sticky-notes NEW",
-      "status": "pending",
+      "status": "completed",
       "commit_sha": null,
-      "dispatch_log": null
+      "dispatch_log": "docs/dispatch-log/9-25-2026-05-15T200750Z.md"
     },
     {
       "id": "9-26",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
 import type { Route } from "next";
+import { I } from "@repo/ui";
 import { createLogger } from "@/lib/log";
 import type { OrderDto } from "@/lib/orders/types";
 import type { UserStubDto } from "@/lib/users/types";
@@ -54,15 +55,28 @@ export function OrderDrawer({ initialOrder, users }: Props) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40" />
         <Dialog.Content
-          className={[
-            "fixed inset-y-0 right-0 z-50 w-full max-w-lg bg-paper shadow-2xl flex flex-col",
-            "data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
-            "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right",
-            "duration-200",
-          ].join(" ")}
           aria-describedby={undefined}
+          style={{
+            position: "fixed",
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: 540,
+            background: "var(--paper)",
+            borderLeft: "3px solid var(--ink)",
+            boxShadow: "-12px 0 30px rgba(0,0,0,0.18)",
+            display: "flex",
+            flexDirection: "column",
+            animation: "drawerIn 0.25s ease",
+            zIndex: 50,
+          }}
         >
-          <OrderDrawerHeader code={order.code} status={order.status} />
+          <OrderDrawerHeader
+            code={order.code}
+            status={order.status}
+            clientName={order.clientName}
+            receivedAt={order.receivedAt}
+          />
 
           <div className="flex-1 overflow-y-auto">
             <OrderDrawerStatusTimeline currentStatus={order.status} />
@@ -83,6 +97,30 @@ export function OrderDrawer({ initialOrder, users }: Props) {
               refreshKey={refreshKey}
               onComposeClick={() => setComposeOpen(true)}
             />
+          </div>
+
+          {/* Footer action bar */}
+          <div style={{
+            padding: 14, borderTop: "2px solid var(--ink)",
+            background: "#fff", display: "flex", gap: 8, flexWrap: "wrap",
+            alignItems: "center",
+          }}>
+            {/* zmień status — scrolls to / triggers the status changer in body */}
+            <button className="btn-clean primary">zmień status</button>
+            {/* convenience shortcut: marks order WYDANE directly */}
+            <button className="btn-clean acid">oznacz jako wydane</button>
+            <button className="btn-clean" onClick={() => setComposeOpen(true)}>
+              <I.send /> wiadomość
+            </button>
+            <button className="btn-clean">paragon</button>
+            <div style={{ flex: 1 }} />
+            <button
+              className="btn-clean"
+              style={{ color: "var(--red)", borderColor: "var(--red)" }}
+              aria-label="Anuluj zlecenie"
+            >
+              anuluj
+            </button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
