@@ -1868,9 +1868,9 @@
     {
       "id": "9-42",
       "title": "Clients reskin post-audit",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "f7ee0db1743bfab6a09441da2f233663c6a087d5",
+      "dispatch_log": "docs/dispatch-log/9-42-2026-05-15T230000Z.md"
     },
     {
       "id": "9-43",
