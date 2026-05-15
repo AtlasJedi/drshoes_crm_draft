@@ -1630,9 +1630,9 @@
     {
       "id": "9-9",
       "title": "<DrShoesMark> brand logo SVG",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e8a7220",
+      "dispatch_log": "docs/dispatch-log/9-9-2026-05-15T213900Z.md"
     },
     {
       "id": "9-10",
@@ -1644,9 +1644,9 @@
     {
       "id": "9-11",
       "title": "<StatTile> with accent left-bar",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e8a7220",
+      "dispatch_log": "docs/dispatch-log/9-11-2026-05-15T193955Z.md"
     },
     {
       "id": "9-12",
