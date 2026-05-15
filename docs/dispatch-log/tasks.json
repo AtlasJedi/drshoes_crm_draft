@@ -1616,9 +1616,9 @@
     {
       "id": "9-7",
       "title": "<Splatter> SVG primitive",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "3583aec",
+      "dispatch_log": "docs/dispatch-log/9-7-2026-05-15T213748Z.md"
     },
     {
       "id": "9-8",
