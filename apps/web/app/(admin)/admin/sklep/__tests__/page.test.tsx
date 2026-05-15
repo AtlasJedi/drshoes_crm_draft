@@ -3,21 +3,23 @@ import { describe, it, expect, vi } from "vitest";
 import SklepPage from "../page";
 
 vi.mock("@/lib/log", () => ({
-  createLogger: () => ({ info: vi.fn(), debug: vi.fn(), warn: vi.fn() }),
+  createLogger: () => ({ info: vi.fn(), debug: vi.fn(), warn: vi.fn(), error: vi.fn() }),
+}));
+vi.mock("@/app/(admin)/admin/_components/PageHeaderContext", () => ({
+  usePageHeader: vi.fn(),
 }));
 
 describe("SklepPage", () => {
-  it("renders placeholder card with correct Polish copy", () => {
+  it("renders the sklep shell (not the placeholder card)", () => {
     render(<SklepPage />);
-    expect(screen.getByText("Sklep")).toBeInTheDocument();
-    expect(screen.getByText(/do implementacji w przyszłości/i)).toBeInTheDocument();
-    expect(screen.getByText(/zarządzane poza panelem/i)).toBeInTheDocument();
+    expect(screen.queryByText(/do implementacji w przyszłości/i)).not.toBeInTheDocument();
   });
 
-  it("renders without console errors", () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+  it("renders filter chips", () => {
     render(<SklepPage />);
-    expect(consoleSpy).not.toHaveBeenCalled();
-    consoleSpy.mockRestore();
+    // "wszystkie" appears only in the filter chip row
+    expect(screen.getByText(/wszystkie/i)).toBeInTheDocument();
+    // "dostępne" appears in both filter chips and Stamp overlays — at least one must exist
+    expect(screen.getAllByText(/dostępne/i).length).toBeGreaterThan(0);
   });
 });
