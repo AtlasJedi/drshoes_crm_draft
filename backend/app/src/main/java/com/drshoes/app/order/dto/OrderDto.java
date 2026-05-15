@@ -12,6 +12,7 @@ public record OrderDto(
     UUID id,
     String code,
     UUID clientId,
+    String clientName,
     OrderStatus status,
     OrderSource source,
     Instant receivedAt,
@@ -31,9 +32,9 @@ public record OrderDto(
     int quotedPriceCents,
     int advancePaidCents
 ) {
-    public static OrderDto of(Order o, List<OrderItemDto> items) {
+    public static OrderDto of(Order o, List<OrderItemDto> items, String clientName) {
         return new OrderDto(
-            o.getId(), o.getCode(), o.getClientId(), o.getStatus(), o.getSource(),
+            o.getId(), o.getCode(), o.getClientId(), clientName, o.getStatus(), o.getSource(),
             o.getReceivedAt(), o.getPlannedPickupAt(), o.getPickedUpAt(),
             o.getAssignedCraftsmanId(), o.getCurrentStorageLocationId(),
             o.getTags(), o.getTotalPriceCents(), o.getCurrency(),

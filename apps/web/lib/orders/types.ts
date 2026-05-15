@@ -50,6 +50,7 @@ export interface OrderDto {
   id: string;
   code: string;
   clientId: string;
+  clientName: string;
   status: OrderStatus;
   source: OrderSource;
   receivedAt: string | null;    // ISO-8601
@@ -75,6 +76,7 @@ export interface OrderListRow {
   id: string;
   code: string;
   clientId: string;
+  clientName: string;
   status: OrderStatus;
   totalPriceCents: number;
   currency: string;

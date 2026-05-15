@@ -64,7 +64,7 @@ export function OrderDrawerCoreFields({ order, users, onOrderUpdate }: Props) {
   return (
     <div className="px-6 py-4 space-y-4">
       <FieldRow label="Klient">
-        <p className="text-sm text-admin-ink">{order.clientId}</p>
+        <p className="text-sm text-admin-ink">{order.clientName}</p>
       </FieldRow>
 
       <FieldRow label="Opis">

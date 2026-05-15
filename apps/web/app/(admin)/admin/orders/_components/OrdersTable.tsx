@@ -139,7 +139,7 @@ export function OrdersTable({
                     {STATUS_LABELS_PL[row.status]}
                   </span>
                 </td>
-                <td className={tdCls + " text-admin-mute"}>{row.clientId.slice(0, 8)}…</td>
+                <td className={tdCls + " text-admin-mute"}>{row.clientName}</td>
                 <td className={tdCls + " text-admin-mute"}>{row.description ?? "—"}</td>
                 <td className={tdCls + " text-admin-mute font-mono text-[13px]"}>{fmtDate(row.receivedAt)}</td>
                 <td className={tdCls + " font-mono text-[13px]"}>{fmtDate(row.plannedPickupAt)}</td>

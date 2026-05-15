@@ -29,6 +29,7 @@ const ROWS: OrderListRow[] = [
     pickedUpAt: null,
     quotedPriceCents: 0,
     advancePaidCents: 0,
+    clientName: "Test Klient",
   },
 ];
 

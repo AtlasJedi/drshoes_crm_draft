@@ -10,6 +10,7 @@ public record OrderListRow(
     UUID id,
     String code,
     UUID clientId,
+    String clientName,
     OrderStatus status,
     int totalPriceCents,
     String currency,
@@ -23,9 +24,9 @@ public record OrderListRow(
     int quotedPriceCents,
     int advancePaidCents
 ) {
-    public static OrderListRow of(Order o) {
+    public static OrderListRow of(Order o, String clientName) {
         return new OrderListRow(
-            o.getId(), o.getCode(), o.getClientId(), o.getStatus(),
+            o.getId(), o.getCode(), o.getClientId(), clientName, o.getStatus(),
             o.getTotalPriceCents(), o.getCurrency(), o.getDescription(),
             o.getPlannedPickupAt(), o.getVersion(), o.getUpdatedAt(),
             o.getCreatedAt(), o.getReceivedAt(), o.getPickedUpAt(),

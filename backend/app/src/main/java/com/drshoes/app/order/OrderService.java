@@ -15,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Command + query facade for the Order aggregate root.
@@ -61,10 +64,14 @@ public class OrderService {
                                    String tag, Instant plannedPickupAtFrom,
                                    Instant plannedPickupAtTo, UUID clientId,
                                    Pageable pageable) {
-        return orderRepo.findAll(
+        var page = orderRepo.findAll(
             OrderSpecifications.forList(statuses, assigneeId, kinds, q, tag,
                                         plannedPickupAtFrom, plannedPickupAtTo, clientId),
-            pageable).map(OrderListRow::of);
+            pageable);
+        Set<UUID> cids = page.map(Order::getClientId).toSet();
+        Map<UUID, String> names = clientRepo.findAllById(cids).stream()
+            .collect(Collectors.toMap(c -> c.getId(), c -> c.getFullName()));
+        return page.map(o -> OrderListRow.of(o, names.getOrDefault(o.getClientId(), "—")));
     }
 
     // ---- commands ----
@@ -179,6 +186,8 @@ public class OrderService {
     private OrderDto toDto(Order o) {
         List<OrderItemDto> items = itemRepo.findAllByOrderIdOrderByPosition(o.getId())
             .stream().map(OrderItemDto::of).toList();
-        return OrderDto.of(o, items);
+        String clientName = clientRepo.findById(o.getClientId())
+            .map(c -> c.getFullName()).orElse("—");
+        return OrderDto.of(o, items, clientName);
     }
 }
