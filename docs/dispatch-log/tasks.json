@@ -1708,9 +1708,9 @@
     {
       "id": "9-20",
       "title": "<MixDonut> 3-segment restyle",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "abe8c05",
+      "dispatch_log": "docs/dispatch-log/9-20-2026-05-15T20-01-34Z.md"
     },
     {
       "id": "9-21",
