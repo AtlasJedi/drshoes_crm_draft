@@ -168,6 +168,8 @@ export interface OrderListFilters {
   /** Filters by item kind — maps to ?type= repeated param. */
   type?: OrderItemKind[];
   craftsmanId?: string;
+  /** Filter by client UUID — maps to ?clientId= param. */
+  clientId?: string;
   q?: string;
   /** Matches orders whose tags JSONB array contains this value. */
   tag?: string;

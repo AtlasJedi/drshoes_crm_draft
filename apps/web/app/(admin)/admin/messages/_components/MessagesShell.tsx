@@ -1,10 +1,14 @@
 "use client";
 
+// MessagesShell — 3-col grid: thread list (320px) | main (1fr) | client profile (280px).
+// MessagesHeader removed in 9-30; topbar title set via usePageHeader through
+// MessagesPageHeaderSetter (server component in page.tsx).
+// < 70 LOC per granulate directive.
+
 import { useState } from "react";
-import { MessagesHeader } from "./MessagesHeader";
 import { ThreadList } from "./ThreadList";
 import { SelectedThread } from "./SelectedThread";
-import { ThreadClientPanel } from "./ThreadClientPanel";
+import { ClientMiniProfile } from "./ClientMiniProfile";
 import { EmptyState } from "./EmptyState";
 import { NewMessageDialog } from "./NewMessageDialog";
 import { useThreadSelection } from "./useThreadSelection";
@@ -16,19 +20,19 @@ interface Props {
 
 /**
  * Top-level client shell for the messages page.
- * Composes: MessagesHeader, ThreadList (sidebar), SelectedThread (main column),
- * ThreadClientPanel (right rail — task 5-18), and NewMessageDialog (task 5-20).
+ * 3-col grid: ThreadList (left) | SelectedThread (centre) | ClientMiniProfile (right).
+ * usePageHeader is called via MessagesPageHeaderSetter (server component) for the topbar.
  */
 export function MessagesShell({ initialThreadId }: Props) {
   const sel = useThreadSelection(initialThreadId);
   const [newMsgOpen, setNewMsgOpen] = useState(false);
-  // Lifted from SelectedThread via onLoaded; drives the right-rail panel.
+  // Lifted from SelectedThread via onLoaded; drives the right-rail ClientMiniProfile.
   const [loadedThread, setLoadedThread] = useState<MessageThreadDto | null>(null);
 
   return (
-    <div className="flex flex-col h-screen bg-paper">
-      <MessagesHeader onNewMessage={() => setNewMsgOpen(true)} />
-      <div className="flex flex-1 overflow-hidden">
+    <div className="h-full flex flex-col">
+      <div className="flex-1 grid grid-cols-admin-msg-3 overflow-hidden border-t-2 border-ink">
+        {/* LEFT: thread list with search + filter chips + channel chips */}
         <ThreadList
           selectedId={sel.selectedId}
           filter={sel.filter}
@@ -36,10 +40,12 @@ export function MessagesShell({ initialThreadId }: Props) {
           q={sel.q}
           onSelect={sel.setSelectedId}
           onFilterChange={sel.setFilter}
+          onChannelChange={sel.setChannel}
           onQChange={sel.setQ}
         />
 
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* CENTRE: active thread or empty state */}
+        <main className="flex flex-col min-w-0 overflow-hidden" style={{ background: "var(--paper-2, #ebe4d4)" }}>
           {!sel.selectedId && <EmptyState variant="no-selection" />}
           {sel.selectedId && (
             <SelectedThread
@@ -50,10 +56,8 @@ export function MessagesShell({ initialThreadId }: Props) {
           )}
         </main>
 
-        {/* Right rail: only for matched threads (clientId non-null) */}
-        {sel.selectedId && loadedThread && loadedThread.clientId && (
-          <ThreadClientPanel thread={loadedThread} />
-        )}
+        {/* RIGHT: client mini-profile (empty panel when no thread selected) */}
+        <ClientMiniProfile clientId={loadedThread?.clientId ?? null} />
       </div>
       <NewMessageDialog
         open={newMsgOpen}

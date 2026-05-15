@@ -1787,9 +1787,9 @@
     {
       "id": "9-31",
       "title": "Triggers <TriggerEditPanel> NEW + placeholder chips",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "baed648",
+      "dispatch_log": "docs/dispatch-log/9-31-2026-05-15T20-24-53Z.md"
     },
     {
       "id": "9-32",
@@ -1801,9 +1801,10 @@
     {
       "id": "9-33",
       "title": "Sklep admin product grid + edit panel reskin",
-      "status": "pending",
+      "status": "done",
       "commit_sha": null,
-      "dispatch_log": null
+      "dispatch_log": "docs/dispatch-log/9-33-2026-05-15.md",
+      "commit": "dbf668a"
     },
     {
       "id": "9-34",

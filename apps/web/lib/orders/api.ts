@@ -27,6 +27,7 @@ function buildOrdersQuery(filters: OrderListFilters, page: number, size: number)
     }
   }
   if (filters.craftsmanId) params.set("craftsmanId", filters.craftsmanId);
+  if (filters.clientId) params.set("clientId", filters.clientId);
   if (filters.q) params.set("q", filters.q);
   if (filters.type?.length) filters.type.forEach((k) => params.append("type", k));
   if (filters.tag) params.set("tag", filters.tag);

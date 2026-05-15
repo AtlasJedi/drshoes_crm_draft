@@ -1,15 +1,21 @@
 "use client";
 
+// ThreadList — 320px left sidebar: search + filter chips + channel chips + rows.
+// Design parity per 9-30: border-r-2 border-ink, Chip primitives, graffiti search box.
+// < 80 LOC per granulate directive.
+
 import { useState, useEffect, useRef } from "react";
 import { createLogger } from "@/lib/log";
 import { listThreads } from "@/lib/messaging/api";
 import type { MessageThreadDto, ThreadFilter, Channel } from "@/lib/messaging/types";
 import { ThreadListRow } from "./ThreadListRow";
-import { FilterChip } from "./FilterChip";
 import { ThreadListSkeleton } from "./ThreadListSkeleton";
+import { Chip } from "@repo/ui";
+import { I } from "@repo/ui";
 
 const log = createLogger("messaging.threadlist");
 const POLL_MS = 30_000;
+const CHANNELS: Channel[] = ["WHATSAPP", "EMAIL", "SMS"];
 
 interface Props {
   selectedId: string | null;
@@ -18,10 +24,11 @@ interface Props {
   q: string;
   onSelect: (id: string) => void;
   onFilterChange: (f: ThreadFilter) => void;
+  onChannelChange: (ch: Channel | null) => void;
   onQChange: (q: string) => void;
 }
 
-export function ThreadList({ selectedId, filter, channel, q, onSelect, onFilterChange, onQChange }: Props) {
+export function ThreadList({ selectedId, filter, channel, q, onSelect, onFilterChange, onChannelChange, onQChange }: Props) {
   const [threads, setThreads] = useState<MessageThreadDto[]>([]);
   const [loading, setLoading] = useState(true);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -45,32 +52,51 @@ export function ThreadList({ selectedId, filter, channel, q, onSelect, onFilterC
   }, [filter, channel, q]);
 
   const unreadCount = threads.filter((t) => t.unreadCount > 0).length;
-  const unmatchedCount = threads.filter((t) => t.unmatched).length;
-  const empty = !loading && threads.length === 0;
 
   return (
-    <aside className="w-[380px] shrink-0 border-r border-admin-line bg-white flex flex-col">
-      <div className="px-4 pt-4 pb-3 border-b border-admin-line">
-        <div className="relative mb-3">
-          <input type="text" value={q} onChange={(e) => onQChange(e.target.value)}
+    <aside className="shrink-0 border-r-2 border-ink flex flex-col bg-white overflow-hidden" style={{ width: 320 }}>
+      <div className="px-3 pt-3 pb-2 border-b border-admin-line flex flex-col gap-2">
+        {/* search box */}
+        <div className="flex items-center gap-2 px-2.5 py-1.5 border-[1.5px] border-ink">
+          <span className="text-admin-mute shrink-0">{I.search}</span>
+          <input
+            type="text"
+            value={q}
+            onChange={(e) => onQChange(e.target.value)}
             aria-label="Szukaj wątków"
-            placeholder="Szukaj klienta, treści, numeru…"
-            className="w-full h-9 pl-9 pr-3 rounded-md border border-admin-line bg-paper text-[13px] focus:outline-none focus:ring-2 focus:ring-acid/60 focus:border-ink/40" />
-          <svg className="absolute left-3 top-2.5 text-admin-mute" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-          </svg>
+            placeholder="Szukaj…"
+            style={{ border: 0, outline: 0, flex: 1, fontFamily: "var(--font-body)", fontSize: 12 }}
+          />
         </div>
-        <div className="flex flex-wrap gap-1.5">
-          <FilterChip active={filter === "ALL"} label="Wszystkie" count={threads.length} onClick={() => onFilterChange("ALL")} />
-          <FilterChip active={filter === "UNREAD"} label="Nieprzeczytane" count={unreadCount} onClick={() => onFilterChange("UNREAD")} />
-          <FilterChip active={filter === "UNMATCHED"} label="Niesparowane" count={unmatchedCount} onClick={() => onFilterChange("UNMATCHED")} />
+        {/* filter chips row 1 */}
+        <div className="flex gap-1.5 flex-wrap">
+          <Chip active={filter === "UNREAD"} onClick={() => onFilterChange("UNREAD")}>
+            nieprzeczytane ({unreadCount})
+          </Chip>
+          {/* wymaga odp. — TODO: map to NEEDS_REPLY when backend adds filter param */}
+          <Chip active={false} onClick={() => onFilterChange("ALL")}>wymaga odp.</Chip>
+          <Chip active={filter === "ALL"} onClick={() => onFilterChange("ALL")}>wszystkie</Chip>
+        </div>
+        {/* channel chips row 2 */}
+        <div className="flex gap-1.5">
+          {CHANNELS.map((ch) => (
+            <Chip key={ch} active={channel === ch} onClick={() => onChannelChange(channel === ch ? null : ch)}>
+              {ch === "WHATSAPP" ? "WhatsApp" : ch}
+            </Chip>
+          ))}
+          <Chip active={false} onClick={() => {}}>IG</Chip>
         </div>
       </div>
       <div className="flex-1 overflow-auto">
         {loading && threads.length === 0 && <ThreadListSkeleton />}
-        {empty && filter === "UNREAD" && <div className="flex items-center justify-center py-16 text-[13px] text-admin-mute">Brak nieprzeczytanych wiadomości</div>}
-        {empty && filter !== "UNREAD" && <div className="flex items-center justify-center py-16 text-[13px] text-admin-mute">Brak wątków wiadomości</div>}
-        {threads.map((t) => <ThreadListRow key={t.id} thread={t} selected={t.id === selectedId} onSelect={onSelect} />)}
+        {!loading && threads.length === 0 && (
+          <div className="flex items-center justify-center py-16 t-mono text-[12px] text-admin-mute">
+            Brak wiadomości
+          </div>
+        )}
+        {threads.map((t) => (
+          <ThreadListRow key={t.id} thread={t} selected={t.id === selectedId} onSelect={onSelect} />
+        ))}
       </div>
     </aside>
   );
