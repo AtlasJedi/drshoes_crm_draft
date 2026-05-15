@@ -1839,9 +1839,9 @@
     {
       "id": "9-38",
       "title": "<NewsTeaser> public landing",
-      "status": "pending",
+      "status": "completed",
       "commit_sha": null,
-      "dispatch_log": null
+      "dispatch_log": "docs/dispatch-log/9-38-2026-05-15T204340Z.md"
     },
     {
       "id": "9-39",
