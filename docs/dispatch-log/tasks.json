@@ -1687,9 +1687,9 @@
     {
       "id": "9-17",
       "title": "AdminLayout integration + per-page usePageHeader callsites",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "2ee3444",
+      "dispatch_log": "docs/dispatch-log/9-17-2026-05-15T2155Z.md"
     },
     {
       "id": "9-18",
