@@ -11,6 +11,12 @@ export default defineConfig({
     environmentOptions: {
       jsdom: { resources: "usable" },
     },
+    include: [
+      "**/__tests__/**/*.{ts,tsx}",
+      "**/*.{spec,test}.{ts,tsx}",
+      "../../packages/ui/src/**/__tests__/**/*.{ts,tsx}",
+      "../../packages/ui/src/**/*.{spec,test}.{ts,tsx}",
+    ],
     exclude: ["**/node_modules/**", "**/dist/**", "e2e/**"],
   },
 });
