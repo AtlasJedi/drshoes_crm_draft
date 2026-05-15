@@ -1651,9 +1651,9 @@
     {
       "id": "9-12",
       "title": "<Toggle> ink ribbon + acid dot",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "3bdc5d1",
+      "dispatch_log": "docs/dispatch-log/9-12-2026-05-15T1940Z.md"
     },
     {
       "id": "9-13",
