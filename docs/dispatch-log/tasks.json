@@ -1825,9 +1825,9 @@
     {
       "id": "9-36",
       "title": "<Hero> public landing",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "b6e732b",
+      "dispatch_log": "docs/dispatch-log/9-36-2026-05-15T120000Z.md"
     },
     {
       "id": "9-37",
