@@ -1780,9 +1780,9 @@
     {
       "id": "9-30",
       "title": "Messages 3-col layout + <ClientMiniProfile> NEW",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "2c256ce",
+      "dispatch_log": "docs/dispatch-log/9-30-2026-05-15T2029Z.md"
     },
     {
       "id": "9-31",
