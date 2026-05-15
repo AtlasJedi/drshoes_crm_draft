@@ -1609,9 +1609,9 @@
     {
       "id": "9-6",
       "title": "<Chip> primitive",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "1626320",
+      "dispatch_log": "docs/dispatch-log/9-6-2026-05-15T194001Z.md"
     },
     {
       "id": "9-7",
