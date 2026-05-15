@@ -81,8 +81,7 @@ describe("weekDays", () => {
   it("consecutive days differ by 1", () => {
     const days = weekDays(new Date(2026, 4, 12));
     for (let i = 1; i < 7; i++) {
-      const diff = days[i]!.getDate() - days[i - 1]!.getDate();
-      // diff is 1 except at month boundary where it wraps; check timestamp diff instead
+      // getDate() diff is 1 except at month boundary where it wraps; check timestamp diff instead
       expect(days[i]!.getTime() - days[i - 1]!.getTime()).toBe(86_400_000);
     }
   });
