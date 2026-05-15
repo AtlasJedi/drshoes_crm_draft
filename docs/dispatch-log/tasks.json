@@ -1736,9 +1736,9 @@
     {
       "id": "9-24",
       "title": "<OrderDrawerStatusTimeline> NEW (5-step timeline)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "2d81ee2",
+      "dispatch_log": "docs/dispatch-log/9-24-2026-05-15T220700Z.md"
     },
     {
       "id": "9-25",
