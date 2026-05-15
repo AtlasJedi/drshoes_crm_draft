@@ -7,6 +7,7 @@ import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import { getTriggersServer } from "@/lib/messaging/api-server";
 import { TriggerToggle } from "./_components/TriggerToggle";
+import { TriggersPageHeaderSetter } from "./_components/TriggersPageHeaderSetter";
 
 const log = createLogger("admin-triggers-page");
 
@@ -34,6 +35,7 @@ export default async function TriggersPage() {
 
   return (
     <div>
+      <TriggersPageHeaderSetter />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-admin-ink">Wyzwalacze</h1>
       </div>

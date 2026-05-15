@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import { getTemplatesServer } from "@/lib/messaging/api-server";
+import { TemplatesPageHeaderSetter } from "./_components/TemplatesPageHeaderSetter";
 
 const log = createLogger("admin-templates-page");
 
@@ -21,6 +22,7 @@ export default async function TemplatesPage() {
 
   return (
     <div>
+      <TemplatesPageHeaderSetter />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-admin-ink">Szablony wiadomości</h1>
         <Link

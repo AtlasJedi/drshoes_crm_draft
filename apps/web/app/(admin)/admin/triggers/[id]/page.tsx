@@ -7,6 +7,7 @@ import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import { getTriggerServer } from "@/lib/messaging/api-server";
 import { TriggerToggle } from "../_components/TriggerToggle";
+import { TriggerDetailPageHeaderSetter } from "./_components/TriggerDetailPageHeaderSetter";
 
 const log = createLogger("admin-trigger-detail-page");
 
@@ -22,6 +23,7 @@ export default async function TriggerDetailPage({
 
   return (
     <div>
+      <TriggerDetailPageHeaderSetter name={t.name} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-admin-ink">{t.name}</h1>
         <Link

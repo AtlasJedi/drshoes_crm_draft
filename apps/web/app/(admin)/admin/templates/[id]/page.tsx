@@ -3,6 +3,7 @@ import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import { getTemplateServer } from "@/lib/messaging/api-server";
 import { TemplateForm } from "../_components/TemplateForm";
+import { TemplateDetailPageHeaderSetter } from "./_components/TemplateDetailPageHeaderSetter";
 
 const log = createLogger("admin-template-edit-page");
 
@@ -18,6 +19,7 @@ export default async function EditTemplatePage({
 
   return (
     <div>
+      <TemplateDetailPageHeaderSetter name={t.name} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-admin-ink">
           Edytuj: {t.name}

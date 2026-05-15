@@ -8,6 +8,7 @@ import { OrdersPageClient } from "./_components/OrdersPageClient";
 import { OrderDrawer } from "./_components/OrderDrawer";
 import { OrderViewTabs } from "./_components/OrderViewTabs";
 import { SavedFilterPresets } from "./_components/SavedFilterPresets";
+import { OrdersPageHeaderSetter } from "./_components/OrdersPageHeaderSetter";
 
 const log = createLogger("admin-orders-page");
 
@@ -82,6 +83,10 @@ export default async function OrdersPage({
 
   return (
     <div>
+      <OrdersPageHeaderSetter
+        activeCount={pageData?.totalElements ?? 0}
+        readyCount={0}
+      />
       <div className="flex items-center justify-between mb-7">
         <h1 className="text-[28px] font-bold text-admin-ink tracking-tight">Zlecenia</h1>
         <Link

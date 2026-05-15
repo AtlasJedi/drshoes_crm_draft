@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { getMe } from "@/lib/auth/session";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { BrowserOtelInit } from "@/components/admin/BrowserOtelInit";
+import { PageHeaderProvider } from "@/app/(admin)/admin/_components/PageHeaderContext";
 import { createLogger } from "@/lib/log";
 
 const log = createLogger("admin-layout");
@@ -26,10 +28,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   log.info("op=guard outcome=ok", { path, userId: me.id, role: me.role });
 
   return (
-    <div className="min-h-screen bg-admin-bg text-admin-ink flex">
-      <BrowserOtelInit />
-      <AdminSidebar me={me} />
-      <main className="flex-1 p-8">{children}</main>
-    </div>
+    <PageHeaderProvider>
+      <div className="min-h-screen bg-admin-bg text-admin-ink flex">
+        <BrowserOtelInit />
+        <AdminSidebar me={me} />
+        <main className="flex-1 flex flex-col overflow-auto">
+          <AdminTopbar />
+          <div className="flex-1 p-6">{children}</div>
+        </main>
+      </div>
+    </PageHeaderProvider>
   );
 }

@@ -8,6 +8,7 @@
  * State primitives: @/components/state/* shipped in 6-12.
  */
 
+import { KanbanPageHeaderSetter } from "./_components/KanbanPageHeaderSetter";
 import { Suspense } from "react";
 import { createLogger } from "@/lib/log";
 import { getKanbanBoardServer } from "@/lib/kanban/api-server";
@@ -49,6 +50,7 @@ export default async function KanbanPage() {
 
   return (
     <div className="flex flex-col h-full">
+      <KanbanPageHeaderSetter />
       {/* Top bar: view switcher */}
       <div className="px-6 pt-4">
         <OrderViewTabs active="kanban" />

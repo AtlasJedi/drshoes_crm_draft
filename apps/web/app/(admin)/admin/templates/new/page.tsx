@@ -1,10 +1,12 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { TemplateForm } from "../_components/TemplateForm";
+import { NewTemplatePageHeaderSetter } from "./_components/NewTemplatePageHeaderSetter";
 
 export default function NewTemplatePage() {
   return (
     <div>
+      <NewTemplatePageHeaderSetter />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-admin-ink">Nowy szablon</h1>
         <Link

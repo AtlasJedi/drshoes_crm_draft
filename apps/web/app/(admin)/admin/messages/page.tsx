@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { MessagesShell } from "./_components/MessagesShell";
+import { MessagesPageHeaderSetter } from "./_components/MessagesPageHeaderSetter";
 
 interface Props {
   searchParams: Promise<{ thread?: string }>;
@@ -12,8 +13,11 @@ interface Props {
 export default async function MessagesPage({ searchParams }: Props) {
   const { thread } = await searchParams;
   return (
-    <Suspense>
-      <MessagesShell initialThreadId={thread ?? null} />
-    </Suspense>
+    <>
+      <MessagesPageHeaderSetter />
+      <Suspense>
+        <MessagesShell initialThreadId={thread ?? null} />
+      </Suspense>
+    </>
   );
 }

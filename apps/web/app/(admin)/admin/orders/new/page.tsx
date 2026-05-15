@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createLogger } from "@/lib/log";
 import { listUsersServer } from "@/lib/orders/api-server";
 import { NewOrderForm } from "./_components/NewOrderForm";
+import { NewOrderPageHeaderSetter } from "./_components/NewOrderPageHeaderSetter";
 
 const log = createLogger("admin-orders-new-page");
 
@@ -20,6 +21,7 @@ export default async function NewOrderPage() {
 
   return (
     <div>
+      <NewOrderPageHeaderSetter />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-admin-ink">Nowe zlecenie</h1>
         <Link

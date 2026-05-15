@@ -16,6 +16,7 @@
  * Design: admin.jsx:481-617.
  */
 
+import { CalendarPageHeaderSetter } from "./_components/CalendarPageHeaderSetter";
 import Link from "next/link";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
@@ -173,6 +174,7 @@ export default async function CalendarPage({
 
   return (
     <div className="flex flex-col h-full">
+      <CalendarPageHeaderSetter />
       {/* Top bar: view tabs + mode toggle + navigation */}
       <div className="px-6 pt-4 pb-0 flex justify-between items-center gap-4">
         <OrderViewTabs active="calendar" />

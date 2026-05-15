@@ -15,6 +15,7 @@ import {
 import { listThreadsForClientServer } from "@/lib/messaging/api-server";
 import { ClientHeader } from "./_components/ClientHeader";
 import { ClientSummaryTiles } from "./_components/ClientSummaryTiles";
+import { ClientDetailPageHeaderSetter } from "./_components/ClientDetailPageHeaderSetter";
 import { STATUS_LABELS_PL, STATUS_PILL_CLASS } from "@/lib/orders/status";
 import type { OrderStatus } from "@/lib/orders/types";
 
@@ -61,6 +62,7 @@ export default async function ClientOverviewPage({ params }: Props) {
 
   return (
     <div>
+      <ClientDetailPageHeaderSetter name={[client.firstName, client.lastName].filter(Boolean).join(" ")} />
       <ClientHeader client={client} />
       <ClientSummaryTiles summary={summary} />
 

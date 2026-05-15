@@ -16,6 +16,7 @@ import { ReadyForPickupPanel } from "./_components/ReadyForPickupPanel";
 import { RecentMessagesPanel } from "./_components/RecentMessagesPanel";
 import { Skeleton } from "@/components/state/Skeleton";
 import { ErrorBanner } from "@/components/state/ErrorBanner";
+import { DashboardPageHeaderSetter } from "./_components/DashboardPageHeaderSetter";
 
 async function KpiSection() {
   let kpis;
@@ -45,7 +46,8 @@ async function ChartsSection() {
 
 export default async function AdminPage() {
   return (
-    <div className="flex flex-col gap-5 p-6">
+    <div className="flex flex-col gap-5">
+      <DashboardPageHeaderSetter />
       <Suspense fallback={<Skeleton height="h-24" />}>
         <KpiSection />
       </Suspense>

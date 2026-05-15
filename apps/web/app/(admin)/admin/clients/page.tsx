@@ -2,6 +2,7 @@ import { createLogger } from "@/lib/log";
 import { listClientsServer, searchClientsServer } from "@/lib/clients/api-server";
 import { ClientListSearchBox } from "./_components/ClientListSearchBox";
 import { ClientListTable } from "./_components/ClientListTable";
+import { ClientsPageHeaderSetter } from "./_components/ClientsPageHeaderSetter";
 import type { ClientSearchResult } from "@/lib/clients/types";
 import Link from "next/link";
 import type { Route } from "next";
@@ -41,6 +42,7 @@ export default async function ClientsPage({
 
   return (
     <div>
+      <ClientsPageHeaderSetter total={pageData?.totalElements} />
       <div className="flex items-center justify-between mb-7">
         <h1 className="text-[28px] font-bold text-admin-ink tracking-tight">Klienci</h1>
       </div>
