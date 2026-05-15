@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import type { CalendarOrderDto } from "@/lib/calendar/types";
 import { colorOfStatus } from "./utils";
+import { Tape } from "@repo/ui";
 
 interface CalendarCellProps {
   day: number;
@@ -46,9 +47,7 @@ export function CalendarCell({ day, isToday, orders }: CalendarCellProps) {
           {day}
         </span>
         {isToday && (
-          <span className="font-stencil text-[9px] px-2 py-px bg-acid border border-ink tracking-wider uppercase">
-            dziś
-          </span>
+          <Tape angle={2} style={{ fontSize: 9, padding: "1px 8px" }}>dziś</Tape>
         )}
       </div>
 

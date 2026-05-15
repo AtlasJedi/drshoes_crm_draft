@@ -1,8 +1,8 @@
 /**
  * Read-only side panel for orders with no planned_pickup_at (unscheduled[]).
  * Each row opens the drawer via ?orderId=. Drag deferred — hint renders disabled.
- * Legend sourced from admin.jsx:602-613.
  * Design: admin.jsx:578-613.
+ * M9: uses AdminCard, Chip, I.drag from @repo/ui. Drag stub per spec section 7 deferral.
  */
 "use client";
 
@@ -11,13 +11,13 @@ import type { Route } from "next";
 import type { CalendarOrderDto } from "@/lib/calendar/types";
 import type { OrderStatus } from "@/lib/orders/types";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
+import { AdminCard, Chip, I } from "@repo/ui";
 import { colorOfStatus } from "./utils";
 
 interface BezTerminuPanelProps {
   unscheduled: CalendarOrderDto[];
 }
 
-// Statuses shown in the legend (mirrors STATUS_INFO keys from admin.jsx)
 const LEGEND_STATUSES: OrderStatus[] = [
   "PRZYJETE",
   "W_REALIZACJI",
@@ -37,17 +37,17 @@ export function BezTerminuPanel({ unscheduled }: BezTerminuPanelProps) {
   }
 
   return (
-    <div className="admin-card flex flex-col p-4 overflow-auto gap-0">
+    <AdminCard padding={16} className="flex flex-col overflow-auto gap-0">
       {/* Header */}
       <div className="flex justify-between items-center mb-2.5">
         <span className="t-display" style={{ fontSize: 18 }}>
           Bez terminu
         </span>
-        <span className="chip font-mono text-xs">{unscheduled.length}</span>
+        <Chip>{unscheduled.length}</Chip>
       </div>
 
-      {/* Drag hint — disabled (drag deferred to a future milestone) */}
-      <p className="t-mono mb-3" style={{ fontSize: 10, color: "rgba(0,0,0,0.5)", letterSpacing: ".05em" }}>
+      {/* Drag hint — disabled (drag deferred to M10) */}
+      <p className="t-mono mb-3" style={{ fontSize: 10, opacity: 0.55, letterSpacing: ".05em" }}>
         przeciągnij na dzień by zaplanować
       </p>
 
@@ -62,20 +62,20 @@ export function BezTerminuPanel({ unscheduled }: BezTerminuPanelProps) {
             <button
               key={order.id}
               type="button"
+              draggable
+              onDragStart={() => console.warn("drag-drop wkrótce")} // TODO M10: wire drag-drop to calendar day planning endpoint
               onClick={() => openDrawer(order.id)}
-              className="text-left"
+              className="text-left cursor-grab"
               style={{
                 padding: 10,
                 border: "1.5px solid var(--ink)",
                 background: "#fff",
                 boxShadow: "2px 2px 0 var(--ink)",
-                cursor: "pointer",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                {/* Drag icon placeholder — non-interactive, deferred */}
-                <span style={{ color: "rgba(0,0,0,0.4)" }} aria-hidden>
-                  ⠿
+                <span style={{ color: "rgba(0,0,0,0.4)", display: "flex" }} aria-hidden>
+                  {I.drag}
                 </span>
                 <span style={{ fontSize: 13, fontWeight: 600 }}>{order.clientName}</span>
               </div>
@@ -115,6 +115,6 @@ export function BezTerminuPanel({ unscheduled }: BezTerminuPanelProps) {
           ))}
         </div>
       </div>
-    </div>
+    </AdminCard>
   );
 }
