@@ -30,3 +30,6 @@ hs_err_pid*.log
 # Playwright E2E artifacts (binaries live in ~/.cache/ms-playwright, not here)
 apps/web/test-results/
 apps/web/playwright-report/
+
+# M9 parity audit screenshots (generated at runtime by m9-parity-audit.spec.ts)
+screenshots/m9-parity/
