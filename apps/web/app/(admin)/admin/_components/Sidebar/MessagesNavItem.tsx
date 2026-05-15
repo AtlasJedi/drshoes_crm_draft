@@ -43,7 +43,7 @@ export function MessagesNavItem() {
       </svg>
       <span className="flex-1">Wiadomości</span>
       {unread > 0 && (
-        <span className="inline-flex items-center justify-center min-w-[20px] h-[18px] px-1.5 rounded-full bg-red-500 text-white text-[10.5px] font-bold leading-none">
+        <span className="inline-flex items-center justify-center min-w-[20px] h-[18px] px-1.5 rounded-full bg-[var(--pink)] text-[var(--ink)] text-[10.5px] font-bold leading-none">
           {fmt}
         </span>
       )}

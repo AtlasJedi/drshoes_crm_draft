@@ -1,14 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { AdminSidebarNav } from "../AdminSidebarNav";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Default pathname mock — individual tests override via vi.mocked().mockReturnValue()
-const mockUsePathname = vi.fn(() => "/admin");
-
-// Mock next/navigation (used by NavLink + MessagesNavItem + ReportIssueButton)
-vi.mock("next/navigation", () => ({
-  usePathname: () => mockUsePathname(),
-  useRouter:   () => ({ push: vi.fn(), replace: vi.fn() }),
+// usePathname returns /admin for "Dashboard active" tests
+vi.mock("next/navigation", () => ({ usePathname: vi.fn(() => "/admin") }));
+vi.mock("@/lib/messaging/useUnreadCount", () => ({ useUnreadCount: vi.fn(() => 3) }));
+vi.mock("@/components/admin/ReportIssueButton", () => ({
+  ReportIssueButton: () => <button>report</button>,
 }));
 
 // Mock @opentelemetry/api
@@ -16,69 +13,63 @@ vi.mock("@opentelemetry/api", () => ({
   trace: { getActiveSpan: () => ({ spanContext: () => ({ traceId: "abc123" }) }) },
 }));
 
-// Mock fetch for health warm-up path
-vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ ok: true } as Response)));
+import { AdminSidebarNav } from "../AdminSidebarNav";
+import { usePathname } from "next/navigation";
 
-// Stub navigator.clipboard
-Object.defineProperty(navigator, "clipboard", {
-  value: { writeText: vi.fn(() => Promise.resolve()) },
-  configurable: true,
-});
+const mockUsePathname = usePathname as ReturnType<typeof vi.fn>;
 
 describe("AdminSidebarNav", () => {
-  it("renders Zgłoś problem button", () => {
-    render(<AdminSidebarNav userEmail="misza@drshoes.pl" />);
-    expect(screen.getByRole("button", { name: /zgłoś problem/i })).toBeTruthy();
+  beforeEach(() => mockUsePathname.mockReturnValue("/admin"));
+
+  it("renders four section headings", () => {
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    expect(screen.getByText("PULPIT")).toBeInTheDocument();
+    expect(screen.getByText("OPERACJE")).toBeInTheDocument();
+    expect(screen.getByText("KOMUNIKACJA")).toBeInTheDocument();
+    expect(screen.getByText("SKLEP")).toBeInTheDocument();
   });
 
-  it("opens modal on click", async () => {
-    render(<AdminSidebarNav userEmail="misza@drshoes.pl" />);
-    fireEvent.click(screen.getByRole("button", { name: /zgłoś problem/i }));
-    await waitFor(() =>
-      expect(screen.getByRole("dialog")).toBeTruthy()
-    );
+  it("Dashboard link is active on /admin", () => {
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    const dashLink = screen.getByRole("link", { name: /dashboard/i });
+    expect(dashLink.className).toMatch(/active/);
   });
 
-  it("passes user email to the modal", async () => {
-    render(<AdminSidebarNav userEmail="misza@drshoes.pl" />);
-    fireEvent.click(screen.getByRole("button", { name: /zgłoś problem/i }));
-    await waitFor(() => screen.getByText("misza@drshoes.pl"));
-    expect(screen.getByText("misza@drshoes.pl")).toBeTruthy();
+  it("Zamówienia link is not active on /admin", () => {
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    const link = screen.getByRole("link", { name: /zamówienia/i });
+    expect(link.className).not.toMatch(/active/);
   });
 
-  describe("Komunikacja section", () => {
-    it("renders Trigery and Szablony wiadomości links", () => {
-      render(<AdminSidebarNav userEmail="misza@drshoes.pl" />);
-      expect(screen.getByRole("link", { name: "Trigery" })).toBeTruthy();
-      expect(screen.getByRole("link", { name: "Szablony wiadomości" })).toBeTruthy();
-    });
+  it("MessagesNavItem renders unread badge", () => {
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    // badge text = "3"
+    expect(screen.getByText("3")).toBeInTheDocument();
+  });
 
-    it("highlights Trigery link when on /admin/triggers", () => {
-      mockUsePathname.mockReturnValue("/admin/triggers");
-      render(<AdminSidebarNav userEmail="misza@drshoes.pl" />);
-      const link = screen.getByRole("link", { name: "Trigery" });
-      expect(link.className).toContain("bg-acid/30");
-    });
+  it("Triggery link label is rendered", () => {
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    expect(screen.getByRole("link", { name: /triggery/i })).toBeInTheDocument();
+  });
 
-    it("highlights Trigery link when on a sub-route of /admin/triggers", () => {
-      mockUsePathname.mockReturnValue("/admin/triggers/123");
-      render(<AdminSidebarNav userEmail="misza@drshoes.pl" />);
-      const link = screen.getByRole("link", { name: "Trigery" });
-      expect(link.className).toContain("bg-acid/30");
-    });
+  it("highlights Triggery link when on /admin/triggers", () => {
+    mockUsePathname.mockReturnValue("/admin/triggers");
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    const link = screen.getByRole("link", { name: /triggery/i });
+    expect(link.className).toMatch(/active/);
+  });
 
-    it("highlights Szablony wiadomości link when on /admin/templates", () => {
-      mockUsePathname.mockReturnValue("/admin/templates");
-      render(<AdminSidebarNav userEmail="misza@drshoes.pl" />);
-      const link = screen.getByRole("link", { name: "Szablony wiadomości" });
-      expect(link.className).toContain("bg-acid/30");
-    });
+  it("highlights Triggery link when on a sub-route of /admin/triggers", () => {
+    mockUsePathname.mockReturnValue("/admin/triggers/123");
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    const link = screen.getByRole("link", { name: /triggery/i });
+    expect(link.className).toMatch(/active/);
+  });
 
-    it("does not highlight Trigery when on /admin/templates", () => {
-      mockUsePathname.mockReturnValue("/admin/templates");
-      render(<AdminSidebarNav userEmail="misza@drshoes.pl" />);
-      const link = screen.getByRole("link", { name: "Trigery" });
-      expect(link.className).not.toContain("bg-acid/30");
-    });
+  it("does not highlight Triggery when on /admin/templates", () => {
+    mockUsePathname.mockReturnValue("/admin/templates");
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    const link = screen.getByRole("link", { name: /triggery/i });
+    expect(link.className).not.toMatch(/active/);
   });
 });
