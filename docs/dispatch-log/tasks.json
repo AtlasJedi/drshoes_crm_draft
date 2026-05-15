@@ -1581,9 +1581,9 @@
     {
       "id": "9-2",
       "title": "<Tape> primitive",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "3bdc5d1",
+      "dispatch_log": "docs/dispatch-log/9-2-2026-05-15T193231Z.md"
     },
     {
       "id": "9-3",
@@ -1623,9 +1623,9 @@
     {
       "id": "9-8",
       "title": "<PhImg> diagonal-stripe placeholder",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "3bdc5d1",
+      "dispatch_log": "docs/dispatch-log/9-8-2026-05-15T214500Z.md"
     },
     {
       "id": "9-9",
