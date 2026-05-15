@@ -11,5 +11,6 @@ export default defineConfig({
     environmentOptions: {
       jsdom: { resources: "usable" },
     },
+    exclude: ["**/node_modules/**", "**/dist/**", "e2e/**"],
   },
 });
