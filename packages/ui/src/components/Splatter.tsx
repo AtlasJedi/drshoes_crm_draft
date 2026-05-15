@@ -22,6 +22,7 @@ export function Splatter({
 }: SplatterProps) {
   return (
     <svg
+      data-testid="splatter"
       width={size}
       height={size}
       viewBox="0 0 200 200"
