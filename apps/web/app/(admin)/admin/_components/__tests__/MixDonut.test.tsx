@@ -4,8 +4,8 @@ import { MixDonut } from "../MixDonut";
 import type { MixByTypeRowDto } from "@/lib/dashboard/types";
 
 const mix: MixByTypeRowDto[] = [
-  { kind: "NAPRAWA", count: 19, percent: 45 },
-  { kind: "CUSTOM_BUTY", count: 14, percent: 33 },
+  { kind: "NAPRAWA",      count: 19, percent: 45 },
+  { kind: "CUSTOM_BUTY",  count: 14, percent: 33 },
   { kind: "CUSTOM_KURTKA", count: 9, percent: 22 },
 ];
 
@@ -27,9 +27,21 @@ describe("MixDonut", () => {
     expect(screen.getByText("42")).toBeInTheDocument();
   });
 
+  it("renders 'aktywne' caption", () => {
+    render(<MixDonut mix={mix} totalActive={42} />);
+    expect(screen.getByText("aktywne")).toBeInTheDocument();
+  });
+
   it("renders an SVG element", () => {
     const { container } = render(<MixDonut mix={mix} totalActive={42} />);
     expect(container.querySelector("svg")).not.toBeNull();
+  });
+
+  it("renders percent labels in legend", () => {
+    render(<MixDonut mix={mix} totalActive={42} />);
+    expect(screen.getByText("45%")).toBeInTheDocument();
+    expect(screen.getByText("33%")).toBeInTheDocument();
+    expect(screen.getByText("22%")).toBeInTheDocument();
   });
 
   it("renders zero state without crashing", () => {

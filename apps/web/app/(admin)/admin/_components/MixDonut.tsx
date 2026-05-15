@@ -1,8 +1,9 @@
 /**
  * Donut chart — current order type mix.
- * SVG adapted directly from admin.jsx:136-148.
+ * 3 segments: Naprawy acid / Custom buty pink / Custom kurtki blue.
+ * Legend rows with 14px coloured square + label + percent.
  * Pure server component.
- * ~80 LOC.
+ * ~75 LOC.
  */
 import type { MixByTypeRowDto } from "@/lib/dashboard/types";
 
@@ -18,12 +19,30 @@ const KIND_COLORS: Record<string, string> = {
   CUSTOM_KURTKA: "var(--blue)",
 };
 
-// Donut geometry: r=78, cx=cy=100, circumference≈490
 const CIRC = 490;
 const R = 78;
 const CX = 100;
 const CY = 100;
 const STROKE_W = 34;
+
+interface LegendRowProps {
+  color: string;
+  label: string;
+  percent: number;
+}
+
+function LegendRow({ color, label, percent }: LegendRowProps) {
+  return (
+    <div className="flex items-center gap-[10px]">
+      <span
+        className="inline-block shrink-0"
+        style={{ width: 14, height: 14, background: color, border: "1px solid var(--ink)" }}
+      />
+      <span className="flex-1 text-[13px]">{label}</span>
+      <span className="t-mono font-bold text-[12px]">{percent}%</span>
+    </div>
+  );
+}
 
 interface Props {
   mix: MixByTypeRowDto[];
@@ -31,7 +50,6 @@ interface Props {
 }
 
 export function MixDonut({ mix, totalActive }: Props) {
-  // Build cumulative rotation offsets for each arc using reduce to avoid mutable variable.
   const { arcs } = mix.reduce<{
     arcs: Array<{ row: MixByTypeRowDto; dashLen: number; rotation: number }>;
     deg: number;
@@ -50,7 +68,6 @@ export function MixDonut({ mix, totalActive }: Props) {
     <div className="admin-card p-[22px]">
       <div className="t-display text-[22px] mb-[14px]">Mix zleceń</div>
       <svg viewBox="0 0 200 200" style={{ width: "100%", height: 180 }}>
-        {/* track */}
         <circle cx={CX} cy={CY} r={R} fill="none" stroke="var(--paper-2)" strokeWidth={STROKE_W} />
         {arcs.map(({ row, dashLen, rotation }) => (
           <circle
@@ -70,16 +87,14 @@ export function MixDonut({ mix, totalActive }: Props) {
           aktywne
         </text>
       </svg>
-      <div className="flex flex-col gap-1.5 mt-1.5">
+      <div className="flex flex-col gap-[6px] mt-[6px]">
         {mix.map((row) => (
-          <div key={row.kind} className="flex items-center gap-2 t-mono text-[11px]">
-            <span
-              className="inline-block w-2.5 h-2.5 shrink-0"
-              style={{ background: KIND_COLORS[row.kind] }}
-            />
-            <span className="flex-1">{KIND_LABELS[row.kind] ?? row.kind}</span>
-            <span className="text-admin-mute">{row.percent}%</span>
-          </div>
+          <LegendRow
+            key={row.kind}
+            color={KIND_COLORS[row.kind] ?? "var(--ink)"}
+            label={KIND_LABELS[row.kind] ?? row.kind}
+            percent={row.percent}
+          />
         ))}
       </div>
     </div>
