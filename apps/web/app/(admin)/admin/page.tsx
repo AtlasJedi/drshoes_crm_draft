@@ -1,11 +1,9 @@
 /**
- * /admin — live Dashboard page.
- * Wires five components: KpiTilesRow + OrdersWeekChart + MixDonut (upper row)
- * + ReadyForPickupPanel + RecentMessagesPanel (lower row).
- * Each data section is independently try/catch isolated in its component;
- * one failing tile/panel does not blank the whole dashboard.
+ * /admin — Dashboard page.
+ * Five components: KpiTilesRow + OrdersWeekChart + MixDonut (upper rows)
+ * + ReadyForPickupPanel + RecentMessagesPanel + FreshReservationsPanel (lower row).
  * Server component — Suspense boundaries provide loading skeletons.
- * ~60 LOC.
+ * ~65 LOC.
  */
 import { Suspense } from "react";
 import { getDashboardKpisServer, getDashboardChartsServer } from "@/lib/dashboard/api-server";
@@ -14,6 +12,7 @@ import { OrdersWeekChart } from "./_components/OrdersWeekChart";
 import { MixDonut } from "./_components/MixDonut";
 import { ReadyForPickupPanel } from "./_components/ReadyForPickupPanel";
 import { RecentMessagesPanel } from "./_components/RecentMessagesPanel";
+import { FreshReservationsPanel } from "./_components/FreshReservationsPanel";
 import { Skeleton } from "@/components/state/Skeleton";
 import { ErrorBanner } from "@/components/state/ErrorBanner";
 import { DashboardPageHeaderSetter } from "./_components/DashboardPageHeaderSetter";
@@ -56,13 +55,15 @@ export default async function AdminPage() {
         <ChartsSection />
       </Suspense>
 
-      <div className="grid grid-cols-[1.2fr_1fr] gap-5">
+      <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-5">
         <Suspense fallback={<Skeleton height="h-12" rows={3} />}>
           <ReadyForPickupPanel />
         </Suspense>
         <Suspense fallback={<Skeleton height="h-10" rows={4} />}>
           <RecentMessagesPanel />
         </Suspense>
+        {/* FreshReservationsPanel uses static placeholder until M10 backend slice ships */}
+        <FreshReservationsPanel />
       </div>
     </div>
   );
