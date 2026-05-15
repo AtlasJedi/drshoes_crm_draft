@@ -46,7 +46,7 @@ export function ThreadListRow({ thread: t, selected, onSelect }: Props) {
       </div>
       <div className="flex flex-col items-end justify-between shrink-0 pl-1">
         <span className={"text-[11px] " + (isUnread ? "text-ink font-semibold" : "text-admin-mute")}>
-          {t.lastMessageAt ? new Date(t.lastMessageAt).toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" }) : "—"}
+          {t.lastMessageAt ? new Date(t.lastMessageAt).toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" }) : "—"}
         </span>
         {isUnread && (
           <span className="mt-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-acid text-ink text-[10px] font-bold">{t.unreadCount}</span>

@@ -16,10 +16,12 @@ function pricePLN(cents: number): string {
 }
 
 /** Format ISO date as dd.MM.yyyy in Polish locale */
+const TZ = "Europe/Warsaw";
+
 function fmtDate(iso: string | null): string {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("pl-PL", {
-    day: "2-digit", month: "2-digit", year: "numeric",
+    day: "2-digit", month: "2-digit", year: "numeric", timeZone: TZ,
   });
 }
 
@@ -27,8 +29,8 @@ function fmtDate(iso: string | null): string {
 function fmtDateTime(iso: string | null): string {
   if (!iso) return "—";
   const d = new Date(iso);
-  const date = d.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric" });
-  const time = d.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
+  const date = d.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: TZ });
+  const time = d.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: TZ });
   return `${date} ${time}`;
 }
 

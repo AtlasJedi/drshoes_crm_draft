@@ -20,7 +20,7 @@ interface Props {
 export function MessageBubble({ message: m, clientName, onRetried }: Props) {
   const inbound = m.direction === "INBOUND";
   const ts = m.sentAt
-    ? new Date(m.sentAt).toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })
+    ? new Date(m.sentAt).toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" })
     : "—";
 
   async function handleRetry() {

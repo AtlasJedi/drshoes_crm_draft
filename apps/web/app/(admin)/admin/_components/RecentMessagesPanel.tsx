@@ -51,7 +51,7 @@ export async function RecentMessagesPanel() {
                     <span className="text-[13px] font-semibold">{t.clientName ?? t.rawSender ?? "—"}</span>
                     <span className="t-mono text-[10px] text-admin-mute shrink-0 ml-2">
                       {t.lastMessageAt
-                        ? new Date(t.lastMessageAt).toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })
+                        ? new Date(t.lastMessageAt).toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" })
                         : ""}
                     </span>
                   </div>

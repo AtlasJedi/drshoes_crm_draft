@@ -76,7 +76,7 @@ export function UnmatchedThreadPanel({ detail, onResolved }: Props) {
             </span>
           </div>
           <div className="text-[11px] text-admin-mute mt-1.5">
-            {thread.channel} · otrzymane {thread.lastMessageAt ? new Date(thread.lastMessageAt).toLocaleDateString("pl-PL") : "—"}
+            {thread.channel} · otrzymane {thread.lastMessageAt ? new Date(thread.lastMessageAt).toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw" }) : "—"}
           </div>
         </div>
       </div>

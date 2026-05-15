@@ -50,7 +50,7 @@ export default async function ClientThreadsPage({ params }: Props) {
               ? "bg-blue-50 text-blue-700 border-blue-200"
               : "bg-violet-50 text-violet-700 border-violet-200";
             const lastAt = t.lastMessageAt
-              ? new Date(t.lastMessageAt).toLocaleString("pl-PL", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
+              ? new Date(t.lastMessageAt).toLocaleString("pl-PL", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" })
               : "—";
 
             return (

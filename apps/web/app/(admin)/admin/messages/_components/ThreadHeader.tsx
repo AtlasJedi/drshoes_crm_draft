@@ -48,7 +48,7 @@ export function ThreadHeader({ thread: t, onReadMarked }: Props) {
                 <span>·</span>
               </>
             )}
-            <span>ostatnia aktywność {t.lastMessageAt ? new Date(t.lastMessageAt).toLocaleDateString("pl-PL") : "—"}</span>
+            <span>ostatnia aktywność {t.lastMessageAt ? new Date(t.lastMessageAt).toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw" }) : "—"}</span>
           </div>
         </div>
       </div>

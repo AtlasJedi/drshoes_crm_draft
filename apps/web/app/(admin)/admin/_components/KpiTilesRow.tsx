@@ -59,7 +59,7 @@ export function KpiTilesRow({ kpis }: Props) {
       />
       <StatTile
         testId="kpi-tile-revenue"
-        label={`Przychód · ${new Date().toLocaleString("pl-PL", { month: "long" })}`}
+        label={`Przychód · ${new Date().toLocaleString("pl-PL", { month: "long", timeZone: "Europe/Warsaw" })}`}
         value={kpis.monthRevenueFormatted}
         sub="ten miesiąc"
         accent="var(--acid)"
