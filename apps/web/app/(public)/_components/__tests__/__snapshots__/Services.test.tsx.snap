@@ -1,0 +1,214 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Services > matches snapshot 1`] = `
+<section
+  class="relative bg-paper"
+  style="padding: 100px 28px 120px;"
+>
+  <div
+    class="max-w-[1280px] mx-auto"
+  >
+    <div
+      class="flex justify-between items-end mb-9 gap-4 flex-wrap"
+    >
+      <div>
+        <span
+          class="tape tape-paper"
+          style="transform: rotate(-2deg);"
+        >
+          co robimy
+        </span>
+        <h2
+          class="t-display"
+          style="font-size: 96px; margin: 16px 0px 0px;"
+        >
+          Trzy 
+          <span
+            style="color: var(--pink);"
+          >
+            rzeczy
+          </span>
+          .
+          <br />
+          Robimy je dobrze.
+        </h2>
+      </div>
+      <p
+        class="t-mono"
+        style="font-size: 13px; max-width: 360px; color: rgba(0, 0, 0, 0.7); line-height: 1.5; margin: 0px;"
+      >
+        Każda para to inna historia. Przed wyceną pisz na DM lub wypełnij formularz — odpowiadamy w 24h.
+      </p>
+    </div>
+    <div
+      class="grid grid-cols-3 gap-[22px]"
+    >
+      <a
+        class="zoom-card relative border-[3px] border-ink overflow-hidden bg-paper-2 no-underline text-ink shadow-[8px_8px_0_var(--ink)]"
+        href="#zamow"
+        style="aspect-ratio: 3/4; display: block;"
+      >
+        <div
+          class="ph-img dark"
+          style="width: 100%; height: 100%; border: medium; position: absolute; inset: 0px;"
+        >
+          <span
+            style="padding: 0px 12px;"
+          >
+            naprawa · vibram doszyty
+          </span>
+        </div>
+        <div
+          class="absolute top-3.5 left-3.5"
+          style="font-family: var(--font-display); font-size: 64px; color: var(--acid); line-height: 0.8; mix-blend-mode: screen;"
+        >
+          01
+        </div>
+        <div
+          class="absolute left-3.5 right-3.5 bottom-3.5 flex items-end justify-between"
+        >
+          <span
+            class="tape"
+            style="transform: rotate(-2deg);"
+          >
+            Naprawa butów
+          </span>
+          <div
+            style="background: var(--paper); padding: 8px; border: 2px solid var(--ink); color: var(--ink);"
+          >
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 32 24"
+              width="18"
+            >
+              <path
+                d="M2 18 L2 14 Q2 10 6 9 L11 8 L16 4 L20 8 L26 10 Q30 11 30 16 L30 18 Z"
+              />
+              <path
+                d="M2 18 L30 18"
+              />
+              <path
+                d="M11 8 L13 12"
+              />
+            </svg>
+          </div>
+        </div>
+      </a>
+      <a
+        class="zoom-card relative border-[3px] border-ink overflow-hidden bg-paper-2 no-underline text-ink shadow-[8px_8px_0_var(--ink)]"
+        href="#zamow"
+        style="aspect-ratio: 3/4; display: block;"
+      >
+        <div
+          class="ph-img dark"
+          style="width: 100%; height: 100%; border: medium; position: absolute; inset: 0px;"
+        >
+          <span
+            style="padding: 0px 12px;"
+          >
+            custom · AF1 bandana
+          </span>
+        </div>
+        <div
+          class="absolute top-3.5 left-3.5"
+          style="font-family: var(--font-display); font-size: 64px; color: var(--pink); line-height: 0.8; mix-blend-mode: screen;"
+        >
+          02
+        </div>
+        <div
+          class="absolute left-3.5 right-3.5 bottom-3.5 flex items-end justify-between"
+        >
+          <span
+            class="tape tape-pink"
+            style="transform: rotate(-2deg);"
+          >
+            Custom malowanie butów
+          </span>
+          <div
+            style="background: var(--paper); padding: 8px; border: 2px solid var(--ink); color: var(--ink);"
+          >
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+            >
+              <path
+                d="M14 3 L21 10 L18 13 L11 6 Z"
+              />
+              <path
+                d="M11 6 L5 12 L7 14 L4 17 L8 21 L11 18 L13 20 L19 14"
+              />
+            </svg>
+          </div>
+        </div>
+      </a>
+      <a
+        class="zoom-card relative border-[3px] border-ink overflow-hidden bg-paper-2 no-underline text-ink shadow-[8px_8px_0_var(--ink)]"
+        href="#zamow"
+        style="aspect-ratio: 3/4; display: block;"
+      >
+        <div
+          class="ph-img dark"
+          style="width: 100%; height: 100%; border: medium; position: absolute; inset: 0px;"
+        >
+          <span
+            style="padding: 0px 12px;"
+          >
+            custom · Carhartt back
+          </span>
+        </div>
+        <div
+          class="absolute top-3.5 left-3.5"
+          style="font-family: var(--font-display); font-size: 64px; color: var(--blue); line-height: 0.8; mix-blend-mode: screen;"
+        >
+          03
+        </div>
+        <div
+          class="absolute left-3.5 right-3.5 bottom-3.5 flex items-end justify-between"
+        >
+          <span
+            class="tape tape-blue"
+            style="transform: rotate(-2deg);"
+          >
+            Custom kurtki
+          </span>
+          <div
+            style="background: var(--paper); padding: 8px; border: 2px solid var(--ink); color: var(--ink);"
+          >
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+            >
+              <path
+                d="M7 3 L4 6 L4 21 L20 21 L20 6 L17 3 L15 5 L12 8 L9 5 Z"
+              />
+              <path
+                d="M12 8 L12 21"
+              />
+              <path
+                d="M14 11 L14 14"
+              />
+            </svg>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+`;
