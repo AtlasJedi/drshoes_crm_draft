@@ -1694,9 +1694,9 @@
     {
       "id": "9-18",
       "title": "<StatTile> integration in KpiTilesRow restyle",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "ec80caa",
+      "dispatch_log": "docs/dispatch-log/9-18-2026-05-15T2003Z.md"
     },
     {
       "id": "9-19",
@@ -1722,9 +1722,9 @@
     {
       "id": "9-22",
       "title": "<FreshReservationsPanel> NEW",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "c16a5e0",
+      "dispatch_log": "docs/dispatch-log/9-22-2026-05-15T220200Z.md"
     },
     {
       "id": "9-23",
