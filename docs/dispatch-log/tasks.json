@@ -1846,9 +1846,9 @@
     {
       "id": "9-39",
       "title": "<SklepTeaser> public landing",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "done",
+      "commit_sha": "8adea79",
+      "dispatch_log": "docs/dispatch-log/9-39-2026-05-15T224400Z.md"
     },
     {
       "id": "9-40",
