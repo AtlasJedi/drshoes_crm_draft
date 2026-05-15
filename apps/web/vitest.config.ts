@@ -4,6 +4,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
 const nm = (p: string) => path.resolve(__dirname, "node_modules", p);
+// @repo/ui is a pnpm workspace package — Next.js resolves it via transpilePackages,
+// but vitest does not. Point directly at the source index so the module graph resolves.
+const repoUi = path.resolve(__dirname, "../../packages/ui/src/index.ts");
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
@@ -12,6 +15,7 @@ export default defineConfig({
     // in apps/web's vitest context) to resolve React + testing-library.
     // String aliases match exact bare specifiers; sub-path aliases are explicit.
     alias: [
+      { find: "@repo/ui", replacement: repoUi },
       { find: "react/jsx-dev-runtime", replacement: nm("react/jsx-dev-runtime") },
       { find: "react/jsx-runtime", replacement: nm("react/jsx-runtime") },
       { find: "react-dom/client", replacement: nm("react-dom/client") },

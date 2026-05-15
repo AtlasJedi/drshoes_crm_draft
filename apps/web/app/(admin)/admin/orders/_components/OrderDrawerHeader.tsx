@@ -1,33 +1,62 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { STATUS_LABELS_PL, STATUS_PILL_CLASS } from "@/lib/orders/status";
+import { Pill, I } from "@repo/ui";
+import { createLogger } from "@/lib/log";
 import type { OrderStatus } from "@/lib/orders/types";
+
+const log = createLogger("order-drawer-header");
 
 interface Props {
   code: string;
   status: OrderStatus;
+  clientName?: string | null;
+  receivedAt?: string | null;
 }
 
-export function OrderDrawerHeader({ code, status }: Props) {
+const TZ = "Europe/Warsaw";
+function fmtShortDate(iso: string | null | undefined): string {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("pl-PL", {
+    day: "2-digit", month: "2-digit", year: "2-digit", timeZone: TZ,
+  });
+}
+
+export function OrderDrawerHeader({ code, status, clientName, receivedAt }: Props) {
+  log.debug("op=render", { code, status });
+  const sub = [
+    clientName,
+    receivedAt ? `przyjęte ${fmtShortDate(receivedAt)}` : null,
+  ].filter(Boolean).join(" · ");
+
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-b border-admin-line">
-      <div className="flex items-center gap-3">
-        <Dialog.Title className="font-mono text-base font-semibold text-admin-ink">
+    <div style={{
+      display: "flex", alignItems: "center", gap: 12,
+      padding: "16px 20px", borderBottom: "2px solid var(--ink)",
+      background: "#fff",
+    }}>
+      <Dialog.Close asChild>
+        <button className="btn-clean" style={{ padding: 6 }} aria-label="Zamknij">
+          <I.close />
+        </button>
+      </Dialog.Close>
+
+      <div style={{ flex: 1 }}>
+        <Dialog.Title className="t-display" style={{ fontSize: 26, lineHeight: 1 }}>
           {code}
         </Dialog.Title>
-        <span
-          className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${STATUS_PILL_CLASS[status]}`}
-        >
-          {STATUS_LABELS_PL[status]}
-        </span>
+        {sub && (
+          <div className="t-mono" style={{ fontSize: 11, color: "rgba(0,0,0,0.55)", marginTop: 2 }}>
+            {sub}
+          </div>
+        )}
       </div>
-      <Dialog.Close
-        aria-label="Zamknij"
-        className="text-admin-mute hover:text-ink text-xl leading-none w-8 h-8 flex items-center justify-center rounded hover:bg-acid/10 transition-colors"
-      >
-        ×
-      </Dialog.Close>
+
+      <Pill status={status} />
+
+      <button className="btn-clean" aria-label="Więcej opcji">
+        <I.more />
+      </button>
     </div>
   );
 }
