@@ -13,21 +13,13 @@ const mockListThreads = listThreadsServer as ReturnType<typeof vi.fn>;
 
 const THREADS: MessageThreadDto[] = [
   {
-    id: "thr-1",
-    clientId: "cli-1",
-    rawSender: null,
-    channel: "WHATSAPP",
-    subject: null,
-    lastMessageAt: "2026-05-10T09:46:00Z",
-    unreadCount: 1,
-    createdAt: "2026-05-01T00:00:00Z",
-    updatedAt: "2026-05-10T09:46:00Z",
+    id: "thr-1", clientId: "cli-1", rawSender: null,
+    channel: "WHATSAPP", subject: null,
+    lastMessageAt: "2026-05-10T09:46:00Z", unreadCount: 1,
+    createdAt: "2026-05-01T00:00:00Z", updatedAt: "2026-05-10T09:46:00Z",
     lastMessagePreview: "Hej, kiedy mogę odebrać moje 1460?",
-    unmatched: false,
-    clientName: "Magdalena K.",
-    clientEmail: null,
-    clientPhone: null,
-    discardedAt: null,
+    unmatched: false, clientName: "Magdalena K.",
+    clientEmail: null, clientPhone: null, discardedAt: null,
   },
 ];
 
@@ -43,6 +35,19 @@ describe("RecentMessagesPanel", () => {
     render(await RecentMessagesPanel());
     expect(screen.getByText("Magdalena K.")).toBeInTheDocument();
     expect(screen.getByText("Hej, kiedy mogę odebrać moje 1460?")).toBeInTheDocument();
+  });
+
+  it("renders initial avatar from client name", async () => {
+    mockListThreads.mockResolvedValueOnce(THREADS);
+    render(await RecentMessagesPanel());
+    // First initial = "M"
+    expect(screen.getByText("M")).toBeInTheDocument();
+  });
+
+  it("renders channel chip", async () => {
+    mockListThreads.mockResolvedValueOnce(THREADS);
+    render(await RecentMessagesPanel());
+    expect(screen.getByText("WHATSAPP")).toBeInTheDocument();
   });
 
   it("renders unread badge for unread threads", async () => {

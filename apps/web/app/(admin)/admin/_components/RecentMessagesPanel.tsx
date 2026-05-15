@@ -1,10 +1,11 @@
 /**
- * Dashboard lower-right panel: top-4 most recent message threads.
- * Layout: admin.jsx:176-200.
+ * Dashboard lower-middle: top-4 most recent message threads.
+ * Circular initial avatar, channel chip (t-mono ink/paper border), pink unread dot.
  * Server component with inline try/catch error isolation.
  * ~75 LOC.
  */
 import Link from "next/link";
+import { AdminCard } from "@drshoes/ui";
 import { listThreadsServer } from "@/lib/messaging/api-server";
 import { EmptyState } from "@/components/state/EmptyState";
 import { ErrorBanner } from "@/components/state/ErrorBanner";
@@ -22,13 +23,10 @@ export async function RecentMessagesPanel() {
   }
 
   return (
-    <div className="admin-card p-[22px]">
+    <AdminCard padding={22}>
       <div className="t-display text-[22px] mb-[14px]">Ostatnie wiadomości</div>
 
-      {fetchError && (
-        <ErrorBanner message="Nie udało się załadować danych." />
-      )}
-
+      {fetchError && <ErrorBanner message="Nie udało się załadować danych." />}
       {!fetchError && threads?.length === 0 && (
         <EmptyState message="Brak nowych wiadomości" />
       )}
@@ -36,27 +34,43 @@ export async function RecentMessagesPanel() {
       {!fetchError && threads && threads.length > 0 && (
         <div className="flex flex-col gap-3">
           {threads.map((t) => {
-            const initials = t.clientName ? t.clientName[0] : "?";
+            const name = t.clientName ?? t.rawSender ?? "?";
+            const initial = name[0] ?? "?";
             return (
               <Link
                 key={t.id}
                 href={`/admin/messages?thread=${t.id}`}
-                className="flex gap-2.5 items-start hover:bg-[var(--paper-2)] transition-colors rounded-sm"
+                className="flex gap-[10px] items-start hover:bg-[var(--paper-2)] transition-colors rounded-sm"
               >
-                <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--paper-2)] border-[1.5px] border-[var(--ink)] flex items-center justify-center text-[11px] font-mono font-bold">
-                  {initials}
+                {/* Circular initial avatar */}
+                <div
+                  style={{
+                    width: 32, height: 32, borderRadius: "50%",
+                    background: "var(--paper-2)", border: "1.5px solid var(--ink)",
+                    fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 11,
+                  }}
+                  className="shrink-0 flex items-center justify-center"
+                >
+                  {initial}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center">
-                    <span className="text-[13px] font-semibold">{t.clientName ?? t.rawSender ?? "—"}</span>
+                    <span className="text-[13px] font-semibold">{name}</span>
                     <span className="t-mono text-[10px] text-admin-mute shrink-0 ml-2">
                       {t.lastMessageAt
-                        ? new Date(t.lastMessageAt).toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" })
+                        ? new Date(t.lastMessageAt).toLocaleTimeString("pl-PL", {
+                            hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw",
+                          })
                         : ""}
                     </span>
                   </div>
-                  <div className="text-[12px] text-admin-mute truncate">{t.lastMessagePreview ?? ""}</div>
-                  <div className="t-mono text-[10px] text-admin-mute mt-0.5">{t.channel}</div>
+                  <div className="text-[12px] text-admin-mute truncate">
+                    {t.lastMessagePreview ?? ""}
+                  </div>
+                  {/* Channel chip: t-mono ink bg paper border-ink */}
+                  <span className="t-mono text-[9px] bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] px-1.5 py-0.5 inline-block mt-1">
+                    {t.channel}
+                  </span>
                 </div>
                 {t.unreadCount > 0 && (
                   <span
@@ -70,6 +84,6 @@ export async function RecentMessagesPanel() {
           })}
         </div>
       )}
-    </div>
+    </AdminCard>
   );
 }

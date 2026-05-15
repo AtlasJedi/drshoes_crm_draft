@@ -1715,9 +1715,9 @@
     {
       "id": "9-21",
       "title": "<ReadyForPickupPanel> + <RecentMessagesPanel> restyle (combined)",
-      "status": "pending",
+      "status": "completed",
       "commit_sha": null,
-      "dispatch_log": null
+      "dispatch_log": "docs/dispatch-log/9-21-2026-05-15T200256Z.md"
     },
     {
       "id": "9-22",

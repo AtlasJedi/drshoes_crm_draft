@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 
-// Mock the server-side orders list fetcher
 vi.mock("@/lib/orders/api-server", () => ({
   listOrdersServer: vi.fn(),
 }));
@@ -14,22 +13,12 @@ const mockListOrders = listOrdersServer as ReturnType<typeof vi.fn>;
 
 const ROWS: OrderListRow[] = [
   {
-    id: "ord-1",
-    code: "DR-0042",
-    clientId: "cli-1",
-    status: "GOTOWE_DO_ODBIORU",
-    totalPriceCents: 15000,
-    currency: "PLN",
-    description: "Naprawa podeszwy",
-    plannedPickupAt: null,
-    version: 1,
-    updatedAt: "2026-05-10T10:00:00Z",
-    createdAt: "2026-05-01T08:00:00Z",
-    receivedAt: "2026-05-01T08:00:00Z",
-    pickedUpAt: null,
-    quotedPriceCents: 0,
-    advancePaidCents: 0,
-    clientName: "Test Klient",
+    id: "ord-1", code: "DR-0042", clientId: "cli-1",
+    status: "GOTOWE_DO_ODBIORU", totalPriceCents: 15000, currency: "PLN",
+    description: "Naprawa podeszwy", plannedPickupAt: null, version: 1,
+    updatedAt: "2026-05-10T10:00:00Z", createdAt: "2026-05-01T08:00:00Z",
+    receivedAt: "2026-05-01T08:00:00Z", pickedUpAt: null,
+    quotedPriceCents: 0, advancePaidCents: 0, clientName: "Test Klient",
   },
 ];
 
@@ -45,6 +34,19 @@ describe("ReadyForPickupPanel", () => {
     render(await ReadyForPickupPanel());
     expect(screen.getByText("DR-0042")).toBeInTheDocument();
     expect(screen.getByText("Naprawa podeszwy")).toBeInTheDocument();
+  });
+
+  it("renders client name in bold", async () => {
+    mockListOrders.mockResolvedValueOnce({ content: ROWS, totalElements: 1, totalPages: 1, number: 0, size: 4 });
+    render(await ReadyForPickupPanel());
+    expect(screen.getByText("Test Klient")).toBeInTheDocument();
+  });
+
+  it("renders Tape count badge", async () => {
+    mockListOrders.mockResolvedValueOnce({ content: ROWS, totalElements: 1, totalPages: 1, number: 0, size: 4 });
+    render(await ReadyForPickupPanel());
+    // Tape renders "{count} czeka"
+    expect(screen.getByText(/czeka/)).toBeInTheDocument();
   });
 
   it("renders empty state when no orders", async () => {
