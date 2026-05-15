@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "active_milestone": "8",
-  "active_plan": "docs/superpowers/plans/2026-05-11-milestone-08-demo-ready.md",
+  "active_milestone": "9",
+  "active_plan": "docs/superpowers/plans/2026-05-15-milestone-09-design-parity.md",
   "tasks": [
     {
       "id": "0b-1",
@@ -1570,6 +1570,307 @@
       "title": "Sidebar nav: link /admin/triggers + /admin/templates under new Komunikacja section",
       "status": "pending",
       "dispatch_log": "docs/dispatch-log/m8-fb-2-20260512T111132Z.md"
+    },
+    {
+      "id": "9-1",
+      "title": "Tokens + fonts + Tailwind preset + globals.css utility classes (foundation, solo dispatch)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-2",
+      "title": "<Tape> primitive",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-3",
+      "title": "<Stamp> primitive",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-4",
+      "title": "<Sticker> primitive",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-5",
+      "title": "<Pill> primitive (orderStatusColor mapping)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-6",
+      "title": "<Chip> primitive",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-7",
+      "title": "<Splatter> SVG primitive",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-8",
+      "title": "<PhImg> diagonal-stripe placeholder",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-9",
+      "title": "<DrShoesMark> brand logo SVG",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-10",
+      "title": "<AdminCard> wrapper",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-11",
+      "title": "<StatTile> with accent left-bar",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-12",
+      "title": "<Toggle> ink ribbon + acid dot",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-13",
+      "title": "<Button> with pop-shadow variants",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-14",
+      "title": "icons.tsx (~25 1-stroke SVG icons)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-15",
+      "title": "AdminSidebar + AdminSidebarNav rewrite (ink ribbon shell)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-16",
+      "title": "AdminTopbar + AdminPageHeaderContext",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-17",
+      "title": "AdminLayout integration + per-page usePageHeader callsites",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-18",
+      "title": "<StatTile> integration in KpiTilesRow restyle",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-19",
+      "title": "<OrdersWeekChart> stacked-bar restyle",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-20",
+      "title": "<MixDonut> 3-segment restyle",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-21",
+      "title": "<ReadyForPickupPanel> + <RecentMessagesPanel> restyle (combined)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-22",
+      "title": "<FreshReservationsPanel> NEW",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-23",
+      "title": "Orders list page reskin (.tbl + Pill + Chip filters)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-24",
+      "title": "<OrderDrawerStatusTimeline> NEW (5-step timeline)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-25",
+      "title": "<OrderDrawerNotes> sticky-notes NEW",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-26",
+      "title": "OrderDrawer photo grid + items + tags reskin",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-27",
+      "title": "OrderDrawer footer actions + header reskin",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-28",
+      "title": "Calendar reskin + <UnscheduledOrdersPanel> NEW",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-29",
+      "title": "Kanban reskin + post-drag status-change popup",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-30",
+      "title": "Messages 3-col layout + <ClientMiniProfile> NEW",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-31",
+      "title": "Triggers <TriggerEditPanel> NEW + placeholder chips",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-32",
+      "title": "Templates editor parity",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-33",
+      "title": "Sklep admin product grid + edit panel reskin",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-34",
+      "title": "Sklep admin <ReservationsQueue> NEW",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-35",
+      "title": "<StickyNav> public landing",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-36",
+      "title": "<Hero> public landing",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-37",
+      "title": "<Services> public landing",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-38",
+      "title": "<NewsTeaser> public landing",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-39",
+      "title": "<SklepTeaser> public landing",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-40",
+      "title": "<Contact> + <Footer> public landing",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-41",
+      "title": "M9 parity audit + inline fixes (Playwright sweep)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-42",
+      "title": "Clients reskin post-audit",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "9-43",
+      "title": "milestone-9 README update + git tag local",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
     }
   ],
   "notes": [
