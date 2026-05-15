@@ -1,0 +1,347 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SklepTeaser > matches snapshot 1`] = `
+<section
+  id="sklep"
+  style="padding: 100px 28px; background: var(--paper); position: relative;"
+>
+  <div
+    style="max-width: 1280px; margin: 0px auto;"
+  >
+    <div
+      class="flex justify-between items-end mb-7 flex-wrap gap-4"
+    >
+      <div>
+        <span
+          class="tape tape-pink"
+          style="transform: rotate(-1.5deg);"
+        >
+          sklep
+        </span>
+        <h2
+          class="t-display"
+          style="font-size: 96px; margin: 16px 0px 0px;"
+        >
+          Pary 
+          <span
+            style="color: var(--blue);"
+          >
+            do wzięcia
+          </span>
+        </h2>
+      </div>
+      <div
+        class="t-mono border-[2px] border-ink"
+        style="font-size: 12px; max-width: 320px; color: rgba(0, 0, 0, 0.65); line-height: 1.5; padding: 10px 14px; background: var(--paper-2);"
+      >
+        ⚠ Płatność i odbiór wyłącznie na miejscu w pracowni. Rezerwacja jest niezobowiązująca przez 48h.
+      </div>
+    </div>
+    <div
+      class="flex gap-3.5 mb-7 flex-wrap items-center"
+    >
+      <span
+        class="t-mono"
+        style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0, 0, 0, 0.55);"
+      >
+        filtruj:
+      </span>
+      <button
+        class="t-mono font-bold border-[2px] border-ink uppercase"
+        style="padding: 6px 16px; background: var(--acid); font-size: 12px; letter-spacing: 0.05em; cursor: pointer; transform: rotate(-1.2deg); box-shadow: 3px 3px 0 var(--ink);"
+        type="button"
+      >
+        Wszystkie
+      </button>
+      <button
+        class="t-mono font-bold border-[2px] border-ink uppercase"
+        style="padding: 6px 16px; background: var(--paper); font-size: 12px; letter-spacing: 0.05em; cursor: pointer; transform: rotate(1.2deg); box-shadow: none;"
+        type="button"
+      >
+        Nike
+      </button>
+      <button
+        class="t-mono font-bold border-[2px] border-ink uppercase"
+        style="padding: 6px 16px; background: var(--paper); font-size: 12px; letter-spacing: 0.05em; cursor: pointer; transform: rotate(-1.2deg); box-shadow: none;"
+        type="button"
+      >
+        Vans
+      </button>
+      <button
+        class="t-mono font-bold border-[2px] border-ink uppercase"
+        style="padding: 6px 16px; background: var(--paper); font-size: 12px; letter-spacing: 0.05em; cursor: pointer; transform: rotate(1.2deg); box-shadow: none;"
+        type="button"
+      >
+        Jordan
+      </button>
+      <button
+        class="t-mono font-bold border-[2px] border-ink uppercase"
+        style="padding: 6px 16px; background: var(--paper); font-size: 12px; letter-spacing: 0.05em; cursor: pointer; transform: rotate(-1.2deg); box-shadow: none;"
+        type="button"
+      >
+        Dr. Martens
+      </button>
+    </div>
+    <div
+      class="grid grid-cols-4 gap-4"
+    >
+      <div
+        class="bg-paper border-[3px] border-ink relative overflow-hidden"
+        data-testid="product-tile"
+        style="box-shadow: 6px 6px 0 var(--ink);"
+      >
+        <div
+          class="relative overflow-hidden border-b-[3px] border-ink"
+          style="aspect-ratio: 1/1;"
+        >
+          <div
+            class="ph-img"
+            style="width: 100%; height: 100%; border: medium;"
+          >
+            <span
+              style="padding: 0px 12px;"
+            >
+              Nike
+AF1 Mid 'Bandana'
+            </span>
+          </div>
+          <div
+            class="absolute top-3.5 left-3.5"
+          >
+            <span
+              class="stamp stamp-pink"
+              style="transform: rotate(-2deg);"
+            >
+              rezerwacja
+            </span>
+          </div>
+          <div
+            class="absolute top-3.5 right-3.5 t-mono text-[var(--paper)] bg-[var(--ink)]"
+            style="font-size: 11px; font-weight: 700; padding: 4px 8px;"
+          >
+            #
+            01
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-1.5"
+          style="padding: 18px;"
+        >
+          <div
+            class="t-mono"
+            style="font-size: 11px; color: rgba(0, 0, 0, 0.55); letter-spacing: 0.1em;"
+          >
+            Nike
+             · 
+            EU 43
+          </div>
+          <h4
+            class="t-display m-0"
+            style="font-size: 24px; line-height: 1;"
+          >
+            AF1 Mid 'Bandana'
+          </h4>
+          <div
+            class="t-display mt-2.5"
+            style="font-size: 30px;"
+          >
+            990 zł
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-paper border-[3px] border-ink relative overflow-hidden"
+        data-testid="product-tile"
+        style="box-shadow: 6px 6px 0 var(--ink);"
+      >
+        <div
+          class="relative overflow-hidden border-b-[3px] border-ink"
+          style="aspect-ratio: 1/1;"
+        >
+          <div
+            class="ph-img"
+            style="width: 100%; height: 100%; border: medium;"
+          >
+            <span
+              style="padding: 0px 12px;"
+            >
+              Vans
+Old Skool 'Drip'
+            </span>
+          </div>
+          <div
+            class="absolute top-3.5 left-3.5"
+          >
+            <span
+              class="stamp stamp-green"
+              style="transform: rotate(-2deg);"
+            >
+              dostępne
+            </span>
+          </div>
+          <div
+            class="absolute top-3.5 right-3.5 t-mono text-[var(--paper)] bg-[var(--ink)]"
+            style="font-size: 11px; font-weight: 700; padding: 4px 8px;"
+          >
+            #
+            02
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-1.5"
+          style="padding: 18px;"
+        >
+          <div
+            class="t-mono"
+            style="font-size: 11px; color: rgba(0, 0, 0, 0.55); letter-spacing: 0.1em;"
+          >
+            Vans
+             · 
+            EU 41
+          </div>
+          <h4
+            class="t-display m-0"
+            style="font-size: 24px; line-height: 1;"
+          >
+            Old Skool 'Drip'
+          </h4>
+          <div
+            class="t-display mt-2.5"
+            style="font-size: 30px;"
+          >
+            750 zł
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-paper border-[3px] border-ink relative overflow-hidden"
+        data-testid="product-tile"
+        style="box-shadow: 6px 6px 0 var(--ink);"
+      >
+        <div
+          class="relative overflow-hidden border-b-[3px] border-ink"
+          style="aspect-ratio: 1/1;"
+        >
+          <div
+            class="ph-img"
+            style="width: 100%; height: 100%; border: medium;"
+          >
+            <span
+              style="padding: 0px 12px;"
+            >
+              Jordan
+Jordan 1 'Tag'
+            </span>
+          </div>
+          <div
+            class="absolute top-3.5 left-3.5"
+          >
+            <span
+              class="stamp stamp-green"
+              style="transform: rotate(-2deg);"
+            >
+              dostępne
+            </span>
+          </div>
+          <div
+            class="absolute top-3.5 right-3.5 t-mono text-[var(--paper)] bg-[var(--ink)]"
+            style="font-size: 11px; font-weight: 700; padding: 4px 8px;"
+          >
+            #
+            03
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-1.5"
+          style="padding: 18px;"
+        >
+          <div
+            class="t-mono"
+            style="font-size: 11px; color: rgba(0, 0, 0, 0.55); letter-spacing: 0.1em;"
+          >
+            Jordan
+             · 
+            EU 44
+          </div>
+          <h4
+            class="t-display m-0"
+            style="font-size: 24px; line-height: 1;"
+          >
+            Jordan 1 'Tag'
+          </h4>
+          <div
+            class="t-display mt-2.5"
+            style="font-size: 30px;"
+          >
+            1240 zł
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-paper border-[3px] border-ink relative overflow-hidden"
+        data-testid="product-tile"
+        style="box-shadow: 6px 6px 0 var(--ink);"
+      >
+        <div
+          class="relative overflow-hidden border-b-[3px] border-ink"
+          style="aspect-ratio: 1/1;"
+        >
+          <div
+            class="ph-img"
+            style="width: 100%; height: 100%; border: medium;"
+          >
+            <span
+              style="padding: 0px 12px;"
+            >
+              Dr. Martens
+1460 — Vibram
+            </span>
+          </div>
+          <div
+            class="absolute top-3.5 left-3.5"
+          >
+            <span
+              class="stamp stamp-ink"
+              style="transform: rotate(-3deg);"
+            >
+              sprzedane
+            </span>
+          </div>
+          <div
+            class="absolute top-3.5 right-3.5 t-mono text-[var(--paper)] bg-[var(--ink)]"
+            style="font-size: 11px; font-weight: 700; padding: 4px 8px;"
+          >
+            #
+            04
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-1.5"
+          style="padding: 18px;"
+        >
+          <div
+            class="t-mono"
+            style="font-size: 11px; color: rgba(0, 0, 0, 0.55); letter-spacing: 0.1em;"
+          >
+            Dr. Martens
+             · 
+            EU 42
+          </div>
+          <h4
+            class="t-display m-0"
+            style="font-size: 24px; line-height: 1;"
+          >
+            1460 — Vibram
+          </h4>
+          <div
+            class="t-display mt-2.5"
+            style="font-size: 30px;"
+          >
+            680 zł
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+`;
