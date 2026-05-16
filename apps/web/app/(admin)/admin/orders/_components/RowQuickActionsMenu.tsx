@@ -76,7 +76,7 @@ export function RowQuickActionsMenu({ row, onOrderUpdated }: Props) {
   async function handleStatusConfirm(sendTriggers: boolean) {
     if (!statusTarget) return;
     try {
-      await changeStatus(row.id, statusTarget, row.version);
+      await changeStatus(row.id, statusTarget, row.version, sendTriggers);
       log.info("op=statusChange outcome=ok", { orderId: row.id, to: statusTarget, sendTriggers });
       setActive(null);
       onOrderUpdated();

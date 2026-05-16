@@ -110,8 +110,8 @@ export function useKanbanDnd(
       setSnapshot(null);
 
       try {
-        await changeStatus(cardId, toStatus, orderVersion);
-        log.info("op=confirmMove outcome=ok", { cardId, toStatus });
+        await changeStatus(cardId, toStatus, orderVersion, sendTriggers);
+        log.info("op=confirmMove outcome=ok", { cardId, toStatus, sendTriggers });
       } catch (err: unknown) {
         log.error("op=confirmMove outcome=error", { cardId, toStatus, err });
         if (savedSnapshot) setColumns(savedSnapshot);
