@@ -58,8 +58,8 @@ export function CalendarCell({ day, isToday, orders }: CalendarCellProps) {
             type="button"
             onClick={() => openDrawer(order.id)}
             title={`${order.code} · ${order.clientName}`}
-            className="text-left px-1.5 py-px font-mono text-[10px] font-semibold border-l-2 border-ink overflow-hidden text-ellipsis whitespace-nowrap w-full"
-            style={{
+            className={`text-left px-1.5 py-px font-mono text-[10px] font-semibold border-l-2 overflow-hidden text-ellipsis whitespace-nowrap w-full${order.urgent ? " border-magenta bg-magenta/10" : " border-ink"}`}
+            style={order.urgent ? undefined : {
               background: colorOfStatus(order.status),
               color: order.status === "WYDANE" ? "rgba(0,0,0,0.6)" : "var(--paper)",
             }}

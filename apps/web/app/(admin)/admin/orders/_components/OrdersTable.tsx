@@ -7,6 +7,7 @@ import type { OrderListRow } from "@/lib/orders/types";
 import { Pill, PhImg } from "@drshoes/ui";
 import { RowQuickActionsMenu } from "./RowQuickActionsMenu";
 import { SortableColumnHeader } from "./SortableColumnHeader";
+import { LocationChip } from "./LocationChip";
 
 const log = createLogger("orders-table");
 
@@ -79,6 +80,7 @@ export function OrdersTable({ rows, totalPages, currentPage, selectedIds, isAllS
                 tabIndex={0}
                 onClick={() => onRowActivate(row.id)}
                 onKeyDown={(e) => e.key === "Enter" && onRowActivate(row.id)}
+                className={row.urgent ? "bg-magenta/10 border-l-2 border-magenta" : ""}
               >
                 <td onClick={(e) => e.stopPropagation()}>
                   {onToggleRow && (
@@ -91,7 +93,7 @@ export function OrdersTable({ rows, totalPages, currentPage, selectedIds, isAllS
                 <td className="text-admin-mute">{row.description ?? "—"}</td>
                 <td className="text-admin-mute font-mono text-[13px]">{fmtDate(row.receivedAt)}</td>
                 <td className="font-mono text-[13px]">{fmtDate(row.plannedPickupAt)}</td>
-                <td className="text-admin-mute">{row.location ?? "—"}</td>
+                <td><LocationChip name={row.location} variant="sm" /></td>
                 <td><PhImg label="" style={{ width: 36, height: 36, border: "1.5px solid var(--ink, #0a0a0a)" }} /></td>
                 <td className="text-right font-mono">{pricePLN(Math.max(0, row.quotedPriceCents - row.advancePaidCents))}</td>
                 <td className="text-right" onClick={(e) => e.stopPropagation()}>

@@ -12,6 +12,7 @@ import type { Route } from "next";
 import { PhImg, I } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";
 import type { KanbanCardDto } from "@/lib/kanban/types";
+import { LocationChip } from "../LocationChip";
 
 const log = createLogger("kanban.card");
 
@@ -65,7 +66,7 @@ export function KanbanCard({ card }: Props) {
       onClick={openDrawer}
       data-card-id={card.id}
       className={`admin-card p-2.5 cursor-grab active:cursor-grabbing select-none${
-        card.urgent ? " border-l-[3px] border-l-[var(--pink)]" : ""
+        card.urgent ? " border-2 border-magenta bg-magenta/5" : ""
       }`}
     >
       {/* Top row: DR-ID + urgent badge */}
@@ -91,6 +92,13 @@ export function KanbanCard({ card }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Location chip (shown when set) */}
+      {card.location && (
+        <div className="mt-1">
+          <LocationChip name={card.location} variant="sm" />
+        </div>
+      )}
 
       {/* Bottom row: dashed divider + calendar icon + due date + craftsman avatar */}
       <div className="flex justify-between items-center mt-2 pt-1.5 border-t border-dashed border-line">

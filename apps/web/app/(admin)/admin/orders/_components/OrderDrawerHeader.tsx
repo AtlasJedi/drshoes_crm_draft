@@ -4,6 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Pill, I } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";
 import type { OrderStatus } from "@/lib/orders/types";
+import { LocationChip } from "./LocationChip";
 
 const log = createLogger("order-drawer-header");
 
@@ -56,26 +57,7 @@ export function OrderDrawerHeader({ code, status, clientName, receivedAt, locati
 
       <Pill status={status} />
 
-      {location && (
-        <span
-          aria-label="Aktualne miejsce"
-          className="t-mono"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 4,
-            padding: "2px 8px",
-            background: "var(--acid, #d8ff3a)",
-            border: "1.5px solid var(--ink)",
-            fontSize: 11,
-            lineHeight: 1.4,
-            whiteSpace: "nowrap",
-          }}
-        >
-          <span aria-hidden>📍</span>
-          {location}
-        </span>
-      )}
+      <LocationChip name={location ?? null} />
 
       <button className="btn-clean" aria-label="Więcej opcji">
         {I.more}
