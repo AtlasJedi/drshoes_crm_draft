@@ -6,6 +6,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import type { Route } from "next";
 import { I } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";
+import { changeStatus } from "@/lib/orders/api";
 import type { OrderDto } from "@/lib/orders/types";
 import type { UserStubDto } from "@/lib/users/types";
 import { OrderDrawerHeader } from "./OrderDrawerHeader";
@@ -38,12 +39,36 @@ export function OrderDrawer({ initialOrder, users }: Props) {
   const [order, setOrder] = useState<OrderDto>(initialOrder);
   const [refreshKey, setRefreshKey] = useState(0);
   const [composeOpen, setComposeOpen] = useState(false);
+  const [markingWydane, setMarkingWydane] = useState(false);
+  const [markWydaneError, setMarkWydaneError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   function handleOrderUpdated(updated: OrderDto) {
     setOrder(updated);
     setRefreshKey((k) => k + 1);
+  }
+
+  async function markWydane() {
+    if (markingWydane || order.status === "WYDANE" || order.status === "ANULOWANE") return;
+    setMarkingWydane(true);
+    setMarkWydaneError(null);
+    try {
+      const res = await changeStatus(order.id, "WYDANE", order.version, true);
+      log.info("op=mark-wydane outcome=ok", { orderId: order.id, from: order.status });
+      handleOrderUpdated(res.order);
+    } catch (err: unknown) {
+      const status = (err as { status?: number })?.status;
+      if (status === 409) {
+        setMarkWydaneError("Konflikt wersji — odśwież drawer i spróbuj ponownie.");
+        log.info("op=mark-wydane outcome=conflict", { orderId: order.id });
+      } else {
+        setMarkWydaneError("Nie udało się oznaczyć jako wydane.");
+        log.error("op=mark-wydane outcome=error", { orderId: order.id, status });
+      }
+    } finally {
+      setMarkingWydane(false);
+    }
   }
 
   function handleOpenChange(open: boolean) {
@@ -124,7 +149,22 @@ export function OrderDrawer({ initialOrder, users }: Props) {
             {/* zmień status — scrolls to / triggers the status changer in body */}
             <button className="btn-clean primary">zmień status</button>
             {/* convenience shortcut: marks order WYDANE directly */}
-            <button className="btn-clean acid">oznacz jako wydane</button>
+            <button
+              type="button"
+              className="btn-clean acid"
+              onClick={markWydane}
+              disabled={markingWydane || order.status === "WYDANE" || order.status === "ANULOWANE"}
+              aria-label="Oznacz jako wydane"
+              title={
+                order.status === "WYDANE"
+                  ? "Zlecenie już wydane"
+                  : order.status === "ANULOWANE"
+                  ? "Zlecenie anulowane"
+                  : "Oznacz jako wydane"
+              }
+            >
+              {markingWydane ? "zapisywanie…" : "oznacz jako wydane"}
+            </button>
             <button className="btn-clean" onClick={() => setComposeOpen(true)}>
               {I.send} wiadomość
             </button>
@@ -138,6 +178,20 @@ export function OrderDrawer({ initialOrder, users }: Props) {
               anuluj
             </button>
           </div>
+          {markWydaneError && (
+            <div
+              role="alert"
+              style={{
+                padding: "8px 14px",
+                borderTop: "1px solid var(--admin-line, #d8d2c0)",
+                background: "#fff",
+                color: "var(--red, #c0392b)",
+                fontSize: 12,
+              }}
+            >
+              {markWydaneError}
+            </div>
+          )}
         </Dialog.Content>
       </Dialog.Portal>
 
