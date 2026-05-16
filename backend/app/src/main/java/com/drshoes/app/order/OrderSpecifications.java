@@ -1,5 +1,6 @@
 package com.drshoes.app.order;
 
+import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderItem;
 import com.drshoes.app.order.domain.OrderItemKind;
@@ -51,9 +52,22 @@ public final class OrderSpecifications {
             }
             if (q != null && !q.isBlank()) {
                 String like = "%" + q.toLowerCase() + "%";
+                var clientSq = query.subquery(UUID.class);
+                var client = clientSq.from(Client.class);
+                clientSq.select(client.get("id")).where(cb.and(
+                    cb.equal(client.get("id"), root.get("clientId")),
+                    cb.or(
+                        cb.like(cb.lower(client.get("firstName")), like),
+                        cb.like(cb.lower(cb.coalesce(client.get("lastName"), "")), like),
+                        cb.like(
+                            cb.lower(cb.concat(
+                                cb.concat(client.get("firstName"), " "),
+                                cb.coalesce(client.get("lastName"), ""))),
+                            like))));
                 preds.add(cb.or(
                     cb.like(cb.lower(root.get("code")), like),
-                    cb.like(cb.lower(root.get("description")), like)));
+                    cb.like(cb.lower(root.get("description")), like),
+                    cb.exists(clientSq)));
             }
             if (tag != null && !tag.isBlank()) {
                 preds.add(cb.isTrue(
