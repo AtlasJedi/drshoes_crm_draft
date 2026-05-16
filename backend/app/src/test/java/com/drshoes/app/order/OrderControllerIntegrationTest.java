@@ -509,6 +509,35 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // -------------------------------------------------------------------------
+    // GET /api/admin/orders?urgent=true — urgent filter (M11-b2)
+    // -------------------------------------------------------------------------
+
+    @Test
+    void listOrders_urgentTrue_returnsOnlyUrgent() throws Exception {
+        loginAsOwner();
+        UUID urgentId    = insertOrder(java.time.Instant.now().minusSeconds(20L * 86400L), "W_REALIZACJI");
+        UUID freshId     = insertOrder(java.time.Instant.now().minusSeconds(2L * 86400L),  "PRZYJETE");
+        UUID deliveredId = insertOrder(java.time.Instant.now().minusSeconds(100L * 86400L), "WYDANE");
+
+        mockMvc().perform(get("/api/admin/orders").param("urgent", "true"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content[?(@.id == '" + urgentId    + "')]").exists())
+            .andExpect(jsonPath("$.content[?(@.id == '" + freshId     + "')]").doesNotExist())
+            .andExpect(jsonPath("$.content[?(@.id == '" + deliveredId + "')]").doesNotExist());
+    }
+
+    // -------------------------------------------------------------------------
+
+    private UUID insertOrder(java.time.Instant receivedAt, String status) {
+        UUID id = UUID.randomUUID();
+        jdbc.update(
+            "INSERT INTO order_ (id, code, client_id, status, source, received_at, " +
+            "total_price_cents, currency, version) " +
+            "VALUES (?::uuid, ?, ?::uuid, ?, 'ADMIN', ?, 0, 'PLN', 0)",
+            id, "URG-" + id.toString().substring(0, 6), clientId, status,
+            java.sql.Timestamp.from(receivedAt));
+        return id;
+    }
 
     private UUID createOrderAndReturnId(String description) throws Exception {
         MvcResult r = mockMvc().perform(post("/api/admin/orders")

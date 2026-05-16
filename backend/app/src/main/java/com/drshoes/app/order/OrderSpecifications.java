@@ -34,7 +34,8 @@ public final class OrderSpecifications {
     public static Specification<Order> forList(List<OrderStatus> statuses, UUID assigneeId,
                                                List<OrderItemKind> kinds, String q,
                                                String tag, Instant plannedPickupAtFrom,
-                                               Instant plannedPickupAtTo, UUID clientId) {
+                                               Instant plannedPickupAtTo, UUID clientId,
+                                               Boolean urgent) {
         return (root, query, cb) -> {
             List<Predicate> preds = new ArrayList<>();
             preds.add(cb.isNull(root.get("deletedAt")));
@@ -82,6 +83,14 @@ public final class OrderSpecifications {
                 preds.add(cb.lessThan(root.get("plannedPickupAt"), plannedPickupAtTo));
             if (clientId != null)
                 preds.add(cb.equal(root.get("clientId"), clientId));
+            if (Boolean.TRUE.equals(urgent)) {
+                Instant cutoff = Instant.now().minusSeconds(14L * 86400L);
+                preds.add(cb.isNotNull(root.get("receivedAt")));
+                preds.add(cb.lessThanOrEqualTo(root.get("receivedAt"), cutoff));
+                preds.add(root.get("status").in(
+                    OrderStatus.PRZYJETE, OrderStatus.W_REALIZACJI,
+                    OrderStatus.CZEKA_NA_KLIENTA, OrderStatus.GOTOWE_DO_ODBIORU));
+            }
             return cb.and(preds.toArray(new Predicate[0]));
         };
     }

@@ -79,6 +79,7 @@ public class OrderController {
             @RequestParam(required = false) String tag,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtFrom,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtTo,
+            @RequestParam(required = false) Boolean urgent,
             @PageableDefault(size = 25, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             Authentication auth) {
         OrderSortValidator.validate(pageable);
@@ -86,9 +87,9 @@ public class OrderController {
             ? plannedPickupAtFrom.atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
         Instant to = plannedPickupAtTo != null
             ? plannedPickupAtTo.plusDays(1).atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
-        log.info("op=listOrders actor={} clientId={} tag={} from={} to={} sort={} outcome=ok",
-            actor(auth), clientId, tag, from, to, pageable.getSort());
-        return svc.list(status, craftsmanId, kinds, q, tag, from, to, clientId, pageable);
+        log.info("op=listOrders actor={} clientId={} tag={} from={} to={} urgent={} sort={} outcome=ok",
+            actor(auth), clientId, tag, from, to, urgent, pageable.getSort());
+        return svc.list(status, craftsmanId, kinds, q, tag, from, to, clientId, urgent, pageable);
     }
 
     @GetMapping("/{id}")

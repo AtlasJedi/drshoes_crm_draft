@@ -69,10 +69,11 @@ public class OrderService {
                                    List<OrderItemKind> kinds, String q,
                                    String tag, Instant plannedPickupAtFrom,
                                    Instant plannedPickupAtTo, UUID clientId,
+                                   Boolean urgent,
                                    Pageable pageable) {
         var page = orderRepo.findAll(
             OrderSpecifications.forList(statuses, assigneeId, kinds, q, tag,
-                                        plannedPickupAtFrom, plannedPickupAtTo, clientId),
+                                        plannedPickupAtFrom, plannedPickupAtTo, clientId, urgent),
             pageable);
         Set<UUID> cids = page.map(Order::getClientId).toSet();
         Map<UUID, String> names = clientRepo.findAllById(cids).stream()

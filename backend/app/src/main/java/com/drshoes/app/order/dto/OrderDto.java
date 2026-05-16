@@ -3,6 +3,7 @@ package com.drshoes.app.order.dto;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderSource;
 import com.drshoes.app.order.domain.OrderStatus;
+import com.drshoes.app.order.domain.OrderUrgency;
 
 import java.time.Instant;
 import java.util.List;
@@ -31,7 +32,8 @@ public record OrderDto(
     Instant updatedAt,
     List<OrderItemDto> items,
     int quotedPriceCents,
-    int advancePaidCents
+    int advancePaidCents,
+    boolean urgent
 ) {
     public static OrderDto of(Order o, List<OrderItemDto> items, String clientName) {
         return new OrderDto(
@@ -43,6 +45,7 @@ public record OrderDto(
             o.getDescription(), o.getCancelledReason(),
             o.getVersion(), o.getCreatedAt(), o.getUpdatedAt(),
             items,
-            o.getQuotedPriceCents(), o.getAdvancePaidCents());
+            o.getQuotedPriceCents(), o.getAdvancePaidCents(),
+            OrderUrgency.isUrgent(o.getReceivedAt(), o.getStatus()));
     }
 }

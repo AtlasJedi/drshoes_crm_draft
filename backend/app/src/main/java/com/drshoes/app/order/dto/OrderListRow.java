@@ -2,6 +2,7 @@ package com.drshoes.app.order.dto;
 
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderStatus;
+import com.drshoes.app.order.domain.OrderUrgency;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -23,7 +24,8 @@ public record OrderListRow(
     Instant receivedAt,
     Instant pickedUpAt,
     int quotedPriceCents,
-    int advancePaidCents
+    int advancePaidCents,
+    boolean urgent
 ) {
     public static OrderListRow of(Order o, String clientName) {
         return new OrderListRow(
@@ -31,6 +33,7 @@ public record OrderListRow(
             o.getStatus(), o.getTotalPriceCents(), o.getCurrency(), o.getDescription(),
             o.getPlannedPickupAt(), o.getVersion(), o.getUpdatedAt(),
             o.getCreatedAt(), o.getReceivedAt(), o.getPickedUpAt(),
-            o.getQuotedPriceCents(), o.getAdvancePaidCents());
+            o.getQuotedPriceCents(), o.getAdvancePaidCents(),
+            OrderUrgency.isUrgent(o.getReceivedAt(), o.getStatus()));
     }
 }
