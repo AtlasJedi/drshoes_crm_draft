@@ -4,7 +4,7 @@
 // < 80 LOC per granulate directive.
 
 import React from 'react';
-import { Tape } from '@repo/ui';
+import { Tape } from '@drshoes/ui';
 import { ServiceTile } from './Services/ServiceTile';
 import type { ServiceTileProps } from './Services/ServiceTile';
 

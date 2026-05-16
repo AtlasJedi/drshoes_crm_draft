@@ -3,8 +3,8 @@
 // < 50 LOC per granulate directive.
 
 import React from 'react';
-import { PhImg, Tape, I } from '@repo/ui';
-import type { TapeColor } from '@repo/ui';
+import { PhImg, Tape, I } from '@drshoes/ui';
+import type { TapeColor } from '@drshoes/ui';
 
 export interface ServiceTileProps {
   tag: '01' | '02' | '03';
