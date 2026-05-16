@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Read-only dashboard aggregation endpoints.
@@ -48,10 +49,20 @@ public class DashboardController {
         long monthRevenue   = orderRepo.sumRevenueBetween(monthStart, monthEnd);
         String formatted    = formatPln(monthRevenue);
 
-        log.info("op=dashboardKpis inProgress={} readyForPickup={} todayIntake={} monthRevenue={} outcome=ok",
-            inProgress, readyForPickup, todayIntake, monthRevenue);
+        long inProgressMoney    = orderRepo.sumTotalPriceByStatusIn(
+            Set.of(OrderStatus.W_REALIZACJI, OrderStatus.PRZYJETE));
+        long pickedUpMoneyMonth = orderRepo.sumTotalPricePickedUpBetween(monthStart, monthEnd);
+        String inProgressFormatted    = formatPln(inProgressMoney);
+        String pickedUpMonthFormatted = formatPln(pickedUpMoneyMonth);
 
-        return new DashboardKpiDto(inProgress, readyForPickup, todayIntake, monthRevenue, formatted);
+        log.info("op=dashboardKpis inProgress={} readyForPickup={} todayIntake={} monthRevenue={}" +
+                 " inProgressMoney={} pickedUpMonth={} outcome=ok",
+            inProgress, readyForPickup, todayIntake, monthRevenue,
+            inProgressMoney, pickedUpMoneyMonth);
+
+        return new DashboardKpiDto(
+            inProgress, readyForPickup, todayIntake, monthRevenue, formatted,
+            inProgressMoney, inProgressFormatted, pickedUpMoneyMonth, pickedUpMonthFormatted);
     }
 
     /**

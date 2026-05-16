@@ -9,6 +9,10 @@ const kpis: DashboardKpiDto = {
   todayIntakeCount: 9,
   monthRevenueCents: 1824000,
   monthRevenueFormatted: "18 240 zł",
+  inProgressMoneyCents: 350000,
+  inProgressMoneyFormatted: "3 500,00 zł",
+  pickedUpMoneyMonthCents: 400000,
+  pickedUpMoneyMonthFormatted: "4 000,00 zł",
 };
 
 describe("KpiTilesRow", () => {
@@ -16,31 +20,30 @@ describe("KpiTilesRow", () => {
     render(<KpiTilesRow kpis={kpis} />);
     expect(screen.getByText("W realizacji")).toBeInTheDocument();
     expect(screen.getByText("Gotowe do odbioru")).toBeInTheDocument();
-    expect(screen.getByText("Nowe rezerwacje (7d)")).toBeInTheDocument();
-    expect(screen.getByText(/Przychód/)).toBeInTheDocument();
+    expect(screen.getByText("Pieniądze w realizacji")).toBeInTheDocument();
+    expect(screen.getByText(/Wydane/)).toBeInTheDocument();
   });
 
   it("renders numeric values", () => {
     render(<KpiTilesRow kpis={kpis} />);
     expect(screen.getByText("14")).toBeInTheDocument();
     expect(screen.getByText("6")).toBeInTheDocument();
-    expect(screen.getByText("9")).toBeInTheDocument();
-    expect(screen.getByText("18 240 zł")).toBeInTheDocument();
+    expect(screen.getByText("3 500,00 zł")).toBeInTheDocument();
+    expect(screen.getByText("4 000,00 zł")).toBeInTheDocument();
   });
 
   it("has data-testid attributes for each tile", () => {
     render(<KpiTilesRow kpis={kpis} />);
     expect(screen.getByTestId("kpi-tile-in-progress")).toBeInTheDocument();
     expect(screen.getByTestId("kpi-tile-ready")).toBeInTheDocument();
-    expect(screen.getByTestId("kpi-tile-intake")).toBeInTheDocument();
-    expect(screen.getByTestId("kpi-tile-revenue")).toBeInTheDocument();
+    expect(screen.getByTestId("kpi-tile-in-progress-money")).toBeInTheDocument();
+    expect(screen.getByTestId("kpi-tile-picked-up-money")).toBeInTheDocument();
   });
 
   it("acid tile has data-accent=acid", () => {
     render(<KpiTilesRow kpis={kpis} />);
-    // StatTile from @drshoes/ui sets data-accent on the tile root
     expect(screen.getByTestId("kpi-tile-in-progress")).toHaveAttribute("data-accent", "acid");
-    expect(screen.getByTestId("kpi-tile-revenue")).toHaveAttribute("data-accent", "acid");
+    expect(screen.getByTestId("kpi-tile-picked-up-money")).toHaveAttribute("data-accent", "acid");
   });
 
   it("pink tile has data-accent=pink", () => {
@@ -50,6 +53,6 @@ describe("KpiTilesRow", () => {
 
   it("blue tile has data-accent=blue", () => {
     render(<KpiTilesRow kpis={kpis} />);
-    expect(screen.getByTestId("kpi-tile-intake")).toHaveAttribute("data-accent", "blue");
+    expect(screen.getByTestId("kpi-tile-in-progress-money")).toHaveAttribute("data-accent", "blue");
   });
 });

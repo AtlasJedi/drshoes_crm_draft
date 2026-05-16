@@ -54,6 +54,14 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     @Query("SELECT COALESCE(SUM(o.totalPriceCents), 0) FROM Order o WHERE o.deletedAt IS NULL AND o.receivedAt >= :from AND o.receivedAt < :to")
     long sumRevenueBetween(@Param("from") Instant from, @Param("to") Instant to);
 
+    /** Sum total_price_cents for non-deleted orders whose status is in the given set. */
+    @Query("SELECT COALESCE(SUM(o.totalPriceCents), 0) FROM Order o WHERE o.deletedAt IS NULL AND o.status IN :statuses")
+    long sumTotalPriceByStatusIn(@Param("statuses") java.util.Set<OrderStatus> statuses);
+
+    /** Sum total_price_cents for non-deleted WYDANE orders picked up in [from, to). */
+    @Query("SELECT COALESCE(SUM(o.totalPriceCents), 0) FROM Order o WHERE o.deletedAt IS NULL AND o.status = com.drshoes.app.order.domain.OrderStatus.WYDANE AND o.pickedUpAt >= :from AND o.pickedUpAt < :to")
+    long sumTotalPricePickedUpBetween(@Param("from") Instant from, @Param("to") Instant to);
+
     /**
      * Returns order counts per ISO week for the last N weeks ending with (and including) weekStart.
      * weekStart is the Monday of the most-recent week (UTC midnight).
@@ -80,10 +88,9 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
 
     /**
      * Returns per-kind order counts for the mix donut.
-     * An order's kind is determined by its first NAPRAWA item (→ NAPRAWA bucket),
-     * else the kind of its first item overall; orders with no items go to a synthetic "NONE" bucket.
-     * Simpler rule consistent with spec §6-6: NAPRAWA bucket = orders with ANY NAPRAWA item;
-     * remaining orders are split by first non-NAPRAWA item kind (CUSTOM_BUTY, CUSTOM_KURTKA).
+     * NAPRAWA bucket = orders with ANY NAPRAWA item;
+     * remaining orders are CUSTOM (V025 merged CUSTOM_BUTY + CUSTOM_KURTKA).
+     * Orders with no items go to a synthetic "NONE" bucket.
      * Returns rows: [kind TEXT, cnt BIGINT].
      */
     @Query(value = """
@@ -91,10 +98,8 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
             CASE
                 WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA')
                      THEN 'NAPRAWA'
-                WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'CUSTOM_BUTY')
-                     THEN 'CUSTOM_BUTY'
-                WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'CUSTOM_KURTKA')
-                     THEN 'CUSTOM_KURTKA'
+                WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'CUSTOM')
+                     THEN 'CUSTOM'
                 ELSE 'NONE'
             END AS kind,
             COUNT(*) AS cnt

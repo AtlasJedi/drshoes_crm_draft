@@ -140,6 +140,57 @@ class DashboardKpiControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ----------------------------------------------------------
+    // Money tile: inProgressMoney sums W_REALIZACJI + PRZYJETE
+    // ----------------------------------------------------------
+
+    @Test
+    void inProgressMoneyAggregatesWRealizacjiAndPrzyjete() throws Exception {
+        loginAsOwner();
+
+        ZoneId warsaw = ZoneId.of("Europe/Warsaw");
+        Instant now = ZonedDateTime.now(warsaw).toInstant();
+
+        seedOrder("M-001", OrderStatus.W_REALIZACJI, now, 10000);  // 100,00 zł
+        seedOrder("M-002", OrderStatus.W_REALIZACJI, now, 20000);  // 200,00 zł
+        seedOrder("M-003", OrderStatus.PRZYJETE,     now,  5000);  //  50,00 zł
+        seedOrder("M-004", OrderStatus.GOTOWE_DO_ODBIORU, now, 99999); // excluded from inProgress
+
+        mockMvc().perform(get("/api/admin/dashboard/kpis"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.inProgressMoneyCents").value(35000L))
+            .andExpect(jsonPath("$.inProgressMoneyFormatted").value("350,00 zł"));
+    }
+
+    // ----------------------------------------------------------
+    // Money tile: pickedUpMoneyMonth sums WYDANE orders in current month only
+    // ----------------------------------------------------------
+
+    @Test
+    void pickedUpMoneyMonthExcludesLastMonthOrders() throws Exception {
+        loginAsOwner();
+
+        ZoneId warsaw = ZoneId.of("Europe/Warsaw");
+        ZonedDateTime nowWaw = ZonedDateTime.now(warsaw);
+        Instant thisMonthPickup = nowWaw.toInstant();
+        // 45 days ago is reliably last month (or earlier)
+        Instant lastMonthPickup = nowWaw.minusDays(45).toInstant();
+        Instant receivedAt = nowWaw.toLocalDate().withDayOfMonth(1).atStartOfDay(warsaw).toInstant();
+
+        Order thisMonth = buildOrder("P-001", OrderStatus.WYDANE, receivedAt, 40000);
+        thisMonth.setPickedUpAt(thisMonthPickup);
+        orderRepo.save(thisMonth);
+
+        Order lastMonth = buildOrder("P-002", OrderStatus.WYDANE, receivedAt, 99999);
+        lastMonth.setPickedUpAt(lastMonthPickup);
+        orderRepo.save(lastMonth);
+
+        mockMvc().perform(get("/api/admin/dashboard/kpis"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.pickedUpMoneyMonthCents").value(40000L))
+            .andExpect(jsonPath("$.pickedUpMoneyMonthFormatted").value("400,00 zł"));
+    }
+
+    // ----------------------------------------------------------
     // Helpers
     // ----------------------------------------------------------
 

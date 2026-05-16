@@ -5,5 +5,9 @@ public record DashboardKpiDto(
     long readyForPickupCount,
     long todayIntakeCount,
     long monthRevenueCents,
-    String monthRevenueFormatted
+    String monthRevenueFormatted,
+    long inProgressMoneyCents,
+    String inProgressMoneyFormatted,
+    long pickedUpMoneyMonthCents,
+    String pickedUpMoneyMonthFormatted
 ) {}

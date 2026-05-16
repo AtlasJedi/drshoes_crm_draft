@@ -34,16 +34,16 @@ export function KpiTilesRow({ kpis }: Props) {
         accent="pink"
       />
       <StatTile
-        data-testid="kpi-tile-intake"
-        label="Nowe rezerwacje (7d)"
-        value={String(kpis.todayIntakeCount)}
-        sub="ostatnie 7 dni"
+        data-testid="kpi-tile-in-progress-money"
+        label="Pieniądze w realizacji"
+        value={kpis.inProgressMoneyFormatted}
+        sub="otwarte zlecenia"
         accent="blue"
       />
       <StatTile
-        data-testid="kpi-tile-revenue"
-        label={`Przychód · ${monthLabel}`}
-        value={kpis.monthRevenueFormatted}
+        data-testid="kpi-tile-picked-up-money"
+        label={`Wydane · ${monthLabel}`}
+        value={kpis.pickedUpMoneyMonthFormatted}
         sub="ten miesiąc"
         accent="acid"
       />
