@@ -70,6 +70,22 @@ public class AuditLog {
     @Column(name = "note", columnDefinition = "TEXT")
     private String note;
 
+    /**
+     * Previous storage location of the order before a location move.
+     * NULL when the audit row is not a location-change event.
+     * Added by V020 migration (M10 task 10-5).
+     */
+    @Column(name = "location_from", length = 64)
+    private String locationFrom;
+
+    /**
+     * New storage location of the order after a location move.
+     * NULL when the audit row is not a location-change event.
+     * Added by V020 migration (M10 task 10-5).
+     */
+    @Column(name = "location_to", length = 64)
+    private String locationTo;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
@@ -93,5 +109,9 @@ public class AuditLog {
     public void setTraceId(String traceId) { this.traceId = traceId; }
     public String getNote() { return note; }
     public void setNote(String note) { this.note = note; }
+    public String getLocationFrom() { return locationFrom; }
+    public void setLocationFrom(String locationFrom) { this.locationFrom = locationFrom; }
+    public String getLocationTo() { return locationTo; }
+    public void setLocationTo(String locationTo) { this.locationTo = locationTo; }
     public Instant getCreatedAt() { return createdAt; }
 }

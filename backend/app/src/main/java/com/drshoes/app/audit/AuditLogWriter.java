@@ -72,17 +72,30 @@ public class AuditLogWriter {
      * Full variant with note: persists all fields including the operator's free-text note.
      * note is stored in audit_log.note (TEXT NULL, added by V015 migration).
      * Pass null when no note is present (all non-status-change audit rows).
+     * Delegates to the 11-param overload with null location fields for backward compatibility.
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(String method, String path, int status, String ip, String userAgent,
                       UUID parentEntityId, UUID actorId, String traceId, String note) {
+        write(method, path, status, ip, userAgent, parentEntityId, actorId, traceId, note, null, null);
+    }
+
+    /**
+     * Full variant with location diff: persists all fields including optional location move.
+     * locationFrom/locationTo are stored in audit_log.location_from/location_to (VARCHAR(64) NULL,
+     * added by V020 migration, M10 task 10-5). Both null for non-location-change rows.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void write(String method, String path, int status, String ip, String userAgent,
+                      UUID parentEntityId, UUID actorId, String traceId, String note,
+                      String locationFrom, String locationTo) {
         em.createNativeQuery("""
             INSERT INTO audit_log
                 (id, actor_id, method, path, status, ip, user_agent, request_id,
-                 created_at, parent_entity_id, trace_id, note)
+                 created_at, parent_entity_id, trace_id, note, location_from, location_to)
             VALUES
                 (:id, :actorId, :method, :path, :status, CAST(:ip AS inet), :userAgent, :requestId,
-                 :createdAt, :parentEntityId, :traceId, :note)
+                 :createdAt, :parentEntityId, :traceId, :note, :locationFrom, :locationTo)
             """)
             .setParameter("id", UUID.randomUUID())
             .setParameter("actorId", actorId)
@@ -96,6 +109,8 @@ public class AuditLogWriter {
             .setParameter("parentEntityId", parentEntityId)
             .setParameter("traceId", traceId)
             .setParameter("note", note)
+            .setParameter("locationFrom", locationFrom)
+            .setParameter("locationTo", locationTo)
             .executeUpdate();
     }
 }

@@ -37,7 +37,7 @@ public class AuditWriteCoordinator {
 
     /** Persists an HTTP audit row, capturing the active OTel trace ID. */
     public void persistHttp(HttpServletRequest r, int status) {
-        persistHttp(r, status, null);
+        persistHttp(r, status, null, null, null);
     }
 
     /**
@@ -45,6 +45,16 @@ public class AuditWriteCoordinator {
      * note is extracted from method args by AuditLogAspect when a HasAuditNote arg is present.
      */
     public void persistHttp(HttpServletRequest r, int status, String note) {
+        persistHttp(r, status, note, null, null);
+    }
+
+    /**
+     * Persists an HTTP audit row with an optional note and optional location diff.
+     * locationFrom/locationTo come from request attributes set by OrderNotesController
+     * after the service call computes the old/new location. Both null for all other endpoints.
+     */
+    public void persistHttp(HttpServletRequest r, int status, String note,
+                            String locationFrom, String locationTo) {
         String actorName = resolveActorName();
         UUID actorId = resolveActorId();
         String traceId = spanHelper.currentTraceId();
@@ -55,9 +65,10 @@ public class AuditWriteCoordinator {
                 null, actorName,
                 () -> writer.write(method, path, status,
                     r.getRemoteAddr(), r.getHeader("User-Agent"),
-                    null, actorId, traceId, note));
-            log.info("op=audit actor={} actorId={} method={} path={} status={} traceId={} hasNote={} outcome=persisted",
-                actorName, actorId, method, path, status, traceId, note != null);
+                    null, actorId, traceId, note, locationFrom, locationTo));
+            log.info("op=audit actor={} actorId={} method={} path={} status={} traceId={} hasNote={} hasLocationDiff={} outcome=persisted",
+                actorName, actorId, method, path, status, traceId, note != null,
+                locationFrom != null || locationTo != null);
         } catch (Exception ex) {
             log.warn("op=audit actor={} method={} path={} status={} outcome=skipped reason={}",
                 actorName, method, path, status, ex.getMessage());

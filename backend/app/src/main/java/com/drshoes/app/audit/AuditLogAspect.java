@@ -90,6 +90,8 @@ public class AuditLogAspect {
         if (attrs == null) return;
         HttpServletRequest r = attrs.getRequest();
         String note = AuditWriteCoordinator.extractNote(args);
-        coordinator.persistHttp(r, status, note);
+        String locationFrom = (String) r.getAttribute("audit.locationFrom");
+        String locationTo   = (String) r.getAttribute("audit.locationTo");
+        coordinator.persistHttp(r, status, note, locationFrom, locationTo);
     }
 }
