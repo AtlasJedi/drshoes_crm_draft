@@ -8,6 +8,7 @@ import com.drshoes.app.messaging.dto.PostmarkInboundPayload;
 import com.drshoes.app.messaging.dto.SmsApiInboundPayload;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageThreadRepository;
+import com.drshoes.app.messaging.util.HtmlStripper;
 import com.drshoes.app.messaging.util.PhoneNormalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +62,9 @@ public class InboundMessageService {
         thread.setUnreadCount(thread.getUnreadCount() + 1);
         thread.setLastMessageAt(OffsetDateTime.now());
         threadRepo.save(thread);
-        String body = (p.strippedTextReply() != null && !p.strippedTextReply().isBlank())
-                      ? p.strippedTextReply() : p.textBody();
+        String rawBody = (p.strippedTextReply() != null && !p.strippedTextReply().isBlank())
+                         ? p.strippedTextReply() : p.textBody();
+        String body = HtmlStripper.toPlainText(rawBody);
         var msg = buildEmailMessage(thread.getId(), unmatched ? null : clientOpt.get().getId(),
                                     unmatched ? p.from() : null, p, body);
         var saved = messageRepo.save(msg);
