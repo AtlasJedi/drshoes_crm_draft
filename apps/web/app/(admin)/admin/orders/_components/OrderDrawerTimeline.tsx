@@ -10,6 +10,7 @@ const log = createLogger("order-timeline");
 const KIND_ICONS: Record<TimelineEventKind, string> = {
   ORDER_CREATED:        "🆕",
   ORDER_UPDATED:        "✏️",
+  ORDER_NOTE:           "📝",
   STATUS_CHANGED:       "🔄",
   ASSIGNEE_CHANGED:     "👤",
   PICKUP_DATE_CHANGED:  "📅",
@@ -32,6 +33,7 @@ const KIND_ICONS: Record<TimelineEventKind, string> = {
 const KIND_LABELS_PL: Record<TimelineEventKind, string> = {
   ORDER_CREATED:        "Zamówienie utworzone",
   ORDER_UPDATED:        "Zamówienie zaktualizowane",
+  ORDER_NOTE:           "Notatka",
   STATUS_CHANGED:       "Status zmieniony",
   ASSIGNEE_CHANGED:     "Przypisany zmieniony",
   PICKUP_DATE_CHANGED:  "Data odbioru zmieniona",
