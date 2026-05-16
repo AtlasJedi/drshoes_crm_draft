@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OrderDrawer · redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Big+Shoulders+Stencil+Display:wght@400;700;800;900&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --ink-2: #1a1a1a;
+    --paper: #f4efe6;
+    --paper-2: #ebe4d4;
+    --paper-3: #ddd3bd;
+    --admin-bg: #f7f5ef;
+    --admin-surface: #ffffff;
+    --admin-line: #e3ddcc;
+    --admin-mute: #6b6960;
+    --line: rgba(10,10,10,.14);
+    --line-2: rgba(10,10,10,.08);
+    --acid: #d8ff3a;
+    --magenta: #ff2e7e;
+    --blue: #2b5cff;
+    --orange: #ff5a1f;
+    --green: #18b06b;
+    --red: #e1342b;
+
+    --font-display: "Anton", Impact, sans-serif;
+    --font-stencil: "Big Shoulders Stencil Display", "Anton", Impact, sans-serif;
+    --font-tag: "Permanent Marker", "Caveat Brush", cursive;
+    --font-body: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    /* status colors map */
+    --st-przyjete: var(--blue);
+    --st-realizacja: var(--orange);
+    --st-czeka: var(--red);
+    --st-gotowe: var(--green);
+    --st-wydane: var(--ink);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--paper-3);
+    -webkit-font-smoothing: antialiased;
+    padding: 36px 24px 80px;
+  }
+
+  /* ───── page chrome ───────────────────────────────────────── */
+  .page {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 440px 1fr; gap: 36px;
+    align-items: flex-start;
+  }
+  @media (max-width: 1000px) { .page { grid-template-columns: 1fr; } }
+
+  .head {
+    grid-column: 1 / -1;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px; padding-bottom: 22px; margin-bottom: 12px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--ink); color: var(--acid);
+    padding: 4px 10px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+  }
+  h1.title {
+    font-family: var(--font-display);
+    font-size: 64px; line-height: .88; margin: 14px 0 0;
+    text-transform: uppercase; letter-spacing: -0.01em;
+  }
+  h1.title em {
+    font-style: normal; position: relative; display: inline-block; padding: 0 4px;
+  }
+  h1.title em::after {
+    content: ""; position: absolute; inset: 4px -6px 6px -6px;
+    background: var(--magenta); z-index: -1; transform: skew(-6deg);
+  }
+  .sub {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink); max-width: 460px; line-height: 1.6;
+  }
+  .sub strong {
+    font-family: var(--font-stencil); font-weight: 800;
+    font-size: 13px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .sub code { background: var(--paper); padding: 1px 5px; border: 1px solid var(--line); }
+
+  /* ───── DRAWER ───────────────────────────────────────────── */
+  .drawer {
+    width: 100%;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+
+  /* header */
+  .drawer-head {
+    display: grid; grid-template-columns: 40px 1fr auto auto; gap: 12px;
+    align-items: center;
+    padding: 16px 18px;
+    background: var(--paper);
+    border-bottom: 2px solid var(--ink);
+  }
+  .icon-btn {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--paper); color: var(--ink);
+    border: 1.5px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    cursor: pointer; padding: 0;
+    transition: transform .1s, box-shadow .1s;
+  }
+  .icon-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+  .order-code {
+    font-family: var(--font-display); font-size: 26px; line-height: 1;
+    margin: 0;
+  }
+  .order-meta {
+    font-family: var(--font-mono); font-size: 11px; color: var(--admin-mute);
+    margin-top: 4px;
+  }
+  .status-pill-head {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px;
+    border: 1.5px solid var(--ink); background: var(--paper);
+    font-family: var(--font-stencil); font-weight: 800; font-size: 12px;
+    letter-spacing: .08em; text-transform: uppercase;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .status-pill-head .dot { width: 8px; height: 8px; background: var(--blue); display: inline-block; }
+
+  /* stepper */
+  .stepper {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    padding: 14px 18px 16px;
+    border-bottom: 1.5px solid var(--admin-line);
+    background: var(--paper);
+    column-gap: 0;
+  }
+  .step { text-align: center; position: relative; }
+  .step .node {
+    width: 28px; height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    font-family: var(--font-stencil); font-weight: 800; font-size: 13px;
+    margin: 0 auto;
+  }
+  .step.done .node { background: var(--ink); color: var(--paper); }
+  .step.active .node { background: var(--ink); color: var(--paper); }
+  .step .label {
+    display: block; margin-top: 6px;
+    font-family: var(--font-stencil); font-weight: 800; font-size: 10px;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--admin-mute);
+  }
+  .step.active .label { color: var(--ink); }
+  .step:not(:last-child)::after {
+    content: ""; position: absolute;
+    top: 13px; left: calc(50% + 18px); right: calc(-50% + 18px);
+    height: 2px; background: var(--admin-line);
+  }
+  .step.done:not(:last-child)::after { background: var(--ink); }
+
+  /* body sections */
+  .drawer-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+
+  /* ── INFO compact (KLIENT + stats) ─────────────────────────── */
+  .info-block { border: 1.5px solid var(--ink); background: var(--paper); }
+  .info-row {
+    display: grid; grid-template-columns: 64px 1fr auto;
+    align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .info-row .lbl {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--admin-mute);
+  }
+  .info-row .val {
+    font-family: var(--font-body); font-size: 15px; font-weight: 600;
+  }
+  .info-row .meta {
+    font-family: var(--font-mono); font-size: 11px; color: var(--admin-mute);
+  }
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+  }
+  .stat {
+    padding: 10px 12px 12px;
+    border-right: 1.5px solid var(--ink);
+    text-align: left;
+  }
+  .stat:last-child { border-right: none; }
+  .stat .lbl {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--admin-mute);
+    display: block; margin-bottom: 4px;
+  }
+  .stat .val {
+    font-family: var(--font-stencil); font-weight: 800; font-size: 18px;
+    letter-spacing: .01em; line-height: 1.1;
+  }
+  .stat.payment .val { color: var(--magenta); }
+
+  /* ── OPIS (no label, placeholder) ──────────────────────────── */
+  .opis-wrap { position: relative; }
+  .opis-wrap textarea {
+    width: 100%;
+    min-height: 76px;
+    padding: 12px 14px;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    font-family: var(--font-body); font-size: 14px; line-height: 1.4;
+    color: var(--ink); resize: vertical;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .opis-wrap textarea::placeholder { color: var(--admin-mute); }
+  .opis-wrap textarea:focus {
+    outline: 2px solid var(--acid); outline-offset: 1px;
+  }
+  .opis-wrap .corner {
+    position: absolute; top: -7px; right: 10px;
+    background: var(--acid);
+    border: 1.5px solid var(--ink);
+    padding: 1px 6px;
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    transform: rotate(-2deg);
+    z-index: 1;
+  }
+
+  /* ── STATUS BUTTONS (full-width, fancy) ────────────────────── */
+  .status-section .grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .status-btn {
+    --c: var(--ink);
+    position: relative; overflow: hidden;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    padding: 14px 10px;
+    font-family: var(--font-stencil); font-weight: 800; font-size: 14px;
+    letter-spacing: .06em; text-transform: uppercase;
+    color: var(--c);
+    cursor: pointer;
+    transition: color .15s, transform .1s, box-shadow .1s;
+    min-height: 52px;
+  }
+  .status-btn > .label { position: relative; z-index: 2; }
+  /* paint fill */
+  .status-btn::before {
+    content: ""; position: absolute; inset: 0;
+    background: var(--c);
+    transform: translateY(101%);
+    transition: transform .25s cubic-bezier(.6,.0,.0,1);
+    z-index: 1;
+  }
+  /* skewed stripe accent that slides */
+  .status-btn::after {
+    content: ""; position: absolute;
+    top: -10%; left: -10%;
+    width: 35%; height: 130%;
+    background: rgba(255,255,255,.18);
+    transform: skewX(-22deg) translateX(-200%);
+    transition: transform .55s cubic-bezier(.4,.0,.2,1);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .status-btn:hover::before, .status-btn.active::before { transform: translateY(0); }
+  .status-btn:hover::after { transform: skewX(-22deg) translateX(450%); }
+  .status-btn:hover, .status-btn.active { color: var(--paper); }
+  .status-btn.active { color: var(--paper); }
+  .status-btn.active .label::after {
+    content: "";
+    position: absolute; top: -4px; right: -10px;
+    width: 6px; height: 6px;
+    background: var(--paper);
+    transform: rotate(45deg);
+  }
+  /* press */
+  .status-btn:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+
+  /* per-status color binding */
+  .status-btn.s-przyjete   { --c: var(--blue); }
+  .status-btn.s-realizacja { --c: var(--orange); }
+  .status-btn.s-czeka      { --c: var(--red); }
+  .status-btn.s-gotowe     { --c: var(--green); }
+  .status-btn.s-wydane     { --c: var(--ink); }
+  .status-btn.s-anuluj {
+    --c: var(--red);
+    background: var(--paper);
+  }
+  /* diagonal hatch for anuluj on hover for street feel */
+  .status-btn.s-anuluj::before {
+    background:
+      repeating-linear-gradient(45deg, var(--red) 0 8px, #b9241d 8px 16px);
+  }
+
+  /* ── ITEMS ────────────────────────────────────────────────── */
+  .items {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .items-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .items-head .title {
+    font-family: var(--font-display); font-size: 20px; line-height: 1;
+    text-transform: uppercase; letter-spacing: -.01em;
+  }
+  .items-head .count {
+    font-family: var(--font-mono); font-size: 11px; color: var(--admin-mute);
+    margin-left: 6px;
+  }
+  .btn-mini {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 6px 10px;
+    background: var(--paper); color: var(--ink);
+    border: 1.5px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .04em; text-transform: lowercase;
+    cursor: pointer;
+    transition: transform .1s, box-shadow .1s;
+  }
+  .btn-mini:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }
+  .item-row {
+    display: grid; grid-template-columns: auto 1fr auto auto auto;
+    align-items: center; gap: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  .item-chip {
+    display: inline-flex; align-items: center;
+    padding: 3px 8px;
+    background: var(--paper-2);
+    font-family: var(--font-stencil); font-size: 11px; font-weight: 800;
+    letter-spacing: .06em; text-transform: uppercase;
+    border: 1.5px solid var(--ink);
+  }
+  .item-row .dash { color: var(--admin-mute); }
+  .item-row .price { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+  .item-row .row-act {
+    width: 24px; height: 24px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--admin-mute); cursor: pointer;
+  }
+  .item-row .row-act:hover { color: var(--ink); }
+
+  /* ── PHOTOS clickable placeholder ──────────────────────────── */
+  .photos {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .photo-tile {
+    aspect-ratio: 1;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .photo-tile img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .photo-add {
+    aspect-ratio: 1;
+    background: var(--paper);
+    border: 2px dashed var(--ink);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    color: var(--ink);
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .photo-add:hover {
+    background: var(--paper-2);
+    border-style: solid;
+    transform: translate(-1px,-1px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .photo-add .plus {
+    font-family: var(--font-display); font-size: 28px; line-height: 1;
+    color: var(--ink);
+  }
+  .photo-add .hint {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--admin-mute); text-align: center;
+  }
+  .photo-add.wide {
+    grid-column: 1 / -1;
+    aspect-ratio: auto;
+    padding: 28px 18px;
+  }
+  .photo-add.wide .plus { font-size: 44px; }
+  .photo-add.wide .hint { font-size: 11px; }
+  .photo-tile .thumb-act {
+    position: absolute; top: 6px; right: 6px;
+    width: 24px; height: 24px;
+    background: var(--ink); color: var(--paper);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: 1.5px solid var(--ink);
+  }
+
+  /* ── HISTORIA ──────────────────────────────────────────────── */
+  .historia {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .hist-row {
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .hist-icon {
+    width: 28px; height: 28px;
+    display: block;
+    border: 1.5px solid var(--ink);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .hist-content {
+    padding-top: 1px;
+  }
+  .hist-title {
+    font-family: var(--font-stencil); font-weight: 800; font-size: 14px;
+    letter-spacing: .03em; text-transform: uppercase;
+    color: var(--ink);
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .hist-meta {
+    font-family: var(--font-mono); font-size: 11px; color: var(--admin-mute);
+    margin-top: 2px;
+  }
+  .hist-body {
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: var(--paper);
+    border-left: 3px solid var(--ink);
+    font-size: 13px; line-height: 1.45;
+    border-top: 1px solid var(--admin-line);
+    border-right: 1px solid var(--admin-line);
+    border-bottom: 1px solid var(--admin-line);
+  }
+  .hist-body.note { border-left-color: var(--acid); background: rgba(216,255,58,.12); }
+  .hist-body.msg  { border-left-color: var(--magenta); }
+  .pill-mini {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 6px;
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    font-family: var(--font-mono); font-size: 10px;
+    line-height: 1.3;
+  }
+  .pill-mini.from { color: var(--admin-mute); }
+  .arrow-mini { font-family: var(--font-mono); color: var(--admin-mute); font-size: 11px; }
+
+  /* ── Section heading (re-used) ─────────────────────────────── */
+  .sect-title {
+    font-family: var(--font-display); font-size: 18px; line-height: 1;
+    text-transform: uppercase; letter-spacing: -.01em;
+    margin: 0 0 10px;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .sect-title .count {
+    font-family: var(--font-mono); font-size: 10px; color: var(--admin-mute);
+    letter-spacing: .12em;
+  }
+
+  /* ── COMPOSER ──────────────────────────────────────────────── */
+  .composer { border-top: 2px dashed var(--ink); padding-top: 14px; margin-top: 4px; }
+  .composer .eyebrow-mini {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em;
+    color: var(--admin-mute); text-transform: uppercase; margin-bottom: 8px;
+  }
+  .composer textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--paper); border: 1.5px solid var(--ink);
+    font-family: var(--font-body); font-size: 13px;
+    resize: vertical; min-height: 60px;
+  }
+  .composer textarea:focus { outline: 2px solid var(--acid); outline-offset: 1px; }
+  .composer-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 8px;
+    margin-top: 8px;
+    align-items: stretch;
+  }
+  .composer select {
+    padding: 8px 10px;
+    background: var(--paper); border: 1.5px solid var(--ink);
+    font-family: var(--font-body); font-size: 13px;
+  }
+  .composer .send {
+    padding: 10px 16px;
+    background: var(--ink); color: var(--paper);
+    border: 1.5px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    font-family: var(--font-stencil); font-weight: 800; font-size: 13px;
+    letter-spacing: .04em; text-transform: uppercase;
+    cursor: pointer;
+    transition: transform .1s, box-shadow .1s;
+  }
+  .composer .send:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+
+  /* ───── Notes panel (right side) ───────────────────────────── */
+  .notes-panel {
+    position: sticky; top: 36px;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    padding: 20px 22px 22px;
+  }
+  .notes-panel h2 {
+    font-family: var(--font-display); font-size: 28px;
+    margin: 0 0 14px; text-transform: uppercase; letter-spacing: -.01em;
+  }
+  .notes-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .notes-list li {
+    display: grid; grid-template-columns: 32px 1fr; gap: 12px;
+    padding-bottom: 14px; border-bottom: 1px dashed var(--line);
+  }
+  .notes-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .notes-list .nn {
+    font-family: var(--font-display); font-size: 28px; line-height: 1;
+  }
+  .notes-list h3 {
+    margin: 0 0 4px;
+    font-family: var(--font-stencil); font-weight: 800; font-size: 14px;
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .notes-list p {
+    margin: 0; font-size: 13px; color: var(--ink-2); line-height: 1.5;
+  }
+  .notes-list p code {
+    font-family: var(--font-mono); font-size: 11px;
+    background: var(--paper-2); padding: 1px 4px; border: 1px solid var(--line);
+  }
+
+  .icon-legend {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1.5px solid var(--ink);
+  }
+  .icon-legend-title {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--admin-mute); margin-bottom: 10px;
+  }
+  .legend-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+  }
+  .legend-grid .cell { text-align: center; }
+  .legend-grid .cell svg {
+    margin: 0 auto 4px;
+    border: 1.5px solid var(--ink);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .legend-grid .cell span {
+    display: block;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--admin-mute);
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="head">
+    <div>
+      <span class="eyebrow">redesign · OrderDrawer</span>
+      <h1 class="title">Drawer<br />zlecenia, <em>gęściej</em></h1>
+    </div>
+    <p class="sub">
+      Pięć korekt: <strong>(1)</strong> inline klient + 4-kol stats grid · <strong>(2)</strong> opis bez labelki, placeholder w polu · <strong>(3)</strong> status buttons street-style 3×2 z animowanym paint-fillem + ANULUJ inlined · <strong>(4)</strong> 5 własnych ikon historii (creation · status · note · message · <em>done</em>) · <strong>(5)</strong> photo placeholder klikalny — bez osobnego przycisku.
+    </p>
+  </header>
+
+  <!-- ═══════ DRAWER MOCKUP ═══════ -->
+  <main class="drawer">
+
+    <!-- HEAD -->
+    <div class="drawer-head">
+      <button class="icon-btn" aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+      <div>
+        <div class="order-code">DR-2026-0010</div>
+        <div class="order-meta">sacac · przyjęte 16.05.26</div>
+      </div>
+      <span class="status-pill-head"><span class="dot"></span>Przyjęte</span>
+      <button class="icon-btn" aria-label="Więcej">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg>
+      </button>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper" aria-label="Etapy zlecenia">
+      <div class="step active">
+        <div class="node">1</div>
+        <span class="label">Przyjęte</span>
+      </div>
+      <div class="step">
+        <div class="node">2</div>
+        <span class="label">W realizacji</span>
+      </div>
+      <div class="step">
+        <div class="node">3</div>
+        <span class="label">Czeka</span>
+      </div>
+      <div class="step">
+        <div class="node">4</div>
+        <span class="label">Gotowe</span>
+      </div>
+      <div class="step">
+        <div class="node">5</div>
+        <span class="label">Wydane</span>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="drawer-body">
+
+      <!-- 1. INFO compact -->
+      <section class="info-block" aria-label="Dane zlecenia">
+        <div class="info-row">
+          <span class="lbl">Klient</span>
+          <span class="val">sacac</span>
+          <span class="meta">+48 600 000 000</span>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="lbl">Czas</span>
+            <span class="val">0 DNI</span>
+          </div>
+          <div class="stat">
+            <span class="lbl">Wycena</span>
+            <span class="val">100 zł</span>
+          </div>
+          <div class="stat">
+            <span class="lbl">Zaliczka</span>
+            <span class="val">0,00</span>
+          </div>
+          <div class="stat payment">
+            <span class="lbl">Do zapłaty</span>
+            <span class="val">100 zł</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. OPIS (no label, placeholder) -->
+      <section class="opis-wrap" aria-label="Opis zlecenia">
+        <span class="corner">opis</span>
+        <textarea placeholder="Opis zlecenia — co konkretnie jest do zrobienia, materiał, kolor, uwagi klienta…">kmnsa</textarea>
+      </section>
+
+      <!-- 3. STATUS BUTTONS — full-width fancy -->
+      <section class="status-section" aria-label="Zmień status">
+        <div class="grid">
+          <button class="status-btn s-przyjete active"><span class="label">Przyjęte</span></button>
+          <button class="status-btn s-realizacja"><span class="label">Realizacja</span></button>
+          <button class="status-btn s-czeka"><span class="label">Czeka</span></button>
+          <button class="status-btn s-gotowe"><span class="label">Gotowe</span></button>
+          <button class="status-btn s-wydane"><span class="label">Wydane</span></button>
+          <button class="status-btn s-anuluj"><span class="label">Anuluj</span></button>
+        </div>
+      </section>
+
+      <!-- ITEMS -->
+      <section class="items" aria-label="Pozycje">
+        <div class="items-head">
+          <div>
+            <span class="title">Pozycje</span>
+            <span class="count">· 1/1</span>
+          </div>
+          <button class="btn-mini">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+            dodaj
+          </button>
+        </div>
+        <div class="item-row">
+          <span class="item-chip">Naprawa</span>
+          <span class="dash">—</span>
+          <span class="price">100,00 zł</span>
+          <span class="row-act" aria-label="Załącznik">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11l-9 9a5 5 0 1 1-7-7l9-9a3.5 3.5 0 1 1 5 5l-9 9a2 2 0 1 1-3-3l8-8"/></svg>
+          </span>
+          <span class="row-act" aria-label="Usuń">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 5l14 14M19 5L5 19"/></svg>
+          </span>
+        </div>
+      </section>
+
+      <!-- PHOTOS — clickable placeholder, no separate button -->
+      <section aria-label="Zdjęcia">
+        <h2 class="sect-title">Zdjęcia <span class="count">· 1</span></h2>
+        <div class="photos">
+          <div class="photo-tile">
+            <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden>
+              <rect width="100" height="100" fill="#ddd3bd"/>
+              <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+                <rect width="8" height="8" fill="#ddd3bd"/>
+                <line x1="0" y1="0" x2="0" y2="8" stroke="#c9bea3" stroke-width="3"/>
+              </pattern>
+              <rect width="100" height="100" fill="url(#hatch)"/>
+              <circle cx="36" cy="40" r="9" fill="#b0a17e"/>
+              <path d="M0 80 L30 50 L55 70 L80 45 L100 70 L100 100 L0 100 Z" fill="#a8997a"/>
+            </svg>
+            <span class="thumb-act" aria-label="Usuń zdjęcie">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg>
+            </span>
+          </div>
+          <button class="photo-add" aria-label="Wgraj zdjęcie">
+            <span class="plus">+</span>
+            <span class="hint">wgraj</span>
+          </button>
+          <button class="photo-add" aria-label="Wgraj zdjęcie">
+            <span class="plus">+</span>
+            <span class="hint">wgraj</span>
+          </button>
+          <button class="photo-add" aria-label="Wgraj zdjęcie">
+            <span class="plus">+</span>
+            <span class="hint">wgraj</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- HISTORIA — with custom designed icons -->
+      <section aria-label="Historia">
+        <h2 class="sect-title">Historia <span class="count">· 6 wpisów</span></h2>
+        <div class="historia">
+
+          <!-- 1 CREATION -->
+          <div class="hist-row">
+            <svg class="hist-icon" viewBox="0 0 24 24" aria-hidden>
+              <rect width="24" height="24" fill="#2b5cff"/>
+              <path d="M12 6v12M6 12h12" stroke="#f4efe6" stroke-width="2.6" stroke-linecap="square"/>
+              <rect x="2" y="2" width="3" height="3" fill="#f4efe6" opacity=".0"/>
+            </svg>
+            <div class="hist-content">
+              <div class="hist-title">Zlecenie utworzone</div>
+              <div class="hist-meta">Misza Doctor · 16.05.2026, 22:24</div>
+            </div>
+          </div>
+
+          <!-- 2 MESSAGE -->
+          <div class="hist-row">
+            <svg class="hist-icon" viewBox="0 0 24 24" aria-hidden>
+              <rect width="24" height="24" fill="#ff2e7e"/>
+              <path d="M4 7h16v10H4z" fill="none" stroke="#f4efe6" stroke-width="2"/>
+              <path d="M4 7l8 6 8-6" fill="none" stroke="#f4efe6" stroke-width="2" stroke-linejoin="miter"/>
+            </svg>
+            <div class="hist-content">
+              <div class="hist-title">Wysłano wiadomość</div>
+              <div class="hist-meta">Misza Doctor · 16.05.2026, 22:24</div>
+              <div class="hist-body msg">„Witam, buty trafiły na warsztat. Damy znać przy odbiorze."</div>
+            </div>
+          </div>
+
+          <!-- 3 STATUS CHANGE -->
+          <div class="hist-row">
+            <svg class="hist-icon" viewBox="0 0 24 24" aria-hidden>
+              <rect width="24" height="24" fill="#ff5a1f"/>
+              <path d="M6 9h11l-3-3M18 15H7l3 3" fill="none" stroke="#f4efe6" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+            </svg>
+            <div class="hist-content">
+              <div class="hist-title">
+                Status zmieniony
+                <span class="pill-mini from">Przyjęte</span>
+                <span class="arrow-mini">→</span>
+                <span class="pill-mini" style="color:var(--orange)">Realizacja</span>
+              </div>
+              <div class="hist-meta">Misza Doctor · 16.05.2026, 23:24</div>
+              <div class="hist-body">ELO — zaczynam dziś po południu.</div>
+            </div>
+          </div>
+
+          <!-- 4 NOTE -->
+          <div class="hist-row">
+            <svg class="hist-icon" viewBox="0 0 24 24" aria-hidden>
+              <rect width="24" height="24" fill="#d8ff3a"/>
+              <path d="M6 8h12M6 12h12M6 16h7" stroke="#0a0a0a" stroke-width="2" stroke-linecap="square"/>
+            </svg>
+            <div class="hist-content">
+              <div class="hist-title">Notatka</div>
+              <div class="hist-meta">Misza Doctor · 16.05.2026, 23:24</div>
+              <div class="hist-body note">
+                Przeniesione.
+                <div style="margin-top:6px;">
+                  <span class="pill-mini">📍 do szafa</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 STATUS CHANGE (to Gotowe) -->
+          <div class="hist-row">
+            <svg class="hist-icon" viewBox="0 0 24 24" aria-hidden>
+              <rect width="24" height="24" fill="#18b06b"/>
+              <path d="M6 9h11l-3-3M18 15H7l3 3" fill="none" stroke="#f4efe6" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+            </svg>
+            <div class="hist-content">
+              <div class="hist-title">
+                Status zmieniony
+                <span class="pill-mini from">Realizacja</span>
+                <span class="arrow-mini">→</span>
+                <span class="pill-mini" style="color:var(--green)">Gotowe</span>
+              </div>
+              <div class="hist-meta">Misza Doctor · 16.05.2026, 23:25</div>
+            </div>
+          </div>
+
+          <!-- 6 DONE -->
+          <div class="hist-row">
+            <svg class="hist-icon" viewBox="0 0 24 24" aria-hidden>
+              <rect width="24" height="24" fill="#0a0a0a"/>
+              <path d="M5 12l5 6 9-12" fill="none" stroke="#d8ff3a" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
+            </svg>
+            <div class="hist-content">
+              <div class="hist-title">Wydane klientowi</div>
+              <div class="hist-meta">Misza Doctor · 16.05.2026, 23:25</div>
+              <div class="hist-body">Zapłata 100,00 zł odebrana. Wszystko gra.</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- COMPOSER -->
+      <section class="composer" aria-label="Dodaj wpis">
+        <div class="eyebrow-mini">Dodaj wpis do historii</div>
+        <textarea placeholder="Co się stało? (opcjonalne) — np. wyczyszczony elo"></textarea>
+        <div class="composer-row">
+          <select aria-label="Miejsce">
+            <option>— bez miejsca —</option>
+            <option>półka 1</option>
+            <option>suszarka</option>
+            <option>szafa</option>
+          </select>
+          <button class="send">dodaj wpis</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ═══════ NOTES PANEL ═══════ -->
+  <aside class="notes-panel">
+    <h2>Co się zmieniło</h2>
+    <ol class="notes-list">
+
+      <li>
+        <span class="nn">01</span>
+        <div>
+          <h3>Info-block: inline + 4-kol stats</h3>
+          <p>
+            Pięć stackowanych pól w jeden blok: <code>KLIENT</code> w wierszu (label · nazwa · telefon), pod spodem czterokolumnowy grid <code>czas / wycena / zaliczka / do zapłaty</code>. Stencil values, mono labels, separatory ink. Oszczędność ~120px.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="nn">02</span>
+        <div>
+          <h3>Opis: bez labelki, placeholder + tape</h3>
+          <p>
+            Labelkę <code>OPIS</code> usunąłem. W zamian: textarea z konkretnym placeholderem („co konkretnie do zrobienia, materiał, kolor…") + mała acid-taśma „opis" w prawym górnym rogu, lekko skręcona — przejrzysta semantyka bez kradzenia linii.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="nn">03</span>
+        <div>
+          <h3>Status buttons: 3×2 paint-fill, ANULUJ w środku</h3>
+          <p>
+            Sześć pełnowymiarowych klocków w grid 3×2 (5 statusów + Anuluj). Idle: paper bg + ink border + tekst w kolorze statusu. Hover: <em>paint-fill</em> wjeżdża z dołu w kolorze statusu + szybki diagonal sweep (light streak). Active: stałe wypełnienie + ink-diamond w rogu. ANULUJ: red, na hover diagonalne hatchowanie — sygnalizuje destrukcję. Pop-shadow 3px ink na każdym. Najedź = zobaczysz.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="nn">04</span>
+        <div>
+          <h3>Historia: 5 własnych ikon stencil</h3>
+          <p>
+            Koniec emoji. Pięć ikon 28×28, każda na kolorowym tile z pop-shadow ink. Konsekwentny język wizualny:
+          </p>
+          <div class="icon-legend">
+            <div class="icon-legend-title">paleta ikon</div>
+            <div class="legend-grid">
+              <div class="cell">
+                <svg viewBox="0 0 24 24" width="32" height="32">
+                  <rect width="24" height="24" fill="#2b5cff"/>
+                  <path d="M12 6v12M6 12h12" stroke="#f4efe6" stroke-width="2.6" stroke-linecap="square"/>
+                </svg>
+                <span>creation</span>
+              </div>
+              <div class="cell">
+                <svg viewBox="0 0 24 24" width="32" height="32">
+                  <rect width="24" height="24" fill="#ff5a1f"/>
+                  <path d="M6 9h11l-3-3M18 15H7l3 3" fill="none" stroke="#f4efe6" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+                </svg>
+                <span>status·</span>
+              </div>
+              <div class="cell">
+                <svg viewBox="0 0 24 24" width="32" height="32">
+                  <rect width="24" height="24" fill="#d8ff3a"/>
+                  <path d="M6 8h12M6 12h12M6 16h7" stroke="#0a0a0a" stroke-width="2" stroke-linecap="square"/>
+                </svg>
+                <span>note</span>
+              </div>
+              <div class="cell">
+                <svg viewBox="0 0 24 24" width="32" height="32">
+                  <rect width="24" height="24" fill="#ff2e7e"/>
+                  <path d="M4 7h16v10H4z" fill="none" stroke="#f4efe6" stroke-width="2"/>
+                  <path d="M4 7l8 6 8-6" fill="none" stroke="#f4efe6" stroke-width="2"/>
+                </svg>
+                <span>message</span>
+              </div>
+              <div class="cell">
+                <svg viewBox="0 0 24 24" width="32" height="32">
+                  <rect width="24" height="24" fill="#0a0a0a"/>
+                  <path d="M5 12l5 6 9-12" fill="none" stroke="#d8ff3a" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
+                </svg>
+                <span>done</span>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top:10px;">
+            <code>status_change</code> bierze kolor docelowego statusu (przykład: → Realizacja = orange tile, → Gotowe = green tile). <code>done</code> to nowy typ: ink tile + acid-check, używany kiedy zlecenie zostaje wydane klientowi i się zamyka.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span class="nn">05</span>
+        <div>
+          <h3>Photos: klikalny placeholder</h3>
+          <p>
+            Wyrzuciłem czarny <code>Prześlij zdjęcia</code>. Każdy kafel siatki jest sam w sobie strefą uploadu — dashed border + stencil „+" + mini-label „wgraj". Hover: dashed → solid + pop-shadow ink. Drop-target dla drag&amp;drop. Po wgraniu zdjęcia kafel zamienia się na thumb z mini X-em w rogu.
+          </p>
+        </div>
+      </li>
+
+    </ol>
+  </aside>
+
+</div>
+
+</body>
+</html>
