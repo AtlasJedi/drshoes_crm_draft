@@ -72,8 +72,9 @@ Follow Superpowers default workflow for any non-trivial change:
 ## Project: Dr Shoes (drshoes.pl)
 
 Two-layer web product for a shoe repair / custom painting workshop in Poland.
-Source of truth: `handoff/` (BRIEF, DESIGN_SYSTEM, DATA_MODEL, API_SURFACE, design/).
-Locked decisions: `handoff/DECISIONS.md`.
+Source of truth: `design/spec/` (BRIEF, DESIGN_SYSTEM, DATA_MODEL, API_SURFACE) + `design/prototype/`.
+Locked decisions: `design/spec/DECISIONS.md`.
+`handoff/` is a transient drop zone — pending design prompts + designer exports only. Consumed artifacts get moved into `design/{prototype,archive,spec}/` so `handoff/` stays empty.
 Architecture for sign-off: `ARCHITECTURE.md`.
 
 Admin panel is the priority — public site is minimal-viable.

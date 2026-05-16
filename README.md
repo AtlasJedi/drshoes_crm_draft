@@ -61,5 +61,8 @@ POSTGRES_PORT=5433 make demo
 - `packages/ui` — shared design tokens + Tailwind preset.
 - `packages/api-types` — TypeScript types generated from backend OpenAPI.
 - `docs/` — schema, API contract, plans.
-- `handoff/` — original brief, design prototype, locked decisions.
+- `design/spec/` — original brief, locked decisions, data model, API surface, design system spec.
+- `design/prototype/` — canonical visual prototype (HTML + JSX + CSS).
+- `design/archive/` — past per-milestone design exports.
+- `handoff/` — temp drop zone for pending design prompts going out + exports coming in (kept empty otherwise).
 - `infra/` — deploy manifests (Cloudflare Containers, GitHub Actions) — added in a later milestone.

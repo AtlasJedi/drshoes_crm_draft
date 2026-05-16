@@ -1,6 +1,6 @@
 # Dr Shoes — Architecture (v1, for sign-off)
 
-**Status:** draft for owner sign-off. Locked decisions in `handoff/DECISIONS.md`. Functional spec in `handoff/BRIEF.md`. Visual contract in `handoff/design/`. After sign-off: `superpowers:writing-plans` → bite-sized tasks → Sonnet-dispatched implementation with TDD.
+**Status:** draft for owner sign-off. Locked decisions in `design/spec/DECISIONS.md`. Functional spec in `design/spec/BRIEF.md`. Visual contract in `design/prototype/`. After sign-off: `superpowers:writing-plans` → bite-sized tasks → Sonnet-dispatched implementation with TDD.
 
 ## Guiding principles
 
@@ -24,7 +24,8 @@ misza_madafaka/
 ├── docker-compose.yml              (local dev: postgres + minio + backend + web)
 ├── .env.example
 ├── .superpowers/                   (bound methodology, v5.1.0)
-├── handoff/                        (original brief, design, decisions)
+├── design/                         (spec/, prototype/, archive/ — canonical brief, prototype, past exports)
+├── handoff/                        (transient drop zone for pending design prompts + designer exports)
 │
 ├── backend/
 │   ├── pom.xml                     (parent POM, multi-module)
@@ -196,7 +197,7 @@ SavedFilter     (per User)
 ScheduledMessage (trigger engine durable queue)
 ```
 
-### Changes from `handoff/DATA_MODEL.md`
+### Changes from `design/spec/DATA_MODEL.md`
 
 **Status enum** adds `WSTEPNIE_PRZYJETE` as the public-intake initial state:
 
@@ -368,7 +369,7 @@ PATCH  /api/admin/users/{id}                OWNER only (password reset, role, de
 ```
 
 ### Admin — Clients, Products, News
-Per `handoff/API_SURFACE.md`. DELETE on any of these = OWNER only. EMPLOYEE may PATCH.
+Per `design/spec/API_SURFACE.md`. DELETE on any of these = OWNER only. EMPLOYEE may PATCH.
 
 ### Admin — Messaging
 ```
