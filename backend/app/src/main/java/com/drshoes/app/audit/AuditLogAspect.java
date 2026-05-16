@@ -90,6 +90,10 @@ public class AuditLogAspect {
         if (attrs == null) return;
         HttpServletRequest r = attrs.getRequest();
         String note = AuditWriteCoordinator.extractNote(args);
+        // Fall back to diff note injected by OrderService.update when no explicit HasAuditNote
+        if (note == null) {
+            note = (String) r.getAttribute("audit.diffNote");
+        }
         String locationFrom = (String) r.getAttribute("audit.locationFrom");
         String locationTo   = (String) r.getAttribute("audit.locationTo");
         coordinator.persistHttp(r, status, note, locationFrom, locationTo);

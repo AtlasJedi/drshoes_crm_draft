@@ -1,6 +1,7 @@
 package com.drshoes.app.order;
 
 import com.drshoes.app.audit.Audited;
+import com.drshoes.app.auth.domain.UserRepository;
 import com.drshoes.app.client.ClientNotFoundException;
 import com.drshoes.app.client.domain.ClientRepository;
 import com.drshoes.app.messaging.service.TriggerEngine;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.Instant;
 import java.util.List;
@@ -39,13 +42,16 @@ public class OrderService {
     private final OrderCodeSequence codeSeq;
     private final OrderItemService itemService;
     private final TriggerEngine triggerEngine;
+    private final UserRepository userRepo;
 
     public OrderService(OrderRepository orderRepo, OrderItemRepository itemRepo,
                         ClientRepository clientRepo, OrderCodeSequence codeSeq,
-                        OrderItemService itemService, TriggerEngine triggerEngine) {
+                        OrderItemService itemService, TriggerEngine triggerEngine,
+                        UserRepository userRepo) {
         this.orderRepo = orderRepo; this.itemRepo = itemRepo;
         this.clientRepo = clientRepo; this.codeSeq = codeSeq;
         this.itemService = itemService; this.triggerEngine = triggerEngine;
+        this.userRepo = userRepo;
     }
 
     // ---- queries ----
@@ -108,6 +114,10 @@ public class OrderService {
         if (o.getDeletedAt() != null) throw new OrderAlreadyDeletedException(id);
         if (req.version() != null && req.version() != o.getVersion())
             throw new OrderVersionConflictException(id, o.getVersion());
+
+        // M10 hygiene: compute Polish diff BEFORE applying changes
+        String diffNote = OrderUpdateDiff.computePolish(o, req, this::resolveUserName);
+
         if (req.description() != null)              o.setDescription(req.description());
         if (req.plannedPickupAt() != null)          o.setPlannedPickupAt(req.plannedPickupAt());
         if (req.assignedCraftsmanId() != null)      o.setAssignedCraftsmanId(req.assignedCraftsmanId());
@@ -116,8 +126,25 @@ public class OrderService {
         if (req.tags() != null)                     o.setTags(req.tags());
         if (req.quotedPriceCents() != null)         o.setQuotedPriceCents(req.quotedPriceCents());
         if (req.advancePaidCents() != null)         o.setAdvancePaidCents(req.advancePaidCents());
-        log.info("op=updateOrder orderId={} outcome=ok", id);
+
+        // Inject diff into request attribute for AuditLogAspect to pick up
+        if (diffNote != null) {
+            try {
+                ServletRequestAttributes attrs =
+                    (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+                attrs.getRequest().setAttribute("audit.diffNote", diffNote);
+            } catch (IllegalStateException ignored) {
+                // no request bound (e.g., called from test) — drop silently
+            }
+        }
+
+        log.info("op=updateOrder orderId={} hasDiff={} outcome=ok", id, diffNote != null);
         return toDto(orderRepo.save(o));
+    }
+
+    private String resolveUserName(UUID userId) {
+        if (userId == null) return null;
+        return userRepo.findById(userId).map(u -> u.getFullName()).orElse("?");
     }
 
     @Transactional
