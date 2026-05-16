@@ -32,11 +32,7 @@ export function OrdersWeekChart({ rows }: Props) {
         {/* Chip toggles — visual only; M10 backlog item wires time-range filter */}
         <div className="flex gap-1.5">
           {CHIPS.map((c) => (
-            <Chip
-              key={c.label}
-              active={c.active}
-              onClick={() => console.warn("chart range wkrótce")}
-            >
+            <Chip key={c.label} active={c.active}>
               {c.label}
             </Chip>
           ))}

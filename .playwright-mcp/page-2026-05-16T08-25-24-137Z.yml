@@ -1,0 +1,135 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: Dr.Shoes
+        - generic [ref=e6]: panel pracowni · v2.4
+      - navigation [ref=e7]:
+        - generic [ref=e8]: PULPIT
+        - link "Dashboard" [ref=e9] [cursor=pointer]:
+          - /url: /admin
+        - generic [ref=e10]: OPERACJE
+        - link "Zamówienia" [ref=e11] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Klienci" [ref=e12] [cursor=pointer]:
+          - /url: /admin/clients
+        - link "Wiadomości" [ref=e13] [cursor=pointer]:
+          - /url: /admin/messages
+          - img [ref=e14]
+          - generic [ref=e16]: Wiadomości
+        - generic [ref=e17]: KOMUNIKACJA
+        - link "Triggery" [ref=e18] [cursor=pointer]:
+          - /url: /admin/triggers
+        - link "Szablony wiadomości" [ref=e19] [cursor=pointer]:
+          - /url: /admin/templates
+        - generic [ref=e20]: SKLEP
+        - link "Sklep" [ref=e21] [cursor=pointer]:
+          - /url: /admin/sklep
+        - link "Aktualności" [ref=e22] [cursor=pointer]:
+          - /url: /admin/aktualnosci
+        - button "Zgłoś problem" [ref=e24] [cursor=pointer]
+      - generic [ref=e25]:
+        - generic [ref=e26]: TA
+        - generic [ref=e27]:
+          - generic [ref=e28]: Test Admin
+          - generic [ref=e29]: owner · pracownia
+        - button "Wyloguj" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+    - main [ref=e34]:
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - heading "Dashboard" [level=1] [ref=e37]
+          - generic [ref=e38]: sobota, 16 maja 2026
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - img [ref=e41]
+            - textbox "Szukaj zlecenia, klienta…" [ref=e44]
+            - generic [ref=e45]: ⌘K
+          - button "Powiadomienia" [ref=e46] [cursor=pointer]:
+            - img [ref=e47]
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e54]: W realizacji
+            - generic [ref=e55]: "3"
+            - generic [ref=e56]: zlecenia aktywne
+          - generic [ref=e58]:
+            - generic [ref=e59]: Gotowe do odbioru
+            - generic [ref=e60]: "2"
+            - generic [ref=e61]: czekają na klienta
+          - generic [ref=e63]:
+            - generic [ref=e64]: Nowe rezerwacje (7d)
+            - generic [ref=e65]: "0"
+            - generic [ref=e66]: ostatnie 7 dni
+          - generic [ref=e68]:
+            - generic [ref=e69]: Przychód · maj
+            - generic [ref=e70]: 0,00 zł
+            - generic [ref=e71]: ten miesiąc
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - generic [ref=e76]:
+                - generic [ref=e77]: Zlecenia / tydzień
+                - generic [ref=e78]: ostatnie 8 tygodni
+              - generic [ref=e79]:
+                - generic [ref=e80] [cursor=pointer]: tydzień
+                - generic [ref=e81] [cursor=pointer]: miesiąc
+                - generic [ref=e82] [cursor=pointer]: kwartał
+            - img [ref=e83]:
+              - generic [ref=e86]: W13
+              - generic [ref=e88]: W14
+              - generic [ref=e90]: W15
+              - generic [ref=e92]: W16
+              - generic [ref=e95]: W17
+              - generic [ref=e99]: W18
+              - generic [ref=e103]: W19
+              - generic [ref=e105]: W20
+            - generic [ref=e106]:
+              - generic [ref=e107]: naprawy
+              - generic [ref=e109]: custom
+          - generic [ref=e111]:
+            - generic [ref=e112]: Mix zleceń
+            - img [ref=e113]:
+              - generic [ref=e118]: "12"
+              - generic [ref=e119]: aktywne
+            - generic [ref=e120]:
+              - generic [ref=e121]:
+                - generic [ref=e123]: Custom buty
+                - generic [ref=e124]: 25%
+              - generic [ref=e125]:
+                - generic [ref=e127]: Custom kurtki
+                - generic [ref=e128]: 16.7%
+              - generic [ref=e129]:
+                - generic [ref=e131]: Naprawy
+                - generic [ref=e132]: 58.3%
+        - generic [ref=e133]:
+          - generic [ref=e138]:
+            - generic [ref=e139]: Ostatnie wiadomości
+            - link "A Anna Kowalska EMAIL" [ref=e141] [cursor=pointer]:
+              - /url: /admin/messages?thread=1ce31d7e-ca6a-46b7-a5bd-709fe4c3a885
+              - generic [ref=e142]: A
+              - generic [ref=e143]:
+                - generic [ref=e145]: Anna Kowalska
+                - generic [ref=e146]: EMAIL
+          - generic [ref=e147]:
+            - generic [ref=e148]: Świeże rezerwacje
+            - generic [ref=e149]:
+              - generic [ref=e150]:
+                - generic [ref=e152]:
+                  - generic [ref=e153]: Karol J.
+                  - generic [ref=e154]: AF1 Mid 'Bandana'
+                  - generic [ref=e155]: dziś · 10:24
+                - button "otwórz" [ref=e156] [cursor=pointer]
+              - generic [ref=e157]:
+                - generic [ref=e159]:
+                  - generic [ref=e160]: Iga S.
+                  - generic [ref=e161]: Vans Authentic 'Drip'
+                  - generic [ref=e162]: wczoraj · 19:01
+                - button "otwórz" [ref=e163] [cursor=pointer]
+              - generic [ref=e164]:
+                - generic [ref=e166]:
+                  - generic [ref=e167]: Adam W.
+                  - generic [ref=e168]: Jordan 1 'Tag'
+                  - generic [ref=e169]: wczoraj · 14:50
+                - button "otwórz" [ref=e170] [cursor=pointer]
+  - alert [ref=e171]
