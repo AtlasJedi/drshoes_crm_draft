@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "active_milestone": "9",
-  "active_plan": "docs/superpowers/plans/2026-05-15-milestone-09-design-parity.md",
+  "active_milestone": "v2-fixes",
+  "active_plan": "docs/superpowers/plans/2026-05-16-v2-six-fixes.md",
   "tasks": [
     {
       "id": "0b-1",
@@ -1997,6 +1997,48 @@
       "status": "completed",
       "commit_sha": "4c38bb6",
       "dispatch_log": "docs/dispatch-log/m11-email-html-regression-20260516T165147Z.md"
+    },
+    {
+      "id": "v2-A",
+      "title": "Kanban drag reuses StatusChangeTriggerDialog",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "v2-C",
+      "title": "Naprawa→Usługa + CUSTOM_BUTY/KURTKA merge to CUSTOM (V025)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "v2-D",
+      "title": "Dashboard money tiles (in-progress + picked-up month)",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "v2-E",
+      "title": "Messages followup template wrap + drop subject + scroll",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "v2-B",
+      "title": "Calendar overhaul — two markers per order [TWO-STAGE]",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
+    },
+    {
+      "id": "v2-F",
+      "title": "Order drawer rip-and-replace per handoff [TWO-STAGE]",
+      "status": "pending",
+      "commit_sha": null,
+      "dispatch_log": null
     }
   ],
   "notes": [
