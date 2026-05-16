@@ -1,10 +1,11 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createLogger } from "@/lib/log";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
 import type { OrderStatus } from "@/lib/orders/types";
+import type { StorageLocation } from "@/lib/types";
 
 /** Shape computed by previewForStatus() and passed down for display. */
 export type TriggerPreview =
@@ -14,6 +15,14 @@ export type TriggerPreview =
 
 const log = createLogger("status-trigger-dialog");
 
+// Statuses where the operator may optionally move the order to a new storage
+// location as part of the status change. Owner directive 2026-05-16.
+const LOCATION_PICKER_STATUSES: OrderStatus[] = [
+  "W_REALIZACJI",
+  "CZEKA_NA_KLIENTA",
+  "GOTOWE_DO_ODBIORU",
+];
+
 interface Props {
   open: boolean;
   fromStatus: OrderStatus;
@@ -22,8 +31,12 @@ interface Props {
   orderId: string;
   clientName?: string;
   triggerPreview: TriggerPreview;
-  /** Called with sendTriggers flag and optional operator note. */
-  onConfirm: (sendTriggers: boolean, note: string) => void;
+  /** Current storage location name (denormalized). Default null = no location. */
+  currentLocation?: string | null;
+  /** Active storage locations available to choose from. Default [] = none. */
+  locations?: StorageLocation[];
+  /** Called with sendTriggers flag, optional operator note, and optional new location (only when changed). */
+  onConfirm: (sendTriggers: boolean, note: string, location?: string) => void;
   onCancel: () => void;
 }
 
@@ -43,25 +56,46 @@ export function StatusChangeTriggerDialog({
   orderId,
   clientName,
   triggerPreview,
+  currentLocation = null,
+  locations = [],
   onConfirm,
   onCancel,
 }: Props) {
   const hasTrigger = triggerPreview.kind === "match";
+  const showLocationPicker = toStatus !== null && LOCATION_PICKER_STATUSES.includes(toStatus);
+
   const [note, setNote] = useState("");
+  const [targetLocation, setTargetLocation] = useState<string>(currentLocation ?? "");
+
+  // Keep targetLocation in sync when the dialog (re)opens for a new order/state.
+  useEffect(() => {
+    if (open) setTargetLocation(currentLocation ?? "");
+  }, [open, currentLocation]);
+
+  function pickedLocation(): string | undefined {
+    if (!showLocationPicker) return undefined;
+    const next = targetLocation || null;
+    const curr = currentLocation || null;
+    if (next === curr) return undefined;
+    return targetLocation || undefined; // empty string => "no location" is not yet supported on this path; treat as no-op
+  }
 
   function handleSend() {
-    log.info("op=confirmWithTrigger", { orderId, from: fromStatus, to: toStatus, hasNote: note.trim().length > 0 });
-    onConfirm(true, note);
+    const location = pickedLocation();
+    log.info("op=confirmWithTrigger", { orderId, from: fromStatus, to: toStatus, hasNote: note.trim().length > 0, hasLocation: !!location });
+    onConfirm(true, note, location);
   }
 
   function handleStatusOnly() {
-    log.info("op=confirmStatusOnly", { orderId, from: fromStatus, to: toStatus, hasNote: note.trim().length > 0 });
-    onConfirm(false, note);
+    const location = pickedLocation();
+    log.info("op=confirmStatusOnly", { orderId, from: fromStatus, to: toStatus, hasNote: note.trim().length > 0, hasLocation: !!location });
+    onConfirm(false, note, location);
   }
 
   function handleOpenChange(isOpen: boolean) {
     if (!isOpen) {
       setNote("");
+      setTargetLocation(currentLocation ?? "");
       onCancel();
     }
   }
@@ -119,6 +153,27 @@ export function StatusChangeTriggerDialog({
             )}
           </div>
 
+          {/* Optional location move — only for W_REALIZACJI / CZEKA / GOTOWE */}
+          {showLocationPicker && (
+            <div className="space-y-1">
+              <label htmlFor="status-change-location" className="text-xs font-medium text-admin-mute">
+                Miejsce (opcjonalnie)
+              </label>
+              <select
+                id="status-change-location"
+                name="location"
+                value={targetLocation}
+                onChange={(e) => setTargetLocation(e.target.value)}
+                className="w-full px-2 py-1.5 text-sm border-2 border-ink bg-paper text-ink focus:outline-none focus:ring-1 focus:ring-ink"
+              >
+                <option value="">— bez zmiany miejsca —</option>
+                {locations.map((l) => (
+                  <option key={l.id} value={l.name}>{l.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Note input */}
           <div className="space-y-1">
             <label htmlFor="status-change-note" className="text-xs font-medium text-admin-mute">
@@ -143,14 +198,14 @@ export function StatusChangeTriggerDialog({
                 onClick={handleSend}
                 className="w-full px-4 py-2 text-sm font-medium bg-ink text-paper border-2 border-ink hover:bg-ink/90 transition-colors"
               >
-                Wyślij wiadomość
+                PYK & SEND
               </button>
             )}
             <button
               onClick={handleStatusOnly}
               className="w-full px-4 py-2 text-sm font-medium bg-paper text-ink border-2 border-ink hover:bg-paper-2 transition-colors"
             >
-              Tylko zmień status
+              PYK
             </button>
             <button
               onClick={onCancel}

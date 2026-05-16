@@ -12,9 +12,11 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { createLogger } from "@/lib/log";
 import { getTriggers } from "@/lib/messaging/api";
 import { changeStatus } from "@/lib/orders/api";
+import { listLocations, addOrderNote } from "@/lib/locations";
 import { STATUS_LABELS_PL, STATUS_ORDER } from "@/lib/orders/status";
 import type { TriggerDto } from "@/lib/messaging/types";
 import type { OrderListRow, OrderStatus } from "@/lib/orders/types";
+import type { StorageLocation } from "@/lib/types";
 import { StatusChangeTriggerDialog } from "./StatusChangeTriggerDialog";
 import type { TriggerPreview } from "./StatusChangeTriggerDialog";
 import { MessageComposerModal } from "./MessageComposerModal";
@@ -58,12 +60,19 @@ export function RowQuickActionsMenu({ row, onOrderUpdated }: Props) {
   const [active, setActive] = useState<ActivePanel>(null);
   const [statusTarget, setStatusTarget] = useState<OrderStatus | null>(null);
   const [triggers, setTriggers] = useState<TriggerDto[]>([]);
+  const [locations, setLocations] = useState<StorageLocation[]>([]);
 
   function openStatusPicker() {
     log.info("op=openStatusPicker", { orderId: row.id });
     getTriggers()
       .then((ts) => setTriggers(ts))
       .catch((err: unknown) => log.error("op=loadTriggers outcome=error", { err }));
+    listLocations()
+      .then((rows) => setLocations(rows.sort((a, b) => a.position - b.position)))
+      .catch((err: unknown) => {
+        log.error("op=loadLocations outcome=error", { err });
+        setLocations([]);
+      });
     setStatusTarget(null);
     setActive("status-pick");
   }
@@ -73,11 +82,19 @@ export function RowQuickActionsMenu({ row, onOrderUpdated }: Props) {
     setActive("status-confirm");
   }
 
-  async function handleStatusConfirm(sendTriggers: boolean) {
+  async function handleStatusConfirm(sendTriggers: boolean, note: string, location?: string) {
     if (!statusTarget) return;
     try {
-      await changeStatus(row.id, statusTarget, row.version, sendTriggers);
-      log.info("op=statusChange outcome=ok", { orderId: row.id, to: statusTarget, sendTriggers });
+      await changeStatus(row.id, statusTarget, row.version, sendTriggers, note);
+      log.info("op=statusChange outcome=ok", { orderId: row.id, to: statusTarget, sendTriggers, hasNote: note.trim().length > 0, hasLocation: !!location });
+      if (location) {
+        try {
+          await addOrderNote(row.id, { location });
+          log.info("op=statusChangeLocationMove outcome=ok", { orderId: row.id, to: location });
+        } catch (locErr) {
+          log.error("op=statusChangeLocationMove outcome=error", { orderId: row.id, err: String(locErr) });
+        }
+      }
       setActive(null);
       onOrderUpdated();
     } catch (err) {
@@ -206,7 +223,9 @@ export function RowQuickActionsMenu({ row, onOrderUpdated }: Props) {
         toStatus={statusTarget}
         orderId={row.id}
         triggerPreview={statusTarget ? previewFor(statusTarget, triggers) : { kind: "none" }}
-        onConfirm={(sendTriggers) => void handleStatusConfirm(sendTriggers)}
+        currentLocation={row.location}
+        locations={locations}
+        onConfirm={(sendTriggers, note, location) => void handleStatusConfirm(sendTriggers, note, location)}
         onCancel={() => {
           setActive(null);
         }}

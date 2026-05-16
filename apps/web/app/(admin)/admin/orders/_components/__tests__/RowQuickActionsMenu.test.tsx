@@ -24,6 +24,10 @@ vi.mock("@/lib/messaging/api", () => ({
 vi.mock("@/lib/orders/api", () => ({
   changeStatus: () => Promise.resolve({}),
 }));
+vi.mock("@/lib/locations", () => ({
+  listLocations: () => Promise.resolve([]),
+  addOrderNote: () => Promise.resolve({}),
+}));
 
 const row: OrderListRow = {
   id: "order-abc-123",
@@ -42,6 +46,8 @@ const row: OrderListRow = {
   quotedPriceCents: 0,
   advancePaidCents: 0,
   clientName: "Test Klient",
+  location: null,
+  urgent: false,
 };
 
 describe("RowQuickActionsMenu", () => {

@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { createLogger } from "@/lib/log";
 import { changeStatus } from "@/lib/orders/api";
 import { getTriggers } from "@/lib/messaging/api";
+import { listLocations, addOrderNote } from "@/lib/locations";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
 import type { OrderDto, OrderStatus } from "@/lib/orders/types";
 import type { TriggerDto } from "@/lib/messaging/types";
+import type { StorageLocation } from "@/lib/types";
 import { previewForStatus } from "@/lib/orders/triggerPreview";
 import { StatusChangeTriggerDialog } from "./StatusChangeTriggerDialog";
 import type { TriggerPreview } from "./StatusChangeTriggerDialog";
@@ -75,6 +77,7 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
   const [target, setTarget] = useState<OrderStatus | null>(null);
   const [conflict, setConflict] = useState(false);
   const [triggers, setTriggers] = useState<TriggerDto[]>([]);
+  const [locations, setLocations] = useState<StorageLocation[]>([]);
 
   useEffect(() => {
     getTriggers()
@@ -85,6 +88,12 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
       .catch((err: unknown) => {
         log.error("op=loadTriggers outcome=error", { err });
       });
+    listLocations()
+      .then((rows) => setLocations(rows.sort((a, b) => a.position - b.position)))
+      .catch((err: unknown) => {
+        log.error("op=loadLocations outcome=error", { err });
+        setLocations([]);
+      });
   }, []);
 
   function openConfirm(s: OrderStatus) {
@@ -93,12 +102,23 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
     setTarget(s);
   }
 
-  async function handleConfirm(sendTriggers: boolean, note: string) {
+  async function handleConfirm(sendTriggers: boolean, note: string, location?: string) {
     if (!target) return;
     try {
       const res = await changeStatus(order.id, target, order.version, sendTriggers, note);
-      log.info("op=changeStatus outcome=ok", { orderId: order.id, to: target, sendTriggers, hasNote: note.trim().length > 0 });
-      onOrderUpdated(res.order);
+      log.info("op=changeStatus outcome=ok", { orderId: order.id, to: target, sendTriggers, hasNote: note.trim().length > 0, hasLocation: !!location });
+      let updated = res.order;
+      if (location) {
+        try {
+          await addOrderNote(order.id, { location });
+          log.info("op=changeStatusLocationMove outcome=ok", { orderId: order.id, to: location });
+          // Reflect the new location optimistically so the drawer doesn't show stale data.
+          updated = { ...updated, location };
+        } catch (locErr: unknown) {
+          log.error("op=changeStatusLocationMove outcome=error", { orderId: order.id, err: String(locErr) });
+        }
+      }
+      onOrderUpdated(updated);
       setTarget(null);
     } catch (err: unknown) {
       if ((err as { status?: number })?.status === 409) {
@@ -180,7 +200,9 @@ export function OrderDrawerStatusChanger({ order, onOrderUpdated }: Props) {
         toStatus={target}
         orderId={order.id}
         triggerPreview={triggerPreview}
-        onConfirm={(sendTriggers, note) => { void handleConfirm(sendTriggers, note); }}
+        currentLocation={order.location}
+        locations={locations}
+        onConfirm={(sendTriggers, note, location) => { void handleConfirm(sendTriggers, note, location); }}
         onCancel={() => setTarget(null)}
       />
     </div>

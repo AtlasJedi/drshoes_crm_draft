@@ -43,7 +43,7 @@ describe("StatusChangeTriggerDialog", () => {
     expect(screen.getByText(/w realizacji/i)).toBeTruthy();
   });
 
-  it("shows 'Wyślij wiadomość' button when trigger matches", () => {
+  it("shows 'PYK & SEND' button when trigger matches", () => {
     render(
       <StatusChangeTriggerDialog
         open={true}
@@ -55,10 +55,10 @@ describe("StatusChangeTriggerDialog", () => {
         onCancel={vi.fn()}
       />,
     );
-    expect(screen.getByText("Wyślij wiadomość")).toBeTruthy();
+    expect(screen.getByText("PYK & SEND")).toBeTruthy();
   });
 
-  it("always shows 'Tylko zmień status' button", () => {
+  it("always shows 'PYK' button", () => {
     render(
       <StatusChangeTriggerDialog
         open={true}
@@ -70,10 +70,10 @@ describe("StatusChangeTriggerDialog", () => {
         onCancel={vi.fn()}
       />,
     );
-    expect(screen.getByText("Tylko zmień status")).toBeTruthy();
+    expect(screen.getByText("PYK")).toBeTruthy();
   });
 
-  it("calls onConfirm(true, '') when Wyślij is clicked with no note", () => {
+  it("calls onConfirm(true, '', undefined) when PYK & SEND is clicked with no note/location", () => {
     const onConfirm = vi.fn();
     render(
       <StatusChangeTriggerDialog
@@ -86,11 +86,11 @@ describe("StatusChangeTriggerDialog", () => {
         onCancel={vi.fn()}
       />,
     );
-    fireEvent.click(screen.getByText("Wyślij wiadomość"));
-    expect(onConfirm).toHaveBeenCalledWith(true, "");
+    fireEvent.click(screen.getByText("PYK & SEND"));
+    expect(onConfirm).toHaveBeenCalledWith(true, "", undefined);
   });
 
-  it("calls onConfirm(false, '') when Tylko-zmień is clicked with no note", () => {
+  it("calls onConfirm(false, '', undefined) when PYK is clicked with no note/location", () => {
     const onConfirm = vi.fn();
     render(
       <StatusChangeTriggerDialog
@@ -103,8 +103,8 @@ describe("StatusChangeTriggerDialog", () => {
         onCancel={vi.fn()}
       />,
     );
-    fireEvent.click(screen.getByText("Tylko zmień status"));
-    expect(onConfirm).toHaveBeenCalledWith(false, "");
+    fireEvent.click(screen.getByText("PYK"));
+    expect(onConfirm).toHaveBeenCalledWith(false, "", undefined);
   });
 
   it("renders note textarea with correct label", () => {
@@ -139,8 +139,91 @@ describe("StatusChangeTriggerDialog", () => {
     );
     const textarea = screen.getByRole("textbox");
     act(() => { fireEvent.change(textarea, { target: { value: "Klient zapłacił z góry" } }); });
-    fireEvent.click(screen.getByText("Tylko zmień status"));
-    expect(onConfirm).toHaveBeenCalledWith(false, "Klient zapłacił z góry");
+    fireEvent.click(screen.getByText("PYK"));
+    expect(onConfirm).toHaveBeenCalledWith(false, "Klient zapłacił z góry", undefined);
+  });
+
+  it("renders location picker for W_REALIZACJI / CZEKA / GOTOWE only", () => {
+    const locations = [
+      { id: 1, name: "Półka A", position: 1, active: true },
+      { id: 2, name: "Półka B", position: 2, active: true },
+    ];
+
+    const { rerender } = render(
+      <StatusChangeTriggerDialog
+        open={true}
+        fromStatus="PRZYJETE"
+        toStatus="W_REALIZACJI"
+        orderId="uuid-1"
+        triggerPreview={noopPreview}
+        currentLocation={null}
+        locations={locations}
+        onConfirm={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+    expect(screen.getByLabelText("Miejsce (opcjonalnie)")).toBeTruthy();
+
+    // PRZYJETE is NOT in the picker set
+    rerender(
+      <StatusChangeTriggerDialog
+        open={true}
+        fromStatus="WSTEPNIE_PRZYJETE"
+        toStatus="PRZYJETE"
+        orderId="uuid-1"
+        triggerPreview={noopPreview}
+        currentLocation={null}
+        locations={locations}
+        onConfirm={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+    expect(screen.queryByLabelText("Miejsce (opcjonalnie)")).toBeNull();
+  });
+
+  it("passes chosen location to onConfirm when changed", () => {
+    const onConfirm = vi.fn();
+    const locations = [
+      { id: 1, name: "Półka A", position: 1, active: true },
+      { id: 2, name: "Półka B", position: 2, active: true },
+    ];
+    render(
+      <StatusChangeTriggerDialog
+        open={true}
+        fromStatus="PRZYJETE"
+        toStatus="W_REALIZACJI"
+        orderId="uuid-1"
+        triggerPreview={noopPreview}
+        currentLocation={null}
+        locations={locations}
+        onConfirm={onConfirm}
+        onCancel={vi.fn()}
+      />,
+    );
+    const select = screen.getByLabelText("Miejsce (opcjonalnie)") as HTMLSelectElement;
+    act(() => { fireEvent.change(select, { target: { value: "Półka B" } }); });
+    fireEvent.click(screen.getByText("PYK"));
+    expect(onConfirm).toHaveBeenCalledWith(false, "", "Półka B");
+  });
+
+  it("omits location from onConfirm when unchanged", () => {
+    const onConfirm = vi.fn();
+    const locations = [{ id: 1, name: "Półka A", position: 1, active: true }];
+    render(
+      <StatusChangeTriggerDialog
+        open={true}
+        fromStatus="PRZYJETE"
+        toStatus="W_REALIZACJI"
+        orderId="uuid-1"
+        triggerPreview={noopPreview}
+        currentLocation="Półka A"
+        locations={locations}
+        onConfirm={onConfirm}
+        onCancel={vi.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByText("PYK"));
+    expect(onConfirm).toHaveBeenCalledWith(false, "", undefined);
   });
 
   it("calls onCancel when Anuluj is clicked", () => {

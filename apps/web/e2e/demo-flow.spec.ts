@@ -68,15 +68,15 @@ async function getTimelineCount(page: Page): Promise<number> {
 
 /**
  * Click the status pill button with the given Polish label inside the open
- * OrderDrawer, then confirm via StatusChangeTriggerDialog ("Tylko zmień status").
+ * OrderDrawer, then confirm via StatusChangeTriggerDialog ("PYK").
  */
 async function changeOrderStatus(page: Page, statusLabel: string) {
   const btn = page.getByRole("button", { name: statusLabel, exact: true });
   await expect(btn).toBeEnabled({ timeout: 8_000 });
   await btn.click();
 
-  // StatusChangeTriggerDialog always renders — always has "Tylko zmień status"
-  const confirmBtn = page.getByRole("button", { name: "Tylko zmień status" });
+  // StatusChangeTriggerDialog always renders — always has "PYK"
+  const confirmBtn = page.getByRole("button", { name: "PYK" });
   await expect(confirmBtn).toBeVisible({ timeout: 5_000 });
   await confirmBtn.click();
 

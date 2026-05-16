@@ -4,8 +4,8 @@
  * StatusChangeTriggerDialog through to the changeStatus API call.
  *
  * Strategy: mock changeStatus, render the component with a seeded order, simulate
- * clicking a status chip to open the dialog, then click "Tylko zmień status"
- * (sendTriggers=false) or "Wyślij wiadomość" (sendTriggers=true) and assert the
+ * clicking a status chip to open the dialog, then click "PYK"
+ * (sendTriggers=false) or "PYK & SEND" (sendTriggers=true) and assert the
  * mock was called with the correct flag.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -23,6 +23,11 @@ vi.mock("@/lib/orders/api", () => ({
 
 vi.mock("@/lib/messaging/api", () => ({
   getTriggers: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock("@/lib/locations", () => ({
+  listLocations: vi.fn().mockResolvedValue([]),
+  addOrderNote: vi.fn().mockResolvedValue({}),
 }));
 
 // ── fixture ───────────────────────────────────────────────────────────────────
@@ -67,7 +72,7 @@ describe("OrderDrawerStatusChanger — sendTriggers plumbing (Slice F)", () => {
     vi.clearAllMocks();
   });
 
-  it("'Tylko zmień status' calls changeStatus with sendTriggers=false", async () => {
+  it("'PYK' calls changeStatus with sendTriggers=false", async () => {
     const order = makeOrder();
     const updatedOrder = makeUpdatedOrder(order);
     (ordersApi.changeStatus as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
@@ -81,9 +86,9 @@ describe("OrderDrawerStatusChanger — sendTriggers plumbing (Slice F)", () => {
     fireEvent.click(screen.getByRole("button", { name: /w realizacji/i }));
 
     // Dialog should appear
-    await waitFor(() => expect(screen.getByText("Tylko zmień status")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("PYK")).toBeInTheDocument());
 
-    fireEvent.click(screen.getByText("Tylko zmień status"));
+    fireEvent.click(screen.getByText("PYK"));
 
     await waitFor(() =>
       expect(ordersApi.changeStatus).toHaveBeenCalledWith(
@@ -96,8 +101,8 @@ describe("OrderDrawerStatusChanger — sendTriggers plumbing (Slice F)", () => {
     );
   });
 
-  it("'Wyślij wiadomość' calls changeStatus with sendTriggers=true (when trigger matches)", async () => {
-    // Seed a trigger so the dialog shows the "Wyślij wiadomość" button.
+  it("'PYK & SEND' calls changeStatus with sendTriggers=true (when trigger matches)", async () => {
+    // Seed a trigger so the dialog shows the "PYK & SEND" button.
     // NOTE: TriggerDto uses JSON-STRING fields for eventParams and channels — not arrays/objects.
     // previewForStatus calls JSON.parse(t.eventParams) and JSON.parse(t.channels).
     (messagingApi.getTriggers as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
@@ -130,10 +135,10 @@ describe("OrderDrawerStatusChanger — sendTriggers plumbing (Slice F)", () => {
     await waitFor(() => expect(messagingApi.getTriggers).toHaveBeenCalled());
     fireEvent.click(screen.getByRole("button", { name: /gotowe do odbioru/i }));
 
-    // "Wyślij wiadomość" only appears when there is a matching trigger
-    await waitFor(() => expect(screen.getByText("Wyślij wiadomość")).toBeInTheDocument());
+    // "PYK & SEND" only appears when there is a matching trigger
+    await waitFor(() => expect(screen.getByText("PYK & SEND")).toBeInTheDocument());
 
-    fireEvent.click(screen.getByText("Wyślij wiadomość"));
+    fireEvent.click(screen.getByText("PYK & SEND"));
 
     await waitFor(() =>
       expect(ordersApi.changeStatus).toHaveBeenCalledWith(
