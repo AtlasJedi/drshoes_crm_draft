@@ -86,6 +86,15 @@ public class AuditLog {
     @Column(name = "location_to", length = 64)
     private String locationTo;
 
+    /**
+     * Target status for status-change audit rows (POST /api/admin/orders/{uuid}/status).
+     * NULL for all other audit rows.
+     * Added by V027 migration (v2-F) to allow the TimelineEventCurator to emit
+     * DONE kind when the target status is WYDANE.
+     */
+    @Column(name = "target_status", length = 32)
+    private String targetStatus;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
@@ -113,5 +122,7 @@ public class AuditLog {
     public void setLocationFrom(String locationFrom) { this.locationFrom = locationFrom; }
     public String getLocationTo() { return locationTo; }
     public void setLocationTo(String locationTo) { this.locationTo = locationTo; }
+    public String getTargetStatus() { return targetStatus; }
+    public void setTargetStatus(String targetStatus) { this.targetStatus = targetStatus; }
     public Instant getCreatedAt() { return createdAt; }
 }

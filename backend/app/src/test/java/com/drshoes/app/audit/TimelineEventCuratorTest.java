@@ -167,6 +167,43 @@ class TimelineEventCuratorTest {
         assertThat(result.get().kind()).isEqualTo(TimelineEventKind.ORDER_NOTE);
     }
 
+    // ── STATUS_CHANGED vs DONE ───────────────────────────────────────────────
+
+    @Test
+    void statusChanged_toWydane_emitsDoneEvent() {
+        AuditLog log = auditLog("POST", "/api/admin/orders/" + ORDER_UUID + "/status", 200, null, null);
+        log.setTargetStatus("WYDANE");
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().kind()).isEqualTo(TimelineEventKind.DONE);
+        assertThat(result.get().actorFullName()).isEqualTo(ACTOR);
+    }
+
+    @Test
+    void statusChanged_toOtherStatus_emitsStatusChangedEvent() {
+        AuditLog log = auditLog("POST", "/api/admin/orders/" + ORDER_UUID + "/status", 200, null, null);
+        log.setTargetStatus("W_REALIZACJI");
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().kind()).isEqualTo(TimelineEventKind.STATUS_CHANGED);
+    }
+
+    @Test
+    void statusChanged_nullTargetStatus_emitsStatusChangedEvent() {
+        // Legacy rows (pre-V027) have null targetStatus — must still emit STATUS_CHANGED.
+        AuditLog log = auditLog("POST", "/api/admin/orders/" + ORDER_UUID + "/status", 200, null, null);
+        // targetStatus is null by default in AuditLog
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().kind()).isEqualTo(TimelineEventKind.STATUS_CHANGED);
+    }
+
     // ── SKIP: HTTP item-op rows ───────────────────────────────────────────────
 
     @Test

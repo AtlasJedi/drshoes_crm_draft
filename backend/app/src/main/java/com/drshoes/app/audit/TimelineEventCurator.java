@@ -146,9 +146,12 @@ public class TimelineEventCurator {
         }
         String orderId = m.group(1);
 
-        // POST /api/admin/orders/{uuid}/status → STATUS_CHANGED
+        // POST /api/admin/orders/{uuid}/status → STATUS_CHANGED (or DONE when target=WYDANE)
         if ("POST".equals(method) && status == 200 && path.endsWith("/status")) {
-            return Optional.of(event(log, TimelineEventKind.STATUS_CHANGED, actorFullName,
+            TimelineEventKind kind = "WYDANE".equals(log.getTargetStatus())
+                ? TimelineEventKind.DONE
+                : TimelineEventKind.STATUS_CHANGED;
+            return Optional.of(event(log, kind, actorFullName,
                 Map.of("path", path, "orderId", orderId)));
         }
 

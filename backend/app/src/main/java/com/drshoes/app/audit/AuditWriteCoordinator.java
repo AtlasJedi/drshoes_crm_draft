@@ -49,12 +49,14 @@ public class AuditWriteCoordinator {
     }
 
     /**
-     * Persists an HTTP audit row with an optional note and optional location diff.
-     * locationFrom/locationTo come from request attributes set by OrderNotesController
-     * after the service call computes the old/new location. Both null for all other endpoints.
+     * Persists an HTTP audit row with an optional note, optional location diff,
+     * and optional targetStatus (for status-change rows only).
+     * locationFrom/locationTo come from request attributes set by OrderNotesController.
+     * targetStatus comes from request attribute "audit.targetStatus" set by OrderController.changeStatus.
      */
     public void persistHttp(HttpServletRequest r, int status, String note,
                             String locationFrom, String locationTo) {
+        String targetStatus = (String) r.getAttribute("audit.targetStatus");
         String actorName = resolveActorName();
         UUID actorId = resolveActorId();
         String traceId = spanHelper.currentTraceId();
@@ -65,10 +67,10 @@ public class AuditWriteCoordinator {
                 null, actorName,
                 () -> writer.write(method, path, status,
                     r.getRemoteAddr(), r.getHeader("User-Agent"),
-                    null, actorId, traceId, note, locationFrom, locationTo));
-            log.info("op=audit actor={} actorId={} method={} path={} status={} traceId={} hasNote={} hasLocationDiff={} outcome=persisted",
+                    null, actorId, traceId, note, locationFrom, locationTo, targetStatus));
+            log.info("op=audit actor={} actorId={} method={} path={} status={} traceId={} hasNote={} hasLocationDiff={} targetStatus={} outcome=persisted",
                 actorName, actorId, method, path, status, traceId, note != null,
-                locationFrom != null || locationTo != null);
+                locationFrom != null || locationTo != null, targetStatus);
         } catch (Exception ex) {
             log.warn("op=audit actor={} method={} path={} status={} outcome=skipped reason={}",
                 actorName, method, path, status, ex.getMessage());

@@ -27,7 +27,8 @@ export type TimelineEventKind =
   | "THREAD_MARKED_READ"   // M5 — operator opened thread or clicked mark-read
   | "THREAD_ASSIGNED"      // M5 — unmatched thread assigned to a client
   | "THREAD_DISCARDED"     // M5 — unmatched thread soft-deleted by operator
-  | "ORDER_NOTE";          // M10 — note + optional location move (POST .../notes)
+  | "ORDER_NOTE"           // M10 — note + optional location move (POST .../notes)
+  | "DONE";               // v2-F — status change that transitions order to WYDANE (ink+acid-check icon)
 
 /**
  * Curated timeline event — mirrors TimelineEvent.java.

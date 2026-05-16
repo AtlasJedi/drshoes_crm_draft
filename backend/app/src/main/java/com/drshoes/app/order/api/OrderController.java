@@ -4,6 +4,7 @@ import com.drshoes.app.order.OrderService;
 import com.drshoes.app.order.domain.OrderItemKind;
 import com.drshoes.app.order.domain.OrderStatus;
 import com.drshoes.app.order.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,12 @@ public class OrderController {
     @PostMapping("/{id}/status")
     public ChangeStatusResponse changeStatus(@PathVariable UUID id,
                                              @Valid @RequestBody ChangeStatusRequest req,
-                                             Authentication auth) {
+                                             Authentication auth,
+                                             HttpServletRequest httpReq) {
+        // Expose targetStatus as a request attribute so AuditWriteCoordinator can
+        // persist it into audit_log.target_status — allows curator to emit DONE kind
+        // when the transition lands at WYDANE (v2-F, V027 migration).
+        httpReq.setAttribute("audit.targetStatus", req.targetStatus().name());
         ChangeStatusResponse resp = svc.changeStatus(id, req);
         log.info("op=changeOrderStatus actor={} orderId={} targetStatus={} noteLen={} outcome=ok",
             actor(auth), id, req.targetStatus(),

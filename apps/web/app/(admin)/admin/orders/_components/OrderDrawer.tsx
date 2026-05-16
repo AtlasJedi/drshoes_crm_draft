@@ -9,19 +9,18 @@ import { createLogger } from "@/lib/log";
 import { changeStatus } from "@/lib/orders/api";
 import type { OrderDto } from "@/lib/orders/types";
 import { OrderDrawerHeader } from "./OrderDrawerHeader";
-import { OrderDrawerCoreFields } from "./OrderDrawerCoreFields";
-import { OrderDrawerStatusChanger } from "./OrderDrawerStatusChanger";
+import { OrderDrawerInfoBlock } from "./OrderDrawerInfoBlock";
+import { OrderDrawerOpis } from "./OrderDrawerOpis";
+import { OrderDrawerStatusGrid } from "./OrderDrawerStatusGrid";
 import { OrderDrawerItems } from "./OrderDrawerItems";
-import { OrderDrawerTimeline } from "./OrderDrawerTimeline";
-import { OrderDrawerMessages } from "./OrderDrawerMessages";
 import { OrderDrawerPhotos } from "./OrderDrawerPhotos";
+import { OrderDrawerTimeline } from "./OrderDrawerTimeline";
 import { OrderDrawerNotes } from "./OrderDrawerNotes";
 import { OrderDrawerNoteComposer } from "./OrderDrawerNoteComposer";
+import { OrderDrawerMessages } from "./OrderDrawerMessages";
 import { MessageComposerModal } from "./MessageComposerModal";
-import { OrderDrawerStatusTimeline } from "./OrderDrawerStatusTimeline";
 
 const log = createLogger("order-drawer");
-
 
 interface Props {
   initialOrder: OrderDto;
@@ -96,6 +95,7 @@ export function OrderDrawer({ initialOrder }: Props) {
             zIndex: 50,
           }}
         >
+          {/* Header + stepper (merged into OrderDrawerHeader) */}
           <OrderDrawerHeader
             code={order.code}
             status={order.status}
@@ -104,19 +104,17 @@ export function OrderDrawer({ initialOrder }: Props) {
             location={order.location}
           />
 
+          {/* Scrollable body */}
           <div className="flex-1 overflow-y-auto">
-            <OrderDrawerStatusTimeline currentStatus={order.status} />
-            <OrderDrawerCoreFields order={order} onOrderUpdate={handleOrderUpdated} />
-
-            <OrderDrawerStatusChanger order={order} onOrderUpdated={handleOrderUpdated} />
-            <OrderDrawerItems order={order} onOrderUpdated={handleOrderUpdated} />
-            <OrderDrawerTimeline orderId={order.id} refreshKey={refreshKey} />
-            <section className="px-6 py-4 border-t border-admin-line">
-              <p className="text-xs font-medium text-admin-mute uppercase tracking-wide mb-3">
-                Zdjęcia
-              </p>
+            <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", gap: 18 }}>
+              <OrderDrawerInfoBlock order={order} />
+              <OrderDrawerOpis order={order} onSave={handleOrderUpdated} />
+              <OrderDrawerStatusGrid order={order} onOrderUpdated={handleOrderUpdated} />
+              <OrderDrawerItems order={order} onOrderUpdated={handleOrderUpdated} />
               <OrderDrawerPhotos orderId={order.id} />
-            </section>
+              <OrderDrawerTimeline orderId={order.id} refreshKey={refreshKey} />
+            </div>
+
             <OrderDrawerNoteComposer
               orderId={order.id}
               currentLocation={order.location ?? null}
@@ -136,9 +134,6 @@ export function OrderDrawer({ initialOrder }: Props) {
             background: "#fff", display: "flex", gap: 8, flexWrap: "wrap",
             alignItems: "center",
           }}>
-            {/* zmień status — scrolls to / triggers the status changer in body */}
-            <button className="btn-clean primary">zmień status</button>
-            {/* convenience shortcut: marks order WYDANE directly */}
             <button
               type="button"
               className="btn-clean acid"
@@ -168,6 +163,7 @@ export function OrderDrawer({ initialOrder }: Props) {
               anuluj
             </button>
           </div>
+
           {markWydaneError && (
             <div
               role="alert"

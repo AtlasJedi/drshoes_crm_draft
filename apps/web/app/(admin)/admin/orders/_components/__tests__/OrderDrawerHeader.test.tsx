@@ -1,6 +1,6 @@
 /**
- * Tests for OrderDrawerHeader reskin (task 9-27).
- * Verifies code display, client sub-line, Pill, and action buttons.
+ * Tests for OrderDrawerHeader (v2-F rework).
+ * Verifies code display, sub-line, stepper, action buttons, and location in sub-line.
  */
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
@@ -23,7 +23,7 @@ function Wrapper({ children }: { children: React.ReactNode }) {
   return <Dialog.Root open>{children}</Dialog.Root>;
 }
 
-describe("OrderDrawerHeader — reskin (task 9-27)", () => {
+describe("OrderDrawerHeader — v2-F rework", () => {
   it("renders order code", () => {
     render(
       <Wrapper>
@@ -66,32 +66,38 @@ describe("OrderDrawerHeader — reskin (task 9-27)", () => {
     expect(screen.getByRole("button", { name: "Więcej opcji" })).toBeInTheDocument();
   });
 
-  it("does not render sub-line when neither clientName nor receivedAt given", () => {
-    const { container } = render(
-      <Wrapper>
-        <OrderDrawerHeader code="DR-0001" status="PRZYJETE" />
-      </Wrapper>,
-    );
-    // sub div uses t-mono class — should be absent
-    expect(container.querySelector(".t-mono")).toBeNull();
-  });
-
-  it("renders acid location pill when location prop is provided", () => {
-    render(
-      <Wrapper>
-        <OrderDrawerHeader code="DR-1042" status="W_REALIZACJI" location="półka 3" />
-      </Wrapper>,
-    );
-    expect(screen.getByLabelText("Aktualne miejsce")).toBeInTheDocument();
-    expect(screen.getByText(/półka 3/)).toBeInTheDocument();
-  });
-
-  it("does not render location pill when location prop is absent", () => {
+  it("renders 5-step stepper", () => {
     render(
       <Wrapper>
         <OrderDrawerHeader code="DR-1042" status="W_REALIZACJI" />
       </Wrapper>,
     );
-    expect(screen.queryByLabelText("Aktualne miejsce")).toBeNull();
+    expect(screen.getByLabelText("Etapy zlecenia")).toBeInTheDocument();
+    // Steps 1-5
+    expect(screen.getByText("1")).toBeInTheDocument();
+    expect(screen.getByText("5")).toBeInTheDocument();
+  });
+
+  it("renders location in sub-line when location prop is provided", () => {
+    render(
+      <Wrapper>
+        <OrderDrawerHeader
+          code="DR-1042"
+          status="W_REALIZACJI"
+          clientName="Jan"
+          location="półka 3"
+        />
+      </Wrapper>,
+    );
+    expect(screen.getByText(/półka 3/)).toBeInTheDocument();
+  });
+
+  it("does not show location text when location prop is absent", () => {
+    render(
+      <Wrapper>
+        <OrderDrawerHeader code="DR-1042" status="W_REALIZACJI" clientName="Jan" />
+      </Wrapper>,
+    );
+    expect(screen.queryByText(/półka/)).toBeNull();
   });
 });

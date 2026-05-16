@@ -33,5 +33,7 @@ public enum TimelineEventKind {
     THREAD_MARKED_READ, // M5 — emitted by MessageThreadMutationService#markRead
     THREAD_ASSIGNED,    // M5 — emitted by MessageThreadMutationService#assignUnmatched
     THREAD_DISCARDED,   // M5 — emitted by MessageThreadMutationService#discardUnmatched
-    ORDER_NOTE          // M10 — emitted by POST /api/admin/orders/{id}/notes (note + optional location move)
+    ORDER_NOTE,         // M10 — emitted by POST /api/admin/orders/{id}/notes (note + optional location move)
+    DONE                // v2-F — emitted when a STATUS_CHANGED row transitions an order to WYDANE;
+                        // distinct from STATUS_CHANGED → WYDANE so the frontend renders the ink+acid-check icon
 }

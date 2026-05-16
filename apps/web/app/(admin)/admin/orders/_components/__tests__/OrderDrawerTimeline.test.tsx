@@ -1,7 +1,7 @@
 /**
- * Tests for OrderDrawerTimeline note rendering (M8 task m8-fb-1b).
- * Verifies that a note blockquote appears when ev.note is present,
- * and is absent when ev.note is null/undefined.
+ * Tests for OrderDrawerTimeline (v2-F rework).
+ * Verifies HistoryIcon-based rendering, DONE kind label, note blockquote,
+ * and LocationMoveChip integration.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
@@ -22,10 +22,33 @@ const baseEvent: TimelineEvent = {
   locationTo: null,
 };
 
-describe("OrderDrawerTimeline — note rendering", () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
+describe("OrderDrawerTimeline — DONE kind (v2-F)", () => {
+  beforeEach(() => { vi.resetAllMocks(); });
+
+  it("renders 'Wydane klientowi' label for DONE events", async () => {
+    const doneEvent: TimelineEvent = { ...baseEvent, kind: "DONE" };
+    vi.mocked(timelineApi.getOrderTimeline).mockResolvedValue([doneEvent]);
+
+    render(<OrderDrawerTimeline orderId="order-1" refreshKey={0} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Wydane klientowi")).toBeTruthy();
+    });
   });
+
+  it("renders 'Status zmieniony' label for STATUS_CHANGED events", async () => {
+    vi.mocked(timelineApi.getOrderTimeline).mockResolvedValue([baseEvent]);
+
+    render(<OrderDrawerTimeline orderId="order-2" refreshKey={0} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Status zmieniony")).toBeTruthy();
+    });
+  });
+});
+
+describe("OrderDrawerTimeline — note rendering", () => {
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it("renders note blockquote when ev.note is present", async () => {
     const eventWithNote: TimelineEvent = { ...baseEvent, note: "Klient zapłacił z góry" };
@@ -69,9 +92,7 @@ describe("OrderDrawerTimeline — note rendering", () => {
 });
 
 describe("OrderDrawerTimeline — LocationMoveChip rendering", () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it("renders LocationMoveChip when both locationFrom and locationTo are set", async () => {
     const eventWithLocation: TimelineEvent = {

@@ -5,6 +5,7 @@ import { createLogger } from "@/lib/log";
 import { getOrderTimeline } from "@/lib/timeline/api";
 import type { TimelineEvent } from "@/lib/timeline/types";
 import { LocationMoveChip } from "./_LocationMoveChip";
+import { HistoryIcon } from "./HistoryIcon";
 
 const log = createLogger("order-drawer-notes");
 
@@ -46,7 +47,6 @@ export function OrderDrawerNotes({ orderId, refreshKey }: Props) {
 
   return (
     <div className="px-5 py-4 border-t border-admin-line">
-      {/* Fix 2: section header — 15px, ink color, full opacity */}
       <div className="t-stencil" style={{ fontSize: 15, letterSpacing: ".1em", marginBottom: 10, color: "var(--ink)" }}>
         Notatki wewnętrzne
       </div>
@@ -66,23 +66,28 @@ export function OrderDrawerNotes({ orderId, refreshKey }: Props) {
               key={ev.id ?? `note-${i}`}
               data-note-card
               style={{
+                display: "grid",
+                gridTemplateColumns: "32px 1fr",
+                gap: 10,
+                alignItems: "flex-start",
                 background: "#fef4a8",
                 padding: 12,
                 border: "1.5px solid var(--ink)",
                 transform: `rotate(${i % 2 === 0 ? -0.3 : 0.4}deg)`,
               }}
             >
-              {/* Fix 2: meta line — 14px, mute */}
-              <div className="t-mono" style={{ fontSize: 14, color: "var(--admin-mute)" }}>
-                {ev.actorFullName ?? "operator"} · {fmt.format(new Date(ev.occurredAt))}
-              </div>
-              {/* Fix 2: note body — 16px, 1.45 line-height, ink */}
-              <div style={{ fontSize: 16, lineHeight: 1.45, marginTop: 2, color: "var(--ink)" }}>{ev.note}</div>
-              {(ev.locationFrom || ev.locationTo) && (
-                <div className="mt-1">
-                  <LocationMoveChip from={ev.locationFrom ?? null} to={ev.locationTo ?? null} />
+              <HistoryIcon kind="note" />
+              <div>
+                <div className="t-mono" style={{ fontSize: 14, color: "var(--admin-mute)" }}>
+                  {ev.actorFullName ?? "operator"} · {fmt.format(new Date(ev.occurredAt))}
                 </div>
-              )}
+                <div style={{ fontSize: 16, lineHeight: 1.45, marginTop: 2, color: "var(--ink)" }}>{ev.note}</div>
+                {(ev.locationFrom || ev.locationTo) && (
+                  <div className="mt-1">
+                    <LocationMoveChip from={ev.locationFrom ?? null} to={ev.locationTo ?? null} />
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>

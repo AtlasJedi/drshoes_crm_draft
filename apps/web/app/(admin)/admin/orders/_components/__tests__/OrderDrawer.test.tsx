@@ -1,6 +1,6 @@
 /**
- * Smoke tests for OrderDrawer reskin (task 9-27).
- * Verifies new header structure and footer action buttons render correctly.
+ * Smoke tests for OrderDrawer rip-and-replace (task v2-F).
+ * Verifies the new component tree renders and footer action buttons are present.
  */
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
@@ -26,14 +26,14 @@ vi.mock("../OrderDrawerHeader", () => ({
     </div>
   ),
 }));
-vi.mock("../OrderDrawerStatusTimeline", () => ({
-  OrderDrawerStatusTimeline: () => <div data-testid="status-timeline" />,
+vi.mock("../OrderDrawerInfoBlock", () => ({
+  OrderDrawerInfoBlock: () => <div data-testid="info-block" />,
 }));
-vi.mock("../OrderDrawerCoreFields", () => ({
-  OrderDrawerCoreFields: () => <div data-testid="core-fields" />,
+vi.mock("../OrderDrawerOpis", () => ({
+  OrderDrawerOpis: () => <div data-testid="opis" />,
 }));
-vi.mock("../OrderDrawerStatusChanger", () => ({
-  OrderDrawerStatusChanger: () => <div data-testid="status-changer" />,
+vi.mock("../OrderDrawerStatusGrid", () => ({
+  OrderDrawerStatusGrid: () => <div data-testid="status-grid" />,
 }));
 vi.mock("../OrderDrawerItems", () => ({
   OrderDrawerItems: () => <div data-testid="items" />,
@@ -88,20 +88,25 @@ const MOCK_ORDER: OrderDto = {
   urgent: false,
 };
 
-describe("OrderDrawer — reskin (task 9-27)", () => {
-  it("renders DR-code in t-display header", () => {
+describe("OrderDrawer — rip-and-replace (task v2-F)", () => {
+  it("renders DR-code in header", () => {
     render(<OrderDrawer initialOrder={MOCK_ORDER} />);
     expect(screen.getByText("DR-1042")).toBeInTheDocument();
   });
 
-  it("renders client name sub in header", () => {
+  it("renders client name in header", () => {
     render(<OrderDrawer initialOrder={MOCK_ORDER} />);
     expect(screen.getByText(/Magdalena Kowalska/i)).toBeInTheDocument();
   });
 
-  it("renders footer zmień status button", () => {
+  it("renders new info-block component", () => {
     render(<OrderDrawer initialOrder={MOCK_ORDER} />);
-    expect(screen.getByRole("button", { name: /zmień status/i })).toBeInTheDocument();
+    expect(screen.getByTestId("info-block")).toBeInTheDocument();
+  });
+
+  it("renders new status-grid component", () => {
+    render(<OrderDrawer initialOrder={MOCK_ORDER} />);
+    expect(screen.getByTestId("status-grid")).toBeInTheDocument();
   });
 
   it("renders footer oznacz jako wydane button", () => {

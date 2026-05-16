@@ -84,18 +84,34 @@ public class AuditLogWriter {
      * Full variant with location diff: persists all fields including optional location move.
      * locationFrom/locationTo are stored in audit_log.location_from/location_to (VARCHAR(64) NULL,
      * added by V020 migration, M10 task 10-5). Both null for non-location-change rows.
+     * Delegates to the 12-param overload with null targetStatus for backward compatibility.
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(String method, String path, int status, String ip, String userAgent,
                       UUID parentEntityId, UUID actorId, String traceId, String note,
                       String locationFrom, String locationTo) {
+        write(method, path, status, ip, userAgent, parentEntityId, actorId, traceId, note,
+              locationFrom, locationTo, null);
+    }
+
+    /**
+     * Full variant with targetStatus: persists all fields including the status-change target.
+     * targetStatus is stored in audit_log.target_status (VARCHAR(32) NULL, added by V027
+     * migration, v2-F task). NULL for all non-status-change audit rows.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void write(String method, String path, int status, String ip, String userAgent,
+                      UUID parentEntityId, UUID actorId, String traceId, String note,
+                      String locationFrom, String locationTo, String targetStatus) {
         em.createNativeQuery("""
             INSERT INTO audit_log
                 (id, actor_id, method, path, status, ip, user_agent, request_id,
-                 created_at, parent_entity_id, trace_id, note, location_from, location_to)
+                 created_at, parent_entity_id, trace_id, note, location_from, location_to,
+                 target_status)
             VALUES
                 (:id, :actorId, :method, :path, :status, CAST(:ip AS inet), :userAgent, :requestId,
-                 :createdAt, :parentEntityId, :traceId, :note, :locationFrom, :locationTo)
+                 :createdAt, :parentEntityId, :traceId, :note, :locationFrom, :locationTo,
+                 :targetStatus)
             """)
             .setParameter("id", UUID.randomUUID())
             .setParameter("actorId", actorId)
@@ -111,6 +127,7 @@ public class AuditLogWriter {
             .setParameter("note", note)
             .setParameter("locationFrom", locationFrom)
             .setParameter("locationTo", locationTo)
+            .setParameter("targetStatus", targetStatus)
             .executeUpdate();
     }
 }
