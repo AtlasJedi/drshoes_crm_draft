@@ -58,6 +58,7 @@ export interface OrderDto {
   pickedUpAt: string | null;    // ISO-8601
   assignedCraftsmanId: string | null;
   currentStorageLocationId: string | null;
+  location: string | null;       // human-readable storage location name (denormalized from storage_locations)
   tags: string | null;          // JSONB stored as serialized string
   totalPriceCents: number;
   currency: string;

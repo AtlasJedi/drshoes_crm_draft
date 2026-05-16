@@ -44,6 +44,9 @@ vi.mock("../OrderDrawerTimeline", () => ({
 vi.mock("../OrderDrawerNotes", () => ({
   OrderDrawerNotes: () => <div data-testid="notes" />,
 }));
+vi.mock("../OrderDrawerNoteComposer", () => ({
+  OrderDrawerNoteComposer: () => <div data-testid="note-composer" />,
+}));
 vi.mock("../OrderDrawerPhotos", () => ({
   OrderDrawerPhotos: () => <div data-testid="photos" />,
 }));
@@ -73,6 +76,7 @@ const MOCK_ORDER: OrderDto = {
   pickedUpAt: null,
   assignedCraftsmanId: null,
   currentStorageLocationId: null,
+  location: null,
   tags: ["pilne"],
   totalPriceCents: 34000,
   currency: "PLN",

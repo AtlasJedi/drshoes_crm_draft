@@ -16,6 +16,7 @@ import { OrderDrawerTimeline } from "./OrderDrawerTimeline";
 import { OrderDrawerMessages } from "./OrderDrawerMessages";
 import { OrderDrawerPhotos } from "./OrderDrawerPhotos";
 import { OrderDrawerNotes } from "./OrderDrawerNotes";
+import { OrderDrawerNoteComposer } from "./OrderDrawerNoteComposer";
 import { OrderDrawerTagsRow } from "./OrderDrawerTagsRow";
 import { MessageComposerModal } from "./MessageComposerModal";
 import { OrderDrawerStatusTimeline } from "./OrderDrawerStatusTimeline";
@@ -100,6 +101,11 @@ export function OrderDrawer({ initialOrder, users }: Props) {
               </p>
               <OrderDrawerPhotos orderId={order.id} />
             </section>
+            <OrderDrawerNoteComposer
+              orderId={order.id}
+              currentLocation={order.location ?? null}
+              onSaved={() => setRefreshKey((k) => k + 1)}
+            />
             <OrderDrawerNotes orderId={order.id} refreshKey={refreshKey} />
             <OrderDrawerMessages
               orderId={order.id}
