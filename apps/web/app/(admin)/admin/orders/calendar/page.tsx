@@ -39,7 +39,6 @@ import { CalendarDayGrid } from "../_components/calendar/CalendarDayGrid";
 import { BezTerminuPanel } from "../_components/calendar/BezTerminuPanel";
 import { OrderDrawer } from "../_components/OrderDrawer";
 import { ErrorBanner } from "@/components/state/ErrorBanner";
-import { EmptyState } from "@/components/state/EmptyState";
 
 const log = createLogger("calendar-page");
 
@@ -158,7 +157,6 @@ export default async function CalendarPage({
 
   const scheduled = calendarData?.scheduled ?? [];
   const unscheduled = calendarData?.unscheduled ?? [];
-  const isCalendarEmpty = !fetchError && calendarData !== null && scheduled.length === 0;
 
   /** Build the href for a mode toggle button, preserving the current anchor date. */
   function modeHref(m: CalendarMode): Route {
@@ -238,11 +236,10 @@ export default async function CalendarPage({
       {/* Main content */}
       {!fetchError && (
         <div className="flex-1 px-6 pt-4 pb-6 grid grid-cols-[1fr_280px] gap-5 overflow-hidden min-h-0">
-          {/* Grid column */}
+          {/* Grid column — always rendered so the day cells exist as drop targets
+              for the BezTerminuPanel, even when no orders are scheduled yet. */}
           <div className="admin-card overflow-hidden flex flex-col p-0">
-            {isCalendarEmpty ? (
-              <EmptyState message="Brak zamówień w tym okresie." />
-            ) : mode === "month" ? (
+            {mode === "month" ? (
               <CalendarMonthGrid date={anchor} scheduled={scheduled} />
             ) : mode === "week" ? (
               <CalendarWeekGrid date={anchor} scheduled={scheduled} />
