@@ -107,7 +107,7 @@ class OrderRepositoryIntegrationTest extends AbstractIntegrationTest {
         UUID orderId = order.getId();
 
         // Save in reverse position order to prove sorting is by position, not insert order
-        orderItemRepository.save(buildItem(orderId, 1, OrderItemKind.CUSTOM_BUTY));
+        orderItemRepository.save(buildItem(orderId, 1, OrderItemKind.CUSTOM));
         orderItemRepository.save(buildItem(orderId, 0, OrderItemKind.NAPRAWA));
 
         List<OrderItem> items = orderItemRepository.findAllByOrderIdOrderByPosition(orderId);
@@ -116,7 +116,7 @@ class OrderRepositoryIntegrationTest extends AbstractIntegrationTest {
         assertThat(items.get(0).getPosition()).isEqualTo(0);
         assertThat(items.get(0).getKind()).isEqualTo(OrderItemKind.NAPRAWA);
         assertThat(items.get(1).getPosition()).isEqualTo(1);
-        assertThat(items.get(1).getKind()).isEqualTo(OrderItemKind.CUSTOM_BUTY);
+        assertThat(items.get(1).getKind()).isEqualTo(OrderItemKind.CUSTOM);
     }
 
     // ---- 4. soft-delete exclusion ----

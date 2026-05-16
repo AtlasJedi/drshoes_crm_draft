@@ -82,9 +82,8 @@ describe("getDashboardChartsServer", () => {
         { weekIso: "2026-W11", repairs: 14, custom: 6 },
       ],
       mixByType: [
-        { kind: "NAPRAWA", count: 19, percent: 45 },
-        { kind: "CUSTOM_BUTY", count: 14, percent: 33 },
-        { kind: "CUSTOM_KURTKA", count: 9, percent: 22 },
+        { kind: "NAPRAWA", count: 19, percent: 55 },
+        { kind: "CUSTOM",  count: 23, percent: 45 },
       ],
     };
     vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(makeResp(payload)));

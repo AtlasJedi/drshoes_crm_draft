@@ -47,7 +47,7 @@ class TemplateContextBuilderTest {
     }
 
     @Test
-    @DisplayName("buildContext maps NAPRAWA kind to 'naprawa' label")
+    @DisplayName("buildContext maps NAPRAWA kind to 'usługa' label")
     void buildContext_naprawaKind_mapsToLabel() {
         UUID orderId  = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
@@ -58,7 +58,7 @@ class TemplateContextBuilderTest {
 
         TemplateContext ctx = builder.buildContext(orderId, clientId);
 
-        assertThat(ctx.typyPracy()).containsExactly("naprawa");
+        assertThat(ctx.typyPracy()).containsExactly("usługa");
         assertThat(ctx.imieKlienta()).isEqualTo("Tomasz");
         assertThat(ctx.numerZlecenia()).isEqualTo("ZL-001");
         assertThat(ctx.nazwaWarsztatu()).isEqualTo("Dr Shoes");
@@ -84,33 +84,18 @@ class TemplateContextBuilderTest {
     }
 
     @Test
-    @DisplayName("buildContext maps CUSTOM_BUTY kind to 'custom buty' label")
-    void buildContext_customButyKind_mapsToLabel() {
+    @DisplayName("buildContext maps CUSTOM kind to 'custom' label")
+    void buildContext_customKind_mapsToLabel() {
         UUID orderId  = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
 
         stubOrder(orderId, "ZL-002", null);
         stubClient(clientId, "Ewa");
-        stubItems(orderId, OrderItemKind.CUSTOM_BUTY);
+        stubItems(orderId, OrderItemKind.CUSTOM);
 
         TemplateContext ctx = builder.buildContext(orderId, clientId);
 
-        assertThat(ctx.typyPracy()).containsExactly("custom buty");
-    }
-
-    @Test
-    @DisplayName("buildContext maps CUSTOM_KURTKA kind to 'custom kurtka' label")
-    void buildContext_customKurtkaKind_mapsToLabel() {
-        UUID orderId  = UUID.randomUUID();
-        UUID clientId = UUID.randomUUID();
-
-        stubOrder(orderId, "ZL-003", null);
-        stubClient(clientId, "Marek");
-        stubItems(orderId, OrderItemKind.CUSTOM_KURTKA);
-
-        TemplateContext ctx = builder.buildContext(orderId, clientId);
-
-        assertThat(ctx.typyPracy()).containsExactly("custom kurtka");
+        assertThat(ctx.typyPracy()).containsExactly("custom");
     }
 
     @Test
@@ -136,6 +121,8 @@ class TemplateContextBuilderTest {
         UUID orderId  = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
 
+        // Client is resolved first in the 3-arg path; must be stubbed so order lookup is reached.
+        stubClient(clientId, "Test");
         when(orders.findById(orderId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> builder.buildContext(orderId, clientId))
@@ -149,12 +136,41 @@ class TemplateContextBuilderTest {
         UUID orderId  = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
 
-        stubOrder(orderId, "ZL-005", null);
+        // Client is resolved first — no order stub needed.
         when(clients.findById(clientId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> builder.buildContext(orderId, clientId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Client not found");
+    }
+
+    @Test
+    @DisplayName("buildContext with userMessage injects wiadomosc_tresc into context")
+    void buildContext_withUserMessage_injectsWiadomoscTresc() {
+        UUID orderId  = UUID.randomUUID();
+        UUID clientId = UUID.randomUUID();
+
+        stubOrder(orderId, "ZL-010", null);
+        stubClient(clientId, "Marek");
+        stubItems(orderId);
+
+        TemplateContext ctx = builder.buildContext(orderId, clientId, "Zapraszamy jutro!");
+
+        assertThat(ctx.wiadomoscTresc()).isEqualTo("Zapraszamy jutro!");
+    }
+
+    @Test
+    @DisplayName("buildContext with null orderId builds client-only context")
+    void buildContext_nullOrderId_clientOnlyContext() {
+        UUID clientId = UUID.randomUUID();
+        stubClient(clientId, "Anna");
+
+        TemplateContext ctx = builder.buildContext(null, clientId, "Wiadomość testowa");
+
+        assertThat(ctx.imieKlienta()).isEqualTo("Anna");
+        assertThat(ctx.numerZlecenia()).isNull();
+        assertThat(ctx.typyPracy()).isEmpty();
+        assertThat(ctx.wiadomoscTresc()).isEqualTo("Wiadomość testowa");
     }
 
     // ---- helpers ----

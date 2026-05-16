@@ -1,6 +1,6 @@
 /**
  * Donut chart — current order type mix.
- * 3 segments: Naprawy acid / Custom buty pink / Custom kurtki blue.
+ * 2 segments: Usługa acid / Custom pink.
  * Legend rows with 14px coloured square + label + percent.
  * Pure server component.
  * ~75 LOC.
@@ -8,15 +8,13 @@
 import type { MixByTypeRowDto } from "@/lib/dashboard/types";
 
 const KIND_LABELS: Record<string, string> = {
-  NAPRAWA: "Naprawy",
-  CUSTOM_BUTY: "Custom buty",
-  CUSTOM_KURTKA: "Custom kurtki",
+  NAPRAWA: "Usługa",
+  CUSTOM:  "Custom",
 };
 
 const KIND_COLORS: Record<string, string> = {
   NAPRAWA: "var(--acid)",
-  CUSTOM_BUTY: "var(--pink)",
-  CUSTOM_KURTKA: "var(--blue)",
+  CUSTOM:  "var(--pink)",
 };
 
 const CIRC = 490;

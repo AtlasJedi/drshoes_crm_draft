@@ -86,8 +86,8 @@ class DashboardChartsControllerIntegrationTest extends AdminWebTestBase {
         UUID orderId = seedOrder("C-002", OrderStatus.PRZYJETE, Instant.now());
         seedItem(orderId, OrderItemKind.NAPRAWA);
 
-        // Also add a CUSTOM_BUTY item to the same order — should still be repair
-        seedItem(orderId, OrderItemKind.CUSTOM_BUTY);
+        // Also add a CUSTOM item to the same order — should not affect repair bucket
+        seedItem(orderId, OrderItemKind.CUSTOM);
 
         mockMvc().perform(get("/api/admin/dashboard/charts"))
             .andExpect(status().isOk())
@@ -103,9 +103,9 @@ class DashboardChartsControllerIntegrationTest extends AdminWebTestBase {
     void mixByTypePercentSumsToHundredOrIsEmpty() throws Exception {
         loginAsOwner();
         UUID id1 = seedOrder("C-003", OrderStatus.PRZYJETE, Instant.now());
-        seedItem(id1, OrderItemKind.CUSTOM_BUTY);
+        seedItem(id1, OrderItemKind.CUSTOM);
         UUID id2 = seedOrder("C-004", OrderStatus.PRZYJETE, Instant.now());
-        seedItem(id2, OrderItemKind.CUSTOM_KURTKA);
+        seedItem(id2, OrderItemKind.CUSTOM);
 
         mockMvc().perform(get("/api/admin/dashboard/charts"))
             .andExpect(status().isOk())

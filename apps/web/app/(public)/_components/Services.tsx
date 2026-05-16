@@ -13,7 +13,7 @@ type ServiceEntry = Omit<ServiceTileProps, never>;
 const SERVICES: ServiceEntry[] = [
   {
     tag: '01',
-    label: 'Naprawa butów',
+    label: 'Usługa naprawy',
     imgLabel: 'naprawa · vibram doszyty',
     accentColor: 'var(--acid)',
     tapeColor: 'acid',
@@ -29,7 +29,7 @@ const SERVICES: ServiceEntry[] = [
   },
   {
     tag: '03',
-    label: 'Custom kurtki',
+    label: 'Custom malowanie kurtek',
     imgLabel: 'custom · Carhartt back',
     accentColor: 'var(--blue)',
     tapeColor: 'blue',

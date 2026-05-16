@@ -58,7 +58,6 @@ export const STATUS_ORDER: OrderStatus[] = [
 // ---------- Item kind labels ----------
 
 export const KIND_LABELS_PL: Record<OrderItemKind, string> = {
-  NAPRAWA:       "Naprawa",
-  CUSTOM_BUTY:   "Custom buty",
-  CUSTOM_KURTKA: "Custom kurtka",
+  NAPRAWA: "Usługa",
+  CUSTOM:  "Custom",
 };

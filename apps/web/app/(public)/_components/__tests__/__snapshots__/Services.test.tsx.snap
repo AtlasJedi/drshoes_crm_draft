@@ -71,7 +71,7 @@ exports[`Services > matches snapshot 1`] = `
             class="tape"
             style="transform: rotate(-2deg);"
           >
-            Naprawa butów
+            Usługa naprawy
           </span>
           <div
             style="background: var(--paper); padding: 8px; border: 2px solid var(--ink); color: var(--ink);"
@@ -180,7 +180,7 @@ exports[`Services > matches snapshot 1`] = `
             class="tape tape-blue"
             style="transform: rotate(-2deg);"
           >
-            Custom kurtki
+            Custom malowanie kurtek
           </span>
           <div
             style="background: var(--paper); padding: 8px; border: 2px solid var(--ink); color: var(--ink);"

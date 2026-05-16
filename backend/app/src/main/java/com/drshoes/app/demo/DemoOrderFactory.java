@@ -57,29 +57,29 @@ public class DemoOrderFactory {
         var result = new ArrayList<Order>();
 
         result.add(seed(clients, 0, now, 21, OrderStatus.WSTEPNIE_PRZYJETE,
-            OrderItemKind.NAPRAWA,       "Naprawa zelówek — buty skórzane",     10));
+            OrderItemKind.NAPRAWA, "Naprawa zelówek — buty skórzane",     10));
         result.add(seed(clients, 1, now, 18, OrderStatus.PRZYJETE,
-            OrderItemKind.NAPRAWA,       "Wymiana podeszwy — trampki",           7));
+            OrderItemKind.NAPRAWA, "Wymiana podeszwy — trampki",           7));
         result.add(seed(clients, 2, now, 15, OrderStatus.W_REALIZACJI,
-            OrderItemKind.CUSTOM_BUTY,   "Custom painting — Air Force 1",        5));
+            OrderItemKind.CUSTOM,  "Custom painting — Air Force 1",        5));
         result.add(seed(clients, 3, now, 14, OrderStatus.W_REALIZACJI,
-            OrderItemKind.CUSTOM_KURTKA, "Custom painting — kurtka bomber",      3));
+            OrderItemKind.CUSTOM,  "Custom painting — kurtka bomber",      3));
         result.add(seed(clients, 4, now, 12, OrderStatus.CZEKA_NA_KLIENTA,
-            OrderItemKind.NAPRAWA,       "Wymiana zamka — kozaki",               2));
+            OrderItemKind.NAPRAWA, "Wymiana zamka — kozaki",               2));
         result.add(seed(clients, 5, now, 10, OrderStatus.GOTOWE_DO_ODBIORU,
-            OrderItemKind.NAPRAWA,       "Renowacja skóry — buty wizytowe",      1));
+            OrderItemKind.NAPRAWA, "Renowacja skóry — buty wizytowe",      1));
         result.add(seed(clients, 0, now,  9, OrderStatus.GOTOWE_DO_ODBIORU,
-            OrderItemKind.CUSTOM_BUTY,   "Hand-painted florals — sneakers",      1));
+            OrderItemKind.CUSTOM,  "Hand-painted florals — sneakers",      1));
         result.add(seed(clients, 1, now,  7, OrderStatus.WYDANE,
-            OrderItemKind.NAPRAWA,       "Uzupełnienie obcasa",                 -1));
+            OrderItemKind.NAPRAWA, "Uzupełnienie obcasa",                 -1));
         result.add(seed(clients, 2, now,  6, OrderStatus.WYDANE,
-            OrderItemKind.CUSTOM_KURTKA, "Malowanie logo na kurtce",            -1));
+            OrderItemKind.CUSTOM,  "Malowanie logo na kurtce",            -1));
         result.add(seed(clients, 3, now,  5, OrderStatus.WYDANE,
-            OrderItemKind.NAPRAWA,       "Przyklejenie zelówki",                -1));
+            OrderItemKind.NAPRAWA, "Przyklejenie zelówki",                -1));
         result.add(seed(clients, 4, now,  4, OrderStatus.ANULOWANE,
-            OrderItemKind.NAPRAWA,       "Zbyt uszkodzone — rezygnacja",        -1));
+            OrderItemKind.NAPRAWA, "Zbyt uszkodzone — rezygnacja",        -1));
         result.add(seed(clients, 5, now,  2, OrderStatus.PRZYJETE,
-            OrderItemKind.CUSTOM_BUTY,   "Custom design — konsultacja",         14));
+            OrderItemKind.CUSTOM,  "Custom design — konsultacja",         14));
 
         return result;
     }

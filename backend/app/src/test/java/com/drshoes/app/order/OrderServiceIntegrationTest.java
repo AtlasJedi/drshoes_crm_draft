@@ -78,7 +78,7 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
     void getOrder_composesItemsInPositionOrder() {
         var itemReqs = List.of(
             new CreateOrderItemRequest(OrderItemKind.NAPRAWA, "zelowanie", null, 5000),
-            new CreateOrderItemRequest(OrderItemKind.CUSTOM_BUTY, "malowanie", null, 15000)
+            new CreateOrderItemRequest(OrderItemKind.CUSTOM, "malowanie", null, 15000)
         );
         OrderDto created = svc.create(reqWithItems("multi-item", itemReqs));
 

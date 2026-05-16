@@ -14,9 +14,9 @@ describe('Services', () => {
     expect(tiles.filter(el => el.getAttribute('href') === '#zamow').length).toBe(3);
   });
 
-  it('renders tile for Naprawa butów', () => {
+  it('renders tile for Usługa naprawy', () => {
     render(<Services />);
-    expect(screen.getByText('Naprawa butów')).toBeInTheDocument();
+    expect(screen.getByText('Usługa naprawy')).toBeInTheDocument();
   });
 
   it('renders tile for Custom malowanie butów', () => {
@@ -24,9 +24,9 @@ describe('Services', () => {
     expect(screen.getByText('Custom malowanie butów')).toBeInTheDocument();
   });
 
-  it('renders tile for Custom kurtki', () => {
+  it('renders tile for Custom malowanie kurtek', () => {
     render(<Services />);
-    expect(screen.getByText('Custom kurtki')).toBeInTheDocument();
+    expect(screen.getByText('Custom malowanie kurtek')).toBeInTheDocument();
   });
 
   it('renders tag numbers 01 02 03', () => {
