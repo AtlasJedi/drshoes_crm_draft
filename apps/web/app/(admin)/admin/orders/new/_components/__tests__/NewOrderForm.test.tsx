@@ -1,6 +1,10 @@
 /**
- * Tests for ux-4: quoted price + advance payment fields.
- * Covers plnToCents util, "Do zapłaty" computation, and CreateOrderRequest payload.
+ * Tests for NewOrderForm — Slice A:
+ *   - Wycena derived from items sum (read-only display)
+ *   - Default one row on mount
+ *   - Submit sends quotedPriceCents = sum of item prices
+ *
+ * Also covers money util units (plnToCents, centsToPlnDisplay, balanceDueCents).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
@@ -86,21 +90,18 @@ describe("centsToPlnDisplay", () => {
 });
 
 // ----------------------------------------------------------------
-// Integration: NewOrderForm sends quotedPriceCents + advancePaidCents
+// Integration: NewOrderForm — derived Wycena + default row
 // ----------------------------------------------------------------
 
-// Mock next/navigation before importing the component
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-// Mock the orders API
 const mockCreateOrder = vi.fn();
 vi.mock("@/lib/orders/api", () => ({
   createOrder: (...args: unknown[]) => mockCreateOrder(...args),
 }));
 
-// Mock ClientPicker — just renders a button that selects a fixed client
 vi.mock("@/components/clients/ClientPicker", () => ({
   ClientPicker: ({ onChange }: { onChange: (c: { id: string }) => void }) => (
     <button
@@ -112,34 +113,99 @@ vi.mock("@/components/clients/ClientPicker", () => ({
   ),
 }));
 
-// Mock NewOrderItemRow
+// Controlled mock: renders price inputs so the form can sum them.
+// Each instance exposes an <input aria-label="item-price-{index}"> that
+// calls onChange with the updated pricePln when changed.
 vi.mock("../NewOrderItemRow", () => ({
-  NewOrderItemRow: () => null,
+  NewOrderItemRow: ({
+    index,
+    item,
+    onChange,
+  }: {
+    index: number;
+    item: { kind: string; description: string; pricePln: string };
+    onChange: (i: number, next: { kind: string; description: string; pricePln: string }) => void;
+  }) => (
+    <input
+      aria-label={`item-price-${index}`}
+      data-testid={`item-row-${index}`}
+      value={item.pricePln}
+      onChange={(e) => onChange(index, { ...item, pricePln: e.target.value })}
+    />
+  ),
 }));
 
 import { NewOrderForm } from "../NewOrderForm";
 
-describe("NewOrderForm — quote/advance fields", () => {
+describe("NewOrderForm — derived Wycena from items", () => {
   beforeEach(() => {
     mockCreateOrder.mockReset();
     mockCreateOrder.mockResolvedValue({ id: "order-uuid-1" });
   });
 
-  it("submits quotedPriceCents and advancePaidCents in CreateOrderRequest", async () => {
+  it("renders exactly one item row by default", () => {
+    render(<NewOrderForm users={[]} />);
+    expect(screen.getAllByTestId(/item-row-/)).toHaveLength(1);
+  });
+
+  it("Wycena shows 0,00 zł when default item price is empty", () => {
+    render(<NewOrderForm users={[]} />);
+    const wycena = screen.getByRole("generic", { name: /wycena/i });
+    expect(wycena.textContent).toBe("0,00 zł");
+  });
+
+  it("Wycena reflects sum after setting one item price to 200,00", async () => {
     render(<NewOrderForm users={[]} />);
 
-    // Select a client
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText("item-price-0"), {
+        target: { value: "200" },
+      });
+    });
+
+    const wycena = screen.getByRole("generic", { name: /wycena/i });
+    expect(wycena.textContent).toBe("200,00 zł");
+  });
+
+  it("Wycena = 350,00 zł for two items at 100 + 250", async () => {
+    render(<NewOrderForm users={[]} />);
+
+    // Set first row price
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText("item-price-0"), {
+        target: { value: "100" },
+      });
+    });
+
+    // Add second row
+    await act(async () => {
+      fireEvent.click(screen.getByText("+ Dodaj pozycję"));
+    });
+
+    // Set second row price
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText("item-price-1"), {
+        target: { value: "250" },
+      });
+    });
+
+    const wycena = screen.getByRole("generic", { name: /wycena/i });
+    expect(wycena.textContent).toBe("350,00 zł");
+  });
+
+  it("submit sends quotedPriceCents equal to sum of item prices", async () => {
+    render(<NewOrderForm users={[]} />);
+
+    // Select client
     fireEvent.click(screen.getByText("Wybierz klienta"));
 
-    // Fill Wycena
-    const quotedInput = screen.getByLabelText(/wycena/i);
-    fireEvent.change(quotedInput, { target: { value: "350" } });
+    // Set item price
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText("item-price-0"), {
+        target: { value: "250" },
+      });
+    });
 
-    // Fill Zaliczka
-    const advanceInput = screen.getByLabelText(/zaliczka/i);
-    fireEvent.change(advanceInput, { target: { value: "100" } });
-
-    // Submit
     const form = document.querySelector("form")!;
     await act(async () => {
       fireEvent.submit(form);
@@ -147,14 +213,18 @@ describe("NewOrderForm — quote/advance fields", () => {
 
     expect(mockCreateOrder).toHaveBeenCalledOnce();
     const req = mockCreateOrder.mock.calls[0]![0]!;
-    expect(req.quotedPriceCents).toBe(35000);
-    expect(req.advancePaidCents).toBe(10000);
+    expect(req.quotedPriceCents).toBe(25000);
   });
 
-  it("sends quotedPriceCents=0 and advancePaidCents=0 when inputs left empty", async () => {
+  it("submit sends advancePaidCents from the Zaliczka field", async () => {
     render(<NewOrderForm users={[]} />);
 
     fireEvent.click(screen.getByText("Wybierz klienta"));
+
+    const advanceInput = screen.getByLabelText(/zaliczka/i);
+    await act(async () => {
+      fireEvent.change(advanceInput, { target: { value: "50" } });
+    });
 
     const form = document.querySelector("form")!;
     await act(async () => {
@@ -163,29 +233,18 @@ describe("NewOrderForm — quote/advance fields", () => {
 
     expect(mockCreateOrder).toHaveBeenCalledOnce();
     const req = mockCreateOrder.mock.calls[0]![0]!;
-    expect(req.quotedPriceCents).toBe(0);
-    expect(req.advancePaidCents).toBe(0);
+    expect(req.advancePaidCents).toBe(5000);
   });
 
-  it("shows 'Do zapłaty' preview when Wycena is filled", async () => {
+  it("Wycena display is not an editable input", () => {
     render(<NewOrderForm users={[]} />);
-
-    const quotedInput = screen.getByLabelText(/wycena/i);
-    await act(async () => {
-      fireEvent.change(quotedInput, { target: { value: "350" } });
-    });
-
-    const advanceInput = screen.getByLabelText(/zaliczka/i);
-    await act(async () => {
-      fireEvent.change(advanceInput, { target: { value: "100" } });
-    });
-
-    expect(screen.getByText(/do zapłaty przy odbiorze/i)).toBeTruthy();
-    expect(screen.getByText(/250,00 zł/)).toBeTruthy();
+    // There should be no input with label matching /wycena/
+    expect(screen.queryByRole("textbox", { name: /wycena/i })).toBeNull();
+    expect(screen.queryByRole("spinbutton", { name: /wycena/i })).toBeNull();
   });
 
-  it("does not show 'Do zapłaty' when Wycena is empty", () => {
+  it("shows helper text 'Suma z pozycji zlecenia' under Wycena", () => {
     render(<NewOrderForm users={[]} />);
-    expect(screen.queryByText(/do zapłaty przy odbiorze/i)).toBeNull();
+    expect(screen.getByText(/suma z pozycji zlecenia/i)).toBeTruthy();
   });
 });

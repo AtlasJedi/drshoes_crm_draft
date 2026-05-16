@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
@@ -10,7 +10,7 @@ import type { ClientDto } from "@/lib/clients/types";
 import type { UserStubDto } from "@/lib/users/types";
 import { ClientPicker } from "@/components/clients/ClientPicker";
 import { NewOrderItemRow, type ItemRowState } from "./NewOrderItemRow";
-import { plnToCents } from "@/lib/orders/money";
+import { plnToCents, centsToPlnDisplay } from "@/lib/orders/money";
 
 const log = createLogger("new-order-form");
 
@@ -30,11 +30,15 @@ export function NewOrderForm({ users }: Props) {
   const [description, setDescription] = useState("");
   const [plannedPickupAt, setPlannedPickupAt] = useState("");
   const [assignedCraftsmanId, setAssignedCraftsmanId] = useState("");
-  const [quotedPricePln, setQuotedPricePln] = useState("");
   const [advancePaidPln, setAdvancePaidPln] = useState("");
-  const [items, setItems] = useState<ItemRowState[]>([]);
+  const [items, setItems] = useState<ItemRowState[]>(() => [makeFreshItem()]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const wycenaCents = useMemo(
+    () => items.reduce((sum, it) => sum + plnToCents(it.pricePln), 0),
+    [items],
+  );
 
   function addItem() {
     setItems((prev) => [...prev, makeFreshItem()]);
@@ -73,7 +77,7 @@ export function NewOrderForm({ users }: Props) {
         : {}),
       ...(assignedCraftsmanId ? { assignedCraftsmanId } : {}),
       ...(builtItems.length > 0 ? { items: builtItems } : {}),
-      quotedPriceCents: plnToCents(quotedPricePln),
+      quotedPriceCents: wycenaCents,
       advancePaidCents: plnToCents(advancePaidPln),
     };
 
@@ -96,6 +100,9 @@ export function NewOrderForm({ users }: Props) {
   const inputCls =
     "w-full h-10 px-3 border border-admin-line rounded-sm focus:outline-none focus:ring-2 focus:ring-acid text-sm";
   const labelCls = "block text-sm font-medium text-admin-ink mb-1";
+
+  const advancePaidCents = plnToCents(advancePaidPln);
+  const balanceCents = Math.max(0, wycenaCents - advancePaidCents);
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6 max-w-2xl">
@@ -158,23 +165,17 @@ export function NewOrderForm({ users }: Props) {
         </select>
       </div>
 
-      {/* Wycena + Zaliczka */}
+      {/* Wycena (derived) + Zaliczka */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="quotedPricePln" className={labelCls}>
-            Wycena (zł)
-          </label>
-          <input
-            id="quotedPricePln"
-            type="text"
-            inputMode="decimal"
-            value={quotedPricePln}
-            disabled={submitting}
-            onChange={(e) => setQuotedPricePln(e.target.value)}
-            placeholder="0,00"
-            className={inputCls}
-          />
-          <p className="mt-1 text-xs text-admin-mute">Łączna kwota za zlecenie</p>
+          <p className={labelCls}>Wycena (zł)</p>
+          <div
+            aria-label="Wycena"
+            className="w-full h-10 px-3 border border-admin-line rounded-sm text-sm flex items-center bg-admin-line/30 text-admin-mute select-none"
+          >
+            {centsToPlnDisplay(wycenaCents)}
+          </div>
+          <p className="mt-1 text-xs text-admin-mute">Suma z pozycji zlecenia (poniżej)</p>
         </div>
         <div>
           <label htmlFor="advancePaidPln" className={labelCls}>
@@ -191,27 +192,13 @@ export function NewOrderForm({ users }: Props) {
             className={inputCls}
           />
           <p className="mt-1 text-xs text-admin-mute">Pozostawiamy puste, jeśli klient nie wpłacił zaliczki</p>
+          {wycenaCents > 0 && (
+            <p className={`mt-1 text-xs font-medium ${balanceCents > 0 ? "text-magenta" : "text-green"}`}>
+              Do zapłaty: {centsToPlnDisplay(balanceCents)}
+            </p>
+          )}
         </div>
       </div>
-
-      {/* Do zapłaty przy odbiorze */}
-      {(() => {
-        const quoted = plnToCents(quotedPricePln);
-        const advance = plnToCents(advancePaidPln);
-        const balance = Math.max(0, quoted - advance);
-        const hasQuote = quotedPricePln.trim() !== "";
-        if (!hasQuote) return null;
-        const balancePln = (balance / 100).toLocaleString("pl-PL", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-        const colorCls = balance > 0 ? "text-magenta" : "text-green";
-        return (
-          <p className={`text-sm font-medium ${colorCls}`}>
-            Do zapłaty przy odbiorze: {balancePln} zł
-          </p>
-        );
-      })()}
 
       {/* Items */}
       <div>
