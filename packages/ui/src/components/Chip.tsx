@@ -20,6 +20,7 @@ export interface ChipProps {
   style?: React.CSSProperties;
   "aria-pressed"?: boolean;
   "aria-label"?: string;
+  "data-testid"?: string;
 }
 
 export function Chip({
@@ -35,6 +36,7 @@ export function Chip({
   style,
   "aria-pressed": ariaPressedProp,
   "aria-label": ariaLabel,
+  "data-testid": dataTestId,
 }: ChipProps) {
   const cls = [
     "chip",
@@ -61,6 +63,7 @@ export function Chip({
         style={style}
         aria-pressed={ariaPressed}
         aria-label={ariaLabel}
+        data-testid={dataTestId}
       >
         {icon && <span className="flex items-center">{icon}</span>}
         {children}
@@ -74,6 +77,7 @@ export function Chip({
       title={title}
       data-color={color}
       style={style}
+      data-testid={dataTestId}
     >
       {icon && <span className="flex items-center">{icon}</span>}
       {children}
