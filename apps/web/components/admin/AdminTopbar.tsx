@@ -3,12 +3,16 @@
 /**
  * AdminTopbar — page title + global search + bell.
  * Title/subtitle pulled from PageHeaderContext (set per-page via usePageHeader).
- * Search submits on Enter → /admin/orders?q=… (matches order code, description, client first/last name).
+ * Search:
+ *   - On /admin/orders (and its sub-tabs): debounced 250ms live filter via
+ *     router.replace, preserving other URL params. useEffect sync from URL is
+ *     guarded by a "lastSentQ" ref to prevent clobbering mid-type input.
+ *   - On any other page: Enter → push to /admin/orders?q=…
  * Bell dot lights up when useUnreadCount() > 0.
  */
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { Route } from "next";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePageHeaderContext } from "@/app/(admin)/admin/_components/PageHeaderContext";
 import { useUnreadCount } from "@/lib/messaging/useUnreadCount";
 import { createLogger } from "@/lib/log";
@@ -19,21 +23,67 @@ export function AdminTopbar() {
   const { current } = usePageHeaderContext();
   const unread = useUnreadCount();
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const urlQ = searchParams.get("q") ?? "";
   const [q, setQ] = useState(urlQ);
+  // Tracks the last q value we synced FROM the URL so we don't clobber mid-type input.
+  const lastSentQ = useRef(urlQ);
 
+  const isOrdersPage = pathname.startsWith("/admin/orders");
+
+  // Sync input from URL only when the URL changes externally (e.g. browser back).
+  // Guard: skip if we were the ones who caused this URL change.
   useEffect(() => {
-    setQ(urlQ);
+    if (urlQ !== lastSentQ.current) {
+      setQ(urlQ);
+      lastSentQ.current = urlQ;
+    }
   }, [urlQ]);
+
+  // Debounced live filter when on the orders page.
+  useEffect(() => {
+    if (!isOrdersPage) return;
+    const timer = setTimeout(() => {
+      const trimmed = q.trim();
+      if (trimmed === lastSentQ.current) return; // no change
+      const params = new URLSearchParams(searchParams.toString());
+      if (trimmed) {
+        params.set("q", trimmed);
+      } else {
+        params.delete("q");
+      }
+      // Reset to page 0 on new search.
+      params.delete("page");
+      lastSentQ.current = trimmed;
+      log.info("op=AdminTopbar.liveSearch", { q: trimmed });
+      router.replace(`/admin/orders?${params.toString()}` as Route);
+    }, 250);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, isOrdersPage]);
 
   function submitSearch() {
     const trimmed = q.trim();
-    const target = trimmed
-      ? `/admin/orders?q=${encodeURIComponent(trimmed)}`
-      : "/admin/orders";
-    log.info("op=AdminTopbar.search", { q: trimmed });
-    router.push(target as Route);
+    if (isOrdersPage) {
+      // On orders page, Enter triggers immediately (skip debounce).
+      const params = new URLSearchParams(searchParams.toString());
+      if (trimmed) {
+        params.set("q", trimmed);
+      } else {
+        params.delete("q");
+      }
+      params.delete("page");
+      lastSentQ.current = trimmed;
+      log.info("op=AdminTopbar.search", { q: trimmed });
+      router.replace(`/admin/orders?${params.toString()}` as Route);
+    } else {
+      const target = trimmed
+        ? `/admin/orders?q=${encodeURIComponent(trimmed)}`
+        : "/admin/orders";
+      log.info("op=AdminTopbar.search", { q: trimmed });
+      router.push(target as Route);
+    }
   }
 
   log.debug("op=AdminTopbar.render", { title: current?.title, unread });

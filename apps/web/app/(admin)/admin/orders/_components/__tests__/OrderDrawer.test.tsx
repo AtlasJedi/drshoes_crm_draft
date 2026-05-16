@@ -53,9 +53,6 @@ vi.mock("../OrderDrawerPhotos", () => ({
 vi.mock("../OrderDrawerMessages", () => ({
   OrderDrawerMessages: () => <div data-testid="messages" />,
 }));
-vi.mock("../OrderDrawerTagsRow", () => ({
-  OrderDrawerTagsRow: () => <div data-testid="tags-row" />,
-}));
 vi.mock("../MessageComposerModal", () => ({
   MessageComposerModal: () => null,
 }));

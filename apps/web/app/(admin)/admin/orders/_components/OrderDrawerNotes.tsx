@@ -46,7 +46,8 @@ export function OrderDrawerNotes({ orderId, refreshKey }: Props) {
 
   return (
     <div className="px-5 py-4 border-t border-admin-line">
-      <div className="t-stencil" style={{ fontSize: 14, letterSpacing: ".1em", marginBottom: 10 }}>
+      {/* Fix 2: section header — 15px, ink color, full opacity */}
+      <div className="t-stencil" style={{ fontSize: 15, letterSpacing: ".1em", marginBottom: 10, color: "var(--ink)" }}>
         Notatki wewnętrzne
       </div>
 
@@ -71,10 +72,12 @@ export function OrderDrawerNotes({ orderId, refreshKey }: Props) {
                 transform: `rotate(${i % 2 === 0 ? -0.3 : 0.4}deg)`,
               }}
             >
-              <div className="t-mono" style={{ fontSize: 10, color: "rgba(0,0,0,0.5)" }}>
+              {/* Fix 2: meta line — 14px, mute */}
+              <div className="t-mono" style={{ fontSize: 14, color: "var(--admin-mute)" }}>
                 {ev.actorFullName ?? "operator"} · {fmt.format(new Date(ev.occurredAt))}
               </div>
-              <div style={{ fontSize: 13, marginTop: 2 }}>{ev.note}</div>
+              {/* Fix 2: note body — 16px, 1.45 line-height, ink */}
+              <div style={{ fontSize: 16, lineHeight: 1.45, marginTop: 2, color: "var(--ink)" }}>{ev.note}</div>
               {(ev.locationFrom || ev.locationTo) && (
                 <div className="mt-1">
                   <LocationMoveChip from={ev.locationFrom ?? null} to={ev.locationTo ?? null} />

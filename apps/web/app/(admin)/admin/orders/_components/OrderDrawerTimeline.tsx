@@ -89,7 +89,10 @@ export function OrderDrawerTimeline({ orderId, refreshKey }: Props) {
 
   return (
     <div className="px-6 py-4 border-t border-admin-line space-y-3">
-      <p className="text-xs font-medium text-admin-mute uppercase tracking-wide">Historia</p>
+      {/* Fix 2: section header — 15px, ink color, full opacity */}
+      <p className="t-stencil" style={{ fontSize: 15, letterSpacing: ".1em", color: "var(--ink)" }}>
+        Historia
+      </p>
 
       {loading && (
         <p className="text-xs text-admin-mute italic">Ładowanie historii…</p>
@@ -111,21 +114,25 @@ export function OrderDrawerTimeline({ orderId, refreshKey }: Props) {
       {!loading && !error && events.length > 0 && (
         <ol className="space-y-2">
           {events.map((ev, i) => (
-            <li key={ev.id ?? `${ev.kind}-${i}`} className="flex gap-2 text-xs">
+            <li key={ev.id ?? `${ev.kind}-${i}`} className="flex gap-2">
               <span className="mt-0.5 shrink-0" aria-hidden="true">{KIND_ICONS[ev.kind]}</span>
               <div className="min-w-0">
-                <span className="font-medium text-ink">{KIND_LABELS_PL[ev.kind]}</span>
-                {ev.actorFullName && (
-                  <span className="text-admin-mute"> · {ev.actorFullName}</span>
-                )}
-                <div className="text-admin-mute">{formatTs(ev.occurredAt)}</div>
+                {/* Fix 2: entry title — 16px / weight 600, ink */}
+                <span style={{ fontSize: 16, fontWeight: 600, color: "var(--ink)" }}>
+                  {KIND_LABELS_PL[ev.kind]}
+                </span>
+                {/* Fix 2: meta line — 14px, mute but not ghosted */}
+                <div style={{ fontSize: 14, color: "var(--admin-mute)" }}>
+                  {ev.actorFullName && <span>{ev.actorFullName} · </span>}
+                  {formatTs(ev.occurredAt)}
+                </div>
                 {(ev.locationFrom != null || ev.locationTo != null) && (
                   <div className="mt-1">
                     <LocationMoveChip from={ev.locationFrom ?? null} to={ev.locationTo ?? null} />
                   </div>
                 )}
                 {ev.note && (
-                  <blockquote className="mt-1 border-l-2 border-gray-300 pl-2 text-sm text-gray-700">
+                  <blockquote className="mt-1 border-l-2 border-gray-300 pl-2" style={{ fontSize: 15, color: "var(--ink)" }}>
                     {ev.note}
                   </blockquote>
                 )}

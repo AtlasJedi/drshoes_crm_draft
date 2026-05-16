@@ -18,17 +18,11 @@ import { OrderDrawerMessages } from "./OrderDrawerMessages";
 import { OrderDrawerPhotos } from "./OrderDrawerPhotos";
 import { OrderDrawerNotes } from "./OrderDrawerNotes";
 import { OrderDrawerNoteComposer } from "./OrderDrawerNoteComposer";
-import { OrderDrawerTagsRow } from "./OrderDrawerTagsRow";
 import { MessageComposerModal } from "./MessageComposerModal";
 import { OrderDrawerStatusTimeline } from "./OrderDrawerStatusTimeline";
 
 const log = createLogger("order-drawer");
 
-/** order.tags is stored as a serialised JSON string (e.g. '["pilne","stały klient"]'). */
-function parseTags(raw: string | null | undefined): string[] {
-  if (!raw) return [];
-  try { return JSON.parse(raw) as string[]; } catch { return []; }
-}
 
 interface Props {
   initialOrder: OrderDto;
@@ -117,8 +111,6 @@ export function OrderDrawer({ initialOrder, users }: Props) {
             <OrderDrawerCoreFields order={order} users={users} onOrderUpdate={handleOrderUpdated} />
 
             <OrderDrawerStatusChanger order={order} onOrderUpdated={handleOrderUpdated} />
-            {/* Tags row — after StatusTimeline per spec 9-26; disabled "+ dodaj" stub until M10 */}
-            <OrderDrawerTagsRow tags={parseTags(order.tags)} />
             <OrderDrawerItems order={order} onOrderUpdated={handleOrderUpdated} />
             <OrderDrawerTimeline orderId={order.id} refreshKey={refreshKey} />
             <section className="px-6 py-4 border-t border-admin-line">

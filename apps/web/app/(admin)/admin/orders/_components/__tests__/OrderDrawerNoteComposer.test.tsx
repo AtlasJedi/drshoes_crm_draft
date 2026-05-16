@@ -20,51 +20,21 @@ const baseProps = {
 };
 
 describe("OrderDrawerNoteComposer", () => {
-  // ── collapsibility ────────────────────────────────────────────────────────
+  // Fix 3 (2026-05-16): composer is always expanded — no toggle button.
 
-  it("form body is hidden by default — only the toggle button is visible", () => {
+  it("form body is always visible — textarea renders without any click", async () => {
     render(<OrderDrawerNoteComposer {...baseProps} />);
-    expect(screen.getByRole("button", { name: /dodaj wpis do historii/i })).toBeInTheDocument();
-    expect(screen.queryByLabelText(/co się stało/i)).toBeNull();
-    expect(screen.queryByRole("button", { name: /dodaj wpis$/i })).toBeNull();
-  });
-
-  it("clicking the toggle button reveals the form body", async () => {
-    render(<OrderDrawerNoteComposer {...baseProps} />);
-    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis do historii/i }));
     await waitFor(() => expect(screen.getByLabelText(/co się stało/i)).toBeInTheDocument());
     expect(screen.getByRole("button", { name: /dodaj wpis$/i })).toBeInTheDocument();
   });
 
-  it("toggle button has aria-expanded=false initially and true when open", async () => {
+  it("section header 'Dodaj wpis do historii' is visible", () => {
     render(<OrderDrawerNoteComposer {...baseProps} />);
-    const toggle = screen.getByRole("button", { name: /dodaj wpis do historii/i });
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    fireEvent.click(toggle);
-    await waitFor(() => expect(toggle).toHaveAttribute("aria-expanded", "true"));
+    expect(screen.getByText(/dodaj wpis do historii/i)).toBeInTheDocument();
   });
-
-  it("successful submit collapses the form and calls onSaved", async () => {
-    const onSaved = vi.fn();
-    render(<OrderDrawerNoteComposer {...baseProps} onSaved={onSaved} />);
-
-    // expand
-    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis do historii/i }));
-    await waitFor(() => screen.getByRole("option", { name: "suszarka" }));
-
-    fireEvent.change(screen.getByLabelText(/co się stało/i), { target: { value: "po cleaningu" } });
-    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis$/i }));
-
-    await waitFor(() => expect(onSaved).toHaveBeenCalled());
-    // form body should be hidden again
-    expect(screen.queryByLabelText(/co się stało/i)).toBeNull();
-  });
-
-  // ── existing submit behaviour (form must be open first) ───────────────────
 
   it("submit button disabled when note empty AND location unchanged", async () => {
     render(<OrderDrawerNoteComposer {...baseProps} />);
-    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis do historii/i }));
     await waitFor(() => expect(screen.getByRole("option", { name: "suszarka" })).toBeInTheDocument());
     const btn = screen.getByRole("button", { name: /dodaj wpis$/i });
     expect(btn).toBeDisabled();
@@ -72,7 +42,6 @@ describe("OrderDrawerNoteComposer", () => {
 
   it("enables submit when only note is filled", async () => {
     render(<OrderDrawerNoteComposer {...baseProps} />);
-    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis do historii/i }));
     await waitFor(() => screen.getByRole("option", { name: "suszarka" }));
     fireEvent.change(screen.getByLabelText(/co się stało/i), { target: { value: "elo" } });
     expect(screen.getByRole("button", { name: /dodaj wpis$/i })).toBeEnabled();
@@ -80,7 +49,6 @@ describe("OrderDrawerNoteComposer", () => {
 
   it("enables submit when only location changed", async () => {
     render(<OrderDrawerNoteComposer {...baseProps} />);
-    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis do historii/i }));
     await waitFor(() => screen.getByRole("option", { name: "suszarka" }));
     fireEvent.change(screen.getByLabelText(/miejsce/i), { target: { value: "suszarka" } });
     expect(screen.getByRole("button", { name: /dodaj wpis$/i })).toBeEnabled();
@@ -89,7 +57,6 @@ describe("OrderDrawerNoteComposer", () => {
   it("calls addOrderNote with the payload and onSaved on success", async () => {
     const onSaved = vi.fn();
     render(<OrderDrawerNoteComposer {...baseProps} onSaved={onSaved} />);
-    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis do historii/i }));
     await waitFor(() => screen.getByRole("option", { name: "suszarka" }));
     fireEvent.change(screen.getByLabelText(/co się stało/i), { target: { value: "po cleaningu" } });
     fireEvent.change(screen.getByLabelText(/miejsce/i), { target: { value: "suszarka" } });
@@ -103,12 +70,24 @@ describe("OrderDrawerNoteComposer", () => {
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
   });
 
+  it("successful submit clears the form and calls onSaved", async () => {
+    const onSaved = vi.fn();
+    render(<OrderDrawerNoteComposer {...baseProps} onSaved={onSaved} />);
+    await waitFor(() => screen.getByRole("option", { name: "suszarka" }));
+
+    fireEvent.change(screen.getByLabelText(/co się stało/i), { target: { value: "po cleaningu" } });
+    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis$/i }));
+
+    await waitFor(() => expect(onSaved).toHaveBeenCalled());
+    // form stays visible (always expanded) but textarea is cleared
+    expect(screen.getByLabelText(/co się stało/i)).toHaveValue("");
+  });
+
   it("shows error when at_least_one_required is returned", async () => {
     (api.addOrderNote as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
       Object.assign(new Error(), { code: "at_least_one_required" })
     );
     render(<OrderDrawerNoteComposer {...baseProps} />);
-    fireEvent.click(screen.getByRole("button", { name: /dodaj wpis do historii/i }));
     await waitFor(() => screen.getByRole("option", { name: "suszarka" }));
     fireEvent.change(screen.getByLabelText(/co się stało/i), { target: { value: "elo" } });
     fireEvent.click(screen.getByRole("button", { name: /dodaj wpis$/i }));

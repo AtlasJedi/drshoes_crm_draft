@@ -78,6 +78,7 @@ export interface OrderListRow {
   code: string;
   clientId: string;
   clientName: string;
+  location: string | null;        // human-readable storage location name (denormalized)
   status: OrderStatus;
   totalPriceCents: number;
   currency: string;

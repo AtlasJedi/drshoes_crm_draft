@@ -21,13 +21,6 @@ function fmtDate(iso: string | null): string {
   return new Date(iso).toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: TZ });
 }
 
-function fmtDateTime(iso: string | null): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  const date = d.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: TZ });
-  const time = d.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: TZ });
-  return `${date} ${time}`;
-}
 
 interface Props {
   rows: OrderListRow[];
@@ -73,10 +66,8 @@ export function OrdersTable({ rows, totalPages, currentPage, selectedIds, isAllS
               <th>Pozycje</th>
               <th><SortableColumnHeader field="receivedAt" label="Przyjęto" /></th>
               <th>Termin odbioru</th>
-              <th><SortableColumnHeader field="pickedUpAt" label="Wydano" /></th>
-              <th>Wykonawca</th>
+              <th>Miejsce</th>
               <th style={{ width: 50 }}>Foto</th>
-              <th style={{ textAlign: "right" }}><SortableColumnHeader field="createdAt" label="Utworzono" className="justify-end" /></th>
               <th style={{ textAlign: "right" }}>Suma</th>
               <th style={{ width: 40 }} />
             </tr>
@@ -100,11 +91,9 @@ export function OrdersTable({ rows, totalPages, currentPage, selectedIds, isAllS
                 <td className="text-admin-mute">{row.description ?? "—"}</td>
                 <td className="text-admin-mute font-mono text-[13px]">{fmtDate(row.receivedAt)}</td>
                 <td className="font-mono text-[13px]">{fmtDate(row.plannedPickupAt)}</td>
-                <td className="text-admin-mute font-mono text-[13px]">{fmtDate(row.pickedUpAt)}</td>
-                <td className="text-admin-mute">—</td>
+                <td className="text-admin-mute">{row.location ?? "—"}</td>
                 <td><PhImg label="" style={{ width: 36, height: 36, border: "1.5px solid var(--ink, #0a0a0a)" }} /></td>
-                <td className="text-right text-admin-mute font-mono text-[13px] whitespace-nowrap">{fmtDateTime(row.createdAt)}</td>
-                <td className="text-right font-mono">{pricePLN(row.totalPriceCents)}</td>
+                <td className="text-right font-mono">{pricePLN(Math.max(0, row.quotedPriceCents - row.advancePaidCents))}</td>
                 <td className="text-right" onClick={(e) => e.stopPropagation()}>
                   <RowQuickActionsMenu row={row} onOrderUpdated={() => router.refresh()} />
                 </td>

@@ -90,11 +90,20 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
     }
   }
 
+  // Fix 8: ref for auto-scroll to bottom on refreshKey change
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+  }, [refreshKey, items]);
+
   return (
     <section className="px-6 py-4 border-t border-admin-line">
       <div className="flex justify-between items-center mb-3">
-        <p className="text-xs font-medium text-admin-mute uppercase tracking-wide">
-          Komunikacja z klientem
+        {/* Fix 2: section header — 15px, ink, full opacity */}
+        <p className="t-stencil" style={{ fontSize: 15, letterSpacing: ".1em", color: "var(--ink)" }}>
+          Wiadomości
         </p>
         <button
           type="button"
@@ -133,25 +142,30 @@ export function OrderDrawerMessages({ orderId, refreshKey, onComposeClick }: Pro
         <p className="text-xs text-admin-mute italic">Brak wiadomości.</p>
       )}
 
+      {/* Fix 8: fixed-height scrollable list, auto-scroll to bottom */}
       {(state === "ok" || items.length > 0) && (
-        <div className="space-y-3 mt-1">
+        <div
+          ref={listRef}
+          className="space-y-3 mt-1"
+          style={{ maxHeight: 360, overflowY: "auto" }}
+        >
           {items.map((msg) => (
-            <div key={msg.id} className="text-sm border border-admin-line rounded p-3 space-y-1">
+            <div key={msg.id} className="border border-admin-line rounded p-3 space-y-1">
               {/* Retry-chain indicator */}
               {msg.retryOfMessageId !== null && (
-                <span className="text-xs text-admin-mute" aria-label="Ponowienie wiadomości">↳ </span>
+                <span style={{ fontSize: 13, color: "var(--admin-mute)" }} aria-label="Ponowienie wiadomości">↳ </span>
               )}
 
-              {/* Channel + status badge */}
+              {/* Channel + status badge — Fix 2: meta 13px mute */}
               <div className="flex items-center gap-2">
-                <span className="text-xs text-admin-mute">{msg.channel}</span>
+                <span style={{ fontSize: 13, color: "var(--admin-mute)" }}>{msg.channel}</span>
                 {msg.direction === "OUTBOUND" && (
                   <MessageStatusBadge status={msg.deliveryStatus} />
                 )}
               </div>
 
-              {/* Body */}
-              <p className="text-ink whitespace-pre-wrap">{msg.body}</p>
+              {/* Body — Fix 2: 15px ink */}
+              <p style={{ fontSize: 15, color: "var(--ink)" }} className="whitespace-pre-wrap">{msg.body}</p>
 
               {/* FAILED: error message + retry button */}
               {msg.direction === "OUTBOUND" && msg.deliveryStatus === "FAILED" && (

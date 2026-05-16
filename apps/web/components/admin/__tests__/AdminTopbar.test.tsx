@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/messaging/useUnreadCount", () => ({
@@ -6,9 +6,13 @@ vi.mock("@/lib/messaging/useUnreadCount", () => ({
 }));
 
 const mockPush = vi.fn();
+const mockReplace = vi.fn();
+let mockPathname = "/admin/dashboard";
+
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
+  useRouter: () => ({ push: mockPush, replace: mockReplace }),
   useSearchParams: () => new URLSearchParams(),
+  usePathname: () => mockPathname,
 }));
 
 import { AdminTopbar } from "../AdminTopbar";
@@ -19,6 +23,8 @@ const mockUnread = useUnreadCount as ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   mockPush.mockReset();
+  mockReplace.mockReset();
+  mockPathname = "/admin/dashboard";
 });
 
 function PageSetter({ title, subtitle }: { title: string; subtitle?: string }) {
@@ -85,7 +91,8 @@ describe("AdminTopbar", () => {
     expect(container.querySelector("[data-testid='bell-dot']")).not.toBeNull();
   });
 
-  it("pushes to /admin/orders?q=… on Enter with trimmed query", () => {
+  it("pushes to /admin/orders?q=… on Enter when NOT on orders page", () => {
+    mockPathname = "/admin/dashboard";
     render(
       <PageHeaderProvider>
         <AdminTopbar />
@@ -97,7 +104,8 @@ describe("AdminTopbar", () => {
     expect(mockPush).toHaveBeenCalledWith("/admin/orders?q=Anna%20Nowak");
   });
 
-  it("pushes to /admin/orders on Enter when query is empty", () => {
+  it("pushes to /admin/orders on Enter when query is empty and NOT on orders page", () => {
+    mockPathname = "/admin/dashboard";
     render(
       <PageHeaderProvider>
         <AdminTopbar />
@@ -106,5 +114,37 @@ describe("AdminTopbar", () => {
     const input = screen.getByPlaceholderText(/szukaj/i);
     fireEvent.keyDown(input, { key: "Enter" });
     expect(mockPush).toHaveBeenCalledWith("/admin/orders");
+  });
+
+  it("uses router.replace on Enter when ON the orders page", () => {
+    mockPathname = "/admin/orders";
+    render(
+      <PageHeaderProvider>
+        <AdminTopbar />
+      </PageHeaderProvider>
+    );
+    const input = screen.getByPlaceholderText(/szukaj/i);
+    fireEvent.change(input, { target: { value: "but" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(mockReplace).toHaveBeenCalledWith(expect.stringContaining("q=but"));
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("debounces live filter on orders page after 250ms", async () => {
+    vi.useFakeTimers();
+    mockPathname = "/admin/orders";
+    render(
+      <PageHeaderProvider>
+        <AdminTopbar />
+      </PageHeaderProvider>
+    );
+    const input = screen.getByPlaceholderText(/szukaj/i);
+    fireEvent.change(input, { target: { value: "Jan" } });
+    expect(mockReplace).not.toHaveBeenCalled();
+    await act(async () => {
+      vi.advanceTimersByTime(250);
+    });
+    expect(mockReplace).toHaveBeenCalledWith(expect.stringContaining("q=Jan"));
+    vi.useRealTimers();
   });
 });
