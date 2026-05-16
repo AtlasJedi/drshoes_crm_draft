@@ -28,11 +28,18 @@ describe("SavedFilterPresets", () => {
     vi.useRealTimers();
   });
 
-  it("renders all three preset chips + the disabled save chip", () => {
+  it("renders compound presets + a chip per OrderStatus + the disabled save chip", () => {
     render(<SavedFilterPresets />);
     expect(screen.getByText(/pilne na ten tydzień/i)).toBeInTheDocument();
-    expect(screen.getByText(/gotowe do odbioru/i)).toBeInTheDocument();
     expect(screen.getByText(/zaległe/i)).toBeInTheDocument();
+    // One chip per OrderStatus (Polish labels from STATUS_LABELS_PL)
+    expect(screen.getByText("Wstępnie przyjęte")).toBeInTheDocument();
+    expect(screen.getByText("Przyjęte")).toBeInTheDocument();
+    expect(screen.getByText("W realizacji")).toBeInTheDocument();
+    expect(screen.getByText("Czeka na klienta")).toBeInTheDocument();
+    expect(screen.getByText("Gotowe do odbioru")).toBeInTheDocument();
+    expect(screen.getByText("Wydane")).toBeInTheDocument();
+    expect(screen.getByText("Anulowane")).toBeInTheDocument();
     expect(screen.getByText(/\+ zapisz widok/i)).toBeInTheDocument();
   });
 

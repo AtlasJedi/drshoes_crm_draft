@@ -1,13 +1,17 @@
 "use client";
 
 /**
- * Hard-coded saved-filter preset chip row.
- * Three presets per spec §7 (locked). The "+ zapisz widok" chip renders disabled.
+ * Saved-filter preset chip row.
+ * Two compound presets ("Pilne na ten tydzień", "Zaległe") + one chip per OrderStatus,
+ * so the row covers every status available for orders. The "+ zapisz widok" chip
+ * renders disabled.
  * Uses <Chip> from @repo/ui per M9 design-parity reskin.
  */
 import { useRouter, useSearchParams } from "next/navigation";
 import { createLogger } from "@/lib/log";
 import { Chip } from "@drshoes/ui";
+import { STATUS_LABELS_PL } from "@/lib/orders/status";
+import type { OrderStatus } from "@/lib/orders/types";
 
 const log = createLogger("saved-filter-presets");
 
@@ -20,7 +24,24 @@ function toIsoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** Order statuses to surface as preset chips, in the same forward-progression
+ *  order used by the segmented status changer (ANULOWANE last). */
+const STATUS_ORDER: OrderStatus[] = [
+  "WSTEPNIE_PRZYJETE",
+  "PRZYJETE",
+  "W_REALIZACJI",
+  "CZEKA_NA_KLIENTA",
+  "GOTOWE_DO_ODBIORU",
+  "WYDANE",
+  "ANULOWANE",
+];
+
 function buildPresets(): Preset[] {
+  const statusPresets: Preset[] = STATUS_ORDER.map((s) => ({
+    label: STATUS_LABELS_PL[s],
+    params: () => ({ status: s }),
+  }));
+
   return [
     {
       label: "Pilne na ten tydzień",
@@ -32,10 +53,6 @@ function buildPresets(): Preset[] {
       },
     },
     {
-      label: "Gotowe do odbioru",
-      params: () => ({ status: "GOTOWE_DO_ODBIORU" }),
-    },
-    {
       label: "Zaległe",
       params: () => {
         const yesterday = new Date();
@@ -43,6 +60,7 @@ function buildPresets(): Preset[] {
         return { plannedPickupAtTo: toIsoDate(yesterday), status: ["W_REALIZACJI", "GOTOWE_DO_ODBIORU"] };
       },
     },
+    ...statusPresets,
   ];
 }
 
