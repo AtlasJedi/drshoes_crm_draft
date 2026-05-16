@@ -7,7 +7,12 @@
  * Auth: quicklogin endpoint mints a dr_session cookie for test@test.pl (OWNER).
  *
  * After all tests finish, writes a JSON report to:
- *   docs/dispatch-log/v1-<UTC>-sweep-report.json
+ *   docs/dispatch-log/v2-<UTC>-sweep-report.json
+ *
+ * V2 changes vs V1:
+ *  - urgent: now expects ≥1 urgent row (DR-2026-0004 received_at backdated 18 days)
+ *  - drawer.czas: also opens DR-2026-0004 and checks ~18 dni + pilne label
+ *  - filter.pilne: data-testid now forwarded by Chip — expects testid selector to find element
  */
 import { test, expect, type Page, type APIRequestContext } from "@playwright/test";
 import path from "path";
@@ -88,23 +93,34 @@ test.describe("M11 fix-batch verifier sweep", () => {
   });
 
   // ── Surface 2: orders.list.urgent ─────────────────────────────────────────
-  test("orders.list.urgent — urgent row highlight (fixture-limited)", async ({ page }) => {
+  test("orders.list.urgent — urgent row highlight visible (DR-2026-0004 backdated 18 days)", async ({ page }) => {
     await page.goto("/admin/orders", { waitUntil: "commit", timeout: 20_000 });
     await page.waitForTimeout(2_000);
 
-    // Urgent rows get bg-magenta/10 border-l-2 border-magenta (Tailwind dynamic)
+    // Urgent rows get bg-magenta/10 border-l-2 border-magenta (Tailwind dynamic classes)
     // Count rows that have a class containing "magenta"
     const urgentRows = page.locator("tbody tr").filter({ hasClass: /magenta/ });
     const count = await urgentRows.count();
     const screenshot = await snap(page, "orders-list-urgent");
 
-    // All orders received today — isUrgent threshold is >7 days → 0 urgent rows expected
-    REPORT.push({
-      surface: "orders.list.urgent",
-      defect: null,
-      screenshot,
-      note: `fixture-limited — 0 urgent rows expected (all orders received today). Count=${count}`,
-    });
+    // DR-2026-0004 received_at was backdated 18 days — isUrgent threshold is >7 days
+    // So we expect at least 1 urgent row now.
+    if (count >= 1) {
+      REPORT.push({
+        surface: "orders.list.urgent",
+        defect: null,
+        screenshot,
+        note: `DR-2026-0004 urgent row visible. Count=${count}`,
+      });
+    } else {
+      REPORT.push({
+        surface: "orders.list.urgent",
+        defect: `Expected ≥1 urgent row (DR-2026-0004 received_at backdated 18 days, threshold >7 days), got ${count}. Check: GET /api/admin/orders?urgent=true should return DR-2026-0004; check if frontend renders isUrgent styling.`,
+        screenshot,
+      });
+    }
+
+    expect(count).toBeGreaterThanOrEqual(1);
   });
 
   // ── Surface 3: drawer.no-wykonawca ────────────────────────────────────────
@@ -138,10 +154,11 @@ test.describe("M11 fix-batch verifier sweep", () => {
   });
 
   // ── Surface 4: drawer.czas-w-warsztacie ───────────────────────────────────
-  test("drawer.czas-w-warsztacie — label present in drawer", async ({ page }) => {
+  test("drawer.czas-w-warsztacie — label present; DR-2026-0004 shows ~18 dni + pilne", async ({ page }) => {
     await page.goto("/admin/orders", { waitUntil: "commit", timeout: 20_000 });
     await page.waitForTimeout(2_000);
 
+    // ── Part A: label visible in any drawer ──
     const firstRow = page.locator("tbody tr").first();
     await firstRow.click();
 
@@ -153,17 +170,65 @@ test.describe("M11 fix-batch verifier sweep", () => {
     const visible = await label.isVisible().catch(() => false);
     const screenshot = await snap(page, "drawer-czas-w-warsztacie");
 
-    if (visible) {
+    // Close drawer before opening DR-2026-0004
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(500);
+
+    // ── Part B: DR-2026-0004 shows ~18 dni and pilne label ──
+    // Find the row for DR-2026-0004 by looking for "0004" in the row text
+    let urgentCzasDefect: string | null = null;
+    try {
+      const dr4Row = page.locator("tbody tr").filter({ hasText: /0004/ }).first();
+      const dr4Visible = await dr4Row.isVisible({ timeout: 3_000 }).catch(() => false);
+      if (dr4Visible) {
+        await dr4Row.click();
+        const drawer2 = page.locator('[role="dialog"]');
+        await expect(drawer2).toBeVisible({ timeout: 10_000 });
+        await page.waitForTimeout(1_000);
+
+        // Should show ~18 dni (accept 15-21 range for clock drift)
+        const czasText = await drawer2.getByText(/\d+\s*dni/i).first().textContent().catch(() => "");
+        const dniMatch = czasText.match(/(\d+)\s*dni/i);
+        const dniCount = dniMatch ? parseInt(dniMatch[1], 10) : -1;
+        const dniOk = dniCount >= 15 && dniCount <= 25;
+
+        // Should show "pilne" label or magenta styling somewhere in drawer
+        const pilneVisible = await drawer2.getByText(/pilne/i).first().isVisible({ timeout: 2_000 }).catch(() => false);
+
+        const screenshot2 = await snap(page, "drawer-czas-dr0004-pilne");
+        if (!dniOk) {
+          urgentCzasDefect = `DR-2026-0004 drawer shows "${czasText}" (expected ~18 dni, accepted 15-25). Backdated received_at may not be visible to frontend.`;
+        } else if (!pilneVisible) {
+          urgentCzasDefect = `DR-2026-0004 drawer missing "pilne" label/text despite being urgent (${dniCount} dni). Urgent badge not rendered in drawer.`;
+        }
+      } else {
+        // DR-2026-0004 not on the current page — warn but don't fail
+        urgentCzasDefect = null; // non-blocking: may be paginated
+      }
+    } catch (e) {
+      urgentCzasDefect = `Error checking DR-2026-0004 drawer: ${e}`;
+    }
+
+    if (visible && !urgentCzasDefect) {
       REPORT.push({ surface: "drawer.czas-w-warsztacie", defect: null, screenshot });
-    } else {
+    } else if (!visible) {
       REPORT.push({
         surface: "drawer.czas-w-warsztacie",
         defect: "\"Czas w warsztacie\" label not found in drawer",
         screenshot,
       });
+    } else {
+      REPORT.push({
+        surface: "drawer.czas-w-warsztacie",
+        defect: urgentCzasDefect,
+        screenshot,
+      });
     }
 
     expect(visible).toBe(true);
+    if (urgentCzasDefect) {
+      throw new Error(urgentCzasDefect);
+    }
   });
 
   // ── Surface 5: drawer.item-math ───────────────────────────────────────────
@@ -244,28 +309,25 @@ test.describe("M11 fix-batch verifier sweep", () => {
   });
 
   // ── Surface 6: filter.pilne ────────────────────────────────────────────────
-  test("filter.pilne — Pilne chip sets urgent=true in URL", async ({ page }) => {
+  test("filter.pilne — Pilne chip (data-testid fixed) sets urgent=true in URL", async ({ page }) => {
     await page.goto("/admin/orders", { waitUntil: "commit", timeout: 20_000 });
     await page.waitForTimeout(2_000);
 
-    // NOTE: data-testid="preset-pilne" is passed to <Chip> but Chip does not
-    // forward data-* attributes to the underlying <button>. This is a defect
-    // in the Chip component (missing data-testid in ChipProps + spread).
-    // We use a text-based fallback: the "Pilne" chip is a <button> inside
-    // the presets bar, matching the text "Pilne" (may include the badge count).
-    // The testid fallback is tried first for forward-compat.
-    let pilneChip = page.locator('[data-testid="preset-pilne"]');
-    const hasTestId = await pilneChip.isVisible({ timeout: 2_000 }).catch(() => false);
+    // V2: Chip now forwards data-testid — [data-testid="preset-pilne"] should resolve directly.
+    const pilneChip = page.locator('[data-testid="preset-pilne"]');
+    const hasTestId = await pilneChip.isVisible({ timeout: 4_000 }).catch(() => false);
 
-    let chipDefect: string | null = null;
     if (!hasTestId) {
-      // data-testid not forwarded — record the defect, fall back to text match
-      chipDefect = "Chip component does not forward data-testid to underlying <button> — [data-testid='preset-pilne'] selector finds 0 elements. Fix: add 'data-testid' to ChipProps and spread it on the rendered button/span.";
-      // Text fallback: button containing "Pilne" in the presets bar (first match)
-      pilneChip = page.locator('button.chip').filter({ hasText: /^Pilne/ }).first();
+      const screenshot = await snap(page, "filter-pilne-testid-missing");
+      REPORT.push({
+        surface: "filter.pilne",
+        defect: "data-testid='preset-pilne' still not found after Chip fix — Chip.tsx change may not have been rebuilt into the web bundle.",
+        screenshot,
+      });
+      expect(hasTestId, "data-testid='preset-pilne' must be present after Chip fix").toBe(true);
+      return;
     }
 
-    await expect(pilneChip).toBeVisible({ timeout: 8_000 });
     await pilneChip.click();
 
     // URL should contain urgent=true
@@ -275,16 +337,8 @@ test.describe("M11 fix-batch verifier sweep", () => {
     const currentUrl = page.url();
     const hasUrgent = currentUrl.includes("urgent=true");
 
-    if (hasUrgent && !chipDefect) {
-      REPORT.push({ surface: "filter.pilne", defect: null, screenshot });
-    } else if (hasUrgent && chipDefect) {
-      // Functional behavior is correct but testid selector is broken
-      REPORT.push({
-        surface: "filter.pilne",
-        defect: chipDefect,
-        screenshot,
-        note: "Functional behavior (urgent=true URL toggle) WORKS. Only the data-testid forwarding is broken.",
-      });
+    if (hasUrgent) {
+      REPORT.push({ surface: "filter.pilne", defect: null, screenshot, note: "data-testid selector works + URL urgent=true confirmed." });
     } else {
       REPORT.push({
         surface: "filter.pilne",
@@ -354,7 +408,7 @@ test.describe("M11 fix-batch verifier sweep", () => {
     const reportPath = path.resolve(
       __dirname,
       "../../../docs/dispatch-log",
-      `v1-${utc}-sweep-report.json`,
+      `v2-${utc}-sweep-report.json`,
     );
     fs.mkdirSync(path.dirname(reportPath), { recursive: true });
     fs.writeFileSync(reportPath, JSON.stringify(REPORT, null, 2), "utf-8");

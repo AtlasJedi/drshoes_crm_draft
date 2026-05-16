@@ -1,0 +1,39 @@
+[
+  {
+    "surface": "orders.list.miejsce",
+    "defect": null,
+    "screenshot": "/Users/atlasjedi/P/misza_madafaka/apps/web/e2e/_screens/orders-list-miejsce.png"
+  },
+  {
+    "surface": "orders.list.urgent",
+    "defect": null,
+    "screenshot": "/Users/atlasjedi/P/misza_madafaka/apps/web/e2e/_screens/orders-list-urgent.png",
+    "note": "DR-2026-0004 urgent row visible. Count=6"
+  },
+  {
+    "surface": "drawer.no-wykonawca",
+    "defect": null,
+    "screenshot": "/Users/atlasjedi/P/misza_madafaka/apps/web/e2e/_screens/drawer-no-wykonawca.png"
+  },
+  {
+    "surface": "drawer.czas-w-warsztacie",
+    "defect": null,
+    "screenshot": "/Users/atlasjedi/P/misza_madafaka/apps/web/e2e/_screens/drawer-czas-w-warsztacie.png"
+  },
+  {
+    "surface": "drawer.item-math",
+    "defect": null,
+    "screenshot": "/Users/atlasjedi/P/misza_madafaka/apps/web/e2e/_screens/drawer-item-math-after-add.png"
+  },
+  {
+    "surface": "filter.pilne",
+    "defect": null,
+    "screenshot": "/Users/atlasjedi/P/misza_madafaka/apps/web/e2e/_screens/filter-pilne.png",
+    "note": "data-testid selector works + URL urgent=true confirmed."
+  },
+  {
+    "surface": "messages.bubble",
+    "defect": null,
+    "screenshot": "/Users/atlasjedi/P/misza_madafaka/apps/web/e2e/_screens/messages-bubble.png"
+  }
+]
