@@ -2008,9 +2008,9 @@
     {
       "id": "v2-C",
       "title": "Naprawa→Usługa + CUSTOM_BUTY/KURTKA merge to CUSTOM (V025)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "163c74d9800618b91d6a74019a9eecbd6ab4b40d",
+      "dispatch_log": "docs/dispatch-log/v2-C-20260517T002800Z.md"
     },
     {
       "id": "v2-D",
