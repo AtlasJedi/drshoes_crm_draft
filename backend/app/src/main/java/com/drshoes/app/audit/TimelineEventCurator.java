@@ -165,7 +165,8 @@ public class TimelineEventCurator {
         }
 
         // POST /api/admin/orders/{uuid}/notes → ORDER_NOTE (M10 — note + optional location move)
-        if ("POST".equals(method) && status == 200 && path.endsWith("/notes")) {
+        // OrderNotesController.add returns 201 Created; accept both 200 and 201 for forward-compat.
+        if ("POST".equals(method) && (status == 200 || status == 201) && path.endsWith("/notes")) {
             return Optional.of(event(log, TimelineEventKind.ORDER_NOTE, actorFullName,
                 Map.of("path", path, "orderId", orderId)));
         }

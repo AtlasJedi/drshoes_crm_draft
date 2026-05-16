@@ -141,6 +141,32 @@ class TimelineEventCuratorTest {
         assertThat(result.get().kind()).isEqualTo(TimelineEventKind.ITEM_REMOVED);
     }
 
+    // ── ORDER_NOTE ───────────────────────────────────────────────────────────
+
+    @Test
+    void orderNote_post201_emitsOrderNoteEvent() {
+        // OrderNotesController.add returns 201 Created; curator must accept it.
+        AuditLog log = auditLog("POST", "/api/admin/orders/" + ORDER_UUID + "/notes", 201, null, null);
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().kind()).isEqualTo(TimelineEventKind.ORDER_NOTE);
+        assertThat(result.get().actorFullName()).isEqualTo(ACTOR);
+        assertThat(result.get().labels()).containsKey("orderId");
+    }
+
+    @Test
+    void orderNote_post200_emitsOrderNoteEvent() {
+        // Also accept 200 for forward-compat.
+        AuditLog log = auditLog("POST", "/api/admin/orders/" + ORDER_UUID + "/notes", 200, null, null);
+
+        Optional<TimelineEvent> result = curator.curate(log, ACTOR);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().kind()).isEqualTo(TimelineEventKind.ORDER_NOTE);
+    }
+
     // ── SKIP: HTTP item-op rows ───────────────────────────────────────────────
 
     @Test
