@@ -31,7 +31,7 @@ public class OrderItem {
     @Column(name = "kind", nullable = false, length = 20)
     private OrderItemKind kind;
 
-    @Column(name = "description", nullable = false, columnDefinition = "text")
+    @Column(name = "description", columnDefinition = "text")
     private String description;
 
     @Column(name = "craftsman_notes", columnDefinition = "text")
