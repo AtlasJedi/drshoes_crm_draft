@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { createLogger } from "@/lib/log";
 import { changeStatus } from "@/lib/orders/api";
+import { addOrderNote } from "@/lib/locations";
 import { previewForStatus } from "@/lib/orders/triggerPreview";
 import type { KanbanColumnDto, KanbanStatus } from "@/lib/kanban/types";
 import type { TriggerPreview } from "../StatusChangeTriggerDialog";
@@ -25,7 +26,7 @@ export interface UseKanbanDndResult {
   columns: KanbanColumnDto[];
   pendingMove: PendingMove | null;
   onDragEnd: (cardId: string, fromStatus: string, toStatus: string) => void;
-  onConfirm: (sendTriggers: boolean) => Promise<void>;
+  onConfirm: (sendTriggers: boolean, note?: string, location?: string) => Promise<void>;
   onCancel: () => void;
   errorToast: string | null;
   dismissToast: () => void;
@@ -100,18 +101,32 @@ export function useKanbanDnd(
   );
 
   const onConfirm = useCallback(
-    async (sendTriggers: boolean) => {
+    async (sendTriggers: boolean, note?: string, location?: string) => {
       if (!pendingMove) return;
       const { cardId, toStatus, orderVersion } = pendingMove;
-      log.info("op=confirmMove", { cardId, toStatus, sendTriggers });
+      const noteText = note ?? "";
+      log.info("op=confirmMove", {
+        cardId, toStatus, sendTriggers,
+        hasNote: noteText.trim().length > 0, hasLocation: !!location,
+      });
       // Capture snapshot ref before clearing so revert can use it
       const savedSnapshot = snapshot;
       setPendingMove(null);
       setSnapshot(null);
 
       try {
-        await changeStatus(cardId, toStatus, orderVersion, sendTriggers);
+        await changeStatus(cardId, toStatus, orderVersion, sendTriggers, noteText);
         log.info("op=confirmMove outcome=ok", { cardId, toStatus, sendTriggers });
+        if (location) {
+          try {
+            await addOrderNote(cardId, { location });
+            log.info("op=confirmMoveLocationMove outcome=ok", { cardId, to: location });
+          } catch (locErr: unknown) {
+            log.error("op=confirmMoveLocationMove outcome=error", {
+              cardId, err: String(locErr),
+            });
+          }
+        }
       } catch (err: unknown) {
         log.error("op=confirmMove outcome=error", { cardId, toStatus, err });
         if (savedSnapshot) setColumns(savedSnapshot);

@@ -10,6 +10,10 @@ vi.mock("@/lib/orders/api", () => ({
 vi.mock("@/lib/messaging/api", () => ({
   getTriggers: vi.fn().mockResolvedValue([]),
 }));
+vi.mock("@/lib/locations", () => ({
+  listLocations: vi.fn().mockResolvedValue([]),
+  addOrderNote: vi.fn().mockResolvedValue({}),
+}));
 
 import { changeStatus } from "@/lib/orders/api";
 
@@ -95,7 +99,7 @@ describe("useKanbanDnd", () => {
     await act(async () => {
       await result.current.onConfirm(true);
     });
-    expect(changeStatus).toHaveBeenCalledWith("card-a", "W_REALIZACJI", 3, true);
+    expect(changeStatus).toHaveBeenCalledWith("card-a", "W_REALIZACJI", 3, true, "");
     expect(result.current.pendingMove).toBeNull();
     expect(result.current.errorToast).toBeNull();
     expect(result.current.columns[0]!.cards).toHaveLength(0);
@@ -115,7 +119,29 @@ describe("useKanbanDnd", () => {
     await act(async () => {
       await result.current.onConfirm(false);
     });
-    expect(changeStatus).toHaveBeenCalledWith("card-a", "W_REALIZACJI", 3, false);
+    expect(changeStatus).toHaveBeenCalledWith("card-a", "W_REALIZACJI", 3, false, "");
+  });
+
+  it("onConfirm with note + location calls changeStatus + addOrderNote", async () => {
+    vi.mocked(changeStatus).mockResolvedValueOnce({
+      order: { id: "card-a", status: "W_REALIZACJI", version: 4 } as never,
+      triggerSuggestion: null,
+    });
+    const { addOrderNote } = await import("@/lib/locations");
+    vi.mocked(addOrderNote).mockResolvedValueOnce({} as never);
+    const { result } = renderHook(() =>
+      useKanbanDnd(makeColumns(), triggers, versionMap),
+    );
+    act(() => {
+      result.current.onDragEnd("card-a", "PRZYJETE", "W_REALIZACJI");
+    });
+    await act(async () => {
+      await result.current.onConfirm(true, "Czeka na decyzję", "Półka A");
+    });
+    expect(changeStatus).toHaveBeenCalledWith(
+      "card-a", "W_REALIZACJI", 3, true, "Czeka na decyzję",
+    );
+    expect(addOrderNote).toHaveBeenCalledWith("card-a", { location: "Półka A" });
   });
 
   it("onConfirm reverts move and sets error toast on failure", async () => {

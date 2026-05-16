@@ -1,8 +1,9 @@
 "use client";
 
-// KanbanBoard — DndContext wrapper + 5-column grid + post-drag inline popup.
-// StatusChangeTriggerDialog (Radix modal) replaced by KanbanDragPopup (fixed div).
-// ~80 LOC.
+// KanbanBoard — DndContext wrapper + 5-column grid.
+// Post-drag status confirmation now happens via StatusChangeTriggerDialog
+// mounted by KanbanBoardWrapper (v2-A: single source of truth for status changes).
+// ~60 LOC.
 
 import {
   DndContext,
@@ -16,25 +17,14 @@ import {
 import { useState } from "react";
 import { KanbanColumn } from "./KanbanColumn";
 import { KanbanCard } from "./KanbanCard";
-import { KanbanDragPopup } from "./KanbanDragPopup";
 import type { KanbanColumnDto } from "@/lib/kanban/types";
-import type { PendingMove } from "./useKanbanDnd";
 
 interface Props {
   columns: KanbanColumnDto[];
   onDragEnd?: (cardId: string, fromStatus: string, toStatus: string) => void;
-  pendingMove?: PendingMove | null;
-  onConfirm?: (sendTriggers: boolean) => Promise<void>;
-  onCancel?: () => void;
 }
 
-export function KanbanBoard({
-  columns,
-  onDragEnd,
-  pendingMove = null,
-  onConfirm,
-  onCancel,
-}: Props) {
+export function KanbanBoard({ columns, onDragEnd }: Props) {
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -64,37 +54,27 @@ export function KanbanBoard({
   }
 
   return (
-    <>
-      <DndContext
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div
+        className="flex-1 overflow-auto p-6 grid gap-4"
+        style={{ gridTemplateColumns: "repeat(5, minmax(240px, 1fr))" }}
       >
-        <div
-          className="flex-1 overflow-auto p-6 grid gap-4"
-          style={{ gridTemplateColumns: "repeat(5, minmax(240px, 1fr))" }}
-        >
-          {columns.map((col) => (
-            <KanbanColumn key={col.status} column={col} />
-          ))}
-        </div>
+        {columns.map((col) => (
+          <KanbanColumn key={col.status} column={col} />
+        ))}
+      </div>
 
-        <DragOverlay>
-          {activeCard && (
-            <div className="opacity-90 rotate-1 shadow-lg">
-              <KanbanCard card={activeCard} />
-            </div>
-          )}
-        </DragOverlay>
-      </DndContext>
-
-      {pendingMove && onConfirm && onCancel && (
-        <KanbanDragPopup
-          pendingMove={pendingMove}
-          onConfirm={onConfirm}
-          onCancel={onCancel}
-        />
-      )}
-    </>
+      <DragOverlay>
+        {activeCard && (
+          <div className="opacity-90 rotate-1 shadow-lg">
+            <KanbanCard card={activeCard} />
+          </div>
+        )}
+      </DragOverlay>
+    </DndContext>
   );
 }
