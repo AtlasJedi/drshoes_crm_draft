@@ -51,9 +51,8 @@ describe("OrdersWeekChart", () => {
 
   it("first chip has active class by default", () => {
     render(<OrdersWeekChart rows={rows} />);
-    // Chip component renders with className containing "active" when active=true
-    const chips = screen.getAllByRole("button");
-    const tygodzenChip = chips.find((b) => b.textContent?.includes("tydzień"));
-    expect(tygodzenChip?.className).toMatch(/active/);
+    // Chip component is a span (no onClick — visual-only in RSC) with className "chip active"
+    const tygodzenChip = screen.getByText("tydzień");
+    expect(tygodzenChip.className).toMatch(/active/);
   });
 });
