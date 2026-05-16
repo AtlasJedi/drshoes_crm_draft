@@ -18,10 +18,10 @@ interface Props {
 
 /**
  * Channel-aware reply composer. State extracted to useReplyComposerState.
- * Supports: channel toggle (EMAIL/SMS), EMAIL subject field, SMS char counter,
- * ⌘+Enter send, TemplatePicker, inline send-error strip.
+ * Supports: channel toggle (EMAIL/SMS), SMS char counter, ⌘+Enter send,
+ * TemplatePicker, inline send-error strip.
+ * Subject input removed for EMAIL — backend pins subject via followup template (v2-E).
  * Attach button is disabled ("wkrótce") per M5 scope.
- * WHATSAPP channel is not surfaced in the toggle — out of M5 scope.
  */
 export function ReplyComposer({ thread, onSent }: Props) {
   const st = useReplyComposerState(thread.channel);
@@ -38,7 +38,6 @@ export function ReplyComposer({ thread, onSent }: Props) {
     try {
       await sendReply(thread.id, {
         channel: st.channel,
-        subject: st.channel === "EMAIL" ? st.subject : undefined,
         body: st.body,
       });
       st.reset();
@@ -83,15 +82,6 @@ export function ReplyComposer({ thread, onSent }: Props) {
             : `wyślij na ${thread.clientPhone ?? "—"}`}
         </div>
       </div>
-      {st.channel === "EMAIL" && (
-        <input
-          type="text"
-          value={st.subject}
-          onChange={e => st.setSubject(e.target.value)}
-          placeholder="Temat"
-          className="w-full h-9 px-3 mb-2 rounded-md border border-admin-line bg-white text-[13px] focus:outline-none focus:ring-2 focus:ring-acid/60 focus:border-ink/40"
-        />
-      )}
       <div className="relative">
         <textarea
           ref={textareaRef}

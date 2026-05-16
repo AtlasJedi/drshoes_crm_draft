@@ -19,8 +19,11 @@ import java.util.UUID;
  *   - sendManual         — operator-initiated from MessagesController / MessageComposerModal
  *   - sendForTrigger     — called by TriggerEngine after status-change post-commit hook
  *   - sendRetry          — called by MessageRetryService; bypasses template re-render
- *   - sendReply          — operator reply on an existing thread (no template)
- *   - sendNewToClient    — cross-thread first-contact compose (no template)
+ *   - sendReply          — operator reply on an existing thread
+ *   - sendNewToClient    — cross-thread first-contact compose
+ *
+ * EMAIL sends (sendReply + sendNewToClient) are wrapped in the followup HTML template (v2-E).
+ * Stored body = user plain text (for bubble display); bodyHtml = rendered wrapper (for gateway).
  *
  * Recipient resolution is delegated to {@link MessageRecipientResolver}.
  * Gateway dispatch is delegated to {@link MessageGatewayDispatcher}.
@@ -104,7 +107,8 @@ public class MessageRouter {
 
     /**
      * Reply send entry point — operator freeform message on an existing thread.
-     * Body/subject provided directly; no template.
+     * EMAIL channel: body is stored as plain text for bubble display; outbound
+     * email is wrapped in the followup HTML template (v2-E). SMS: sent as-is.
      */
     @Transactional
     public UUID sendReply(UUID threadId, UUID clientId, String channel, String subject,
@@ -112,9 +116,13 @@ public class MessageRouter {
         String recipient = recipientResolver.resolve(clientId, channel);
         UUID actorId = actor == null ? null : actor.userId();
 
+        WrappedEmail wrap = "EMAIL".equals(channel)
+                ? wrapWithFollowupTemplate(clientId, orderId, body)
+                : new WrappedEmail(subject, null);
+
         var msg = buildOutbound(threadId, orderId, clientId, channel,
-                null, null, subject, body, null, actorId);
-        var persisted = dispatcher.dispatch(msg, recipient, subject, body);
+                null, null, wrap.subject(), body, wrap.bodyHtml(), actorId);
+        var persisted = dispatcher.dispatch(msg, recipient, wrap.subject(), body);
 
         log.info("op=message.sendReply outcome={} threadId={} messageId={} channel={} actor={}",
                 persisted.getDeliveryStatus(), threadId, persisted.getId(), channel,
@@ -124,7 +132,8 @@ public class MessageRouter {
 
     /**
      * Cross-thread "Nowa wiadomość" compose — first-contact with a client on a given channel.
-     * Find-or-create thread; body/subject provided directly.
+     * EMAIL channel: body is stored as plain text for bubble display; outbound email is
+     * wrapped in the followup HTML template (v2-E). SMS: sent as-is.
      */
     @Transactional
     public UUID sendNewToClient(UUID clientId, String channel, String subject,
@@ -133,9 +142,13 @@ public class MessageRouter {
         var thread = threadService.findOrCreateForClient(clientId, channel);
         UUID actorId = actor == null ? null : actor.userId();
 
+        WrappedEmail wrap = "EMAIL".equals(channel)
+                ? wrapWithFollowupTemplate(clientId, null, body)
+                : new WrappedEmail(subject, null);
+
         var msg = buildOutbound(thread.getId(), null, clientId, channel,
-                null, null, subject, body, null, actorId);
-        var persisted = dispatcher.dispatch(msg, recipient, subject, body);
+                null, null, wrap.subject(), body, wrap.bodyHtml(), actorId);
+        var persisted = dispatcher.dispatch(msg, recipient, wrap.subject(), body);
 
         log.info("op=message.sendNewToClient outcome={} clientId={} channel={} threadId={} messageId={} actor={}",
                 persisted.getDeliveryStatus(), clientId, channel, thread.getId(), persisted.getId(),
@@ -144,6 +157,26 @@ public class MessageRouter {
     }
 
     // ---- private ----
+
+    /**
+     * Wraps a free-form operator message in the "Dr Shoes - followup (EMAIL)" template.
+     * Returns rendered subject + bodyHtml. The caller stores the original user text as
+     * {@code body} (for bubble display) and this rendered HTML as {@code bodyHtml} (for gateway).
+     */
+    private WrappedEmail wrapWithFollowupTemplate(UUID clientId, UUID orderId, String userMessage) {
+        var tpl = templates.findByName("Dr Shoes - followup (EMAIL)")
+                .orElseThrow(() -> new IllegalStateException(
+                        "Followup template not seeded — run V026 migration"));
+        var ctx = contextBuilder.buildContext(orderId, clientId, userMessage);
+        String renderedSubject = renderer.render(tpl.getSubject(), ctx);
+        String renderedHtml = renderer.render(tpl.getBodyHtml(), ctx);
+        log.info("op=message.wrapFollowup clientId={} orderId={} subject={} outcome=ok",
+                clientId, orderId, renderedSubject);
+        return new WrappedEmail(renderedSubject, renderedHtml);
+    }
+
+    /** Carrier for the wrapped EMAIL subject + bodyHtml pair. */
+    private record WrappedEmail(String subject, String bodyHtml) {}
 
     private UUID send(UUID orderId, UUID clientId, UUID templateId, UUID triggerId,
                       String channel, UUID actorId) {

@@ -23,20 +23,22 @@ public class PlaceholderResolver {
   private final Map<String, Function<TemplateContext, String>> strategies = new HashMap<>();
 
   public PlaceholderResolver() {
-    strategies.put("imie_klienta",   ctx -> blankToDash(ctx.imieKlienta()));
-    strategies.put("numer_zlecenia", ctx -> blankToDash(ctx.numerZlecenia()));
-    strategies.put("typ_pracy",      ctx -> ctx.typyPracy() == null || ctx.typyPracy().isEmpty()
-                                            ? "—"
-                                            : String.join(", ", ctx.typyPracy()));
-    strategies.put("data_odbioru",   ctx -> ctx.dataOdbioru() == null ? "—" : PL.format(ctx.dataOdbioru()));
-    strategies.put("nazwa_warsztatu",ctx -> blankToDash(ctx.nazwaWarsztatu()));
-    strategies.put("adres_warsztatu",ctx -> blankToDash(ctx.adresWarsztatu()));
+    strategies.put("imie_klienta",    ctx -> blankToDash(ctx.imieKlienta()));
+    strategies.put("numer_zlecenia",  ctx -> blankToDash(ctx.numerZlecenia()));
+    strategies.put("typ_pracy",       ctx -> ctx.typyPracy() == null || ctx.typyPracy().isEmpty()
+                                             ? "—"
+                                             : String.join(", ", ctx.typyPracy()));
+    strategies.put("data_odbioru",    ctx -> ctx.dataOdbioru() == null ? "—" : PL.format(ctx.dataOdbioru()));
+    strategies.put("nazwa_warsztatu", ctx -> blankToDash(ctx.nazwaWarsztatu()));
+    strategies.put("adres_warsztatu", ctx -> blankToDash(ctx.adresWarsztatu()));
     strategies.put("godziny_otwarcia",ctx -> blankToDash(ctx.godzinyOtwarcia()));
-    strategies.put("url_warsztatu",  ctx -> blankToDash(ctx.urlWarsztatu()));
-    strategies.put("link_do_zdjec",  ctx -> {
+    strategies.put("url_warsztatu",   ctx -> blankToDash(ctx.urlWarsztatu()));
+    strategies.put("link_do_zdjec",   ctx -> {
       log.warn("op=template.render placeholder=link_do_zdjec reason=deferred_until_M3");
       return "—";
     });
+    // v2-E: operator free-form body injected into the followup email wrapper
+    strategies.put("wiadomosc_tresc", ctx -> ctx.wiadomoscTresc() != null ? ctx.wiadomoscTresc() : "");
   }
 
   /** Returns substitution for the placeholder name (no braces) or null if unknown. */

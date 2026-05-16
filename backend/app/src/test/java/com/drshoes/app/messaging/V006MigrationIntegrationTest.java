@@ -13,10 +13,11 @@ class V006MigrationIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void seedsFourTemplates() {
+    // V006 seeds 4 templates; V026 adds the followup template — total ≥ 4.
     Integer count = jdbc.queryForObject(
         "SELECT COUNT(*) FROM message_template WHERE active = TRUE",
         Integer.class);
-    assertThat(count).isEqualTo(4);
+    assertThat(count).isGreaterThanOrEqualTo(4);
   }
 
   @Test

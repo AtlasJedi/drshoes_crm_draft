@@ -11,5 +11,14 @@ public record TemplateContext(
     String nazwaWarsztatu,
     String adresWarsztatu,          // nullable — from WorkshopProperties
     String godzinyOtwarcia,         // nullable — from WorkshopProperties
-    String urlWarsztatu             // nullable — from WorkshopProperties
-) {}
+    String urlWarsztatu,            // nullable — from WorkshopProperties
+    String wiadomoscTresc           // nullable — operator typed body (v2-E followup)
+) {
+    /** Convenience constructor without wiadomoscTresc (backwards compat). */
+    public TemplateContext(String imieKlienta, String numerZlecenia, List<String> typyPracy,
+                           OffsetDateTime dataOdbioru, String nazwaWarsztatu,
+                           String adresWarsztatu, String godzinyOtwarcia, String urlWarsztatu) {
+        this(imieKlienta, numerZlecenia, typyPracy, dataOdbioru, nazwaWarsztatu,
+             adresWarsztatu, godzinyOtwarcia, urlWarsztatu, null);
+    }
+}

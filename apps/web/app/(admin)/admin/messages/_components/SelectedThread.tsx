@@ -39,7 +39,7 @@ export function SelectedThread({ threadId, onLoaded, onResolved }: Props) {
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
       <ThreadHeader thread={detail.thread} onReadMarked={refetch} />
-      <div className="flex-1 overflow-auto px-6 py-5 space-y-4">
+      <div className="flex-1 overflow-auto min-h-0 px-6 py-5 space-y-4">
         {msgs.map(m => (
           <MessageBubble
             key={m.id}

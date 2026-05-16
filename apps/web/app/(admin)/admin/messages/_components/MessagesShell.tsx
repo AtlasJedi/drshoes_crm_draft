@@ -45,7 +45,7 @@ export function MessagesShell({ initialThreadId }: Props) {
         />
 
         {/* CENTRE: active thread or empty state */}
-        <main className="flex flex-col min-w-0 overflow-hidden" style={{ background: "var(--paper-2, #ebe4d4)" }}>
+        <main className="flex flex-col min-w-0 min-h-0 overflow-hidden" style={{ background: "var(--paper-2, #ebe4d4)" }}>
           {!sel.selectedId && <EmptyState variant="no-selection" />}
           {sel.selectedId && (
             <SelectedThread

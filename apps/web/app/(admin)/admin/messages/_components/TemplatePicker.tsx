@@ -9,7 +9,7 @@ import { IconBtn } from "./IconBtn";
 const log = createLogger("messaging.templatepicker");
 
 interface Props {
-  onSelect: (body: string, subject?: string | null) => void;
+  onSelect: (body: string) => void;
 }
 
 /**
@@ -58,7 +58,7 @@ export function TemplatePicker({ onSelect }: Props) {
   }, [open, close]);
 
   function handleSelect(t: TemplateDto) {
-    onSelect(t.body, t.subject);
+    onSelect(t.body);
     close();
   }
 

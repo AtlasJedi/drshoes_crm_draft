@@ -34,7 +34,8 @@ class TemplatesControllerIntegrationTest extends AdminWebTestBase {
         "Zlecenie przyjete (EMAIL)",
         "Gotowe do odbioru (EMAIL)",
         "Przypomnienie o odbiorze (SMS)",
-        "Prosba o opinie (EMAIL)"
+        "Prosba o opinie (EMAIL)",
+        "Dr Shoes - followup (EMAIL)"   // V026 — must not be cleaned up between tests
     );
 
     @Autowired
@@ -60,7 +61,7 @@ class TemplatesControllerIntegrationTest extends AdminWebTestBase {
         loginAsOwner();
         mockMvc().perform(get("/api/admin/templates"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(4));
+            .andExpect(jsonPath("$.length()").value(5));
     }
 
     @Test

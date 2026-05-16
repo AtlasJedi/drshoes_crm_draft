@@ -19,14 +19,13 @@ interface Props {
 
 /**
  * "Nowa wiadomość" cross-thread composer. Radix Dialog wrapping ClientPicker
- * + channel selector + subject (EMAIL) + body textarea + Send.
+ * + channel selector + body textarea + Send.
+ * Subject input removed for EMAIL — backend pins subject via followup template (v2-E).
  * On success: closes dialog, calls onSent(threadId) to select new/found thread.
- * ~85 LOC — recommend extracting useNewMessageState if it gains further features.
  */
 export function NewMessageDialog({ open, onOpenChange, onSent }: Props) {
   const [client, setClient] = useState<ClientDto | null>(null);
   const [channel, setChannel] = useState<Channel>("EMAIL");
-  const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +35,6 @@ export function NewMessageDialog({ open, onOpenChange, onSent }: Props) {
     if (!open) {
       setClient(null);
       setChannel("EMAIL");
-      setSubject("");
       setBody("");
       setError(null);
     }
@@ -54,7 +52,6 @@ export function NewMessageDialog({ open, onOpenChange, onSent }: Props) {
     try {
       const result = await sendNewToClient(client.id, {
         channel: effectiveChannel,
-        subject: effectiveChannel === "EMAIL" ? subject : undefined,
         body,
       });
       onSent(result.threadId);
@@ -91,14 +88,6 @@ export function NewMessageDialog({ open, onOpenChange, onSent }: Props) {
               ))}
             </div>
           </div>
-
-          {effectiveChannel === "EMAIL" && (
-            <div className="space-y-1">
-              <label className="text-[12px] text-admin-mute uppercase">Temat</label>
-              <input type="text" value={subject} onChange={e => setSubject(e.target.value)} placeholder="Temat wiadomości"
-                className="w-full h-9 px-3 rounded-md border border-admin-line text-[13px] focus:outline-none focus:ring-2 focus:ring-acid/60" />
-            </div>
-          )}
 
           <div className="space-y-1">
             <label className="text-[12px] text-admin-mute uppercase">Treść</label>
