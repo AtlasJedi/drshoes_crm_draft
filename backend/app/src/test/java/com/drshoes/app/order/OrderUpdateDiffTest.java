@@ -58,7 +58,7 @@ class OrderUpdateDiffTest {
         UpdateOrderRequest req = new UpdateOrderRequest(
             "nowy opis", null, null, null, null, null, null, null, null);
         String diff = OrderUpdateDiff.computePolish(o, req, null);
-        assertThat(diff).isEqualTo("opis: \"stary opis\" → \"nowy opis\"");
+        assertThat(diff).isEqualTo("Opis zmieniony z „stary opis” na „nowy opis”");
     }
 
     @Test
@@ -67,21 +67,21 @@ class OrderUpdateDiffTest {
         UpdateOrderRequest req = new UpdateOrderRequest(
             null, null, null, null, null, null, null, 10000, null);
         String diff = OrderUpdateDiff.computePolish(o, req, null);
-        assertThat(diff).isEqualTo("cena: 0,00 zł → 100,00 zł");
+        assertThat(diff).isEqualTo("Cena zmieniona z 0,00 zł na 100,00 zł");
     }
 
     @Test
-    void multipleFieldsChanged_joinedWithSemicolon() {
+    void multipleFieldsChanged_joinedWithBullet() {
         Order o = baseOrder();
         o.setQuotedPriceCents(500);
         o.setAdvancePaidCents(0);
         UpdateOrderRequest req = new UpdateOrderRequest(
             "nowy", null, null, null, null, null, null, 1000, 200);
         String diff = OrderUpdateDiff.computePolish(o, req, null);
-        assertThat(diff).contains("; ");
-        assertThat(diff).contains("opis:");
-        assertThat(diff).contains("cena:");
-        assertThat(diff).contains("zaliczka:");
+        assertThat(diff).contains(" · ");
+        assertThat(diff).contains("Opis zmieniony");
+        assertThat(diff).contains("Cena zmieniona");
+        assertThat(diff).contains("Zaliczka zmieniona");
     }
 
     @Test
@@ -108,7 +108,7 @@ class OrderUpdateDiffTest {
             if (id.equals(newCraftsman)) return "Maria Nowak";
             return "?";
         });
-        assertThat(diff).isEqualTo("wykonawca: Jan Kowalski → Maria Nowak");
+        assertThat(diff).isEqualTo("Wykonawca zmieniony z Jan Kowalski na Maria Nowak");
     }
 
     @Test
@@ -119,7 +119,7 @@ class OrderUpdateDiffTest {
             null, newDate, null, null, null, null, null, null, null);
         String diff = OrderUpdateDiff.computePolish(o, req, null);
         // old is null → "brak"
-        assertThat(diff).isEqualTo("planowany odbiór: brak → 15.07.2025");
+        assertThat(diff).isEqualTo("Planowany odbiór zmieniony z brak na 15.07.2025");
     }
 
     @Test
@@ -131,7 +131,7 @@ class OrderUpdateDiffTest {
         String diff = OrderUpdateDiff.computePolish(o, req, null);
         assertThat(diff).isNotNull();
         // Each side should be truncated to 30
-        assertThat(diff).contains("\"" + "a".repeat(30) + "\"");
-        assertThat(diff).contains("\"" + "b".repeat(30) + "\"");
+        assertThat(diff).contains("„" + "a".repeat(30) + "”");
+        assertThat(diff).contains("„" + "b".repeat(30) + "”");
     }
 }

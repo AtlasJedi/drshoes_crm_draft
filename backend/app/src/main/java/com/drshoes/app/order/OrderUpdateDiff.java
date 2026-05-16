@@ -43,58 +43,63 @@ public final class OrderUpdateDiff {
                                        Function<UUID, String> userNameResolver) {
         List<String> parts = new ArrayList<>();
 
-        // description
+        // description (m) → "zmieniony"
         if (req.description() != null && !Objects.equals(req.description(), before.getDescription())) {
-            String oldVal = truncate(before.getDescription(), 30);
-            String newVal = truncate(req.description(), 30);
-            parts.add("opis: \"" + oldVal + "\" → \"" + newVal + "\"");
+            String oldVal = quote(truncate(before.getDescription(), 30));
+            String newVal = quote(truncate(req.description(), 30));
+            parts.add("Opis zmieniony z " + oldVal + " na " + newVal);
         }
 
-        // plannedPickupAt
+        // plannedPickupAt (m: "odbiór") → "zmieniony"
         if (req.plannedPickupAt() != null
                 && !Objects.equals(req.plannedPickupAt(), before.getPlannedPickupAt())) {
             String oldDate = formatDate(before.getPlannedPickupAt());
             String newDate = formatDate(req.plannedPickupAt());
-            parts.add("planowany odbiór: " + oldDate + " → " + newDate);
+            parts.add("Planowany odbiór zmieniony z " + oldDate + " na " + newDate);
         }
 
-        // assignedCraftsmanId
+        // assignedCraftsmanId (m: "wykonawca") → "zmieniony"
         if (req.assignedCraftsmanId() != null
                 && !Objects.equals(req.assignedCraftsmanId(), before.getAssignedCraftsmanId())) {
             String oldName = resolveName(before.getAssignedCraftsmanId(), userNameResolver);
             String newName = resolveName(req.assignedCraftsmanId(), userNameResolver);
-            parts.add("wykonawca: " + oldName + " → " + newName);
+            parts.add("Wykonawca zmieniony z " + oldName + " na " + newName);
         }
 
-        // cancelledReason
+        // cancelledReason (m: "powód") → "zmieniony"
         if (req.cancelledReason() != null
                 && !Objects.equals(req.cancelledReason(), before.getCancelledReason())) {
-            String oldVal = truncate(before.getCancelledReason(), 30);
-            String newVal = truncate(req.cancelledReason(), 30);
-            parts.add("powód anulowania: \"" + oldVal + "\" → \"" + newVal + "\"");
+            String oldVal = quote(truncate(before.getCancelledReason(), 30));
+            String newVal = quote(truncate(req.cancelledReason(), 30));
+            parts.add("Powód anulowania zmieniony z " + oldVal + " na " + newVal);
         }
 
-        // tags (content diff not parsed — just signal changed)
+        // tags (plural) — content diff not parsed
         if (req.tags() != null && !Objects.equals(req.tags(), before.getTags())) {
-            parts.add("tagi: zmienione");
+            parts.add("Tagi zaktualizowane");
         }
 
-        // quotedPriceCents
+        // quotedPriceCents (f: "cena") → "zmieniona"
         if (req.quotedPriceCents() != null && req.quotedPriceCents() != before.getQuotedPriceCents()) {
             String oldPln = formatPln(before.getQuotedPriceCents());
             String newPln = formatPln(req.quotedPriceCents());
-            parts.add("cena: " + oldPln + " → " + newPln);
+            parts.add("Cena zmieniona z " + oldPln + " na " + newPln);
         }
 
-        // advancePaidCents
+        // advancePaidCents (f: "zaliczka") → "zmieniona"
         if (req.advancePaidCents() != null && req.advancePaidCents() != before.getAdvancePaidCents()) {
             String oldPln = formatPln(before.getAdvancePaidCents());
             String newPln = formatPln(req.advancePaidCents());
-            parts.add("zaliczka: " + oldPln + " → " + newPln);
+            parts.add("Zaliczka zmieniona z " + oldPln + " na " + newPln);
         }
 
         if (parts.isEmpty()) return null;
-        return String.join("; ", parts);
+        // " · " joiner keeps multi-field PATCHes readable as one elegant title
+        return String.join(" · ", parts);
+    }
+
+    private static String quote(String s) {
+        return "„" + s + "”";
     }
 
     // ---- private helpers ----

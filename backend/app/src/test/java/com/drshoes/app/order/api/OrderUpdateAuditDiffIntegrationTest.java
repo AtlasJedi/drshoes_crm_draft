@@ -49,11 +49,11 @@ class OrderUpdateAuditDiffIntegrationTest extends AdminWebTestBase {
             "/api/admin/orders/" + o.getId() + "%", o.getId());
         assertThat(rows).isNotEmpty();
         AuditLog latest = rows.get(rows.size() - 1);
-        assertThat(latest.getNote()).isEqualTo("cena: 0,00 zł → 100,00 zł");
+        assertThat(latest.getNote()).isEqualTo("Cena zmieniona z 0,00 zł na 100,00 zł");
     }
 
     @Test
-    void PATCH_twoFieldsChanged_noteSeparatedBySemicolon() throws Exception {
+    void PATCH_twoFieldsChanged_noteSeparatedByBullet() throws Exception {
         Order o = persistOrder(500, 0);
 
         mockMvc().perform(patch("/api/admin/orders/" + o.getId())
@@ -67,9 +67,9 @@ class OrderUpdateAuditDiffIntegrationTest extends AdminWebTestBase {
         assertThat(rows).isNotEmpty();
         String note = rows.get(rows.size() - 1).getNote();
         assertThat(note).isNotNull();
-        assertThat(note).contains("; ");
-        assertThat(note).contains("cena:");
-        assertThat(note).contains("zaliczka:");
+        assertThat(note).contains(" · ");
+        assertThat(note).contains("Cena zmieniona");
+        assertThat(note).contains("Zaliczka zmieniona");
     }
 
     @Test
