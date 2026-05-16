@@ -105,6 +105,8 @@ public class OrderService {
         }
         log.info("op=createOrder orderId={} code={} clientId={} outcome=ok",
             saved.getId(), saved.getCode(), saved.getClientId());
+        triggerEngine.onStatusChange(saved.getId(), null, OrderStatus.PRZYJETE.name());
+        log.info("op=create.triggerFire orderId={} outcome=enqueued", saved.getId());
         return toDto(saved);
     }
 

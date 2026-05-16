@@ -3,6 +3,8 @@ package com.drshoes.app.order;
 import com.drshoes.app.AbstractIntegrationTest;
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
+import com.drshoes.app.messaging.domain.MessageEntity;
+import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.order.domain.*;
 import com.drshoes.app.order.dto.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,7 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
     @Autowired OrderRepository orderRepo;
     @Autowired OrderItemRepository itemRepo;
     @Autowired ClientRepository clientRepo;
+    @Autowired MessageRepository messageRepo;
 
     private UUID clientId;
 
@@ -389,5 +392,43 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
         OrderDto fetched = svc.get(updated.id());
         assertThat(fetched.quotedPriceCents()).isEqualTo(50000);
         assertThat(fetched.advancePaidCents()).isEqualTo(20000);
+    }
+
+    // ============================================================
+    // Test 21: create fires PRZYJETE trigger → Message row SENT via LoggingEmailGateway
+    // (fix-C — trigger on order create)
+    // ============================================================
+    @Test
+    void createOrder_firesPrzyjeteTrigger_producesMessageRowSent() {
+        // Client must have an email so the EMAIL trigger can resolve a recipient
+        Client c = new Client();
+        c.setFirstName("Anna");
+        c.setPhone("+48111222333");
+        c.setEmail("anna@example.com");
+        UUID emailClientId = clientRepo.save(c).getId();
+
+        CreateOrderRequest req = new CreateOrderRequest(
+            emailClientId, "naprawa sandałów", null, null, null,
+            OrderSource.ADMIN, null, null, null);
+
+        OrderDto created = svc.create(req);
+
+        // After commit the afterCommit hook runs synchronously within the same
+        // Testcontainers transaction context; wait briefly if needed (rarely necessary).
+        // Assert: at least one Message row exists for this order with deliveryStatus=SENT
+        List<MessageEntity> msgs = messageRepo.findAllByOrderIdOrderByCreatedAtAsc(created.id());
+        assertThat(msgs)
+            .as("Expected at least one Message row for the PRZYJETE trigger")
+            .isNotEmpty();
+
+        MessageEntity sent = msgs.stream()
+            .filter(m -> "SENT".equals(m.getDeliveryStatus()))
+            .findFirst()
+            .orElse(null);
+        assertThat(sent)
+            .as("Expected a Message row with deliveryStatus=SENT (LoggingEmailGateway path)")
+            .isNotNull();
+        assertThat(sent.getChannel()).isEqualTo("EMAIL");
+        assertThat(sent.getOrderId()).isEqualTo(created.id());
     }
 }
