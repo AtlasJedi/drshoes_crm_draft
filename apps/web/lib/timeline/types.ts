@@ -26,13 +26,16 @@ export type TimelineEventKind =
   | "MESSAGE_RECEIVED"     // M5 — inbound message recorded (email or SMS)
   | "THREAD_MARKED_READ"   // M5 — operator opened thread or clicked mark-read
   | "THREAD_ASSIGNED"      // M5 — unmatched thread assigned to a client
-  | "THREAD_DISCARDED";    // M5 — unmatched thread soft-deleted by operator
+  | "THREAD_DISCARDED"     // M5 — unmatched thread soft-deleted by operator
+  | "ORDER_NOTE";          // M10 — note + optional location move (POST .../notes)
 
 /**
  * Curated timeline event — mirrors TimelineEvent.java.
  * id: null for synthetic events (e.g. ORDER_CREATED without audit_log row).
  * labels: display metadata key-value map (e.g. actorFullName, path).
  * note: optional operator note — present only on STATUS_CHANGED rows where a note was provided.
+ * locationFrom: previous storage location before a location-change event (M10/V020). Null otherwise.
+ * locationTo: new storage location after a location-change event (M10/V020). Null otherwise.
  */
 export interface TimelineEvent {
   id: string | null;
@@ -41,4 +44,6 @@ export interface TimelineEvent {
   actorFullName: string | null;
   labels: Record<string, string>;
   note?: string | null;
+  locationFrom?: string | null;
+  locationTo?: string | null;
 }

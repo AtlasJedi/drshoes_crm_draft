@@ -118,6 +118,8 @@ public class MessageSentTimelineHandler {
                 row.getCreatedAt(),
                 actorFullName,
                 Map.copyOf(labels),
+                null,
+                null,
                 null
         );
     }

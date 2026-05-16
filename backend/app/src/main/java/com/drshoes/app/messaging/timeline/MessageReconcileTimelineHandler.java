@@ -63,6 +63,6 @@ public class MessageReconcileTimelineHandler {
                 "orderId", orderIdLabel
         );
 
-        return new TimelineEvent(row.getId(), kind, row.getCreatedAt(), actorFullName, labels, null);
+        return new TimelineEvent(row.getId(), kind, row.getCreatedAt(), actorFullName, labels, null, null, null);
     }
 }

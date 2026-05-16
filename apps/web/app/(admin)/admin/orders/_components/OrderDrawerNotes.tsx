@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { createLogger } from "@/lib/log";
 import { getOrderTimeline } from "@/lib/timeline/api";
 import type { TimelineEvent } from "@/lib/timeline/types";
+import { LocationMoveChip } from "./_LocationMoveChip";
 
 const log = createLogger("order-drawer-notes");
 
@@ -29,7 +30,9 @@ export function OrderDrawerNotes({ orderId, refreshKey }: Props) {
     setLoading(true);
     try {
       const events = await getOrderTimeline(orderId);
-      const withNote = events.filter((ev) => ev.note);
+      const withNote = events.filter(
+        (ev) => ev.note || ev.kind === "ORDER_NOTE"
+      );
       log.info("op=loadNotes outcome=ok", { orderId, count: withNote.length });
       setNotes(withNote);
     } catch (err) {
@@ -72,6 +75,11 @@ export function OrderDrawerNotes({ orderId, refreshKey }: Props) {
                 {ev.actorFullName ?? "operator"} · {fmt.format(new Date(ev.occurredAt))}
               </div>
               <div style={{ fontSize: 13, marginTop: 2 }}>{ev.note}</div>
+              {(ev.locationFrom || ev.locationTo) && (
+                <div className="mt-1">
+                  <LocationMoveChip from={ev.locationFrom ?? null} to={ev.locationTo ?? null} />
+                </div>
+              )}
             </div>
           ))}
         </div>

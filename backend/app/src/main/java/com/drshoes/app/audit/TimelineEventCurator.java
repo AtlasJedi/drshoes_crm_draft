@@ -164,6 +164,12 @@ public class TimelineEventCurator {
                 Map.of("path", path, "orderId", orderId)));
         }
 
+        // POST /api/admin/orders/{uuid}/notes → ORDER_NOTE (M10 — note + optional location move)
+        if ("POST".equals(method) && status == 200 && path.endsWith("/notes")) {
+            return Optional.of(event(log, TimelineEventKind.ORDER_NOTE, actorFullName,
+                Map.of("path", path, "orderId", orderId)));
+        }
+
         return Optional.empty();
     }
 
@@ -232,6 +238,6 @@ public class TimelineEventCurator {
     private static TimelineEvent event(AuditLog log, TimelineEventKind kind,
                                         String actorFullName, Map<String, String> labels) {
         return new TimelineEvent(log.getId(), kind, log.getCreatedAt(), actorFullName, labels,
-            log.getNote());
+            log.getNote(), log.getLocationFrom(), log.getLocationTo());
     }
 }

@@ -58,4 +58,18 @@ describe("OrderDrawerNotes", () => {
     const { container } = render(<OrderDrawerNotes orderId="order-1" refreshKey={0} />);
     await waitFor(() => expect(container.querySelectorAll("[data-note-card]").length).toBe(2));
   });
+
+  it("renders ORDER_NOTE row with note body and location move chip", async () => {
+    mockGetTimeline.mockResolvedValue([
+      {
+        id: "e3", kind: "ORDER_NOTE", occurredAt: "2026-05-04T11:00:00Z",
+        actorFullName: "Tomek", labels: {}, note: "Przeniesiono na suszarkę",
+        locationFrom: "półka 1", locationTo: "suszarka",
+      },
+    ]);
+    render(<OrderDrawerNotes orderId="order-1" refreshKey={0} />);
+    await waitFor(() => expect(screen.getByText(/Przeniesiono na suszarkę/i)).toBeInTheDocument());
+    expect(screen.getByText(/półka 1/)).toBeInTheDocument();
+    expect(screen.getByText(/suszarka/)).toBeInTheDocument();
+  });
 });

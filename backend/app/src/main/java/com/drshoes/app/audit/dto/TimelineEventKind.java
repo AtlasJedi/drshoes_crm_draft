@@ -32,5 +32,6 @@ public enum TimelineEventKind {
     MESSAGE_RECEIVED,   // M5 — emitted by InboundMessageService#recordEmailInbound / #recordSmsInbound
     THREAD_MARKED_READ, // M5 — emitted by MessageThreadMutationService#markRead
     THREAD_ASSIGNED,    // M5 — emitted by MessageThreadMutationService#assignUnmatched
-    THREAD_DISCARDED    // M5 — emitted by MessageThreadMutationService#discardUnmatched
+    THREAD_DISCARDED,   // M5 — emitted by MessageThreadMutationService#discardUnmatched
+    ORDER_NOTE          // M10 — emitted by POST /api/admin/orders/{id}/notes (note + optional location move)
 }
