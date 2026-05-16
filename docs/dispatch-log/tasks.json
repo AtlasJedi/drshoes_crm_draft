@@ -2036,9 +2036,9 @@
     {
       "id": "v2-F",
       "title": "Order drawer rip-and-replace per handoff [TWO-STAGE]",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "fea371a",
+      "dispatch_log": "docs/dispatch-log/v2-F-20260517T010800Z.md"
     }
   ],
   "notes": [
