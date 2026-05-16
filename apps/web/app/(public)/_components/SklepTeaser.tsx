@@ -1,6 +1,8 @@
 // apps/web/app/(public)/_components/SklepTeaser.tsx
 // Public landing: Sklep / shop teaser — 4 static product tiles + non-functional filter pills.
 // Design: handoff/design/landing.jsx Sklep function (~line 158).
+"use client";
+
 import React from "react";
 import { Tape } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";

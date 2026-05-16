@@ -29,9 +29,10 @@ export function PhotoCard({ photo, onClick, onRelabel, onDelete }: Props) {
           bottom: 3,
           left: 3,
           background:
-            photo.label === "before" ? "var(--blue, #2563eb)"
-            : photo.label === "trakcie" ? "var(--orange, #f97316)"
-            : "var(--green, #16a34a)",
+            photo.label === "BEFORE" ? "var(--blue, #2563eb)"
+            : photo.label === "IN_PROGRESS" ? "var(--orange, #f97316)"
+            : photo.label === "AFTER" ? "var(--green, #16a34a)"
+            : "var(--ink, #0a0a0a)",
         }}
       >
         {PHOTO_LABEL_PL[photo.label]}

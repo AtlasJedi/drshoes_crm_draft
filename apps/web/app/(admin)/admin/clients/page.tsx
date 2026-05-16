@@ -1,5 +1,6 @@
 import { createLogger } from "@/lib/log";
 import { listClientsServer, searchClientsServer } from "@/lib/clients/api-server";
+import type { ClientSearchResult } from "@/lib/clients/types";
 import { ClientListSearchBox } from "./_components/ClientListSearchBox";
 import { ClientListTable } from "./_components/ClientListTable";
 import { ClientsPageHeaderSetter } from "./_components/ClientsPageHeaderSetter";

@@ -22,7 +22,8 @@ const NEWS: NewsEntry[] = [
 ];
 
 export function NewsTeaser() {
-  const [hero, ...rest] = NEWS;
+  const hero = NEWS[0]!;
+  const rest = NEWS.slice(1);
 
   return (
     <section

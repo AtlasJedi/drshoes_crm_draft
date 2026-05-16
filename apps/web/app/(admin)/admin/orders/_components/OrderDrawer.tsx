@@ -119,7 +119,7 @@ export function OrderDrawer({ initialOrder, users }: Props) {
             {/* convenience shortcut: marks order WYDANE directly */}
             <button className="btn-clean acid">oznacz jako wydane</button>
             <button className="btn-clean" onClick={() => setComposeOpen(true)}>
-              <I.send /> wiadomość
+              {I.send} wiadomość
             </button>
             <button className="btn-clean">paragon</button>
             <div style={{ flex: 1 }} />

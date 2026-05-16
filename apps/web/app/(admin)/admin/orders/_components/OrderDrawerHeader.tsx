@@ -37,7 +37,7 @@ export function OrderDrawerHeader({ code, status, clientName, receivedAt }: Prop
     }}>
       <Dialog.Close asChild>
         <button className="btn-clean" style={{ padding: 6 }} aria-label="Zamknij">
-          <I.close />
+          {I.close}
         </button>
       </Dialog.Close>
 
@@ -55,7 +55,7 @@ export function OrderDrawerHeader({ code, status, clientName, receivedAt }: Prop
       <Pill status={status} />
 
       <button className="btn-clean" aria-label="Więcej opcji">
-        <I.more />
+        {I.more}
       </button>
     </div>
   );
