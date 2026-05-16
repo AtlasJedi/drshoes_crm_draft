@@ -27,66 +27,32 @@ polish + Dashboard with live data become the next active milestone(s).
 | **M5** | Inbound replies — message_thread, parsing, reply UI, unread badge, /admin/messages page | `milestone-5` |
 | **M6** | Order processing polish + Dashboard — KPIs, charts, calendar, kanban (DnD), bulk actions, filter presets, row quick-actions | `milestone-6` |
 | **M7** | Clients UI (list, detail, sub-tabs, edit modal) + minimal Sklep/Aktualności stubs + sidebar nav | _(tag deferred to owner)_ |
+| **M8** | Demo-Ready Foundation — one-command boot, OTel tracing, Playwright gate, smart-fix scripts | `milestone-8` |
+| **M9** | Design Parity — graffiti design system rewrite (tokens + fonts + 12 primitives + icons) + dark-ribbon admin shell + every admin view to design fidelity + full public landing + V017 product_reservation backend slice. Closed 2026-05-16. HEAD at close: `011945b1da331249411bcd6a24933601fd76a1c2`. Backend 409/0/0/0, frontend 521/521 vitest, Playwright 12/12 parity audit. | `milestone-9` (local) |
 
 ## In flight
 
-_(none — M7 implementation closed 2026-05-11; awaiting owner sign-off + `milestone-7` tag)_
+_(none — M9 implementation closed 2026-05-16; awaiting owner sign-off + push)_
 
-## Next — locked priority
+## Next — M10 candidate backlog
 
-### M6 — Order Processing Polish + Dashboard (delivered)
+All items below were deferred from M9 (via 9-41 parity audit + 9-43 closure). Scope for M10 to be refined in brainstorming.
 
-**Theme:** Make the daily Misza-flow smooth. Orders + Dashboard.
+### M10 — Polish, wiring, and real implementations
 
-**Likely scope (will be refined in `superpowers:brainstorming` next session):**
-- **Dashboard:** real KPI tiles wired to backend
-  - Zlecenia w realizacji (in-progress count by status)
-  - Gotowe do odbioru (ready-for-pickup count + age distribution)
-  - Zaległe (overdue per due_at)
-  - Nowe rezerwacje (last 24h orders, possibly by source)
-  - Recent activity feed (last N audit events curator-projected)
-  - Optional: today/this-week revenue if pricing is in scope
-- **Orders processing polish:**
-  - Three switchable list views (BRIEF spec) — table / cards / calendar (or kanban)
-  - Bulk status changes
-  - Filtering + sorting beyond what M1 shipped (date range, customer, item type, technician)
-  - Quick actions from list rows (status bump, photo add, message)
-  - History view per order (audit timeline already exists; surface as a tab)
-  - Export / print (probably defer)
-- **Operational ergonomics:**
-  - Keyboard shortcuts on common actions
-  - Empty/loading/error state polish
-  - Inline edit for items + status without opening drawer
-- **Carry-forward hygiene from M4/M5 closure:**
-  - `MessageRouter` 293 LOC split
-  - `sendRetry/send` duplication dedup
-  - `MessagesControllerIntegrationTest` cross-test flake (`AdminWebTestBase.seedUsers` FK ordering)
+**Carry-forward from M9 (identified in 9-41 parity audit):**
 
-### M7 — Clients UI + minimal Sklep/News stubs
-
-**Theme:** Round out admin nav with the surfaces still missing UI.
-
-**Likely scope:**
-- **Clients UI** — `/admin/clients`
-  - List (search, filter by channel preference, RODO consent state)
-  - Detail page — profile + order history + message thread links + photos referenced
-  - Inline edit (contact, channel, RODO toggle)
-  - Probably no separate "create client" flow — clients are created via order intake
-- **Sklep — minimal stub** — `/admin/sklep`
-  - Single page with "do implementacji w przyszłości" / coming-soon placeholder
-  - Optional: shell of a reservation list (read-only) if intake from public site already exists
-- **Aktualności — minimal stub** — `/admin/aktualnosci`
-  - Single page with the same stub pattern
-  - Optional: trivial CRUD if we want owner to be able to post one news item
-
-### M8+ — Deferred, no commitment
-
-- Sklep real implementation (catalog, reservations management, inventory)
-- Aktualności real implementation (markdown editor, schedule, public site rendering)
-- Public landing page (BRIEF Layer 1) beyond minimal-viable
-- Reports / advanced analytics
-- Multi-user RBAC nuances beyond OWNER/EMPLOYEE
-- Mobile-tuned admin layout
+- **Drag-drop wiring** — `UnscheduledOrdersPanel` drop handler (9-28 stub), kanban "+ dodaj" column button (9-29 stub). UI ships visually; behaviour stubs with `console.warn`. Real DnD wiring deferred.
+- **Order drawer add-tag flow** — "+ dodaj tag" chip (9-26 stub). Click handler stubbed with `// TODO M10`.
+- **AdminTopbar global search handler** — design shows `Szukaj zlecenia, klienta…` search input + notification bell. Topbar renders the shell; search and notifications are wired to `// TODO M10` stubs.
+- **Notifications popover** — bell icon in AdminTopbar with badge count. Popover content and real data feed deferred.
+- **FreshReservationsPanel live data** — dashboard panel (9-22) ships with placeholder rows. Endpoint `GET /api/admin/sklep/reservations?limit=3` was not wired (cross-cutting note B from plan). Need a list-across-products controller method + wire the component.
+- **MixDonut chart rendering** — donut chart area on dashboard shows empty. Recharts/Chart.js integration for the pie segment visual not yet landed.
+- **Light / dark mode toggle** — design system tokens exist but theme switcher UI not implemented.
+- **Mobile-responsive layouts** — admin shell and views not mobile-tuned. Desktop-first only through M9.
+- **Real `/sklep` + `/aktualności` implementations** — Sklep catalog + reservations management; Aktualności markdown editor + scheduling. Currently minimal stubs (M7 locked scope). No calendar slot until owner directs.
+- **Map iframe precise coords** — Contact section on public landing uses placeholder coords. Replace with the workshop's actual address coords.
+- **Container rebuild for M9 visual verification** — web Docker image at close predates M9 commits. Rebuild with `docker compose build web && docker compose up -d web` + re-run `m9-parity-audit.spec.ts` to confirm post-M9 parity.
 
 ## Decision log
 

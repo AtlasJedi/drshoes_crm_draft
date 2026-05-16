@@ -129,6 +129,8 @@ Full protocol in memory entry `feedback_dispatch_protocol.md` (auto-loaded each 
 - [x] Milestone 5: Inbound parsing + reply UI + cross-client inbox
 - [x] Milestone 6: Order processing polish + Dashboard
 - [x] Milestone 7: Clients UI + minimal Sklep/Aktualności stubs (implementation closed 2026-05-11 — `milestone-7` tag deferred to owner sign-off)
+- [x] Milestone 8: Demo-ready foundation — one-command boot, OTel tracing, Playwright gate, smart-fix scripts (`milestone-8` tag)
+- [x] Milestone 9: design parity (admin + landing) — full graffiti design system shipped (closed 2026-05-16 — `milestone-9` tag local, awaiting owner sign-off + push)
 
 ## Forward roadmap
 
