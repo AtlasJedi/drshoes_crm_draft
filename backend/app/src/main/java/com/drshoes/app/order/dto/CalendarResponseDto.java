@@ -11,25 +11,28 @@ public record CalendarResponseDto(
     List<CalendarOrderDto> unscheduled
 ) {
     /**
-     * Unified DTO for both scheduled and unscheduled calendar entries.
+     * Unified DTO for all calendar entries.
      *
-     * <p>Contract (updated ux-2 2026-05-12):</p>
+     * <p>Contract (updated v2-B 2026-05-17):</p>
      * <ul>
-     *   <li>Scheduled entries: {@code plannedPickupAt} non-null, {@code receivedAt} non-null
-     *       — both timestamps are always populated so week/day views can render the same
-     *       order as two distinct markers (received marker on received date, pickup marker
-     *       on planned pickup date).</li>
-     *   <li>Unscheduled entries: {@code plannedPickupAt} null, {@code receivedAt} non-null.</li>
+     *   <li>{@code receivedAt} always non-null — green marker day.</li>
+     *   <li>{@code effectivePickupAt} always non-null — red marker day.
+     *       Computed as {@code plannedPickupAt ?? receivedAt + 14 days}.</li>
+     *   <li>{@code pickupAtDefaulted true} when no explicit {@code plannedPickupAt}
+     *       was set — frontend renders a dashed red border.</li>
+     *   <li>{@code plannedPickupAt} kept for backward compat; may be null.</li>
+     *   <li>{@code unscheduled} array is always empty — every order is now scheduled.</li>
      * </ul>
-     * urgent follows the same derivation as OrderMapper.toDto (tag "pilne" OR within 48h of plannedPickupAt).
      */
     public record CalendarOrderDto(
         UUID id,
         String code,
         String clientName,
         OrderStatus status,
-        Instant plannedPickupAt,  // null for unscheduled entries
-        Instant receivedAt,        // always non-null (both scheduled and unscheduled)
+        Instant plannedPickupAt,      // may be null; kept for compat
+        Instant receivedAt,            // always non-null — green marker
+        Instant effectivePickupAt,     // always non-null — red marker (planned ?? received+14d)
+        boolean pickupAtDefaulted,     // true when effectivePickupAt was computed from +14d
         String itemSummary,
         boolean urgent
     ) {}

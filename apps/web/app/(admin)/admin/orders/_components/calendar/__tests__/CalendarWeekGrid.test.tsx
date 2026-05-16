@@ -1,10 +1,10 @@
 /**
- * Vitest + RTL snapshot/render tests for CalendarWeekGrid.
+ * Vitest + RTL tests for CalendarWeekGrid (v2-B two-marker model).
  * Verifies:
  *   - 7 column headers (Pon … Nd)
- *   - Orders with receivedAt in window render as acid-dot chips
- *   - Orders with plannedPickupAt in window render as magenta-dot chips
- *   - Same order can appear in two cells (received + pickup on different days)
+ *   - Orders with receivedAt in window render as green chips
+ *   - Orders with effectivePickupAt in window render as red chips
+ *   - Same order can appear in two cells (received + due on different days)
  *   - Orders outside the window do not appear
  */
 import React from "react";
@@ -22,8 +22,9 @@ const ANCHOR = new Date(2026, 4, 12); // local midnight
 
 function makeOrder(
   id: string,
-  receivedAt: string | null,
-  plannedPickupAt: string | null,
+  receivedAt: string,
+  effectivePickupAt: string,
+  pickupAtDefaulted = false,
 ): CalendarOrderDto {
   return {
     id,
@@ -31,7 +32,9 @@ function makeOrder(
     clientName: `Klient ${id}`,
     status: "W_REALIZACJI",
     receivedAt,
-    plannedPickupAt,
+    plannedPickupAt: pickupAtDefaulted ? null : effectivePickupAt,
+    effectivePickupAt,
+    pickupAtDefaulted,
     itemSummary: "Test item",
     urgent: false,
   };
@@ -51,27 +54,28 @@ describe("CalendarWeekGrid", () => {
 
   it("renders a cell for every day of the week", () => {
     render(<CalendarWeekGrid date={ANCHOR} scheduled={[]} />);
-    // Each day has a data-testid="week-cell-YYYY-MM-DD"
     expect(screen.getByTestId("week-cell-2026-05-11")).toBeInTheDocument(); // Mon
     expect(screen.getByTestId("week-cell-2026-05-17")).toBeInTheDocument(); // Sun
   });
 
-  it("shows an order received on 2026-05-12 (Tue) in that cell with acid chip", () => {
-    const order = makeOrder("1", "2026-05-12T09:00:00Z", null);
+  it("v2-B: shows a GREEN received chip on receivedAt day (2026-05-12 Tue)", () => {
+    const order = makeOrder("1", "2026-05-12T09:00:00Z", "2026-05-26T09:00:00Z");
     render(<CalendarWeekGrid date={ANCHOR} scheduled={[order]} />);
     const cell = screen.getByTestId("week-cell-2026-05-12");
     expect(within(cell).getByText(/DR-001/)).toBeInTheDocument();
+    expect(within(cell).getByTestId("week-chip-1-received")).toBeInTheDocument();
   });
 
-  it("shows an order with plannedPickupAt on 2026-05-14 (Thu) in that cell", () => {
+  it("v2-B: shows a RED due chip on effectivePickupAt day (2026-05-14 Thu)", () => {
     const order = makeOrder("2", "2026-05-10T08:00:00Z", "2026-05-14T15:00:00Z");
     render(<CalendarWeekGrid date={ANCHOR} scheduled={[order]} />);
     const cell = screen.getByTestId("week-cell-2026-05-14");
     expect(within(cell).getByText(/DR-002/)).toBeInTheDocument();
+    expect(within(cell).getByTestId("week-chip-2-pickup")).toBeInTheDocument();
   });
 
-  it("same order appears in two cells when receivedAt and plannedPickupAt are on different days in window", () => {
-    // received 2026-05-11, pickup 2026-05-15 — both in window
+  it("v2-B: same order appears in two cells when receivedAt and effectivePickupAt are on different days in window", () => {
+    // received 2026-05-11, due 2026-05-15 — both in window
     const order = makeOrder("3", "2026-05-11T08:00:00Z", "2026-05-15T15:00:00Z");
     render(<CalendarWeekGrid date={ANCHOR} scheduled={[order]} />);
     const cellMon = screen.getByTestId("week-cell-2026-05-11");
@@ -80,19 +84,20 @@ describe("CalendarWeekGrid", () => {
     expect(within(cellFri).getByText(/DR-003/)).toBeInTheDocument();
   });
 
-  it("order with receivedAt 2026-05-10 (outside Mon 11 – Sun 17 window) does NOT appear", () => {
-    const order = makeOrder("4", "2026-05-10T08:00:00Z", null);
+  it("order with receivedAt 2026-05-10 (outside Mon 11 – Sun 17 window) does NOT appear in received bucket", () => {
+    // effectivePickupAt also outside window
+    const order = makeOrder("4", "2026-05-10T08:00:00Z", "2026-05-10T10:00:00Z");
     render(<CalendarWeekGrid date={ANCHOR} scheduled={[order]} />);
     expect(screen.queryByText(/DR-004/)).not.toBeInTheDocument();
   });
 
-  it("order with plannedPickupAt 2026-05-26 (outside window) does NOT appear", () => {
+  it("order with effectivePickupAt 2026-05-26 (outside window) does not show due chip", () => {
     const order = makeOrder("5", "2026-05-12T08:00:00Z", "2026-05-26T15:00:00Z");
     render(<CalendarWeekGrid date={ANCHOR} scheduled={[order]} />);
-    // The received marker (05-12 = in window) appears; the pickup marker (05-26) does not
+    // received marker (05-12 = in window) appears
     const cell12 = screen.getByTestId("week-cell-2026-05-12");
     expect(within(cell12).getByText(/DR-005/)).toBeInTheDocument();
-    // No cell for 05-26 exists at all
+    // no cell for 05-26 exists
     expect(screen.queryByTestId("week-cell-2026-05-26")).not.toBeInTheDocument();
   });
 

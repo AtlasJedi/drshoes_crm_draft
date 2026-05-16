@@ -16,7 +16,9 @@ function makeOrder(id: string, status: CalendarOrderDto["status"] = "PRZYJETE"):
     clientName: "Bartek W.",
     status,
     plannedPickupAt: "2026-05-15T10:00:00Z",
-    receivedAt: null,
+    receivedAt: "2026-05-01T09:00:00Z",
+    effectivePickupAt: "2026-05-15T10:00:00Z",
+    pickupAtDefaulted: false,
     itemSummary: "DM 1460",
     urgent: false,
   };

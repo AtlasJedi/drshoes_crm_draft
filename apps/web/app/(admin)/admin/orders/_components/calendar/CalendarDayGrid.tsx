@@ -1,11 +1,11 @@
 /**
- * Single-day view — lists all received and pickup orders for a given date.
- * Two sections:
- *   1. Przyjęte (received today) — acid dot prefix
- *   2. Do odbioru (pickup today) — magenta dot prefix
+ * Single-day view — lists all received and due orders for a given date.
+ * v2-B: two sections:
+ *   1. Przyjęte (received today) — green dot prefix
+ *   2. Do odbioru (due today) — red dot prefix (dashed when pickupAtDefaulted)
  * Clicking a row opens the drawer via ?orderId=.
  *
- * Design tokens: acid (received), magenta (pickup), admin-line (borders).
+ * Design tokens: green (received), red (due), admin-line (borders).
  * Typography matches CalendarMonthGrid/CalendarWeekGrid.
  */
 "use client";
@@ -93,7 +93,7 @@ export function CalendarDayGrid({ date, scheduled }: CalendarDayGridProps) {
   const today = toLocalDate(new Date());
   const isToday = dateStr === today;
 
-  // Partition orders into received-today and pickup-today
+  // Partition orders into received-today and due-today (effectivePickupAt)
   const received: CalendarOrderDto[] = [];
   const pickup: CalendarOrderDto[] = [];
 
@@ -101,7 +101,8 @@ export function CalendarDayGrid({ date, scheduled }: CalendarDayGridProps) {
     if (order.receivedAt && isoToDateStr(order.receivedAt) === dateStr) {
       received.push(order);
     }
-    if (order.plannedPickupAt && isoToDateStr(order.plannedPickupAt) === dateStr) {
+    // v2-B: use effectivePickupAt (plannedPickupAt ?? receivedAt+14d)
+    if (order.effectivePickupAt && isoToDateStr(order.effectivePickupAt) === dateStr) {
       pickup.push(order);
     }
   }
@@ -138,13 +139,13 @@ export function CalendarDayGrid({ date, scheduled }: CalendarDayGridProps) {
       <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-8">
         <Section
           title="Przyjęte"
-          dotColor="var(--acid)"
+          dotColor="var(--green)"
           orders={received}
           onOpen={openDrawer}
         />
         <Section
           title="Do odbioru"
-          dotColor="var(--magenta)"
+          dotColor="var(--red)"
           orders={pickup}
           onOpen={openDrawer}
         />

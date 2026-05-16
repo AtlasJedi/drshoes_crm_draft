@@ -66,11 +66,7 @@ vi.mock("../../_components/calendar/CalendarDayGrid", () => ({
     <div data-testid="day-grid" data-count={scheduled.length} />
   ),
 }));
-vi.mock("../../_components/calendar/BezTerminuPanel", () => ({
-  BezTerminuPanel: ({ unscheduled }: { unscheduled: unknown[] }) => (
-    <div data-testid="bez-terminu" data-count={unscheduled.length} />
-  ),
-}));
+// v2-B: BezTerminuPanel deleted — no mock needed
 vi.mock("../../_components/OrderDrawer", () => ({
   OrderDrawer: ({ initialOrder }: { initialOrder: { id: string } }) => (
     <div data-testid="order-drawer" data-order-id={initialOrder.id} />
@@ -127,25 +123,13 @@ describe("CalendarPage", () => {
     expect(screen.getByTestId("month-grid")).toHaveAttribute("data-count", "1");
   });
 
-  it("renders BezTerminuPanel with unscheduled orders", async () => {
-    mockFetch.mockResolvedValueOnce({
-      scheduled: [],
-      unscheduled: [
-        {
-          id: "2",
-          code: "DR-002",
-          clientName: "B",
-          status: "PRZYJETE",
-          plannedPickupAt: null,
-          receivedAt: "2026-05-01T09:00:00Z",
-          itemSummary: "y",
-          urgent: false,
-        },
-      ],
-    });
+  it("v2-B: no BezTerminuPanel — month grid is full-width", async () => {
+    mockFetch.mockResolvedValueOnce({ scheduled: [], unscheduled: [] });
     const jsx = await CalendarPage({ searchParams: Promise.resolve({}) });
     render(jsx as React.ReactElement);
-    expect(screen.getByTestId("bez-terminu")).toHaveAttribute("data-count", "1");
+    // BezTerminuPanel is gone — only the grid renders
+    expect(screen.queryByTestId("bez-terminu")).toBeNull();
+    expect(screen.getByTestId("month-grid")).toBeInTheDocument();
   });
 
   it("renders error banner when fetch throws", async () => {

@@ -1,11 +1,11 @@
 /**
  * 7-column week grid — ISO week (Monday first).
- * Renders two marker types per order:
- *   - acid dot  : order received on that day (receivedAt)
- *   - magenta dot: order to pick up that day (plannedPickupAt)
+ * v2-B: two marker types per order:
+ *   - green dot : order received on that day (receivedAt)
+ *   - red dot   : order due on that day (effectivePickupAt; dashed when pickupAtDefaulted)
  * Clicking a chip pushes ?orderId= to open the drawer.
  *
- * Design tokens: acid (received), magenta (pickup), admin-line (borders).
+ * Design tokens: green (received), red (due), admin-line (borders).
  * Typography matches CalendarMonthGrid.
  */
 "use client";
@@ -32,13 +32,15 @@ function buildBuckets(days: Date[], scheduled: CalendarOrderDto[]): Map<string, 
     map.set(toLocalDate(d), { received: [], pickup: [] });
   }
   for (const order of scheduled) {
+    // Green marker — receivedAt
     if (order.receivedAt) {
       const dateStr = isoToDateStr(order.receivedAt);
       const bucket = map.get(dateStr);
       if (bucket) bucket.received.push(order);
     }
-    if (order.plannedPickupAt) {
-      const dateStr = isoToDateStr(order.plannedPickupAt);
+    // Red marker — effectivePickupAt (planned or +14d fallback)
+    if (order.effectivePickupAt) {
+      const dateStr = isoToDateStr(order.effectivePickupAt);
       const bucket = map.get(dateStr);
       if (bucket) bucket.pickup.push(order);
     }
@@ -56,20 +58,25 @@ function OrderChip({
   markerType: "received" | "pickup";
   onOpen: (id: string) => void;
 }) {
-  const dotColor = markerType === "received" ? "var(--acid)" : "var(--magenta)";
+  // v2-B palette: green for received, red for due (dashed when defaulted)
+  const dotColor = markerType === "received" ? "var(--green)" : "var(--red)";
+  const borderStyle = markerType === "pickup" && order.pickupAtDefaulted
+    ? "2px dashed var(--red)"
+    : `1px solid var(--ink)`;
   const label = markerType === "received" ? "przyjęte" : "odbiór";
   return (
     <button
       type="button"
       onClick={() => onOpen(order.id)}
       title={`${order.code} · ${order.clientName} (${label})`}
+      data-testid={`week-chip-${order.id}-${markerType}`}
       className="flex items-center gap-1 text-left w-full px-1.5 py-0.5 font-mono text-[10px] font-semibold
                  hover:bg-ink/5 rounded overflow-hidden"
     >
       <span
         aria-hidden
         className="shrink-0 rounded-full"
-        style={{ width: 7, height: 7, background: dotColor, border: "1px solid var(--ink)" }}
+        style={{ width: 7, height: 7, background: dotColor, border: borderStyle }}
       />
       <span className="truncate text-ink">
         {order.code} · {order.clientName.split(" ")[0]}

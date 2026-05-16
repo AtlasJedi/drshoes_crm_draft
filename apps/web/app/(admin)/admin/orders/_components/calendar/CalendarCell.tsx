@@ -1,16 +1,17 @@
 /**
  * Individual calendar cell for a single day of the month.
+ * v2-B: kept as a standalone component for legacy test coverage.
+ * Production month view now renders chips inline in CalendarMonthGrid.
+ *
  * Renders up to 3 order pills + "+N więcej" overflow indicator.
  * Click on a pill pushes ?orderId= into the URL to open the drawer.
- * Design: admin.jsx:553-572. Color palette: admin.jsx:503.
+ * Color: green border for received, red for due (dashed when pickupAtDefaulted).
  */
 "use client";
 
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import type { CalendarOrderDto } from "@/lib/calendar/types";
-import { colorOfStatus } from "./utils";
-import { Tape } from "@drshoes/ui";
 
 interface CalendarCellProps {
   day: number;
@@ -47,7 +48,9 @@ export function CalendarCell({ day, isToday, orders }: CalendarCellProps) {
           {day}
         </span>
         {isToday && (
-          <Tape angle={2} style={{ fontSize: 9, padding: "1px 8px" }}>dziś</Tape>
+          <span className="font-stencil text-[9px] px-1.5 py-px bg-acid border border-ink tracking-wider uppercase">
+            dziś
+          </span>
         )}
       </div>
 
@@ -58,11 +61,11 @@ export function CalendarCell({ day, isToday, orders }: CalendarCellProps) {
             type="button"
             onClick={() => openDrawer(order.id)}
             title={`${order.code} · ${order.clientName}`}
-            className={`text-left px-1.5 py-px font-mono text-[10px] font-semibold border-l-2 overflow-hidden text-ellipsis whitespace-nowrap w-full${order.urgent ? " border-magenta bg-magenta/10" : " border-ink"}`}
-            style={order.urgent ? undefined : {
-              background: colorOfStatus(order.status),
-              color: order.status === "WYDANE" ? "rgba(0,0,0,0.6)" : "var(--paper)",
-            }}
+            className={[
+              "text-left px-1.5 py-px font-mono text-[10px] font-semibold border-l-2",
+              "overflow-hidden text-ellipsis whitespace-nowrap w-full text-ink",
+              "bg-green/15 border-green",
+            ].join(" ")}
           >
             {order.code} · {order.clientName.split(" ")[0]}
           </button>

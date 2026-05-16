@@ -96,19 +96,24 @@ class CalendarControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ----------------------------------------------------------
-    // Unscheduled orders appear in unscheduled array
+    // v2-B: orders without plannedPickupAt appear in scheduled[] (not unscheduled[])
     // ----------------------------------------------------------
 
     @Test
-    void unscheduledOrderAppearsInUnscheduledArray() throws Exception {
+    void orderWithoutPlannedPickupAppearsInScheduledWithDefaultedFlag() throws Exception {
         loginAsOwner();
-        // no plannedPickupAt
-        seedOrder("K-002", OrderStatus.W_REALIZACJI, null, null);
+        // receivedAt = today − 7 days → effectivePickupAt = today + 7 days (within nextWeek window)
+        Instant receivedAt = Instant.now().minus(7, ChronoUnit.DAYS);
+        seedOrder("K-002", OrderStatus.W_REALIZACJI, null, receivedAt);
 
         mockMvc().perform(get("/api/admin/orders/calendar?from=" + today + "&to=" + nextWeek))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.unscheduled").isArray())
-            .andExpect(jsonPath("$.unscheduled[?(@.code=='K-002')]").exists());
+            // v2-B: unscheduled array is always empty
+            .andExpect(jsonPath("$.unscheduled").isEmpty())
+            // The order appears in scheduled[] with pickupAtDefaulted=true
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-002')]").exists())
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-002')].pickupAtDefaulted")
+                .value(hasItem(true)));
     }
 
     // ----------------------------------------------------------
@@ -181,6 +186,45 @@ class CalendarControllerIntegrationTest extends AdminWebTestBase {
     void unauthenticatedReturns401() throws Exception {
         mockMvc().perform(get("/api/admin/orders/calendar?from=" + today + "&to=" + nextWeek))
             .andExpect(status().isUnauthorized());
+    }
+
+    // ----------------------------------------------------------
+    // v2-B: effectivePickupAt with explicit plannedPickupAt
+    // ----------------------------------------------------------
+
+    @Test
+    void calendarReturnsEffectivePickupAt_withPlannedPickup() throws Exception {
+        loginAsOwner();
+        ZoneId warsaw = ZoneId.of("Europe/Warsaw");
+        Instant tomorrow = ZonedDateTime.now(warsaw).toLocalDate().plusDays(1)
+            .atStartOfDay(warsaw).toInstant();
+        seedOrder("K-EFF-1", OrderStatus.PRZYJETE, tomorrow, null);
+
+        mockMvc().perform(get("/api/admin/orders/calendar?from=" + today + "&to=" + nextWeek))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-EFF-1')].effectivePickupAt").isArray())
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-EFF-1')].pickupAtDefaulted")
+                .value(hasItem(false)));
+    }
+
+    // ----------------------------------------------------------
+    // v2-B: effectivePickupAt fallback = receivedAt + 14d when no plannedPickupAt
+    // ----------------------------------------------------------
+
+    @Test
+    void calendarReturnsEffectivePickupAt_withFallbackPlus14d() throws Exception {
+        loginAsOwner();
+        // receivedAt = today − 7 days → effectivePickupAt = today + 7 days (within nextWeek window)
+        // This ensures the +14d fallback lands inside [today, nextWeek].
+        Instant receivedAt = Instant.now().minus(7, ChronoUnit.DAYS);
+        seedOrder("K-EFF-2", OrderStatus.W_REALIZACJI, null, receivedAt);
+
+        mockMvc().perform(get("/api/admin/orders/calendar?from=" + today + "&to=" + nextWeek))
+            .andExpect(status().isOk())
+            // Order without plannedPickupAt now appears in scheduled[] with defaulted flag
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-EFF-2')].pickupAtDefaulted")
+                .value(hasItem(true)))
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-EFF-2')].effectivePickupAt").isArray());
     }
 
     // ----------------------------------------------------------

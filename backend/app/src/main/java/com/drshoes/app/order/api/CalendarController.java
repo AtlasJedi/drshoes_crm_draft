@@ -66,49 +66,52 @@ public class CalendarController {
         Instant fromInstant = from.atStartOfDay(WARSAW).toInstant();
         Instant toInstant   = to.plusDays(1).atStartOfDay(WARSAW).toInstant();
 
-        List<Order> scheduled   = orderRepo.findScheduledInWindow(fromInstant, toInstant);
-        List<Order> unscheduled = orderRepo.findUnscheduled();
+        // v2-B: all active orders in window — both with and without plannedPickupAt
+        List<Order> allOrders = orderRepo.findAllActiveInWindow(fromInstant, toInstant);
 
         // Pre-fetch client names in one batch
         Set<UUID> clientIds = new HashSet<>();
-        scheduled.forEach(o -> clientIds.add(o.getClientId()));
-        unscheduled.forEach(o -> clientIds.add(o.getClientId()));
+        allOrders.forEach(o -> clientIds.add(o.getClientId()));
         Map<UUID, String> clientNames = clientRepo.findAllById(clientIds).stream()
             .collect(Collectors.toMap(Client::getId, Client::getFullName));
 
         // Pre-fetch first items in one batch (for itemSummary)
         Set<UUID> orderIds = new HashSet<>();
-        scheduled.forEach(o -> orderIds.add(o.getId()));
-        unscheduled.forEach(o -> orderIds.add(o.getId()));
+        allOrders.forEach(o -> orderIds.add(o.getId()));
         Map<UUID, String> summaries = buildSummaries(orderIds);
 
-        List<CalendarOrderDto> scheduledDtos = scheduled.stream()
-            .map(o -> toDto(o, clientNames, summaries, true))
-            .toList();
-        List<CalendarOrderDto> unscheduledDtos = unscheduled.stream()
-            .map(o -> toDto(o, clientNames, summaries, false))
+        List<CalendarOrderDto> scheduledDtos = allOrders.stream()
+            .map(o -> toDto(o, clientNames, summaries))
             .toList();
 
-        log.info("op=calendarQuery from={} to={} scheduledCount={} unscheduledCount={} outcome=ok",
-            from, to, scheduledDtos.size(), unscheduledDtos.size());
+        long defaultedCount = scheduledDtos.stream().filter(CalendarOrderDto::pickupAtDefaulted).count();
+        log.info("op=calendarQuery from={} to={} scheduledCount={} defaultedCount={} outcome=ok",
+            from, to, scheduledDtos.size(), defaultedCount);
 
-        return new CalendarResponseDto(scheduledDtos, unscheduledDtos);
+        // unscheduled is always empty — every order now has an effectivePickupAt
+        return new CalendarResponseDto(scheduledDtos, List.of());
     }
 
     /**
-     * Maps an Order to CalendarOrderDto.
-     * receivedAt is ALWAYS populated (ux-2 contract: both timestamps needed for week/day markers).
-     * plannedPickupAt is populated only for scheduled entries (unscheduled have null).
+     * Maps an Order to CalendarOrderDto (v2-B contract).
+     * effectivePickupAt = plannedPickupAt ?? receivedAt + 14 days.
+     * pickupAtDefaulted = true when no explicit plannedPickupAt was set.
      */
     private CalendarOrderDto toDto(Order o, Map<UUID, String> clientNames,
-                                   Map<UUID, String> summaries, boolean includePickup) {
+                                   Map<UUID, String> summaries) {
         String clientName = clientNames.getOrDefault(o.getClientId(), "");
         String summary    = summaries.getOrDefault(o.getId(), "");
         boolean urgent    = isUrgent(o);
+        boolean defaulted = o.getPlannedPickupAt() == null;
+        Instant effective = defaulted
+            ? o.getReceivedAt().plus(14, ChronoUnit.DAYS)
+            : o.getPlannedPickupAt();
         return new CalendarOrderDto(
             o.getId(), o.getCode(), clientName, o.getStatus(),
-            includePickup ? o.getPlannedPickupAt() : null,
-            o.getReceivedAt(),  // always populated — week/day views need both timestamps
+            o.getPlannedPickupAt(),
+            o.getReceivedAt(),
+            effective,
+            defaulted,
             summary, urgent);
     }
 

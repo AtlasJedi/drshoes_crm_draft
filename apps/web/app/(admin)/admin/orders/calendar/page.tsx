@@ -36,7 +36,6 @@ import { OrderViewTabs } from "../_components/OrderViewTabs";
 import { CalendarMonthGrid } from "../_components/calendar/CalendarMonthGrid";
 import { CalendarWeekGrid } from "../_components/calendar/CalendarWeekGrid";
 import { CalendarDayGrid } from "../_components/calendar/CalendarDayGrid";
-import { BezTerminuPanel } from "../_components/calendar/BezTerminuPanel";
 import { OrderDrawer } from "../_components/OrderDrawer";
 import { ErrorBanner } from "@/components/state/ErrorBanner";
 
@@ -156,7 +155,7 @@ export default async function CalendarPage({
   const nextParam = adjacentParam(mode, anchor, 1);
 
   const scheduled = calendarData?.scheduled ?? [];
-  const unscheduled = calendarData?.unscheduled ?? [];
+  // v2-B: unscheduled is always empty — every order has effectivePickupAt
 
   /** Build the href for a mode toggle button, preserving the current anchor date. */
   function modeHref(m: CalendarMode): Route {
@@ -233,12 +232,10 @@ export default async function CalendarPage({
         </div>
       )}
 
-      {/* Main content */}
+      {/* Main content — full-width single column (v2-B: BezTerminuPanel removed) */}
       {!fetchError && (
-        <div className="flex-1 px-6 pt-4 pb-6 grid grid-cols-[1fr_280px] gap-5 overflow-hidden min-h-0">
-          {/* Grid column — always rendered so the day cells exist as drop targets
-              for the BezTerminuPanel, even when no orders are scheduled yet. */}
-          <div className="admin-card overflow-hidden flex flex-col p-0">
+        <div className="flex-1 px-6 pt-4 pb-6 overflow-hidden min-h-0">
+          <div className="admin-card overflow-hidden flex flex-col p-0 h-full">
             {mode === "month" ? (
               <CalendarMonthGrid date={anchor} scheduled={scheduled} />
             ) : mode === "week" ? (
@@ -247,9 +244,6 @@ export default async function CalendarPage({
               <CalendarDayGrid date={anchor} scheduled={scheduled} />
             )}
           </div>
-
-          {/* Bez terminu side panel (shown in all modes) */}
-          <BezTerminuPanel unscheduled={unscheduled} />
         </div>
       )}
 

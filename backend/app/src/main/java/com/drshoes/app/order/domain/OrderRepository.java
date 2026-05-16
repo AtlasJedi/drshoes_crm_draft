@@ -112,6 +112,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     /**
      * Scheduled orders in the [fromInstant, toInstant) window — non-deleted, active statuses only.
      * Active = NOT IN (WYDANE, ANULOWANE). planned_pickup_at must be non-null.
+     * Kept for backward compat; prefer findAllActiveInWindow for v2-B two-marker model.
      */
     @Query(value = """
         SELECT * FROM order_
@@ -128,6 +129,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     /**
      * Unscheduled orders: no planned_pickup_at, non-deleted, active statuses.
      * Capped at 50 by received_at DESC.
+     * Kept for backward compat; v2-B calendar no longer uses this.
      */
     @Query(value = """
         SELECT * FROM order_
@@ -138,6 +140,30 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
         LIMIT 50
         """, nativeQuery = true)
     List<Order> findUnscheduled();
+
+    /**
+     * v2-B: All active orders in the window, regardless of whether plannedPickupAt is set.
+     * Window is based on received_at OR planned_pickup_at falling in [fromInstant, toInstant).
+     * Active = NOT IN (WYDANE, ANULOWANE), non-deleted.
+     * Orders outside the window but with effectivePickupAt in it are included via the +14d fallback.
+     */
+    @Query(value = """
+        SELECT * FROM order_
+        WHERE deleted_at IS NULL
+          AND status NOT IN ('WYDANE', 'ANULOWANE')
+          AND (
+            (received_at >= :fromInstant AND received_at < :toInstant)
+            OR (planned_pickup_at IS NOT NULL
+                AND planned_pickup_at >= :fromInstant
+                AND planned_pickup_at < :toInstant)
+            OR (planned_pickup_at IS NULL
+                AND received_at + INTERVAL '14 days' >= :fromInstant
+                AND received_at + INTERVAL '14 days' < :toInstant)
+          )
+        ORDER BY received_at ASC
+        """, nativeQuery = true)
+    List<Order> findAllActiveInWindow(@Param("fromInstant") Instant fromInstant,
+                                      @Param("toInstant") Instant toInstant);
 
     /**
      * Paged orders for a Kanban column ordered by received_at DESC.
