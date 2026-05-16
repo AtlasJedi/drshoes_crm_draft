@@ -1,1973 +1,1975 @@
 {
-  "schema_version": 1,
-  "active_milestone": "9",
-  "active_plan": "docs/superpowers/plans/2026-05-15-milestone-09-design-parity.md",
-  "tasks": [
-    {
-      "id": "0b-1",
-      "title": "User entity + UserRepository + repo integration test",
-      "status": "completed",
-      "commit_sha": "ddea414",
-      "dispatch_log": null
-    },
-    {
-      "id": "0b-2",
-      "title": "Spring Session JDBC config",
-      "status": "completed",
-      "commit_sha": "9d16661",
-      "dispatch_log": null
-    },
-    {
-      "id": "0b-3",
-      "title": "BCrypt password encoder",
-      "status": "completed",
-      "commit_sha": "2e73e4f",
-      "dispatch_log": "docs/dispatch-log/0b-3-2026-05-08T010000Z.md"
-    },
-    {
-      "id": "0b-4",
-      "title": "SecurityConfig + CSRF + public allow-list",
-      "status": "completed",
-      "commit_sha": "2fbd384",
-      "fixup_sha": "61e395f",
-      "dispatch_log": "docs/dispatch-log/0b-4-2026-05-08T010300Z.md",
-      "fixup_log": "docs/dispatch-log/0b-4-fixup-2026-05-07T231117Z.md",
-      "review_blockers_resolved": [
-        "phantom /api/admin/auth/csrf matcher removed",
-        "CSRF enforcement tests added (3) \u2014 admin POST without token \u2192 403, cookie repo bean wired, webhook bypass verified"
-      ]
-    },
-    {
-      "id": "0b-5",
-      "title": "Login throttle (Bucket4j)",
-      "status": "completed",
-      "commit_sha": "47af9b3",
-      "dispatch_log": "docs/dispatch-log/0b-5-2026-05-08T011500Z.md"
-    },
-    {
-      "id": "0b-6",
-      "title": "AuthService + AuthController + DTOs",
-      "status": "completed",
-      "commit_sha": "e696c9e",
-      "dispatch_log": "docs/dispatch-log/0b-6-2026-05-08T110000Z.md"
-    },
-    {
-      "id": "0b-7",
-      "title": "RbacService + @EnableMethodSecurity",
-      "status": "completed",
-      "commit_sha": "21bcbdf",
-      "fixup_sha": "25cc2f1",
-      "dispatch_log": "docs/dispatch-log/0b-7-2026-05-08T132000Z.md",
-      "fixup_log": "docs/dispatch-log/0b-7-fixup-2026-05-08T132700Z.md",
-      "review_blockers_resolved": [
-        "AnonymousAuthenticationToken bypass \u2014 explicit instanceof check added; new unit test asserts the trap is now caught"
-      ]
-    },
-    {
-      "id": "0b-8",
-      "title": "AuditLogAspect AOP",
-      "status": "completed",
-      "commit_sha": "213a81f",
-      "fixup_sha": "2403bb2",
-      "dispatch_log": "docs/dispatch-log/0b-8-2026-05-08T133000Z.md",
-      "fixup_log": "docs/dispatch-log/0b-8-fixup-2026-05-08T134200Z.md",
-      "review_blockers_resolved": [
-        "Pointcut excluded @ExceptionHandler methods \u2014 failed login now writes exactly one audit row (was two: status=500 + status=401). Regression test added; unused imports removed."
-      ]
-    },
-    {
-      "id": "0b-9",
-      "title": "V002 seed users",
-      "status": "completed",
-      "commit_sha": "1fbcc28",
-      "dispatch_log": "docs/dispatch-log/0b-9-2026-05-08T114826Z.md"
-    },
-    {
-      "id": "0b-10",
-      "title": "Frontend API client + auth helpers (incl. lib/log.ts)",
-      "status": "completed",
-      "commit_sha": "062e29d",
-      "dispatch_log": "docs/dispatch-log/0b-10-2026-05-08T150000Z.md"
-    },
-    {
-      "id": "0b-11",
-      "title": "Login page + LoginForm component",
-      "status": "completed",
-      "commit_sha": "573776b",
-      "dispatch_log": "docs/dispatch-log/0b-11-2026-05-08T170000Z.md"
-    },
-    {
-      "id": "0b-12",
-      "title": "Admin layout auth guard + sidebar shell",
-      "status": "completed",
-      "commit_sha": "a64a5ca",
-      "dispatch_log": "docs/dispatch-log/0b-12-20260508T190000Z.md"
-    },
-    {
-      "id": "0b-13",
-      "title": "E2E auth verification + tag milestone-0b",
-      "status": "completed",
-      "commit_sha": "79d363d",
-      "dispatch_log": "docs/dispatch-log/0b-13-20260508T121154Z.md"
-    },
-    {
-      "id": "1-0",
-      "title": "Activate milestone 1 in tasks.json (this commit)",
-      "status": "completed",
-      "dispatch_log": null,
-      "commit_sha": "PENDING"
-    },
-    {
-      "id": "1-1",
-      "title": "V003 clients migration + Client entity + repo + integration test",
-      "status": "completed",
-      "commit_sha": "9dabeef",
-      "dispatch_log": "docs/dispatch-log/1-1-20260508T154000Z.md",
-      "concerns_resolved_in_plan": [
-        "V001 already creates `client` table \u2014 V003 recast as comment-only marker.",
-        "Plan's Client entity spec was missing real V001 columns (preferred_channel, rodo_consent_at, citext email, nullable last_name, client_contact_present check). Entity mapped to actual schema.",
-        "Plan referenced non-existent PostgresIntegrationTestBase \u2014 actual base is AbstractIntegrationTest. Plan errata block added at top of plan file documenting V001 reality + correct base class for downstream tasks."
-      ]
-    },
-    {
-      "id": "1-2",
-      "title": "ClientService (CRUD + search) + unit test",
-      "status": "completed",
-      "commit_sha": "524b32f",
-      "dispatch_log": "docs/dispatch-log/1-2-20260508T134511Z.md",
-      "deviations_from_plan": [
-        "Added 5th unit test for client_contact_present invariant (plan had 4).",
-        "Added ClientContactMissingException + applied invariant in both create() and update().",
-        "Aligned validation with V001 schema (phone max 40 not 32; lastName not @NotBlank since column is nullable).",
-        "ClientSearchResult.fullName made null-safe for nullable lastName."
-      ]
-    },
-    {
-      "id": "1-3",
-      "title": "ClientController + RBAC + integration test",
-      "status": "completed",
-      "commit_sha": "cf34b8f",
-      "fixup_sha": "e32a7b0",
-      "dispatch_log": "docs/dispatch-log/1-3-20260508T135000Z.md",
-      "fixup_log": "docs/dispatch-log/1-3-fixup-20260508T135533Z.md",
-      "deviations_from_plan": [
-        "Added spring-security-test (test scope) \u2014 wasn't on classpath before.",
-        "Used SecurityMockMvcRequestPostProcessors.user().roles() instead of plan's manually-stuffed MockHttpSession (SS6-idiomatic).",
-        "Initial commit placed ClientController at com.drshoes.app.client \u2014 outside the AuditLogAspect pointcut (.api.). Fixup relocated to com.drshoes.app.client.api and added postCreateWritesAuditRow regression test. Plan errata updated to encode the .api. controller-package convention for downstream tasks 1-7/1-10/1-11."
-      ]
-    },
-    {
-      "id": "1-4",
-      "title": "V004 orders migration + Order/OrderItem entities + repos",
-      "status": "completed",
-      "commit_sha": "eea55c3",
-      "dispatch_log": "docs/dispatch-log/1-4-20260508T140000Z.md",
-      "deviations_from_plan": [
-        "V004 became ALTER TABLE order_ ADD COLUMN version (not no-op marker \u2014 V001 lacks the column required by @Version optimistic-locking architecture).",
-        "Added OrderSource enum (V001 declares source NOT NULL DEFAULT 'ADMIN'; Java needs a default to avoid NULL inserts).",
-        "Optimistic-locking conflict test deferred to task 1-6 (OrderService) \u2014 repo-layer reproduction needs a detached EntityManager."
-      ]
-    },
-    {
-      "id": "1-5",
-      "title": "OrderCodeSequence service + integration test",
-      "status": "completed",
-      "commit_sha": "e5beeb0",
-      "log_commit_sha": "d0c0952",
-      "dispatch_log": "docs/dispatch-log/1-5-20260508T160000Z.md",
-      "deviations_from_plan": [
-        "Used JdbcTemplate (per errata) instead of plan-body's EntityManager approach.",
-        "Test is integration (not unit as plan title says) \u2014 tests the real PL/pgSQL function, not a mock.",
-        "Year isolation via deleting 1999/1998 rows in @BeforeEach (avoids counter pollution from sibling tests sharing the reused container).",
-        "Concurrency proven: 8 parallel CompletableFuture.runAsync calls produce 8 distinct codes."
-      ],
-      "protocol_drift": "Subagent split work into two commits (service + dispatch log) \u2014 instruction was atomic. Not worth fixup; tighten prompt next time."
-    },
-    {
-      "id": "1-6",
-      "title": "OrderService CRUD + status change + soft-delete + items",
-      "status": "completed",
-      "commit_sha": "e35afa3",
-      "fixup_sha": "6ce609e",
-      "dispatch_log": "docs/dispatch-log/1-6-20260508T141200Z.md",
-      "review_log": "docs/dispatch-log/1-6-review-20260508T153000Z.md",
-      "fixup_log": "docs/dispatch-log/1-6-fixup-20260508T162100Z.md",
-      "review_blockers_resolved": [
-        "3 plan-mandated tests missing (list status filter, list q= search, update on soft-deleted) \u2014 added in fixup. Production code was already correct.",
-        "Optimistic-lock test proves app-layer guard, not JPA OLE backstop \u2014 accepted (the manual version compare is the intended design).",
-        "Initial status ambiguity (PRZYJETE vs WSTEPNIE_PRZYJETE) \u2014 resolved: PRZYJETE for ADMIN-source orders (Misza creating manually = already received and confirmed). WSTEPNIE_PRZYJETE reserved for future PUBLIC_INTAKE source. Plan body wins."
-      ],
-      "deviations_from_plan": [
-        "OrderService at 165 LOC / 133 effective \u2014 13 lines over the 120 ceiling. Split into OrderService + OrderItemService + OrderSpecifications. Reviewer accepted the 'no cohesion benefit from further splitting' argument."
-      ]
-    },
-    {
-      "id": "1-7",
-      "title": "OrderController + ExceptionHandler + integration test",
-      "status": "completed",
-      "commit_sha": "f27c0ff",
-      "dispatch_log": "docs/dispatch-log/1-7-20260508T143300Z.md",
-      "deviations_from_plan": [
-        "GET /orders takes single ?status= (not comma-separated List<OrderStatus>) because OrderService.list shipped in 1-6 takes single status. Plan body's multi-status filter is debt against later need; design spec doesn't strictly require it.",
-        "OrderController 142 LOC \u2014 over 120 ceiling. Accepted under the CRUD-controller exception (mirrors the JPA-entity exception). No clean split: all 9 endpoints share rbac/svc dependency, splitting would just move LOC sideways.",
-        "Test @AfterEach cleanupOrders() added \u2014 FK order_.client_id forces orders to be deleted before clients in shared Testcontainers reuse mode."
-      ],
-      "audit_coverage": "postCreateWritesAuditRow regression test asserts audit_log delta == 1 after POST. Controller located at com.drshoes.app.order.api.OrderController per .api. convention \u2014 pointcut matches."
-    },
-    {
-      "id": "1-8",
-      "title": "V005 audit_parent_entity + AuditLogAspect parent-id population",
-      "status": "completed",
-      "commit_sha": "39a5d17",
-      "fixup_sha": "0c707ad",
-      "log_backfill_sha": "0b1c097",
-      "dispatch_log": "docs/dispatch-log/1-8-20260508T165032Z.md",
-      "review_log": "docs/dispatch-log/1-8-review-20260508T165321Z.md",
-      "fixup_log": "docs/dispatch-log/1-8-fixup-20260508T165900Z.md",
-      "review_blockers_resolved": [
-        "Test 'methodWithoutAuditedAnnotationLeavesParentEntityIdNull' was vacuously true (called clientService.create() directly with no HTTP context \u2014 controller pointcut bailed, zero rows written, assertion ran over empty list). Fixed: switched to AdminWebTestBase + MockMvc POST so a real audit row gets written and asserted.",
-        "Test 'spelFailureDoesNotBreakAuditRow' didn't exercise the full proxy pipeline \u2014 only tested the resolver in isolation. Fixed: @TestConfiguration adds BrokenSpelAuditedService bean with @Audited(parent='#nonExistentVariable.toString()') (chain forces SpelEvaluationException \u2014 undefined variable alone returns null in SimpleEvaluationContext); test calls through Spring proxy, asserts method returns normally, audit row written with parent_entity_id null, WARN log captured via Logback ListAppender."
-      ],
-      "key_decisions": [
-        "Two-row audit architecture: HTTP controller advice writes one row (path=/api/admin/.../, parent_entity_id=null); @Audited service advice writes a SECOND row (path=synthetic 'OrderService#addItem', method=INTERNAL, status=0, parent_entity_id=orderId). Reviewer confirmed sound \u2014 alternative thread-local enrichment was rejected as fragile.",
-        "Sandboxing: SimpleEvaluationContext.forReadOnlyDataBinding() \u2014 blocks T(...) reflection + bean refs.",
-        "Exception safety: try/catch around SpEL eval in AuditedParentResolver; WARN log; returns null; audit row still writes.",
-        "-parameters compile flag is enabled in root pom.xml (pluginManagement/maven-compiler-plugin) \u2014 required for #orderId-style param-name SpEL bindings."
-      ]
-    },
-    {
-      "id": "1-9",
-      "title": "TimelineEventCurator (pure function) + unit tests",
-      "status": "completed",
-      "commit_sha": "055fbc9",
-      "log_backfill_sha": "455de66",
-      "dispatch_log": "docs/dispatch-log/1-9-20260508T170346Z.md",
-      "deviations_from_plan": [
-        "Plan body assumed AuditLog had entityType/operation/fieldsChanged/before-after JSON \u2014 none of those exist on the actual entity. Curator built as a path-pattern dispatcher keyed on (method, path, parentEntityId, status). Documented as M2 debt: body-capture would unlock ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED + field-level deltas.",
-        "9 enum kinds shipped; only 7 emitted: ORDER_CREATED, ORDER_UPDATED (new), STATUS_CHANGED, ORDER_SOFT_DELETED, ITEM_ADDED, ITEM_EDITED, ITEM_REMOVED. ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED reserved for M2 (in enum, never dispatched). ORDER_UPDATED is the generic PATCH event since the curator can't see field-level info.",
-        "HTTP item-op rows (POST /orders/{id}/items etc) are intentionally SKIPPED \u2014 the INTERNAL @Audited service row covers them. Prevents double-count. Test covers this.",
-        "AuditLog needed 4 missing getters (getMethod, getPath, getStatus, getActorId) \u2014 added inline. Mechanical accessor additions, not behavioral changes.",
-        "TimelineEventCurator 140 LOC = 90 logic + 50 Javadoc. Over 120 ceiling but documentation is load-bearing (URL-prefix brittleness debt is documented in class Javadoc)."
-      ]
-    },
-    {
-      "id": "1-10",
-      "title": "AuditTimelineService + Controller + integration test",
-      "status": "completed",
-      "commit_sha": "b29ea5f",
-      "log_backfill_sha": "a2dc77b",
-      "dispatch_log": "docs/dispatch-log/1-10-20260508T191200Z.md",
-      "deviations_from_plan": [
-        "Plan body referenced AuditLog.entity_type / entity_id columns (don't exist). Repo query rewritten to scan `path LIKE :pathPrefix OR parent_entity_id = :orderId ORDER BY createdAt`. Two-parameter method signature: caller (service) constructs pathPrefix.",
-        "ORDER_CREATED event SYNTHESIZED from Order.createdAt \u2014 the POST /api/admin/orders audit row has no orderId in its path, so the LIKE scan can't find it. Actor resolved from the earliest scanned row. If order not found (unknown orderId), empty list returned. M2 debt: TimelineEvent.id is null for the synthetic event; frontend must handle.",
-        "AuditTimelineController placed at com.drshoes.app.audit.api.AuditTimelineController per .api. convention.",
-        "RBAC: no @PreAuthorize \u2014 SecurityConfig filter chain already enforces isAuthenticated() on /api/admin/**. Test 3 proves anonymous \u2192 401."
-      ]
-    },
-    {
-      "id": "1-11",
-      "title": "UsersController for assignee dropdown",
-      "status": "completed",
-      "commit_sha": "fc89ff4",
-      "dispatch_log": "docs/dispatch-log/1-11-20260508T171634Z.md",
-      "atomic_commit": true,
-      "deviations_from_plan": [
-        "UserStubDto placed at com.drshoes.app.auth.api.dto.UserStubDto (matches existing 0B layout) rather than com.drshoes.app.auth.dto.* as plan body suggests.",
-        "User entity uses `active` boolean (not `deletedAt`) \u2014 repo method named findAllByActiveTrueOrderByFullName.",
-        "User.getFullName() already returns a single-column persisted value \u2014 no null-safe concat needed.",
-        "Audit-coverage regression test intentionally omitted \u2014 endpoint is read-only GET, aspect only fires on writes."
-      ]
-    },
-    {
-      "id": "1-12",
-      "title": "lib/clients + lib/orders + lib/timeline modules",
-      "status": "completed",
-      "commit_sha": "9a4abab",
-      "log_backfill_sha": "feb2e37",
-      "dispatch_log": "docs/dispatch-log/1-12-20260508T172441Z.md",
-      "deviations_from_plan": [
-        "lib/orders/types.ts is 154 LOC \u2014 over the 120 ceiling for TS modules. Pure type declarations, accepted.",
-        "Frontend ClientDto types include preferredChannel? + rodoConsentAt? as optional. The backend ClientDto.java OMITS these fields even though they exist on the Client entity \u2014 backend debt to file separately. Frontend papered over with optional typing so wire absence doesn't break consumers.",
-        "Tailwind tokens (acid/magenta/blue/orange/green/admin-line/admin-mute) confirmed live in packages/ui/src/tokens.ts via preset; no stock fallbacks needed.",
-        "Endpoint paths all matched plan body; orders list uses ?type= (repeatable) for item kinds."
-      ],
-      "follow_up_debts": [
-        "Backend ClientDto.java should expose preferredChannel + rodoConsentAt \u2014 file as separate task before M1 closes if admin UI needs to edit these fields, otherwise defer to M2 messaging milestone."
-      ]
-    },
-    {
-      "id": "1-13",
-      "title": "ClientPicker + ClientCreateModal components",
-      "status": "completed",
-      "commit_sha": "dae1119",
-      "dispatch_log": "docs/dispatch-log/1-13-20260508T172835Z.md",
-      "atomic_commit": true,
-      "deps_added": [
-        "@radix-ui/react-dialog@1.1.15"
-      ],
-      "deviations_from_plan": [
-        "ClientPicker split per plan into ClientPicker.tsx (101 LOC) + ClientPickerResults.tsx (51 LOC). Picker over 80 LOC soft cap but under 120; modal also 96 LOC.",
-        "Keyboard nav (arrow up/down + Enter) deferred \u2014 mouse-only for M1. Documented.",
-        "onMouseDown+preventDefault used on result rows to prevent onBlur from closing dropdown before click \u2014 standard combobox technique not in plan."
-      ]
-    },
-    {
-      "id": "1-14",
-      "title": "Orders list page + filters + table",
-      "status": "completed",
-      "commit_sha": "7c867de",
-      "dispatch_log": "docs/dispatch-log/1-14-20260508T173354Z.md",
-      "atomic_commit": true,
-      "deviations_from_plan": [
-        "Plan body said multi-checkbox status filter (6 statuses) \u2014 WRONG. Backend OrderController takes single ?status=. Implemented as single <select> with 'Wszystkie' empty option. M1 debt.",
-        "Cookie-forwarding pattern from lib/auth/session.ts mirrored in new lib/orders/api-server.ts (server-only module).",
-        "OrderListRow DTO is missing 'items' array \u2014 'Pozycje' column falls back to description. Backend debt.",
-        "OrderListRow DTO is missing 'assignedCraftsmanId' \u2014 'Wykonawca' column renders '\u2014'. Backend debt.",
-        "/admin/orders/new Link uses `as any` cast \u2014 typed routes won't know the path until 1-15 ships. Resolves automatically next task."
-      ],
-      "follow_up_debts": [
-        "Backend OrderListRow.java should include `items` (or at least an items-count + kinds summary) and `assignedCraftsmanId` fields. File as separate task before M1 closure if assignee + items columns matter for UAT, otherwise defer."
-      ]
-    },
-    {
-      "id": "1-15",
-      "title": "Create-new-order page",
-      "status": "completed",
-      "commit_sha": "7046c82",
-      "dispatch_log": "docs/dispatch-log/1-15-20260508T175000Z.md",
-      "atomic_commit": true,
-      "deviations_from_plan": [
-        "Items inline-create included \u2014 CreateOrderRequest.java accepts List<CreateOrderItemRequest> items.",
-        "Form split into NewOrderForm.tsx (116 LOC) + NewOrderItemRow.tsx (62 LOC) to stay under granular-code ceiling.",
-        "Both `as any` casts on /admin/orders/new Link in 1-14's OrdersTable removed \u2014 typed routes now resolve naturally.",
-        "receivedAt field on CreateOrderRequest exists but not wired in the form \u2014 backend defaults to now(). M1 acceptable; could add to drawer later."
-      ]
-    },
-    {
-      "id": "1-16",
-      "title": "OrderDrawer scaffold + core fields + URL state",
-      "status": "completed",
-      "commit_sha": "3577831",
-      "dispatch_log": "docs/dispatch-log/1-16-20260508T174820Z.md"
-    },
-    {
-      "id": "1-17",
-      "title": "OrderDrawerStatusChanger + trigger placeholder",
-      "status": "completed",
-      "commit_sha": "8f9df16",
-      "dispatch_log": "docs/dispatch-log/1-17-20260508T175223Z.md"
-    },
-    {
-      "id": "1-18",
-      "title": "OrderDrawerItems CRUD",
-      "status": "completed",
-      "commit_sha": "da5248f",
-      "dispatch_log": "docs/dispatch-log/1-18-20260508T175556Z.md"
-    },
-    {
-      "id": "1-19",
-      "title": "OrderDrawerTimeline (right rail)",
-      "status": "completed",
-      "commit_sha": "f84b205",
-      "dispatch_log": "docs/dispatch-log/1-19-20260508T180051Z.md"
-    },
-    {
-      "id": "1-20",
-      "title": "E2E compose smoke + milestone-1 tag + CLAUDE.md flip",
-      "status": "completed",
-      "commit_sha": "e86b149",
-      "dispatch_log": "docs/dispatch-log/1-20-20260508T180442Z.md"
-    },
-    {
-      "id": "2-1",
-      "title": "Activate M2 in tasks.json",
-      "status": "completed",
-      "commit_sha": "aaa452a",
-      "dispatch_log": null
-    },
-    {
-      "id": "2-2",
-      "title": "V006 migration: seed templates/triggers + trigger_fire table",
-      "status": "completed",
-      "commit_sha": "1829d13",
-      "dispatch_log": "docs/dispatch-log/2-2-20260508T190555Z.md"
-    },
-    {
-      "id": "2-3",
-      "title": "Domain entities + enums + repos + integration test",
-      "status": "completed",
-      "commit_sha": "56dc49e",
-      "dispatch_log": "docs/dispatch-log/2-3-20260508T190909Z.md"
-    },
-    {
-      "id": "2-4",
-      "title": "IdempotencyService.claimTriggerFire",
-      "status": "completed",
-      "commit_sha": "0724f17",
-      "dispatch_log": "docs/dispatch-log/2-4-20260508T191420Z.md"
-    },
-    {
-      "id": "2-5",
-      "title": "PlaceholderResolver + TemplateRenderer",
-      "status": "completed",
-      "commit_sha": "725f80e",
-      "dispatch_log": "docs/dispatch-log/2-5-20260508T191928Z.md"
-    },
-    {
-      "id": "2-6",
-      "title": "MessageThreadService",
-      "status": "done",
-      "dispatch_log": null,
-      "commit_sha": "fdbfaa2",
-      "log": "docs/dispatch-log/2-6-20260508T192146Z.md"
-    },
-    {
-      "id": "2-7",
-      "title": "MessageRouter (TWO-STAGE REVIEW)",
-      "status": "completed",
-      "commit_sha": "ee52e0c",
-      "fixup_sha": "5e2124c",
-      "dispatch_log": "docs/dispatch-log/2-7-20260508T192440Z.md",
-      "fixup_log": "docs/dispatch-log/2-7-fixup-20260508T193125Z.md",
-      "review_blockers_resolved": [
-        "A: MessageEntity constructor reverted to protected + newMessage() factory added",
-        "B: TriggerEntity.eventParams and .channels annotated with @JdbcTypeCode(SqlTypes.JSON)",
-        "D: null-recipient pre-check WARN added before OutboundMessage construction",
-        "E: @Audited dual-path documented in javadoc; 2-10 must match both sendManual and sendForTrigger"
-      ]
-    },
-    {
-      "id": "2-8",
-      "title": "TriggerEngine + STATUS_CHANGE post-commit hook",
-      "status": "completed",
-      "commit_sha": "7af95d7",
-      "dispatch_log": "docs/dispatch-log/2-8-20260508T193742Z.md"
-    },
-    {
-      "id": "2-9",
-      "title": "ScheduledTriggerJob (cron)",
-      "status": "completed",
-      "commit_sha": "fed9f0f",
-      "fixup_sha": "ec86b96",
-      "dispatch_log": "docs/dispatch-log/2-9-20260508T194354Z.md",
-      "fixup_log": "docs/dispatch-log/2-9-fixup-20260508T195008Z.md",
-      "review_blockers_resolved": [
-        "V007 added redundant order_.delivered_at \u2014 dropped via V008; OrderRepository.findAllByDeliveredDate renamed to findAllByPickedUpDate querying the correct pre-existing picked_up_at column (V001 line 157, written by OrderService on WYDANE). Order.deliveredAt JPA field + accessors removed. Test helper updated to seed picked_up_at so AFTER_HANDOVER triggers now actually fire in production."
-      ]
-    },
-    {
-      "id": "2-10",
-      "title": "MessageSentTimelineHandler",
-      "status": "completed",
-      "commit_sha": "e3b343e",
-      "dispatch_log": "docs/dispatch-log/2-10-20260508T195342Z.md"
-    },
-    {
-      "id": "2-11",
-      "title": "TemplatesController",
-      "status": "completed",
-      "commit_sha": "fb9aab2",
-      "dispatch_log": "docs/dispatch-log/2-11-20260508T200252Z.md"
-    },
-    {
-      "id": "2-12",
-      "title": "TriggersController",
-      "status": "done",
-      "dispatch_log": null,
-      "commit_sha": "1d67fe3"
-    },
-    {
-      "id": "2-13",
-      "title": "MessagesController",
-      "status": "completed",
-      "commit_sha": "e722c51",
-      "dispatch_log": "docs/dispatch-log/2-13-20260508T201341Z.md"
-    },
-    {
-      "id": "2-14",
-      "title": "lib/messaging API client + types",
-      "status": "completed",
-      "commit_sha": "46dead5",
-      "dispatch_log": "docs/dispatch-log/2-14-20260508T203821Z.md"
-    },
-    {
-      "id": "2-15",
-      "title": "/admin/templates pages + TemplateForm",
-      "status": "completed",
-      "commit_sha": "8afcdd0",
-      "dispatch_log": "docs/dispatch-log/2-15-20260508T210050Z.md"
-    },
-    {
-      "id": "2-16",
-      "title": "/admin/triggers pages",
-      "status": "completed",
-      "commit_sha": "e14013d",
-      "dispatch_log": "docs/dispatch-log/2-16-20260508T211518Z.md"
-    },
-    {
-      "id": "2-17",
-      "title": "OrderDrawerMessages thread view + MESSAGE_SENT timeline label",
-      "status": "completed",
-      "commit_sha": "69b7d24",
-      "dispatch_log": "docs/dispatch-log/2-17-20260508T211737Z.md"
-    },
-    {
-      "id": "2-18",
-      "title": "MessageComposerModal",
-      "status": "completed",
-      "commit_sha": "9be76ed",
-      "dispatch_log": "docs/dispatch-log/2-18-20260508T212006Z.md"
-    },
-    {
-      "id": "2-19",
-      "title": "OrderDrawerStatusChanger real trigger preview",
-      "status": "completed",
-      "commit_sha": "d57789a",
-      "dispatch_log": "docs/dispatch-log/2-19-20260508T212212Z.md"
-    },
-    {
-      "id": "2-20",
-      "title": "/api/health endpoint + timeline label ratification errata",
-      "status": "completed",
-      "commit_sha": "02d0978",
-      "dispatch_log": "docs/dispatch-log/2-20-20260508T212428Z.md"
-    },
-    {
-      "id": "2-21",
-      "title": "E2E compose smoke + milestone-2 tag + CLAUDE.md flip",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/2-21-20260508T212824Z.md",
-      "commit_sha": "2ad7b9a"
-    },
-    {
-      "id": "3-1",
-      "title": "V009 photo migration",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-1-20260508T224557Z.md",
-      "commit_sha": "9f6180a"
-    },
-    {
-      "id": "3-2",
-      "title": "Extend BlobStorage with get(BlobKey)",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-2-20260508T225401Z.md",
-      "commit_sha": "ed2f164"
-    },
-    {
-      "id": "3-3",
-      "title": "AdminPrincipal record + AuthService wrap (TWO-STAGE)",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-3-20260508T225731Z.md",
-      "commit_sha": "24e533e",
-      "fixup_sha": "fdaec86",
-      "fixup_log": "docs/dispatch-log/3-3-fixup-20260508T231628Z.md",
-      "review_blockers_resolved": [
-        "AdminPrincipalLoginTest missed the audit_log FK teardown that the other three modified tests received \u2014 added auditLogs.deleteAll() before users.deleteAll() in seed() and cleanup(), suite stays 153/0/0/1."
-      ],
-      "review_followups_deferred": [
-        "AuthController.me() still does a DB lookup for fullName + lastLoginAt because those fields are not on AdminPrincipal. Optional follow-up: fold them onto the principal to eliminate the lookup. Behavior is correct as-is."
-      ]
-    },
-    {
-      "id": "3-4",
-      "title": "Retrofit MessagesController to use AdminPrincipal.userId()",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-4-20260508T231825Z.md",
-      "commit_sha": "f8e9138"
-    },
-    {
-      "id": "3-5",
-      "title": "Photo JPA entity + PhotoRepository",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-5-20260508T232408Z.md",
-      "commit_sha": "72ca604"
-    },
-    {
-      "id": "3-6",
-      "title": "PhotoService + @Audited + TimelineEventCurator extension (TWO-STAGE)",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-6-20260508T233215Z.md",
-      "commit_sha": "ca521b6",
-      "fixup_sha": "b1a956f",
-      "fixup_log": "docs/dispatch-log/3-6-fixup-20260508T234841Z.md",
-      "review_blockers_resolved": [
-        "Cross-order photo ID enumeration \u2014 added orderId param + verifyOwnership() guard to relabel/delete/stream; cross-order calls throw PhotoNotFoundException (info-leak resistant). 3 new ownership-guard tests in PhotoServiceTest.",
-        "stream() pinned a JDBC connection for the full download \u2014 dropped @Transactional(readOnly=true); findById opens its own short tx, blob InputStream is held by caller without spanning the JPA session."
-      ],
-      "review_followups_deferred": [
-        "MIME magic-byte verification \u2014 service trusts multipart Content-Type header (admin-only surface; low risk). Track for task 3-7 if Apache Tika or similar is added.",
-        "PhotoService is 232 LOC vs 120 cap \u2014 cohesive, no clean split point. Acknowledged in dispatch log."
-      ]
-    },
-    {
-      "id": "3-7",
-      "title": "PhotoController + integration tests (Testcontainers MinIO)",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-7-20260509T011555Z.md",
-      "commit_sha": "2426672"
-    },
-    {
-      "id": "3-8",
-      "title": "apps/web/lib/photos/{api,types}.ts",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-8-20260509T102353Z.md",
-      "commit_sha": "12ba385"
-    },
-    {
-      "id": "3-9",
-      "title": "OrderDrawerPhotos tab + PhotoGrid + PhotoCard",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-9-20260509T102712Z.md",
-      "commit_sha": "8364797",
-      "start_utc": "2026-05-09T10:20:00Z",
-      "end_utc": "2026-05-09T10:27:12Z"
-    },
-    {
-      "id": "3-10",
-      "title": "PhotoUploader",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-10-20260509T102907Z.md",
-      "commit_sha": "d86e32b",
-      "start_utc": "2026-05-09T10:27:12Z",
-      "end_utc": "2026-05-09T10:29:07Z"
-    },
-    {
-      "id": "3-11",
-      "title": "PhotoLightbox",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-11-20260509T103143Z.md",
-      "commit_sha": "45a90e6",
-      "start_utc": "2026-05-09T10:31:00Z",
-      "end_utc": "2026-05-09T10:35:00Z"
-    },
-    {
-      "id": "3-12",
-      "title": "KIND_LABELS_PL extension for PHOTO_* timeline kinds",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-12-20260509T103338Z.md",
-      "commit_sha": "e646356",
-      "start_utc": "2026-05-09T10:33:00Z",
-      "end_utc": "2026-05-09T10:33:38Z"
-    },
-    {
-      "id": "3-13",
-      "title": "Smoke + milestone-3 tag + CLAUDE.md flip",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/3-13-20260509T103837Z.md",
-      "commit_sha": "98f9769",
-      "start_utc": "2026-05-09T10:36:00Z",
-      "end_utc": "2026-05-09T10:38:37Z"
-    },
-    {
-      "id": "4-1",
-      "title": "V010 messaging providers migration + WebhookEventEntity + Repository",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-1-20260509T135513Z.md",
-      "commit_sha": "056c68c",
-      "start_utc": "2026-05-09T13:40:00Z",
-      "end_utc": "2026-05-09T13:55:13Z"
-    },
-    {
-      "id": "4-2",
-      "title": "messaging-core extensions (Provider enum + WebhookEvent extension)",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-2-20260509T135734Z.md",
-      "commit_sha": "2f3bfe9",
-      "start_utc": "2026-05-09T15:50:00Z",
-      "end_utc": "2026-05-09T15:57:34Z"
-    },
-    {
-      "id": "4-3",
-      "title": "PostmarkPayloadMapper + PostmarkResponseMapper + unit tests",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-3-20260509T143902Z.md",
-      "commit_sha": "1551e27",
-      "start_utc": "2026-05-09T14:30:00Z",
-      "end_utc": "2026-05-09T14:39:02Z"
-    },
-    {
-      "id": "4-4",
-      "title": "PostmarkEmailGateway + properties + autoconfig + WireMock IT (TWO-STAGE)",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-4-20260509T144728Z.md",
-      "commit_sha": "cd83005",
-      "start_utc": "2026-05-09T13:00:00Z",
-      "fixup_sha": "367a2ae",
-      "review_log": "docs/dispatch-log/4-4-review-20260509T145324Z.md",
-      "review_sha": "b5a68d3",
-      "end_utc": "2026-05-09T15:04:42Z"
-    },
-    {
-      "id": "4-5",
-      "title": "SmsApiPayloadMapper + SmsApiResponseMapper + unit tests",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-5-20260509T151242Z.md",
-      "commit_sha": "a1cd361aeeaa34d8949cc50fdb3d2043bed231e8",
-      "completed_at": "2026-05-09T15:12:42Z"
-    },
-    {
-      "id": "4-6",
-      "title": "SmsApiSmsGateway + properties + autoconfig + WireMock IT (TWO-STAGE)",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-6-20260509T152513Z.md",
-      "stage_1_commit_sha": "81d684a",
-      "stage_1_completed_at": "2026-05-09T15:25:13Z",
-      "completed_at": "2026-05-09T18:44:08Z",
-      "review_log": "docs/dispatch-log/4-6-review-20260509T153024Z.md",
-      "review_commit_sha": "ff267e7",
-      "fixup_log": "docs/dispatch-log/4-6-fixup-20260509T184408Z.md",
-      "fixup_commit_sha": "e19e49b",
-      "commit_sha": "e19e49b"
-    },
-    {
-      "id": "4-7",
-      "title": "PostmarkWebhookController + Basic-auth verifier + IT",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-7-20260509T185728Z.md",
-      "commit_sha": "a963ebb1d285515ad757b451414537d28613b9cd",
-      "completed_at": "2026-05-09T18:57:28Z"
-    },
-    {
-      "id": "4-8",
-      "title": "SmsApiWebhookController + IP allowlist + IT",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-8-20260509T190730Z.md",
-      "commit_sha": "8cbc0240d3cd8813949f3a605b4be4b64a91a0d6",
-      "completed_at": "2026-05-09T19:07:30Z"
-    },
-    {
-      "id": "4-9",
-      "title": "MessageReconcileTimelineHandler + per-outcome audit paths (narrowed from TWO-STAGE: 4-7 forward-pulled reconciler internals)",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-9-20260509T191422Z.md",
-      "commit_sha": "b0a1923",
-      "completed_at": "2026-05-09T19:18:15Z"
-    },
-    {
-      "id": "4-10",
-      "title": "MessageRetryService + unit tests",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-10-20260509T212700Z.md",
-      "commit_sha": "87cda12",
-      "completed_at": "2026-05-09T21:27:00Z"
-    },
-    {
-      "id": "4-12",
-      "title": "apps/web/lib/messaging types extension + retryMessage api",
-      "status": "completed",
-      "commit_sha": "49d3569",
-      "dispatch_log": "docs/dispatch-log/4-12-20260509T195045Z.md",
-      "completed_at": "2026-05-09T19:55:00Z"
-    },
-    {
-      "id": "4-13",
-      "title": "MessageStatusBadge component",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-13-20260509T195301Z.md",
-      "commit_sha": "e867370",
-      "completed_at": "2026-05-09T19:54:00Z"
-    },
-    {
-      "id": "4-14",
-      "title": "OrderDrawerMessages \u2014 badge + retry button + 10s polling",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-14-20260509T195456Z.md",
-      "commit_sha": "b34a9c2",
-      "completed_at": "2026-05-09T20:05:00Z"
-    },
-    {
-      "id": "4-15",
-      "title": "KIND_LABELS_PL + KIND_ICONS extension for MESSAGE_DELIVERED/FAILED",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-15-20260509T195756Z.md",
-      "commit_sha": "cac53b5",
-      "completed_at": "2026-05-09T19:59:00Z"
-    },
-    {
-      "id": "4-11",
-      "title": "POST /api/admin/messages/{id}/retry endpoint + IT",
-      "status": "completed",
-      "commit_sha": "1a4de6a",
-      "dispatch_log": "docs/dispatch-log/4-11-20260509T193457Z.md"
-    },
-    {
-      "id": "4-16",
-      "title": "Smoke + milestone-4 tag + CLAUDE.md flip",
-      "status": "completed",
-      "dispatch_log": "docs/dispatch-log/4-16-20260509T200019Z.md",
-      "commit_sha": "6b7ffd1"
-    },
-    {
-      "id": "5-1",
-      "title": "V012 migration \u2014 message_thread channel + raw_sender + discarded_at + message idempotency unique",
-      "status": "completed",
-      "commit_sha": "5ae8b17",
-      "dispatch_log": "docs/dispatch-log/5-1-20260509T222908Z.md"
-    },
-    {
-      "id": "5-2",
-      "title": "Entity + repo updates + repo IT",
-      "status": "completed",
-      "commit_sha": "a0a071f",
-      "dispatch_log": "docs/dispatch-log/5-2-20260509T223549Z.md"
-    },
-    {
-      "id": "5-3",
-      "title": "MessageGatewayDispatcher hygiene extraction",
-      "status": "completed",
-      "commit_sha": "96ede4f",
-      "dispatch_log": "docs/dispatch-log/5-3-20260510T004200Z.md"
-    },
-    {
-      "id": "5-3b",
-      "title": "MessageRouter LOC fixup \u2014 extract TemplateContextBuilder",
-      "status": "completed",
-      "commit_sha": "5810725",
-      "dispatch_log": "docs/dispatch-log/5-3b-20260510T005600Z.md",
-      "parent_task": "5-3"
-    },
-    {
-      "id": "5-4",
-      "title": "InboundMessageService + PhoneNormalizer",
-      "status": "completed",
-      "commit_sha": "b26ebda",
-      "dispatch_log": "docs/dispatch-log/5-4-20260510T010000Z.md"
-    },
-    {
-      "id": "5-5",
-      "title": "PostmarkInboundController + IT",
-      "status": "completed",
-      "commit_sha": "1f06cc9",
-      "dispatch_log": "docs/dispatch-log/5-5-2026-05-09T23:28:44Z.md"
-    },
-    {
-      "id": "5-5b",
-      "title": "@Audited SpEL record fix \u2014 property access (no parens) + restore IT assertion",
-      "status": "completed",
-      "parent_task": "5-5",
-      "commit_sha": null,
-      "dispatch_log": "docs/dispatch-log/5-5b-20260510T014000Z.md",
-      "option_used": "A",
-      "key_fix": "Changed #result.threadId() and #result.orderId() to #result.threadId and #result.orderId \u2014 SimpleEvaluationContext.forReadOnlyDataBinding() supports property access (DataBindingPropertyAccessor resolves record components as bean properties in Spring 6.x) but blocks method calls."
-    },
-    {
-      "id": "5-6",
-      "title": "SmsApiInboundController + IT",
-      "status": "done",
-      "commit_sha": "94d70a5",
-      "dispatch_log": "docs/dispatch-log/5-6-2026-05-10T00:38:21Z.md"
-    },
-    {
-      "id": "5-7",
-      "title": "Timeline kinds + curator wiring + frontend label/icon",
-      "status": "done",
-      "commit_sha": "1b8aed8",
-      "dispatch_log": "docs/dispatch-log/5-7-2026-05-10T01:02:43Z.md"
-    },
-    {
-      "id": "5-8",
-      "title": "MessageThreadService extensions + MessageThreadMutationService split",
-      "status": "done",
-      "commit_sha": "24d0276",
-      "dispatch_log": "docs/dispatch-log/5-8-2026-05-10T01:12:36Z.md"
-    },
-    {
-      "id": "5-9",
-      "title": "ThreadController + integration test (TWO-STAGE REVIEW)",
-      "status": "done",
-      "commit_sha": "994f0c1",
-      "dispatch_log": "docs/dispatch-log/5-9-2026-05-10T01:23:25Z.md"
-    },
-    {
-      "id": "5-10",
-      "title": "Reply send \u2014 POST /api/admin/threads/{id}/messages",
-      "status": "done",
-      "commit_sha": "d0c938b",
-      "dispatch_log": "docs/dispatch-log/5-10-20260510T092121Z.md"
-    },
-    {
-      "id": "5-11",
-      "title": "Cross-thread compose \u2014 POST /api/admin/clients/{id}/messages",
-      "status": "done",
-      "commit_sha": "53f8c18",
-      "dispatch_log": "docs/dispatch-log/5-11-20260510T093424Z.md"
-    },
-    {
-      "id": "5-12",
-      "title": "lib/messaging frontend extensions",
-      "status": "done",
-      "commit_sha": "1a95398",
-      "dispatch_log": "docs/dispatch-log/5-12-20260510T094616Z.md"
-    },
-    {
-      "id": "5-13",
-      "title": "MessagesNavItem (sidebar) + unread polling + OrderDrawerMessages NIT fixups",
-      "status": "done",
-      "commit_sha": "dac09c2",
-      "dispatch_log": "docs/dispatch-log/5-13-20260510T095018Z.md"
-    },
-    {
-      "id": "5-14",
-      "title": "UnreadElsewhereBanner + dedicated backend endpoint",
-      "status": "done",
-      "commit_sha": "8d10fea",
-      "dispatch_log": "docs/dispatch-log/5-14-20260510T100150Z.md",
-      "deviations_from_plan": [
-        "Plan IT used OrderType.NAPRAWA \u2014 Order entity has no orderType field; removed setOrderType call.",
-        "Plan owner() helper used SecurityMockMvcRequestPostProcessors.user(...).roles(...) which injects plain UserDetails, causing NPE on actor.email(). Replaced with authentication(UsernamePasswordAuthenticationToken.authenticated(new AdminPrincipal(...))) \u2014 same pattern as ThreadControllerIntegrationTest.",
-        "UnreadElsewhereBanner.tsx required `import type { Route } from \"next\"` and `as Route` cast on href template literal \u2014 Next.js 16 typed-routes requirement not in plan body."
-      ]
-    },
-    {
-      "id": "5-15",
-      "title": "Page shell + ThreadList + filter chips + search input (TWO-STAGE)",
-      "status": "done",
-      "commit_sha": "5da7c48",
-      "dispatch_log": "docs/dispatch-log/5-15-20260510T101835Z.md",
-      "fixup_sha": "de8b585",
-      "review_mode": "two-stage",
-      "review_verdict": "APPROVED-WITH-FOLLOWUP",
-      "review_followups_resolved": [
-        "ThreadListRow aria-current \u2014 added in de8b585",
-        "ThreadList search input aria-label \u2014 added in de8b585",
-        "FilterChip + MessagesHeader buttons type='button' \u2014 added in de8b585",
-        "MessagesShell redundant `as Channel | null` cast removed \u2014 de8b585",
-        "MessagesShell render-time log.debug removed \u2014 de8b585"
-      ],
-      "deviations_from_plan": [
-        "ThreadDto \u2192 MessageThreadDto (plan literal mismatch; real export name).",
-        "channel: string|null \u2192 Channel|null in useThreadSelection (matches listThreads signature).",
-        "Bonus 8th file ThreadListSkeleton.tsx extracted from ThreadList.tsx to honor < 80 LOC cap (ThreadList \u2192 76 LOC).",
-        "MessagesShell scaffolds future-task slots (5-16..5-20) with Polish placeholders + // TODO markers \u2014 intentional staging."
-      ],
-      "carry_forward_followups": [
-        "ThreadListSkeleton width arrays cosmetic \u2014 defer.",
-        "UNMATCHED empty-state copy collapsed with ALL \u2014 defer.",
-        "Cross-filter chip counts: 'Wszystkie' shows current-filter result count, not true global \u2014 architectural, needs server total field if we care.",
-        "Search debounce: plan acceptance says debounces, plan code sample doesn't. Owner decision deferred. 2-char min cutoff in api.ts mitigates."
-      ]
-    },
-    {
-      "id": "5-16",
-      "title": "ThreadHeader + MessageBubble + SelectedThread (10s polling)",
-      "status": "done",
-      "commit_sha": "05de133",
-      "dispatch_log": "docs/dispatch-log/5-16-20260510T103110Z.md",
-      "fixup_sha": "d52b74e",
-      "deviations_from_plan": [
-        "ThreadDto \u2192 MessageThreadDto + ThreadDetailDto unpacking (plan literal mismatch).",
-        "ReplyComposer.tsx stub created at the 5-17 path because SelectedThread imports it; 5-17 will overwrite.",
-        "type='button' added to IconBtn + MessageBubble retry button per project convention.",
-        "SelectedThread originally landed at 86 LOC (6 over 80 cap). Extracted polling concern to useThreadPoller.ts in fixup d52b74e \u2014 SelectedThread now 48 LOC, useThreadPoller 59 LOC."
-      ]
-    },
-    {
-      "id": "5-17",
-      "title": "ReplyComposer + TemplatePicker (TWO-STAGE)",
-      "status": "done",
-      "commit_sha": "a714bfd",
-      "fixup_sha": "3dcd2ff",
-      "precondition_sha": "e7e6885",
-      "dispatch_log": "docs/dispatch-log/5-17-20260510T110000Z.md",
-      "review_log": "docs/dispatch-log/5-17-review-20260510T110325Z.md",
-      "precondition_log": "docs/dispatch-log/5-17a-20260510T105523Z.md",
-      "review_verdict": "APPROVED-WITH-FOLLOWUP",
-      "review_blockers_resolved": [
-        "Hand-built TemplatePicker missing Esc dismiss + focus-return + ARIA roles (a11y). Fixed in 3dcd2ff.",
-        "WHATSAPP edge: useReplyComposerState now defaults non-EMAIL/SMS channels to EMAIL on init."
-      ],
-      "notes": [
-        "Plan referenced ThreadDto / clientEmail / clientPhone fields that did not exist. Backend precondition slice (commit e7e6885, log 5-17a) added the fields to MessageThreadDto record + TS interface so 5-18 + 5-20 inherit the same wiring.",
-        "Plan called for @radix-ui/react-dropdown-menu, which is not installed. TemplatePicker rolled hand-built dropdown (zero new deps) per simplest-but-working directive.",
-        "ReplyComposer accepted at 142 LOC \u2014 ~35 LOC logic, ~107 LOC JSX/SVG. Hook extraction satisfied the cap's intent."
-      ]
-    },
-    {
-      "id": "5-18",
-      "title": "ThreadClientPanel (right rail)",
-      "status": "done",
-      "commit_sha": "95c8498",
-      "dispatch_log": "docs/dispatch-log/5-18-20260510T110926Z.md",
-      "review_verdict": "APPROVED",
-      "notes": [
-        "Plan errata: ThreadDto \u2192 MessageThreadDto; recentOrderId/Code/Status/totalOrders fields not on DTO so the active-order card always renders the placeholder branch (\u2014 per plan footnote line 7028) and the totals grid renders \u2014 for both cells.",
-        "WHATSAPP chip color promoted to 3-way switch: EMAIL=blue, SMS=violet, WHATSAPP=emerald.",
-        "MessagesShell wiring: setLoadedThread setter passed directly as the SelectedThread onLoaded prop (signature matches); right rail guarded at parent by selectedId && loadedThread && loadedThread.clientId so unmatched threads don't render the panel at all.",
-        "ThreadClientPanel landed at 129 LOC (over 80 cap) \u2014 JSX-density across 4 sections; within the 142 LOC precedent set by 5-17 ReplyComposer. MessagesShell at 67 LOC.",
-        "TS strict-mode self-fix: string[0] indexing replaced with charAt(0) in initials computation (avoids string|undefined in noUncheckedIndexedAccess)."
-      ]
-    },
-    {
-      "id": "5-19",
-      "title": "EmptyState + UnmatchedThreadPanel + assign/discard wiring",
-      "status": "done",
-      "commit_sha": "a784c01",
-      "dispatch_log": "docs/dispatch-log/5-19-20260510T111602Z.md",
-      "review_verdict": "APPROVED",
-      "notes": [
-        "Plan errata: ThreadDto \u2192 MessageThreadDto; UnmatchedThreadPanel signature changed to accept ThreadDetailDto (not MessageThreadDto) so the last-inbound bubble derives lastMsg from detail.messages[length-1] without any backend call.",
-        "@radix-ui/react-alert-dialog NOT installed \u2014 Discard confirmation built as @radix-ui/react-dialog with destructive button styling. Visually + semantically equivalent.",
-        "ClientCreateModal.onCreate is synchronous (client: ClientDto) => void; the assignUnmatched call lives in a sibling async handler in UnmatchedThreadPanel rather than inside onCreate, preserving the modal's internal close/reset flow.",
-        "Integration glue NOT in plan but added per Opus dispatch: SelectedThread branches on detail.thread.unmatched (renders UnmatchedThreadPanel instead of normal flow); MessagesShell replaces hardcoded \"Wybierz w\u0105tek\u2026\" with <EmptyState variant=\"no-selection\"/> and threads onResolved \u2192 sel.setSelectedId(null).",
-        "LOC counts: EmptyState 74, AssignUnmatchedDialog 75, UnmatchedThreadPanel 171 (over cap; 2 embedded dialogs + 4 state booleans, justified vs 5-17/5-18 precedent), SelectedThread 56, MessagesShell 65."
-      ]
-    },
-    {
-      "id": "5-20",
-      "title": "NewMessageDialog (cross-thread compose)",
-      "status": "done",
-      "commit_sha": "21c80e6",
-      "precondition_sha": "cbdb5c6",
-      "dispatch_log": "docs/dispatch-log/5-20-20260510T112611Z.md",
-      "precondition_log": "docs/dispatch-log/5-20a-20260510T112256Z.md",
-      "review_verdict": "APPROVED",
-      "notes": [
-        "Plan errata: sendNewToClient returns MessageDto (not {threadId}). Backend precondition slice (cbdb5c6, log 5-20a) added threadId: UUID to MessageDto record + 5 mapper sites + TS interface so result.threadId is a real field. M5 backend tests still 72/0/0/0.",
-        "effectiveChannel auto-fallback verified: when channel=EMAIL but client has no email and has phone, effectiveChannel promotes to SMS; EMAIL toggle button shown disabled + inactive while SMS shows active. Send goes via SMS.",
-        "MessagesShell wiring: removed `void newMsgOpen` suppression, mounted <NewMessageDialog open=newMsgOpen onOpenChange=setNewMsgOpen onSent=(threadId)=>sel.setSelectedId(threadId)/>. Radix Portal places dialog at document.body so placement in tree is cosmetic.",
-        "LOC counts: NewMessageDialog 133 (over 80 cap; pure JSX density; consistent with 5-17 142, 5-18 129, 5-19 UnmatchedThreadPanel 171). MessagesShell 65 (unchanged net)."
-      ]
-    },
-    {
-      "id": "5-21",
-      "title": "Closure \u2014 mvn verify + frontend gates + milestone-5 tag + CLAUDE.md flip",
-      "status": "completed",
-      "commit_sha": "061f99a",
-      "dispatch_log": "docs/dispatch-log/5-21-20260510T113542Z.md",
-      "review_verdict": "APPROVED",
-      "notes": [
-        "Suite: 302 total / 0 failures / 1 error (pre-existing flake) / 0 skipped. M4 close was 201; M5 added 101 cases.",
-        "Flake: MessagesControllerIntegrationTest.emptyThreadReturnsEmptyList \u2014 AdminWebTestBase.seedUsers() clients.deleteAll() hits FK from prior test class's uncleaned order. Pre-existing since task 5-16. Fix in M6: add orderRepository.deleteAll() to AdminWebTestBase.seedUsers() before clients.deleteAll().",
-        "Frontend: typecheck 0 errors, lint 0 errors (eslint direct, not next lint), build SUCCESSFUL.",
-        "milestone-5 tag created locally. Not pushed to remote (consistent with M0b\u2013M4 precedent).",
-        "CLAUDE.md status row flipped to [x] Milestone 5: Inbound parsing + reply UI + cross-client inbox."
-      ]
-    },
-    {
-      "id": "6-1",
-      "title": "AdminWebTestBase FK ordering fix",
-      "status": "completed",
-      "commit_sha": "11bc14e",
-      "dispatch_log": "docs/dispatch-log/6-1-20260510T152600Z.md"
-    },
-    {
-      "id": "6-2",
-      "title": "MessageRouter split + sendRetry/send dedup",
-      "status": "completed",
-      "commit_sha": "bc9d54c",
-      "dispatch_log": "docs/dispatch-log/6-2-20260510T174000Z.md"
-    },
-    {
-      "id": "6-3",
-      "title": "V013 message_thread uniqueness migration + @NotNull",
-      "status": "completed",
-      "commit_sha": "8228905",
-      "dispatch_log": "docs/dispatch-log/6-3-20260510T154435Z.md"
-    },
-    {
-      "id": "6-4",
-      "title": "pnpm lint verification + closure-bar wiring",
-      "status": "completed",
-      "commit_sha": "816a88c",
-      "dispatch_log": "docs/dispatch-log/6-4-20260510T155449Z.md"
-    },
-    {
-      "id": "6-5",
-      "title": "GET /api/admin/dashboard/kpis",
-      "status": "completed",
-      "commit_sha": "250b3ca",
-      "dispatch_log": "docs/dispatch-log/6-5-20260510T155706Z.md"
-    },
-    {
-      "id": "6-6",
-      "title": "GET /api/admin/dashboard/charts",
-      "status": "completed",
-      "commit_sha": "d8dc017",
-      "dispatch_log": "docs/dispatch-log/6-6-20260510T160357Z.md",
-      "review_verdict": "APPROVED",
-      "notes": [
-        "Separate DashboardChartsController created (merged DashboardController would be ~130 LOC > 120 cap).",
-        "Plan test ordersPerWeek[0].repairs corrected to filter-based assertion \u2014 controller zero-fills oldest\u2192newest so current-week order lands at index 7, not 0.",
-        "Window calc simplified: toLocalDate().with(DayOfWeek.MONDAY).minusWeeks(7) vs plan's IsoFields manipulation \u2014 same result, cleaner code."
-      ]
-    },
-    {
-      "id": "6-7",
-      "title": "GET /api/admin/orders/calendar",
-      "status": "completed",
-      "commit_sha": "3428f2a",
-      "dispatch_log": "docs/dispatch-log/6-7-20260510T161335Z.md",
-      "review_verdict": "APPROVED"
-    },
-    {
-      "id": "6-8",
-      "title": "GET /api/admin/orders/kanban",
-      "status": "completed",
-      "commit_sha": "c19940a",
-      "dispatch_log": "docs/dispatch-log/6-8-20260510T162332Z.md",
-      "review_verdict": "APPROVED",
-      "notes": [
-        "Plan used @Validated/@Min/@Max for limitPerColumn validation \u2014 ConstraintViolationException maps to 500 by default. Replaced with explicit ResponseStatusException(BAD_REQUEST) guard (same pattern as CalendarController). All 7 ITs green.",
-        "countByStatusNotDeleted reused from 6-5 (no duplication). Two new native queries added to OrderRepository.",
-        "Suite: 333 \u2192 340 (+7)."
-      ]
-    },
-    {
-      "id": "6-9",
-      "title": "POST /api/admin/orders/bulk/status (TWO-STAGE)",
-      "status": "completed",
-      "commit_sha": "f81c188",
-      "stage_1_sha": "f81c188",
-      "fixup_sha": "00084b0",
-      "dispatch_log": "docs/dispatch-log/6-9-20260510T163138Z.md",
-      "stage2_log": "docs/dispatch-log/6-9-stage2-20260510T164315Z.md"
-    },
-    {
-      "id": "6-10",
-      "title": "lib/dashboard/api-server.ts + types.ts",
-      "status": "completed",
-      "commit_sha": "edf4258",
-      "dispatch_log": "docs/dispatch-log/6-10-20260510T165631Z.md"
-    },
-    {
-      "id": "6-11",
-      "title": "KpiTilesRow + OrdersWeekChart + MixDonut",
-      "status": "completed",
-      "commit_sha": "738b548",
-      "dispatch_log": "docs/dispatch-log/6-11-20260510T170315Z.md"
-    },
-    {
-      "id": "6-12",
-      "title": "ReadyForPickupPanel + RecentMessagesPanel + dashboard page wiring",
-      "status": "completed",
-      "commit_sha": "5be4995",
-      "dispatch_log": "docs/dispatch-log/6-12-20260510T175734Z.md"
-    },
-    {
-      "id": "6-13",
-      "title": "lib/calendar + OrderViewTabs shared component",
-      "status": "completed",
-      "commit_sha": "785d2cc",
-      "dispatch_log": "docs/dispatch-log/6-13-20260510T180400Z.md"
-    },
-    {
-      "id": "6-14",
-      "title": "CalendarMonthGrid + CalendarCell",
-      "status": "completed",
-      "commit_sha": "7edf9a1",
-      "dispatch_log": "docs/dispatch-log/6-14-20260510T180907Z.md"
-    },
-    {
-      "id": "6-15",
-      "title": "BezTerminuPanel",
-      "status": "completed",
-      "commit_sha": "d8bcdac",
-      "dispatch_log": "docs/dispatch-log/6-15-20260510T181328Z.md"
-    },
-    {
-      "id": "6-16",
-      "title": "Calendar page wiring + states",
-      "status": "completed",
-      "commit_sha": "964fc74",
-      "dispatch_log": "docs/dispatch-log/6-16-20260510T181835Z.md"
-    },
-    {
-      "id": "6-17",
-      "title": "lib/kanban/api-server.ts + types.ts",
-      "status": "completed",
-      "commit_sha": "3bcc341",
-      "dispatch_log": "docs/dispatch-log/6-17-20260510T182413Z.md"
-    },
-    {
-      "id": "6-18",
-      "title": "KanbanBoard + KanbanColumn + KanbanCard (static)",
-      "status": "completed",
-      "commit_sha": "2c46cd1",
-      "dispatch_log": "docs/dispatch-log/6-18-20260510T182729Z.md"
-    },
-    {
-      "id": "6-19",
-      "title": "useKanbanDnd + StatusChangeTriggerDialog extraction + drag flow (TWO-STAGE)",
-      "status": "completed",
-      "stage_1_sha": "15d54b5",
-      "fixup_sha": "5b50c01",
-      "commit_sha": "15d54b5",
-      "dispatch_log": "docs/dispatch-log/6-19-stage1-20260510T182729Z.md",
-      "review_mode": "two-stage",
-      "review_verdict": "NEEDS-FIXUP",
-      "stage2_log": "docs/dispatch-log/6-19-stage2-20260510T184056Z.md",
-      "review_followups_resolved": [
-        "KanbanColumn drop-target ring-2 ring-[var(--pink)] \u2014 fixed in 5b50c01",
-        "StatusChangeConfirm.tsx orphan deleted \u2014 5b50c01"
-      ],
-      "deferred_followups": [
-        "Wire useKanbanDnd into kanban page (6-20 scope)",
-        "sendTriggers full wiring to single-order endpoint (M7 scope)",
-        "errorToast UI rendering (6-20 scope)"
-      ]
-    },
-    {
-      "id": "6-20",
-      "title": "Kanban page wiring + states",
-      "status": "completed",
-      "commit_sha": "36cf69c",
-      "dispatch_log": "docs/dispatch-log/6-20-20260510T184545Z.md"
-    },
-    {
-      "id": "6-21",
-      "title": "SavedFilterPresets chip row + URL plumbing (+ inline 6-21a backend slice)",
-      "status": "completed",
-      "commit_sha": "0d8432e",
-      "backend_slice_sha": "b0d6738",
-      "dispatch_log": "docs/dispatch-log/6-21-20260510T185003Z.md"
-    },
-    {
-      "id": "6-22",
-      "title": "useOrderRowSelection + BulkActionBar + BulkResultModal (TWO-STAGE)",
-      "status": "completed",
-      "commit_sha": "6044f49",
-      "stage_1_sha": "f8d23ee",
-      "fixup_sha": "6044f49",
-      "dispatch_log": "docs/dispatch-log/6-22-stage1-20260510T190347Z.md",
-      "stage2_log": "docs/dispatch-log/6-22-stage2-20260510T190936Z.md"
-    },
-    {
-      "id": "6-23",
-      "title": "RowQuickActionsMenu (three-dot dropdown)",
-      "status": "completed",
-      "commit_sha": "7b87dec",
-      "dispatch_log": "docs/dispatch-log/6-23-20260510T191323Z.md"
-    },
-    {
-      "id": "7-1",
-      "title": "Extend UpdateClientRequest + ClientService.update for preferredChannel + rodoConsent",
-      "status": "completed",
-      "commit_sha": "e9b64ee",
-      "dispatch_log": "docs/dispatch-log/7-1-20260510T212516Z.md"
-    },
-    {
-      "id": "7-2",
-      "title": "Add clientId filter to OrderController.list -> OrderService.list -> OrderSpecifications.forList",
-      "status": "completed",
-      "commit_sha": "681c529",
-      "dispatch_log": "docs/dispatch-log/7-2-20260510T213247Z.md"
-    },
-    {
-      "id": "7-3",
-      "title": "Add clientId filter to ThreadController.list + new MessageThreadRepository derived method",
-      "status": "completed",
-      "commit_sha": "c34e533",
-      "dispatch_log": "docs/dispatch-log/7-3-20260510T213807Z.md"
-    },
-    {
-      "id": "7-4",
-      "title": "ClientSummaryService + ClientSummaryDto + GET /api/admin/clients/{id}/summary (TWO-STAGE)",
-      "status": "completed",
-      "commit_sha": "feb75b3",
-      "stage_1_sha": "feb75b3",
-      "dispatch_log": "docs/dispatch-log/7-4-stage1-20260510T214209Z.md",
-      "stage2_log": "docs/dispatch-log/7-4-stage2-20260510T215219Z.md",
-      "fixup_sha": null
-    },
-    {
-      "id": "7-5",
-      "title": "Extend lib/clients \u2014 types, api, api-server (listClients, getClient, getClientSummary, updateClient)",
-      "status": "completed",
-      "commit_sha": "0c7d453",
-      "dispatch_log": "docs/dispatch-log/7-5-20260510T215452Z.md"
-    },
-    {
-      "id": "7-6",
-      "title": "ClientListSearchBox CC \u2014 debounced typeahead + tests",
-      "status": "completed",
-      "commit_sha": "9c4b408",
-      "dispatch_log": "docs/dispatch-log/7-6-20260510T222947Z.md"
-    },
-    {
-      "id": "7-7",
-      "title": "ClientListTable SC \u2014 paginated rows + inline RODO pill (placeholder until 7-10)",
-      "status": "completed",
-      "commit_sha": "4dbafe3",
-      "dispatch_log": "docs/dispatch-log/7-7-20260511T003400Z.md"
-    },
-    {
-      "id": "7-8",
-      "title": "/admin/clients/page.tsx \u2014 list page Server Component (search + paginated list shell)",
-      "status": "completed",
-      "commit_sha": "d213177",
-      "dispatch_log": "docs/dispatch-log/7-8-20260510T223956Z.md"
-    },
-    {
-      "id": "7-9",
-      "title": "[id]/layout.tsx + ClientTabNav CC (shared shell + active-tab styling)",
-      "status": "completed",
-      "commit_sha": "a83a10e",
-      "dispatch_log": "docs/dispatch-log/7-9-20260511T004500Z.md"
-    },
-    {
-      "id": "7-10",
-      "title": "ClientHeader SC + RodoBadge SC + EditClient island stub (real modal in 7-15)",
-      "status": "completed",
-      "commit_sha": "f1626c6",
-      "dispatch_log": "docs/dispatch-log/7-10-20260511T005200Z.md"
-    },
-    {
-      "id": "7-11",
-      "title": "ClientSummaryTiles SC \u2014 4 dashboard tiles wired to /summary",
-      "status": "completed",
-      "commit_sha": "85b3504",
-      "dispatch_log": "docs/dispatch-log/7-11-20260511T005800Z.md"
-    },
-    {
-      "id": "7-12",
-      "title": "/admin/clients/[id]/page.tsx \u2014 overview tab (parallel fetches, 404 guard)",
-      "status": "completed",
-      "commit_sha": "df5e55d",
-      "dispatch_log": "docs/dispatch-log/7-12-20260511T010200Z.md"
-    },
-    {
-      "id": "7-13",
-      "title": "/admin/clients/[id]/zlecenia/page.tsx \u2014 orders sub-tab",
-      "status": "completed",
-      "commit_sha": "f4207e5",
-      "dispatch_log": "docs/dispatch-log/7-13-20260511T010600Z.md"
-    },
-    {
-      "id": "7-14",
-      "title": "/admin/clients/[id]/wiadomosci/page.tsx \u2014 threads sub-tab",
-      "status": "completed",
-      "commit_sha": "de20ad6",
-      "dispatch_log": "docs/dispatch-log/7-14-20260511T010900Z.md"
-    },
-    {
-      "id": "7-15",
-      "title": "EditClientModal CC + useEditClientModalForm hook + RTL tests",
-      "status": "completed",
-      "commit_sha": "a2d2ce1",
-      "dispatch_log": "docs/dispatch-log/7-15-20260510T232139Z.md",
-      "review_mode": "combined-single-stage (owner-directed; TWO-STAGE flag in plan superseded by anti-bloat directive)"
-    },
-    {
-      "id": "7-16",
-      "title": "PlaceholderCard SC + /admin/sklep + /admin/aktualnosci stub pages + smoke tests",
-      "status": "completed",
-      "commit_sha": "311666d",
-      "dispatch_log": "docs/dispatch-log/7-16-20260510T232140Z.md"
-    },
-    {
-      "id": "7-17",
-      "title": "Sidebar wiring + active-state (manual UAT skipped; milestone-7 tag deferred to owner)",
-      "status": "completed",
-      "commit_sha": "ad4babb",
-      "dispatch_log": "docs/dispatch-log/7-17-20260510T232141Z.md"
-    },
-    {
-      "id": "8-1",
-      "title": "New whatsapp-gateway Maven module (interface + Logging impl + autoconfig)",
-      "status": "completed",
-      "commit_sha": "a46bcc0",
-      "dispatch_log": "docs/dispatch-log/8-1-20260511T200546Z.md"
-    },
-    {
-      "id": "8-2",
-      "title": "Wire WhatsApp into MessageGatewayDispatcher switch + recipient-hash util",
-      "status": "completed",
-      "commit_sha": "5f08092",
-      "dispatch_log": "docs/dispatch-log/8-2-20260511T201110Z.md"
-    },
-    {
-      "id": "8-3",
-      "title": "V014 \u2014 add trace_id column to audit_log (TWO-STAGE)",
-      "status": "completed",
-      "commit_sha": "9530b1c",
-      "dispatch_log": "docs/dispatch-log/8-3-20260511T201504Z.md"
-    },
-    {
-      "id": "8-4",
-      "title": "Backend OTel dependencies (Spring Boot starter + OTLP exporter + JDBC instr)",
-      "status": "completed",
-      "commit_sha": "6012d44",
-      "dispatch_log": "docs/dispatch-log/8-4-20260511T201924Z.md"
-    },
-    {
-      "id": "8-5",
-      "title": "OTel YAML configuration in application.yaml + application-local.yaml",
-      "status": "completed",
-      "commit_sha": "350eac5",
-      "dispatch_log": "docs/dispatch-log/8-5-20260511T202245Z.md"
-    },
-    {
-      "id": "8-6",
-      "title": "Manual span on MessageGatewayDispatcher.dispatch (TWO-STAGE)",
-      "status": "completed",
-      "stage_1_sha": "cf18f9b",
-      "stage_1_completed_at": "2026-05-11T20:51:56Z",
-      "commit_sha": "89e804e",
-      "dispatch_log": "docs/dispatch-log/8-6-20260511T205156Z.md",
-      "stage2_log": "docs/dispatch-log/8-6-stage2-20260511T205939Z.md",
-      "fixup_sha": "89e804e",
-      "review_mode": "two-stage",
-      "review_verdict": "NEEDS-FIXUP"
-    },
-    {
-      "id": "8-7",
-      "title": "AuditLogAspect \u2014 trace_id capture + audit.write manual span + LOC extraction (TWO-STAGE)",
-      "status": "completed",
-      "stage_1_sha": "579e130",
-      "commit_sha": "579e130",
-      "dispatch_log": "docs/dispatch-log/8-7-20260511T210622Z.md",
-      "stage2_log": "docs/dispatch-log/8-7-stage2-20260511T211307Z.md",
-      "review_mode": "two-stage",
-      "review_verdict": "APPROVED-WITH-FOLLOWUP"
-    },
-    {
-      "id": "8-8",
-      "title": "DemoSeedRunner skeleton (@Profile local + @ConditionalOnProperty + idempotent guard)",
-      "status": "completed",
-      "commit_sha": "6bcdca7",
-      "dispatch_log": "docs/dispatch-log/8-8-20260511T212214Z.md"
-    },
-    {
-      "id": "8-9",
-      "title": "Seed clients + orders + photos via service layer (TWO-STAGE)",
-      "status": "completed",
-      "stage_1_sha": "527a0f1",
-      "commit_sha": "527a0f1",
-      "dispatch_log": "docs/dispatch-log/8-9-20260511T212730Z.md",
-      "stage2_log": "docs/dispatch-log/8-9-stage2-20260511T213436Z.md",
-      "fixup_sha": null,
-      "review_mode": "two-stage",
-      "review_verdict": "APPROVED-WITH-FOLLOWUP"
-    },
-    {
-      "id": "8-10",
-      "title": "Seed sample MessageThread with 4 alternating messages",
-      "status": "completed",
-      "commit_sha": "2cbba62",
-      "dispatch_log": "docs/dispatch-log/8-10-20260511T214025Z.md"
-    },
-    {
-      "id": "8-11",
-      "title": "Add Jaeger all-in-one to docker-compose.yml + OTLP env wiring",
-      "status": "completed",
-      "commit_sha": "8edf1f3",
-      "dispatch_log": "docs/dispatch-log/8-11-20260511T214550Z.md"
-    },
-    {
-      "id": "8-12",
-      "title": "make demo Makefile target + colored banner output",
-      "status": "completed",
-      "commit_sha": "8c3ec38",
-      "dispatch_log": "docs/dispatch-log/8-12-20260511T214736Z.md"
-    },
-    {
-      "id": "8-13",
-      "title": "README 'Run the demo' section + .env.example",
-      "status": "completed",
-      "commit_sha": "2da81d0",
-      "dispatch_log": "docs/dispatch-log/8-13-20260511T214912Z.md"
-    },
-    {
-      "id": "8-14",
-      "title": "Frontend OTel deps + instrumentation.ts (Next register hook)",
-      "status": "completed",
-      "commit_sha": "1e54ff2",
-      "dispatch_log": "docs/dispatch-log/8-14-20260511T215120Z.md"
-    },
-    {
-      "id": "8-15",
-      "title": "Browser OTel client + /api/otlp Next proxy route (TWO-STAGE)",
-      "status": "completed",
-      "commit_sha": "7f86f63",
-      "dispatch_log": "docs/dispatch-log/8-15-20260511T215458Z.md",
-      "stage_1_sha": "7f86f63",
-      "stage2_log": "docs/dispatch-log/8-15-stage2-20260511T220113Z.md",
-      "stage2_verdict": "APPROVED-WITH-FOLLOWUP"
-    },
-    {
-      "id": "8-16",
-      "title": "End-to-end OTel propagation smoke test (backend IT + frontend vitest)",
-      "status": "completed",
-      "commit_sha": "783a6a9",
-      "dispatch_log": "docs/dispatch-log/8-16-20260511T220619Z.md"
-    },
-    {
-      "id": "8-17",
-      "title": "docs/MODULE_MAP.md \u2014 feature-to-file lookup table",
-      "status": "completed",
-      "commit_sha": "e892fd1",
-      "dispatch_log": "docs/dispatch-log/8-17-20260511T221215Z.md"
-    },
-    {
-      "id": "8-18",
-      "title": "tools/where-is bash script + make target",
-      "status": "completed",
-      "commit_sha": "b59861b",
-      "dispatch_log": "docs/dispatch-log/8-18-20260511T221626Z.md"
-    },
-    {
-      "id": "8-19",
-      "title": "ReportIssueButton client component + clipboard JSON + vitest",
-      "status": "completed",
-      "commit_sha": "bc459bf",
-      "dispatch_log": "docs/dispatch-log/8-19-20260511T221958Z.md"
-    },
-    {
-      "id": "8-20",
-      "title": "Sidebar wire-up for 'Zg\u0142o\u015b problem' button",
-      "status": "completed",
-      "commit_sha": "eb23485",
-      "dispatch_log": "docs/dispatch-log/8-20-20260511T222350Z.md"
-    },
-    {
-      "id": "8-21",
-      "title": "Playwright setup in apps/web (config + smoke spec + .gitignore)",
-      "status": "completed",
-      "commit_sha": "1f62fea",
-      "dispatch_log": "docs/dispatch-log/8-21-20260511T222750Z.md"
-    },
-    {
-      "id": "8-22",
-      "title": "Full demo-flow E2E spec \u2014 new-order \u2192 process \u2192 deliver + trace assertion (TWO-STAGE)",
-      "status": "stage_1_complete",
-      "stage_1_sha": "57009db",
-      "dispatch_log": "docs/dispatch-log/8-22-20260511T223140Z.md",
-      "stage_1_fixup_sha": "cdc83b4",
-      "stage_1_fixup_commits": [
-        "204fb67",
-        "d8d0b33",
-        "1150d31",
-        "cdc83b4"
-      ],
-      "stage_1_fixup_note": "Continuation agent unblocked: OTel URL fix, CSRF disable, Docker playwright service, spec corrections"
-    },
-    {
-      "id": "8-23",
-      "title": "Self-verification fix-loop + milestone-8 tag + DEMO-HANDOVER doc",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
-    },
-    {
-      "id": "m8-fb-1a",
-      "title": "Frontend sort UI for orders list",
-      "status": "completed",
-      "commit_sha": "106e245",
-      "dispatch_log": "docs/dispatch-log/m8-fb-1a-20260512T094056Z.md",
-      "verdict": "APPROVED"
-    },
-    {
-      "id": "m8-fb-1b",
-      "title": "Status-change note: V015 migration + aspect wiring + dialog + timeline display",
-      "status": "completed",
-      "commit_sha": "102f46b",
-      "backend_commit_sha": "9cc0780",
-      "dispatch_log": "docs/dispatch-log/m8-fb-1b-20260512T094056Z.md",
-      "verdict": "APPROVED"
-    },
-    {
-      "id": "m8-fb-2",
-      "title": "Sidebar nav: link /admin/triggers + /admin/templates under new Komunikacja section",
-      "status": "pending",
-      "dispatch_log": "docs/dispatch-log/m8-fb-2-20260512T111132Z.md"
-    },
-    {
-      "id": "9-1",
-      "title": "Tokens + fonts + Tailwind preset + globals.css utility classes (foundation, solo dispatch)",
-      "status": "completed",
-      "commit_sha": "53874a6",
-      "dispatch_log": "docs/dispatch-log/9-1-2026-05-15T191814Z.md"
-    },
-    {
-      "id": "9-2",
-      "title": "<Tape> primitive",
-      "status": "completed",
-      "commit_sha": "3bdc5d1",
-      "dispatch_log": "docs/dispatch-log/9-2-2026-05-15T193231Z.md"
-    },
-    {
-      "id": "9-3",
-      "title": "<Stamp> primitive",
-      "status": "completed",
-      "commit_sha": "3be36c8",
-      "dispatch_log": "docs/dispatch-log/9-3-20260515T193831Z.md"
-    },
-    {
-      "id": "9-4",
-      "title": "<Sticker> primitive",
-      "status": "completed",
-      "commit_sha": "1626320",
-      "dispatch_log": "docs/dispatch-log/9-4-2026-05-15T213547Z.md"
-    },
-    {
-      "id": "9-5",
-      "title": "<Pill> primitive (orderStatusColor mapping)",
-      "status": "completed",
-      "commit_sha": "84d0a59",
-      "dispatch_log": "docs/dispatch-log/9-5-2026-05-15T214231Z.md"
-    },
-    {
-      "id": "9-6",
-      "title": "<Chip> primitive",
-      "status": "completed",
-      "commit_sha": "1626320",
-      "dispatch_log": "docs/dispatch-log/9-6-2026-05-15T194001Z.md"
-    },
-    {
-      "id": "9-7",
-      "title": "<Splatter> SVG primitive",
-      "status": "completed",
-      "commit_sha": "3583aec",
-      "dispatch_log": "docs/dispatch-log/9-7-2026-05-15T213748Z.md"
-    },
-    {
-      "id": "9-8",
-      "title": "<PhImg> diagonal-stripe placeholder",
-      "status": "completed",
-      "commit_sha": "3bdc5d1",
-      "dispatch_log": "docs/dispatch-log/9-8-2026-05-15T214500Z.md"
-    },
-    {
-      "id": "9-9",
-      "title": "<DrShoesMark> brand logo SVG",
-      "status": "completed",
-      "commit_sha": "e8a7220",
-      "dispatch_log": "docs/dispatch-log/9-9-2026-05-15T213900Z.md"
-    },
-    {
-      "id": "9-10",
-      "title": "<AdminCard> wrapper",
-      "status": "completed",
-      "commit_sha": "763d57f",
-      "dispatch_log": null
-    },
-    {
-      "id": "9-11",
-      "title": "<StatTile> with accent left-bar",
-      "status": "completed",
-      "commit_sha": "e8a7220",
-      "dispatch_log": "docs/dispatch-log/9-11-2026-05-15T193955Z.md"
-    },
-    {
-      "id": "9-12",
-      "title": "<Toggle> ink ribbon + acid dot",
-      "status": "completed",
-      "commit_sha": "3bdc5d1",
-      "dispatch_log": "docs/dispatch-log/9-12-2026-05-15T1940Z.md"
-    },
-    {
-      "id": "9-13",
-      "title": "<Button> with pop-shadow variants",
-      "status": "completed",
-      "commit_sha": "84d0a59",
-      "dispatch_log": null,
-      "completed_at": "2026-05-15T194500Z"
-    },
-    {
-      "id": "9-14",
-      "title": "icons.tsx (~25 1-stroke SVG icons)",
-      "status": "completed",
-      "commit_sha": "6535a2f",
-      "dispatch_log": "docs/dispatch-log/9-14-2026-05-15T194101Z.md"
-    },
-    {
-      "id": "9-15",
-      "title": "AdminSidebar + AdminSidebarNav rewrite (ink ribbon shell)",
-      "status": "completed",
-      "commit_sha": "1d81b0e",
-      "dispatch_log": "docs/dispatch-log/9-15-2026-05-15T21-47-00Z.md"
-    },
-    {
-      "id": "9-16",
-      "title": "AdminTopbar + AdminPageHeaderContext",
-      "status": "completed",
-      "commit_sha": "b7ee2b7",
-      "dispatch_log": "docs/dispatch-log/9-16-2026-05-15T1947Z.md"
-    },
-    {
-      "id": "9-17",
-      "title": "AdminLayout integration + per-page usePageHeader callsites",
-      "status": "done",
-      "commit_sha": "2ee3444",
-      "dispatch_log": "docs/dispatch-log/9-17-2026-05-15T2155Z.md"
-    },
-    {
-      "id": "9-18",
-      "title": "<StatTile> integration in KpiTilesRow restyle",
-      "status": "completed",
-      "commit_sha": "ec80caa",
-      "dispatch_log": "docs/dispatch-log/9-18-2026-05-15T2003Z.md"
-    },
-    {
-      "id": "9-19",
-      "title": "<OrdersWeekChart> stacked-bar restyle",
-      "status": "completed",
-      "commit_sha": "cab29f9",
-      "dispatch_log": "docs/dispatch-log/9-19-2026-05-15T20-01-52Z.md"
-    },
-    {
-      "id": "9-20",
-      "title": "<MixDonut> 3-segment restyle",
-      "status": "done",
-      "commit_sha": "abe8c05",
-      "dispatch_log": "docs/dispatch-log/9-20-2026-05-15T20-01-34Z.md"
-    },
-    {
-      "id": "9-21",
-      "title": "<ReadyForPickupPanel> + <RecentMessagesPanel> restyle (combined)",
-      "status": "completed",
-      "commit_sha": "636508a",
-      "dispatch_log": "docs/dispatch-log/9-21-2026-05-15T200256Z.md"
-    },
-    {
-      "id": "9-22",
-      "title": "<FreshReservationsPanel> NEW",
-      "status": "completed",
-      "commit_sha": "c16a5e0",
-      "dispatch_log": "docs/dispatch-log/9-22-2026-05-15T220200Z.md"
-    },
-    {
-      "id": "9-23",
-      "title": "Orders list page reskin (.tbl + Pill + Chip filters)",
-      "status": "done",
-      "commit_sha": "b60b6ee",
-      "dispatch_log": "docs/dispatch-log/9-23-2026-05-15T2012Z.md"
-    },
-    {
-      "id": "9-24",
-      "title": "<OrderDrawerStatusTimeline> NEW (5-step timeline)",
-      "status": "completed",
-      "commit_sha": "2d81ee2",
-      "dispatch_log": "docs/dispatch-log/9-24-2026-05-15T220700Z.md"
-    },
-    {
-      "id": "9-25",
-      "title": "<OrderDrawerNotes> sticky-notes NEW",
-      "status": "completed",
-      "commit_sha": null,
-      "dispatch_log": "docs/dispatch-log/9-25-2026-05-15T200750Z.md"
-    },
-    {
-      "id": "9-26",
-      "title": "OrderDrawer photo grid + items + tags reskin",
-      "status": "completed",
-      "commit_sha": "b60b6ee",
-      "dispatch_log": "docs/dispatch-log/9-26-2026-05-15T2215Z.md"
-    },
-    {
-      "id": "9-27",
-      "title": "OrderDrawer footer actions + header reskin",
-      "status": "done",
-      "commit_sha": "f46cc5d",
-      "dispatch_log": "docs/dispatch-log/9-27-2026-05-15T2210Z.md"
-    },
-    {
-      "id": "9-28",
-      "title": "Calendar reskin + <UnscheduledOrdersPanel> NEW",
-      "status": "done",
-      "commit_sha": "8e12973",
-      "dispatch_log": "docs/dispatch-log/9-28-2026-05-15T2218Z.md",
-      "completed_at": "2026-05-15T22:18Z"
-    },
-    {
-      "id": "9-29",
-      "title": "Kanban reskin + post-drag status-change popup",
-      "status": "completed",
-      "commit_sha": "e6841ec",
-      "dispatch_log": "docs/dispatch-log/9-29-2026-05-15T202121Z.md",
-      "completed_at": "2026-05-15T20:21Z"
-    },
-    {
-      "id": "9-30",
-      "title": "Messages 3-col layout + <ClientMiniProfile> NEW",
-      "status": "done",
-      "commit_sha": "2c256ce",
-      "dispatch_log": "docs/dispatch-log/9-30-2026-05-15T2029Z.md"
-    },
-    {
-      "id": "9-31",
-      "title": "Triggers <TriggerEditPanel> NEW + placeholder chips",
-      "status": "completed",
-      "commit_sha": "baed648",
-      "dispatch_log": "docs/dispatch-log/9-31-2026-05-15T20-24-53Z.md"
-    },
-    {
-      "id": "9-32",
-      "title": "Templates editor parity",
-      "status": "completed",
-      "commit_sha": "dbf668aa4577fd6ee2c09d1cfd8bd9793c701b69",
-      "dispatch_log": "docs/dispatch-log/9-32-2026-05-15T2028Z.md"
-    },
-    {
-      "id": "9-33",
-      "title": "Sklep admin product grid + edit panel reskin",
-      "status": "done",
-      "commit_sha": null,
-      "dispatch_log": "docs/dispatch-log/9-33-2026-05-15.md",
-      "commit": "dbf668a"
-    },
-    {
-      "id": "9-34",
-      "title": "Sklep admin <ReservationsQueue> NEW",
-      "status": "completed",
-      "commit_sha": "ca259fd",
-      "dispatch_log": "docs/dispatch-log/9-34-2026-05-15T2238Z.md",
-      "verdict": "APPROVED"
-    },
-    {
-      "id": "9-35",
-      "title": "<StickyNav> public landing",
-      "status": "completed",
-      "commit_sha": "b2bc80b",
-      "dispatch_log": "docs/dispatch-log/9-35-2026-05-15T2241Z.md",
-      "verdict": "APPROVED"
-    },
-    {
-      "id": "9-36",
-      "title": "<Hero> public landing",
-      "status": "completed",
-      "commit_sha": "b6e732b",
-      "dispatch_log": "docs/dispatch-log/9-36-2026-05-15T120000Z.md"
-    },
-    {
-      "id": "9-37",
-      "title": "<Services> public landing",
-      "status": "completed",
-      "commit_sha": "ae0dfa8",
-      "dispatch_log": "docs/dispatch-log/9-37-2026-05-15T230000Z.md"
-    },
-    {
-      "id": "9-38",
-      "title": "<NewsTeaser> public landing",
-      "status": "completed",
-      "commit_sha": null,
-      "dispatch_log": "docs/dispatch-log/9-38-2026-05-15T204340Z.md"
-    },
-    {
-      "id": "9-39",
-      "title": "<SklepTeaser> public landing",
-      "status": "done",
-      "commit_sha": "8adea79",
-      "dispatch_log": "docs/dispatch-log/9-39-2026-05-15T224400Z.md"
-    },
-    {
-      "id": "9-40",
-      "title": "<Contact> + <Footer> public landing",
-      "status": "completed",
-      "commit_sha": "3c8a479",
-      "dispatch_log": null
-    },
-    {
-      "id": "9-41",
-      "title": "M9 parity audit + inline fixes (Playwright sweep)",
-      "status": "completed",
-      "commit_sha": "pending",
-      "dispatch_log": null,
-      "completed_at": "2026-05-15T20:56:46Z"
-    },
-    {
-      "id": "9-42",
-      "title": "Clients reskin post-audit",
-      "status": "done",
-      "commit_sha": "f7ee0db1743bfab6a09441da2f233663c6a087d5",
-      "dispatch_log": "docs/dispatch-log/9-42-2026-05-15T230000Z.md"
-    },
-    {
-      "id": "9-43",
-      "title": "milestone-9 README update + git tag local",
-      "status": "completed",
-      "commit_sha": "8aafc7337b3ad2ba04b287abbfab949cf6f7e44c",
-      "dispatch_log": "docs/dispatch-log/9-43-2026-05-16T081500Z.md",
-      "completed_at": "2026-05-16T08:15:00Z"
-    },
-    {
-      "id": "10-1",
-      "milestone": 10,
-      "status": "completed",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
-      "commit_sha": "bea4ec5"
-    },
-    {
-      "id": "10-2",
-      "milestone": 10,
-      "status": "completed",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
-      "commit_sha": "c2a3d18"
-    },
-    {
-      "id": "10-3",
-      "milestone": 10,
-      "status": "completed",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
-      "commit_sha": "766e1be",
-      "dispatch_log": "docs/dispatch-log/10-3-2026-05-16T09:45Z.md"
-    },
-    {
-      "id": "10-4",
-      "milestone": 10,
-      "status": "completed",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
-      "completedAt": "2026-05-16T09:45:00Z",
-      "commitSha": "d680a66",
-      "dispatchLog": "docs/dispatch-log/10-4-20260516T094500Z.md"
-    },
-    {
-      "id": "10-5",
-      "milestone": 10,
-      "status": "completed",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
-      "dispatchLog": "docs/dispatch-log/10-5-2026-05-16T09-55-55Z.md"
-    },
-    {
-      "id": "10-6",
-      "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
-    },
-    {
-      "id": "10-7",
-      "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
-    },
-    {
-      "id": "10-8",
-      "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
-    },
-    {
-      "id": "10-9",
-      "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
-    },
-    {
-      "id": "10-10",
-      "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
-    },
-    {
-      "id": "10-11",
-      "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
-    },
-    {
-      "id": "10-12",
-      "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
-    }
-  ],
-  "notes": [
-    "Tasks 0b-1 and 0b-2 shipped before the dispatch-log directive, so dispatch_log is null. Future tasks must include a dispatch_log path.",
-    "Per locked dispatch protocol: plans on disk only; thin prompts; combined reviews for mechanical tasks; structured logging baked in from 0b-3 onward.",
-    "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml \u2014 contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
-    "PII flag (from 0b-5 inline review): LoginThrottle logs raw client IP at INFO on throttle events. Polish RODO/GDPR treats IP as personal data. Acceptable for now (security event); revisit during AuditLogAspect (0b-8) to apply a unified PII-redaction or hashing policy across security-event logs.",
-    "M6 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md (10,462 lines, 23 tasks). Two TWO-STAGE reviews planned (6-9 bulk-status, 6-19 kanban drag flow + dialog extraction); rest combined single-stage. Inline backend slice 6-21a will fire (W5 author confirmed OrderController.list() lacks tag/date-range/multi-status params) \u2014 not a separate task ID. W4 may also fire an inline KanbanCardDto version-field slice (decision pinned at 6-20 dispatch). Resume next session by dispatching 6-1 cold per dispatch protocol.",
-    "M7 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-07-clients.md (4,783 lines, 17 tasks). Spec: docs/superpowers/specs/2026-05-10-milestone-07-clients-design.md (commits f3f33e6 + 1a51d0a). Authored via 4 parallel slice subagents (A backend, B lib+list, C detail+tabs, D modal+stubs+scaffold). Two TWO-STAGE reviews planned (7-4 ClientSummaryService SQL correctness, 7-15 EditClientModal form + a11y); rest combined single-stage. Awaiting Claude.ai design export per spec \u00a713\u2013\u00a714 \u2014 DOM details for tasks 7-7, 7-8, 7-10, 7-11, 7-12, 7-15 may need minor refinement once export lands; no impact on task IDs or contracts. M5/M6 hygiene carry-forward (AuditLogAspect flake, send/sendRetry dedup) deferred to a future hygiene milestone. Resume next session by dispatching 7-1 cold per dispatch protocol.",
-    "M8 planning complete 2026-05-11. Plan: docs/superpowers/plans/2026-05-11-milestone-08-demo-ready.md (4,350 lines, 23 tasks). Spec: docs/superpowers/specs/2026-05-11-milestone-08-demo-ready-design.md (8af58ee). Authored via 3 parallel slice subagents (A backend foundations + instrumentation, B seeds + compose + frontend OTel, C smart-fix + verification). Six TWO-STAGE reviews planned (8-3 V014, 8-6 dispatch span, 8-7 audit aspect + LOC extraction, 8-9 seed data, 8-15 browser OTel + /api/otlp proxy, 8-22 Playwright E2E); rest combined single-stage per anti-bloat directive. Owner directive 2026-05-11 reframes M8 as 'demo-ready foundation': one-command local boot + extensive OTel observability + mockable providers (email/SMS already there, WhatsApp new) + smart-fix primitives + Playwright E2E gate before owner dogfooding. Resume next session by dispatching 8-1 cold per dispatch protocol. Wave 1 (8-1..8-5) and Wave 2 (8-6..8-7) can mostly parallelize after 8-1 lands (8-4/8-5 OTel deps are independent of WhatsApp work)."
-  ]
+    "schema_version": 1,
+    "active_milestone": "9",
+    "active_plan": "docs/superpowers/plans/2026-05-15-milestone-09-design-parity.md",
+    "tasks": [
+        {
+            "id": "0b-1",
+            "title": "User entity + UserRepository + repo integration test",
+            "status": "completed",
+            "commit_sha": "ddea414",
+            "dispatch_log": null
+        },
+        {
+            "id": "0b-2",
+            "title": "Spring Session JDBC config",
+            "status": "completed",
+            "commit_sha": "9d16661",
+            "dispatch_log": null
+        },
+        {
+            "id": "0b-3",
+            "title": "BCrypt password encoder",
+            "status": "completed",
+            "commit_sha": "2e73e4f",
+            "dispatch_log": "docs/dispatch-log/0b-3-2026-05-08T010000Z.md"
+        },
+        {
+            "id": "0b-4",
+            "title": "SecurityConfig + CSRF + public allow-list",
+            "status": "completed",
+            "commit_sha": "2fbd384",
+            "fixup_sha": "61e395f",
+            "dispatch_log": "docs/dispatch-log/0b-4-2026-05-08T010300Z.md",
+            "fixup_log": "docs/dispatch-log/0b-4-fixup-2026-05-07T231117Z.md",
+            "review_blockers_resolved": [
+                "phantom /api/admin/auth/csrf matcher removed",
+                "CSRF enforcement tests added (3) — admin POST without token → 403, cookie repo bean wired, webhook bypass verified"
+            ]
+        },
+        {
+            "id": "0b-5",
+            "title": "Login throttle (Bucket4j)",
+            "status": "completed",
+            "commit_sha": "47af9b3",
+            "dispatch_log": "docs/dispatch-log/0b-5-2026-05-08T011500Z.md"
+        },
+        {
+            "id": "0b-6",
+            "title": "AuthService + AuthController + DTOs",
+            "status": "completed",
+            "commit_sha": "e696c9e",
+            "dispatch_log": "docs/dispatch-log/0b-6-2026-05-08T110000Z.md"
+        },
+        {
+            "id": "0b-7",
+            "title": "RbacService + @EnableMethodSecurity",
+            "status": "completed",
+            "commit_sha": "21bcbdf",
+            "fixup_sha": "25cc2f1",
+            "dispatch_log": "docs/dispatch-log/0b-7-2026-05-08T132000Z.md",
+            "fixup_log": "docs/dispatch-log/0b-7-fixup-2026-05-08T132700Z.md",
+            "review_blockers_resolved": [
+                "AnonymousAuthenticationToken bypass — explicit instanceof check added; new unit test asserts the trap is now caught"
+            ]
+        },
+        {
+            "id": "0b-8",
+            "title": "AuditLogAspect AOP",
+            "status": "completed",
+            "commit_sha": "213a81f",
+            "fixup_sha": "2403bb2",
+            "dispatch_log": "docs/dispatch-log/0b-8-2026-05-08T133000Z.md",
+            "fixup_log": "docs/dispatch-log/0b-8-fixup-2026-05-08T134200Z.md",
+            "review_blockers_resolved": [
+                "Pointcut excluded @ExceptionHandler methods — failed login now writes exactly one audit row (was two: status=500 + status=401). Regression test added; unused imports removed."
+            ]
+        },
+        {
+            "id": "0b-9",
+            "title": "V002 seed users",
+            "status": "completed",
+            "commit_sha": "1fbcc28",
+            "dispatch_log": "docs/dispatch-log/0b-9-2026-05-08T114826Z.md"
+        },
+        {
+            "id": "0b-10",
+            "title": "Frontend API client + auth helpers (incl. lib/log.ts)",
+            "status": "completed",
+            "commit_sha": "062e29d",
+            "dispatch_log": "docs/dispatch-log/0b-10-2026-05-08T150000Z.md"
+        },
+        {
+            "id": "0b-11",
+            "title": "Login page + LoginForm component",
+            "status": "completed",
+            "commit_sha": "573776b",
+            "dispatch_log": "docs/dispatch-log/0b-11-2026-05-08T170000Z.md"
+        },
+        {
+            "id": "0b-12",
+            "title": "Admin layout auth guard + sidebar shell",
+            "status": "completed",
+            "commit_sha": "a64a5ca",
+            "dispatch_log": "docs/dispatch-log/0b-12-20260508T190000Z.md"
+        },
+        {
+            "id": "0b-13",
+            "title": "E2E auth verification + tag milestone-0b",
+            "status": "completed",
+            "commit_sha": "79d363d",
+            "dispatch_log": "docs/dispatch-log/0b-13-20260508T121154Z.md"
+        },
+        {
+            "id": "1-0",
+            "title": "Activate milestone 1 in tasks.json (this commit)",
+            "status": "completed",
+            "dispatch_log": null,
+            "commit_sha": "PENDING"
+        },
+        {
+            "id": "1-1",
+            "title": "V003 clients migration + Client entity + repo + integration test",
+            "status": "completed",
+            "commit_sha": "9dabeef",
+            "dispatch_log": "docs/dispatch-log/1-1-20260508T154000Z.md",
+            "concerns_resolved_in_plan": [
+                "V001 already creates `client` table — V003 recast as comment-only marker.",
+                "Plan's Client entity spec was missing real V001 columns (preferred_channel, rodo_consent_at, citext email, nullable last_name, client_contact_present check). Entity mapped to actual schema.",
+                "Plan referenced non-existent PostgresIntegrationTestBase — actual base is AbstractIntegrationTest. Plan errata block added at top of plan file documenting V001 reality + correct base class for downstream tasks."
+            ]
+        },
+        {
+            "id": "1-2",
+            "title": "ClientService (CRUD + search) + unit test",
+            "status": "completed",
+            "commit_sha": "524b32f",
+            "dispatch_log": "docs/dispatch-log/1-2-20260508T134511Z.md",
+            "deviations_from_plan": [
+                "Added 5th unit test for client_contact_present invariant (plan had 4).",
+                "Added ClientContactMissingException + applied invariant in both create() and update().",
+                "Aligned validation with V001 schema (phone max 40 not 32; lastName not @NotBlank since column is nullable).",
+                "ClientSearchResult.fullName made null-safe for nullable lastName."
+            ]
+        },
+        {
+            "id": "1-3",
+            "title": "ClientController + RBAC + integration test",
+            "status": "completed",
+            "commit_sha": "cf34b8f",
+            "fixup_sha": "e32a7b0",
+            "dispatch_log": "docs/dispatch-log/1-3-20260508T135000Z.md",
+            "fixup_log": "docs/dispatch-log/1-3-fixup-20260508T135533Z.md",
+            "deviations_from_plan": [
+                "Added spring-security-test (test scope) — wasn't on classpath before.",
+                "Used SecurityMockMvcRequestPostProcessors.user().roles() instead of plan's manually-stuffed MockHttpSession (SS6-idiomatic).",
+                "Initial commit placed ClientController at com.drshoes.app.client — outside the AuditLogAspect pointcut (.api.). Fixup relocated to com.drshoes.app.client.api and added postCreateWritesAuditRow regression test. Plan errata updated to encode the .api. controller-package convention for downstream tasks 1-7/1-10/1-11."
+            ]
+        },
+        {
+            "id": "1-4",
+            "title": "V004 orders migration + Order/OrderItem entities + repos",
+            "status": "completed",
+            "commit_sha": "eea55c3",
+            "dispatch_log": "docs/dispatch-log/1-4-20260508T140000Z.md",
+            "deviations_from_plan": [
+                "V004 became ALTER TABLE order_ ADD COLUMN version (not no-op marker — V001 lacks the column required by @Version optimistic-locking architecture).",
+                "Added OrderSource enum (V001 declares source NOT NULL DEFAULT 'ADMIN'; Java needs a default to avoid NULL inserts).",
+                "Optimistic-locking conflict test deferred to task 1-6 (OrderService) — repo-layer reproduction needs a detached EntityManager."
+            ]
+        },
+        {
+            "id": "1-5",
+            "title": "OrderCodeSequence service + integration test",
+            "status": "completed",
+            "commit_sha": "e5beeb0",
+            "log_commit_sha": "d0c0952",
+            "dispatch_log": "docs/dispatch-log/1-5-20260508T160000Z.md",
+            "deviations_from_plan": [
+                "Used JdbcTemplate (per errata) instead of plan-body's EntityManager approach.",
+                "Test is integration (not unit as plan title says) — tests the real PL/pgSQL function, not a mock.",
+                "Year isolation via deleting 1999/1998 rows in @BeforeEach (avoids counter pollution from sibling tests sharing the reused container).",
+                "Concurrency proven: 8 parallel CompletableFuture.runAsync calls produce 8 distinct codes."
+            ],
+            "protocol_drift": "Subagent split work into two commits (service + dispatch log) — instruction was atomic. Not worth fixup; tighten prompt next time."
+        },
+        {
+            "id": "1-6",
+            "title": "OrderService CRUD + status change + soft-delete + items",
+            "status": "completed",
+            "commit_sha": "e35afa3",
+            "fixup_sha": "6ce609e",
+            "dispatch_log": "docs/dispatch-log/1-6-20260508T141200Z.md",
+            "review_log": "docs/dispatch-log/1-6-review-20260508T153000Z.md",
+            "fixup_log": "docs/dispatch-log/1-6-fixup-20260508T162100Z.md",
+            "review_blockers_resolved": [
+                "3 plan-mandated tests missing (list status filter, list q= search, update on soft-deleted) — added in fixup. Production code was already correct.",
+                "Optimistic-lock test proves app-layer guard, not JPA OLE backstop — accepted (the manual version compare is the intended design).",
+                "Initial status ambiguity (PRZYJETE vs WSTEPNIE_PRZYJETE) — resolved: PRZYJETE for ADMIN-source orders (Misza creating manually = already received and confirmed). WSTEPNIE_PRZYJETE reserved for future PUBLIC_INTAKE source. Plan body wins."
+            ],
+            "deviations_from_plan": [
+                "OrderService at 165 LOC / 133 effective — 13 lines over the 120 ceiling. Split into OrderService + OrderItemService + OrderSpecifications. Reviewer accepted the 'no cohesion benefit from further splitting' argument."
+            ]
+        },
+        {
+            "id": "1-7",
+            "title": "OrderController + ExceptionHandler + integration test",
+            "status": "completed",
+            "commit_sha": "f27c0ff",
+            "dispatch_log": "docs/dispatch-log/1-7-20260508T143300Z.md",
+            "deviations_from_plan": [
+                "GET /orders takes single ?status= (not comma-separated List<OrderStatus>) because OrderService.list shipped in 1-6 takes single status. Plan body's multi-status filter is debt against later need; design spec doesn't strictly require it.",
+                "OrderController 142 LOC — over 120 ceiling. Accepted under the CRUD-controller exception (mirrors the JPA-entity exception). No clean split: all 9 endpoints share rbac/svc dependency, splitting would just move LOC sideways.",
+                "Test @AfterEach cleanupOrders() added — FK order_.client_id forces orders to be deleted before clients in shared Testcontainers reuse mode."
+            ],
+            "audit_coverage": "postCreateWritesAuditRow regression test asserts audit_log delta == 1 after POST. Controller located at com.drshoes.app.order.api.OrderController per .api. convention — pointcut matches."
+        },
+        {
+            "id": "1-8",
+            "title": "V005 audit_parent_entity + AuditLogAspect parent-id population",
+            "status": "completed",
+            "commit_sha": "39a5d17",
+            "fixup_sha": "0c707ad",
+            "log_backfill_sha": "0b1c097",
+            "dispatch_log": "docs/dispatch-log/1-8-20260508T165032Z.md",
+            "review_log": "docs/dispatch-log/1-8-review-20260508T165321Z.md",
+            "fixup_log": "docs/dispatch-log/1-8-fixup-20260508T165900Z.md",
+            "review_blockers_resolved": [
+                "Test 'methodWithoutAuditedAnnotationLeavesParentEntityIdNull' was vacuously true (called clientService.create() directly with no HTTP context — controller pointcut bailed, zero rows written, assertion ran over empty list). Fixed: switched to AdminWebTestBase + MockMvc POST so a real audit row gets written and asserted.",
+                "Test 'spelFailureDoesNotBreakAuditRow' didn't exercise the full proxy pipeline — only tested the resolver in isolation. Fixed: @TestConfiguration adds BrokenSpelAuditedService bean with @Audited(parent='#nonExistentVariable.toString()') (chain forces SpelEvaluationException — undefined variable alone returns null in SimpleEvaluationContext); test calls through Spring proxy, asserts method returns normally, audit row written with parent_entity_id null, WARN log captured via Logback ListAppender."
+            ],
+            "key_decisions": [
+                "Two-row audit architecture: HTTP controller advice writes one row (path=/api/admin/.../, parent_entity_id=null); @Audited service advice writes a SECOND row (path=synthetic 'OrderService#addItem', method=INTERNAL, status=0, parent_entity_id=orderId). Reviewer confirmed sound — alternative thread-local enrichment was rejected as fragile.",
+                "Sandboxing: SimpleEvaluationContext.forReadOnlyDataBinding() — blocks T(...) reflection + bean refs.",
+                "Exception safety: try/catch around SpEL eval in AuditedParentResolver; WARN log; returns null; audit row still writes.",
+                "-parameters compile flag is enabled in root pom.xml (pluginManagement/maven-compiler-plugin) — required for #orderId-style param-name SpEL bindings."
+            ]
+        },
+        {
+            "id": "1-9",
+            "title": "TimelineEventCurator (pure function) + unit tests",
+            "status": "completed",
+            "commit_sha": "055fbc9",
+            "log_backfill_sha": "455de66",
+            "dispatch_log": "docs/dispatch-log/1-9-20260508T170346Z.md",
+            "deviations_from_plan": [
+                "Plan body assumed AuditLog had entityType/operation/fieldsChanged/before-after JSON — none of those exist on the actual entity. Curator built as a path-pattern dispatcher keyed on (method, path, parentEntityId, status). Documented as M2 debt: body-capture would unlock ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED + field-level deltas.",
+                "9 enum kinds shipped; only 7 emitted: ORDER_CREATED, ORDER_UPDATED (new), STATUS_CHANGED, ORDER_SOFT_DELETED, ITEM_ADDED, ITEM_EDITED, ITEM_REMOVED. ASSIGNEE_CHANGED + PICKUP_DATE_CHANGED reserved for M2 (in enum, never dispatched). ORDER_UPDATED is the generic PATCH event since the curator can't see field-level info.",
+                "HTTP item-op rows (POST /orders/{id}/items etc) are intentionally SKIPPED — the INTERNAL @Audited service row covers them. Prevents double-count. Test covers this.",
+                "AuditLog needed 4 missing getters (getMethod, getPath, getStatus, getActorId) — added inline. Mechanical accessor additions, not behavioral changes.",
+                "TimelineEventCurator 140 LOC = 90 logic + 50 Javadoc. Over 120 ceiling but documentation is load-bearing (URL-prefix brittleness debt is documented in class Javadoc)."
+            ]
+        },
+        {
+            "id": "1-10",
+            "title": "AuditTimelineService + Controller + integration test",
+            "status": "completed",
+            "commit_sha": "b29ea5f",
+            "log_backfill_sha": "a2dc77b",
+            "dispatch_log": "docs/dispatch-log/1-10-20260508T191200Z.md",
+            "deviations_from_plan": [
+                "Plan body referenced AuditLog.entity_type / entity_id columns (don't exist). Repo query rewritten to scan `path LIKE :pathPrefix OR parent_entity_id = :orderId ORDER BY createdAt`. Two-parameter method signature: caller (service) constructs pathPrefix.",
+                "ORDER_CREATED event SYNTHESIZED from Order.createdAt — the POST /api/admin/orders audit row has no orderId in its path, so the LIKE scan can't find it. Actor resolved from the earliest scanned row. If order not found (unknown orderId), empty list returned. M2 debt: TimelineEvent.id is null for the synthetic event; frontend must handle.",
+                "AuditTimelineController placed at com.drshoes.app.audit.api.AuditTimelineController per .api. convention.",
+                "RBAC: no @PreAuthorize — SecurityConfig filter chain already enforces isAuthenticated() on /api/admin/**. Test 3 proves anonymous → 401."
+            ]
+        },
+        {
+            "id": "1-11",
+            "title": "UsersController for assignee dropdown",
+            "status": "completed",
+            "commit_sha": "fc89ff4",
+            "dispatch_log": "docs/dispatch-log/1-11-20260508T171634Z.md",
+            "atomic_commit": true,
+            "deviations_from_plan": [
+                "UserStubDto placed at com.drshoes.app.auth.api.dto.UserStubDto (matches existing 0B layout) rather than com.drshoes.app.auth.dto.* as plan body suggests.",
+                "User entity uses `active` boolean (not `deletedAt`) — repo method named findAllByActiveTrueOrderByFullName.",
+                "User.getFullName() already returns a single-column persisted value — no null-safe concat needed.",
+                "Audit-coverage regression test intentionally omitted — endpoint is read-only GET, aspect only fires on writes."
+            ]
+        },
+        {
+            "id": "1-12",
+            "title": "lib/clients + lib/orders + lib/timeline modules",
+            "status": "completed",
+            "commit_sha": "9a4abab",
+            "log_backfill_sha": "feb2e37",
+            "dispatch_log": "docs/dispatch-log/1-12-20260508T172441Z.md",
+            "deviations_from_plan": [
+                "lib/orders/types.ts is 154 LOC — over the 120 ceiling for TS modules. Pure type declarations, accepted.",
+                "Frontend ClientDto types include preferredChannel? + rodoConsentAt? as optional. The backend ClientDto.java OMITS these fields even though they exist on the Client entity — backend debt to file separately. Frontend papered over with optional typing so wire absence doesn't break consumers.",
+                "Tailwind tokens (acid/magenta/blue/orange/green/admin-line/admin-mute) confirmed live in packages/ui/src/tokens.ts via preset; no stock fallbacks needed.",
+                "Endpoint paths all matched plan body; orders list uses ?type= (repeatable) for item kinds."
+            ],
+            "follow_up_debts": [
+                "Backend ClientDto.java should expose preferredChannel + rodoConsentAt — file as separate task before M1 closes if admin UI needs to edit these fields, otherwise defer to M2 messaging milestone."
+            ]
+        },
+        {
+            "id": "1-13",
+            "title": "ClientPicker + ClientCreateModal components",
+            "status": "completed",
+            "commit_sha": "dae1119",
+            "dispatch_log": "docs/dispatch-log/1-13-20260508T172835Z.md",
+            "atomic_commit": true,
+            "deps_added": [
+                "@radix-ui/react-dialog@1.1.15"
+            ],
+            "deviations_from_plan": [
+                "ClientPicker split per plan into ClientPicker.tsx (101 LOC) + ClientPickerResults.tsx (51 LOC). Picker over 80 LOC soft cap but under 120; modal also 96 LOC.",
+                "Keyboard nav (arrow up/down + Enter) deferred — mouse-only for M1. Documented.",
+                "onMouseDown+preventDefault used on result rows to prevent onBlur from closing dropdown before click — standard combobox technique not in plan."
+            ]
+        },
+        {
+            "id": "1-14",
+            "title": "Orders list page + filters + table",
+            "status": "completed",
+            "commit_sha": "7c867de",
+            "dispatch_log": "docs/dispatch-log/1-14-20260508T173354Z.md",
+            "atomic_commit": true,
+            "deviations_from_plan": [
+                "Plan body said multi-checkbox status filter (6 statuses) — WRONG. Backend OrderController takes single ?status=. Implemented as single <select> with 'Wszystkie' empty option. M1 debt.",
+                "Cookie-forwarding pattern from lib/auth/session.ts mirrored in new lib/orders/api-server.ts (server-only module).",
+                "OrderListRow DTO is missing 'items' array — 'Pozycje' column falls back to description. Backend debt.",
+                "OrderListRow DTO is missing 'assignedCraftsmanId' — 'Wykonawca' column renders '—'. Backend debt.",
+                "/admin/orders/new Link uses `as any` cast — typed routes won't know the path until 1-15 ships. Resolves automatically next task."
+            ],
+            "follow_up_debts": [
+                "Backend OrderListRow.java should include `items` (or at least an items-count + kinds summary) and `assignedCraftsmanId` fields. File as separate task before M1 closure if assignee + items columns matter for UAT, otherwise defer."
+            ]
+        },
+        {
+            "id": "1-15",
+            "title": "Create-new-order page",
+            "status": "completed",
+            "commit_sha": "7046c82",
+            "dispatch_log": "docs/dispatch-log/1-15-20260508T175000Z.md",
+            "atomic_commit": true,
+            "deviations_from_plan": [
+                "Items inline-create included — CreateOrderRequest.java accepts List<CreateOrderItemRequest> items.",
+                "Form split into NewOrderForm.tsx (116 LOC) + NewOrderItemRow.tsx (62 LOC) to stay under granular-code ceiling.",
+                "Both `as any` casts on /admin/orders/new Link in 1-14's OrdersTable removed — typed routes now resolve naturally.",
+                "receivedAt field on CreateOrderRequest exists but not wired in the form — backend defaults to now(). M1 acceptable; could add to drawer later."
+            ]
+        },
+        {
+            "id": "1-16",
+            "title": "OrderDrawer scaffold + core fields + URL state",
+            "status": "completed",
+            "commit_sha": "3577831",
+            "dispatch_log": "docs/dispatch-log/1-16-20260508T174820Z.md"
+        },
+        {
+            "id": "1-17",
+            "title": "OrderDrawerStatusChanger + trigger placeholder",
+            "status": "completed",
+            "commit_sha": "8f9df16",
+            "dispatch_log": "docs/dispatch-log/1-17-20260508T175223Z.md"
+        },
+        {
+            "id": "1-18",
+            "title": "OrderDrawerItems CRUD",
+            "status": "completed",
+            "commit_sha": "da5248f",
+            "dispatch_log": "docs/dispatch-log/1-18-20260508T175556Z.md"
+        },
+        {
+            "id": "1-19",
+            "title": "OrderDrawerTimeline (right rail)",
+            "status": "completed",
+            "commit_sha": "f84b205",
+            "dispatch_log": "docs/dispatch-log/1-19-20260508T180051Z.md"
+        },
+        {
+            "id": "1-20",
+            "title": "E2E compose smoke + milestone-1 tag + CLAUDE.md flip",
+            "status": "completed",
+            "commit_sha": "e86b149",
+            "dispatch_log": "docs/dispatch-log/1-20-20260508T180442Z.md"
+        },
+        {
+            "id": "2-1",
+            "title": "Activate M2 in tasks.json",
+            "status": "completed",
+            "commit_sha": "aaa452a",
+            "dispatch_log": null
+        },
+        {
+            "id": "2-2",
+            "title": "V006 migration: seed templates/triggers + trigger_fire table",
+            "status": "completed",
+            "commit_sha": "1829d13",
+            "dispatch_log": "docs/dispatch-log/2-2-20260508T190555Z.md"
+        },
+        {
+            "id": "2-3",
+            "title": "Domain entities + enums + repos + integration test",
+            "status": "completed",
+            "commit_sha": "56dc49e",
+            "dispatch_log": "docs/dispatch-log/2-3-20260508T190909Z.md"
+        },
+        {
+            "id": "2-4",
+            "title": "IdempotencyService.claimTriggerFire",
+            "status": "completed",
+            "commit_sha": "0724f17",
+            "dispatch_log": "docs/dispatch-log/2-4-20260508T191420Z.md"
+        },
+        {
+            "id": "2-5",
+            "title": "PlaceholderResolver + TemplateRenderer",
+            "status": "completed",
+            "commit_sha": "725f80e",
+            "dispatch_log": "docs/dispatch-log/2-5-20260508T191928Z.md"
+        },
+        {
+            "id": "2-6",
+            "title": "MessageThreadService",
+            "status": "done",
+            "dispatch_log": null,
+            "commit_sha": "fdbfaa2",
+            "log": "docs/dispatch-log/2-6-20260508T192146Z.md"
+        },
+        {
+            "id": "2-7",
+            "title": "MessageRouter (TWO-STAGE REVIEW)",
+            "status": "completed",
+            "commit_sha": "ee52e0c",
+            "fixup_sha": "5e2124c",
+            "dispatch_log": "docs/dispatch-log/2-7-20260508T192440Z.md",
+            "fixup_log": "docs/dispatch-log/2-7-fixup-20260508T193125Z.md",
+            "review_blockers_resolved": [
+                "A: MessageEntity constructor reverted to protected + newMessage() factory added",
+                "B: TriggerEntity.eventParams and .channels annotated with @JdbcTypeCode(SqlTypes.JSON)",
+                "D: null-recipient pre-check WARN added before OutboundMessage construction",
+                "E: @Audited dual-path documented in javadoc; 2-10 must match both sendManual and sendForTrigger"
+            ]
+        },
+        {
+            "id": "2-8",
+            "title": "TriggerEngine + STATUS_CHANGE post-commit hook",
+            "status": "completed",
+            "commit_sha": "7af95d7",
+            "dispatch_log": "docs/dispatch-log/2-8-20260508T193742Z.md"
+        },
+        {
+            "id": "2-9",
+            "title": "ScheduledTriggerJob (cron)",
+            "status": "completed",
+            "commit_sha": "fed9f0f",
+            "fixup_sha": "ec86b96",
+            "dispatch_log": "docs/dispatch-log/2-9-20260508T194354Z.md",
+            "fixup_log": "docs/dispatch-log/2-9-fixup-20260508T195008Z.md",
+            "review_blockers_resolved": [
+                "V007 added redundant order_.delivered_at — dropped via V008; OrderRepository.findAllByDeliveredDate renamed to findAllByPickedUpDate querying the correct pre-existing picked_up_at column (V001 line 157, written by OrderService on WYDANE). Order.deliveredAt JPA field + accessors removed. Test helper updated to seed picked_up_at so AFTER_HANDOVER triggers now actually fire in production."
+            ]
+        },
+        {
+            "id": "2-10",
+            "title": "MessageSentTimelineHandler",
+            "status": "completed",
+            "commit_sha": "e3b343e",
+            "dispatch_log": "docs/dispatch-log/2-10-20260508T195342Z.md"
+        },
+        {
+            "id": "2-11",
+            "title": "TemplatesController",
+            "status": "completed",
+            "commit_sha": "fb9aab2",
+            "dispatch_log": "docs/dispatch-log/2-11-20260508T200252Z.md"
+        },
+        {
+            "id": "2-12",
+            "title": "TriggersController",
+            "status": "done",
+            "dispatch_log": null,
+            "commit_sha": "1d67fe3"
+        },
+        {
+            "id": "2-13",
+            "title": "MessagesController",
+            "status": "completed",
+            "commit_sha": "e722c51",
+            "dispatch_log": "docs/dispatch-log/2-13-20260508T201341Z.md"
+        },
+        {
+            "id": "2-14",
+            "title": "lib/messaging API client + types",
+            "status": "completed",
+            "commit_sha": "46dead5",
+            "dispatch_log": "docs/dispatch-log/2-14-20260508T203821Z.md"
+        },
+        {
+            "id": "2-15",
+            "title": "/admin/templates pages + TemplateForm",
+            "status": "completed",
+            "commit_sha": "8afcdd0",
+            "dispatch_log": "docs/dispatch-log/2-15-20260508T210050Z.md"
+        },
+        {
+            "id": "2-16",
+            "title": "/admin/triggers pages",
+            "status": "completed",
+            "commit_sha": "e14013d",
+            "dispatch_log": "docs/dispatch-log/2-16-20260508T211518Z.md"
+        },
+        {
+            "id": "2-17",
+            "title": "OrderDrawerMessages thread view + MESSAGE_SENT timeline label",
+            "status": "completed",
+            "commit_sha": "69b7d24",
+            "dispatch_log": "docs/dispatch-log/2-17-20260508T211737Z.md"
+        },
+        {
+            "id": "2-18",
+            "title": "MessageComposerModal",
+            "status": "completed",
+            "commit_sha": "9be76ed",
+            "dispatch_log": "docs/dispatch-log/2-18-20260508T212006Z.md"
+        },
+        {
+            "id": "2-19",
+            "title": "OrderDrawerStatusChanger real trigger preview",
+            "status": "completed",
+            "commit_sha": "d57789a",
+            "dispatch_log": "docs/dispatch-log/2-19-20260508T212212Z.md"
+        },
+        {
+            "id": "2-20",
+            "title": "/api/health endpoint + timeline label ratification errata",
+            "status": "completed",
+            "commit_sha": "02d0978",
+            "dispatch_log": "docs/dispatch-log/2-20-20260508T212428Z.md"
+        },
+        {
+            "id": "2-21",
+            "title": "E2E compose smoke + milestone-2 tag + CLAUDE.md flip",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/2-21-20260508T212824Z.md",
+            "commit_sha": "2ad7b9a"
+        },
+        {
+            "id": "3-1",
+            "title": "V009 photo migration",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-1-20260508T224557Z.md",
+            "commit_sha": "9f6180a"
+        },
+        {
+            "id": "3-2",
+            "title": "Extend BlobStorage with get(BlobKey)",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-2-20260508T225401Z.md",
+            "commit_sha": "ed2f164"
+        },
+        {
+            "id": "3-3",
+            "title": "AdminPrincipal record + AuthService wrap (TWO-STAGE)",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-3-20260508T225731Z.md",
+            "commit_sha": "24e533e",
+            "fixup_sha": "fdaec86",
+            "fixup_log": "docs/dispatch-log/3-3-fixup-20260508T231628Z.md",
+            "review_blockers_resolved": [
+                "AdminPrincipalLoginTest missed the audit_log FK teardown that the other three modified tests received — added auditLogs.deleteAll() before users.deleteAll() in seed() and cleanup(), suite stays 153/0/0/1."
+            ],
+            "review_followups_deferred": [
+                "AuthController.me() still does a DB lookup for fullName + lastLoginAt because those fields are not on AdminPrincipal. Optional follow-up: fold them onto the principal to eliminate the lookup. Behavior is correct as-is."
+            ]
+        },
+        {
+            "id": "3-4",
+            "title": "Retrofit MessagesController to use AdminPrincipal.userId()",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-4-20260508T231825Z.md",
+            "commit_sha": "f8e9138"
+        },
+        {
+            "id": "3-5",
+            "title": "Photo JPA entity + PhotoRepository",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-5-20260508T232408Z.md",
+            "commit_sha": "72ca604"
+        },
+        {
+            "id": "3-6",
+            "title": "PhotoService + @Audited + TimelineEventCurator extension (TWO-STAGE)",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-6-20260508T233215Z.md",
+            "commit_sha": "ca521b6",
+            "fixup_sha": "b1a956f",
+            "fixup_log": "docs/dispatch-log/3-6-fixup-20260508T234841Z.md",
+            "review_blockers_resolved": [
+                "Cross-order photo ID enumeration — added orderId param + verifyOwnership() guard to relabel/delete/stream; cross-order calls throw PhotoNotFoundException (info-leak resistant). 3 new ownership-guard tests in PhotoServiceTest.",
+                "stream() pinned a JDBC connection for the full download — dropped @Transactional(readOnly=true); findById opens its own short tx, blob InputStream is held by caller without spanning the JPA session."
+            ],
+            "review_followups_deferred": [
+                "MIME magic-byte verification — service trusts multipart Content-Type header (admin-only surface; low risk). Track for task 3-7 if Apache Tika or similar is added.",
+                "PhotoService is 232 LOC vs 120 cap — cohesive, no clean split point. Acknowledged in dispatch log."
+            ]
+        },
+        {
+            "id": "3-7",
+            "title": "PhotoController + integration tests (Testcontainers MinIO)",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-7-20260509T011555Z.md",
+            "commit_sha": "2426672"
+        },
+        {
+            "id": "3-8",
+            "title": "apps/web/lib/photos/{api,types}.ts",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-8-20260509T102353Z.md",
+            "commit_sha": "12ba385"
+        },
+        {
+            "id": "3-9",
+            "title": "OrderDrawerPhotos tab + PhotoGrid + PhotoCard",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-9-20260509T102712Z.md",
+            "commit_sha": "8364797",
+            "start_utc": "2026-05-09T10:20:00Z",
+            "end_utc": "2026-05-09T10:27:12Z"
+        },
+        {
+            "id": "3-10",
+            "title": "PhotoUploader",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-10-20260509T102907Z.md",
+            "commit_sha": "d86e32b",
+            "start_utc": "2026-05-09T10:27:12Z",
+            "end_utc": "2026-05-09T10:29:07Z"
+        },
+        {
+            "id": "3-11",
+            "title": "PhotoLightbox",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-11-20260509T103143Z.md",
+            "commit_sha": "45a90e6",
+            "start_utc": "2026-05-09T10:31:00Z",
+            "end_utc": "2026-05-09T10:35:00Z"
+        },
+        {
+            "id": "3-12",
+            "title": "KIND_LABELS_PL extension for PHOTO_* timeline kinds",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-12-20260509T103338Z.md",
+            "commit_sha": "e646356",
+            "start_utc": "2026-05-09T10:33:00Z",
+            "end_utc": "2026-05-09T10:33:38Z"
+        },
+        {
+            "id": "3-13",
+            "title": "Smoke + milestone-3 tag + CLAUDE.md flip",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/3-13-20260509T103837Z.md",
+            "commit_sha": "98f9769",
+            "start_utc": "2026-05-09T10:36:00Z",
+            "end_utc": "2026-05-09T10:38:37Z"
+        },
+        {
+            "id": "4-1",
+            "title": "V010 messaging providers migration + WebhookEventEntity + Repository",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-1-20260509T135513Z.md",
+            "commit_sha": "056c68c",
+            "start_utc": "2026-05-09T13:40:00Z",
+            "end_utc": "2026-05-09T13:55:13Z"
+        },
+        {
+            "id": "4-2",
+            "title": "messaging-core extensions (Provider enum + WebhookEvent extension)",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-2-20260509T135734Z.md",
+            "commit_sha": "2f3bfe9",
+            "start_utc": "2026-05-09T15:50:00Z",
+            "end_utc": "2026-05-09T15:57:34Z"
+        },
+        {
+            "id": "4-3",
+            "title": "PostmarkPayloadMapper + PostmarkResponseMapper + unit tests",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-3-20260509T143902Z.md",
+            "commit_sha": "1551e27",
+            "start_utc": "2026-05-09T14:30:00Z",
+            "end_utc": "2026-05-09T14:39:02Z"
+        },
+        {
+            "id": "4-4",
+            "title": "PostmarkEmailGateway + properties + autoconfig + WireMock IT (TWO-STAGE)",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-4-20260509T144728Z.md",
+            "commit_sha": "cd83005",
+            "start_utc": "2026-05-09T13:00:00Z",
+            "fixup_sha": "367a2ae",
+            "review_log": "docs/dispatch-log/4-4-review-20260509T145324Z.md",
+            "review_sha": "b5a68d3",
+            "end_utc": "2026-05-09T15:04:42Z"
+        },
+        {
+            "id": "4-5",
+            "title": "SmsApiPayloadMapper + SmsApiResponseMapper + unit tests",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-5-20260509T151242Z.md",
+            "commit_sha": "a1cd361aeeaa34d8949cc50fdb3d2043bed231e8",
+            "completed_at": "2026-05-09T15:12:42Z"
+        },
+        {
+            "id": "4-6",
+            "title": "SmsApiSmsGateway + properties + autoconfig + WireMock IT (TWO-STAGE)",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-6-20260509T152513Z.md",
+            "stage_1_commit_sha": "81d684a",
+            "stage_1_completed_at": "2026-05-09T15:25:13Z",
+            "completed_at": "2026-05-09T18:44:08Z",
+            "review_log": "docs/dispatch-log/4-6-review-20260509T153024Z.md",
+            "review_commit_sha": "ff267e7",
+            "fixup_log": "docs/dispatch-log/4-6-fixup-20260509T184408Z.md",
+            "fixup_commit_sha": "e19e49b",
+            "commit_sha": "e19e49b"
+        },
+        {
+            "id": "4-7",
+            "title": "PostmarkWebhookController + Basic-auth verifier + IT",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-7-20260509T185728Z.md",
+            "commit_sha": "a963ebb1d285515ad757b451414537d28613b9cd",
+            "completed_at": "2026-05-09T18:57:28Z"
+        },
+        {
+            "id": "4-8",
+            "title": "SmsApiWebhookController + IP allowlist + IT",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-8-20260509T190730Z.md",
+            "commit_sha": "8cbc0240d3cd8813949f3a605b4be4b64a91a0d6",
+            "completed_at": "2026-05-09T19:07:30Z"
+        },
+        {
+            "id": "4-9",
+            "title": "MessageReconcileTimelineHandler + per-outcome audit paths (narrowed from TWO-STAGE: 4-7 forward-pulled reconciler internals)",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-9-20260509T191422Z.md",
+            "commit_sha": "b0a1923",
+            "completed_at": "2026-05-09T19:18:15Z"
+        },
+        {
+            "id": "4-10",
+            "title": "MessageRetryService + unit tests",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-10-20260509T212700Z.md",
+            "commit_sha": "87cda12",
+            "completed_at": "2026-05-09T21:27:00Z"
+        },
+        {
+            "id": "4-12",
+            "title": "apps/web/lib/messaging types extension + retryMessage api",
+            "status": "completed",
+            "commit_sha": "49d3569",
+            "dispatch_log": "docs/dispatch-log/4-12-20260509T195045Z.md",
+            "completed_at": "2026-05-09T19:55:00Z"
+        },
+        {
+            "id": "4-13",
+            "title": "MessageStatusBadge component",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-13-20260509T195301Z.md",
+            "commit_sha": "e867370",
+            "completed_at": "2026-05-09T19:54:00Z"
+        },
+        {
+            "id": "4-14",
+            "title": "OrderDrawerMessages — badge + retry button + 10s polling",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-14-20260509T195456Z.md",
+            "commit_sha": "b34a9c2",
+            "completed_at": "2026-05-09T20:05:00Z"
+        },
+        {
+            "id": "4-15",
+            "title": "KIND_LABELS_PL + KIND_ICONS extension for MESSAGE_DELIVERED/FAILED",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-15-20260509T195756Z.md",
+            "commit_sha": "cac53b5",
+            "completed_at": "2026-05-09T19:59:00Z"
+        },
+        {
+            "id": "4-11",
+            "title": "POST /api/admin/messages/{id}/retry endpoint + IT",
+            "status": "completed",
+            "commit_sha": "1a4de6a",
+            "dispatch_log": "docs/dispatch-log/4-11-20260509T193457Z.md"
+        },
+        {
+            "id": "4-16",
+            "title": "Smoke + milestone-4 tag + CLAUDE.md flip",
+            "status": "completed",
+            "dispatch_log": "docs/dispatch-log/4-16-20260509T200019Z.md",
+            "commit_sha": "6b7ffd1"
+        },
+        {
+            "id": "5-1",
+            "title": "V012 migration — message_thread channel + raw_sender + discarded_at + message idempotency unique",
+            "status": "completed",
+            "commit_sha": "5ae8b17",
+            "dispatch_log": "docs/dispatch-log/5-1-20260509T222908Z.md"
+        },
+        {
+            "id": "5-2",
+            "title": "Entity + repo updates + repo IT",
+            "status": "completed",
+            "commit_sha": "a0a071f",
+            "dispatch_log": "docs/dispatch-log/5-2-20260509T223549Z.md"
+        },
+        {
+            "id": "5-3",
+            "title": "MessageGatewayDispatcher hygiene extraction",
+            "status": "completed",
+            "commit_sha": "96ede4f",
+            "dispatch_log": "docs/dispatch-log/5-3-20260510T004200Z.md"
+        },
+        {
+            "id": "5-3b",
+            "title": "MessageRouter LOC fixup — extract TemplateContextBuilder",
+            "status": "completed",
+            "commit_sha": "5810725",
+            "dispatch_log": "docs/dispatch-log/5-3b-20260510T005600Z.md",
+            "parent_task": "5-3"
+        },
+        {
+            "id": "5-4",
+            "title": "InboundMessageService + PhoneNormalizer",
+            "status": "completed",
+            "commit_sha": "b26ebda",
+            "dispatch_log": "docs/dispatch-log/5-4-20260510T010000Z.md"
+        },
+        {
+            "id": "5-5",
+            "title": "PostmarkInboundController + IT",
+            "status": "completed",
+            "commit_sha": "1f06cc9",
+            "dispatch_log": "docs/dispatch-log/5-5-2026-05-09T23:28:44Z.md"
+        },
+        {
+            "id": "5-5b",
+            "title": "@Audited SpEL record fix — property access (no parens) + restore IT assertion",
+            "status": "completed",
+            "parent_task": "5-5",
+            "commit_sha": null,
+            "dispatch_log": "docs/dispatch-log/5-5b-20260510T014000Z.md",
+            "option_used": "A",
+            "key_fix": "Changed #result.threadId() and #result.orderId() to #result.threadId and #result.orderId — SimpleEvaluationContext.forReadOnlyDataBinding() supports property access (DataBindingPropertyAccessor resolves record components as bean properties in Spring 6.x) but blocks method calls."
+        },
+        {
+            "id": "5-6",
+            "title": "SmsApiInboundController + IT",
+            "status": "done",
+            "commit_sha": "94d70a5",
+            "dispatch_log": "docs/dispatch-log/5-6-2026-05-10T00:38:21Z.md"
+        },
+        {
+            "id": "5-7",
+            "title": "Timeline kinds + curator wiring + frontend label/icon",
+            "status": "done",
+            "commit_sha": "1b8aed8",
+            "dispatch_log": "docs/dispatch-log/5-7-2026-05-10T01:02:43Z.md"
+        },
+        {
+            "id": "5-8",
+            "title": "MessageThreadService extensions + MessageThreadMutationService split",
+            "status": "done",
+            "commit_sha": "24d0276",
+            "dispatch_log": "docs/dispatch-log/5-8-2026-05-10T01:12:36Z.md"
+        },
+        {
+            "id": "5-9",
+            "title": "ThreadController + integration test (TWO-STAGE REVIEW)",
+            "status": "done",
+            "commit_sha": "994f0c1",
+            "dispatch_log": "docs/dispatch-log/5-9-2026-05-10T01:23:25Z.md"
+        },
+        {
+            "id": "5-10",
+            "title": "Reply send — POST /api/admin/threads/{id}/messages",
+            "status": "done",
+            "commit_sha": "d0c938b",
+            "dispatch_log": "docs/dispatch-log/5-10-20260510T092121Z.md"
+        },
+        {
+            "id": "5-11",
+            "title": "Cross-thread compose — POST /api/admin/clients/{id}/messages",
+            "status": "done",
+            "commit_sha": "53f8c18",
+            "dispatch_log": "docs/dispatch-log/5-11-20260510T093424Z.md"
+        },
+        {
+            "id": "5-12",
+            "title": "lib/messaging frontend extensions",
+            "status": "done",
+            "commit_sha": "1a95398",
+            "dispatch_log": "docs/dispatch-log/5-12-20260510T094616Z.md"
+        },
+        {
+            "id": "5-13",
+            "title": "MessagesNavItem (sidebar) + unread polling + OrderDrawerMessages NIT fixups",
+            "status": "done",
+            "commit_sha": "dac09c2",
+            "dispatch_log": "docs/dispatch-log/5-13-20260510T095018Z.md"
+        },
+        {
+            "id": "5-14",
+            "title": "UnreadElsewhereBanner + dedicated backend endpoint",
+            "status": "done",
+            "commit_sha": "8d10fea",
+            "dispatch_log": "docs/dispatch-log/5-14-20260510T100150Z.md",
+            "deviations_from_plan": [
+                "Plan IT used OrderType.NAPRAWA — Order entity has no orderType field; removed setOrderType call.",
+                "Plan owner() helper used SecurityMockMvcRequestPostProcessors.user(...).roles(...) which injects plain UserDetails, causing NPE on actor.email(). Replaced with authentication(UsernamePasswordAuthenticationToken.authenticated(new AdminPrincipal(...))) — same pattern as ThreadControllerIntegrationTest.",
+                "UnreadElsewhereBanner.tsx required `import type { Route } from \"next\"` and `as Route` cast on href template literal — Next.js 16 typed-routes requirement not in plan body."
+            ]
+        },
+        {
+            "id": "5-15",
+            "title": "Page shell + ThreadList + filter chips + search input (TWO-STAGE)",
+            "status": "done",
+            "commit_sha": "5da7c48",
+            "dispatch_log": "docs/dispatch-log/5-15-20260510T101835Z.md",
+            "fixup_sha": "de8b585",
+            "review_mode": "two-stage",
+            "review_verdict": "APPROVED-WITH-FOLLOWUP",
+            "review_followups_resolved": [
+                "ThreadListRow aria-current — added in de8b585",
+                "ThreadList search input aria-label — added in de8b585",
+                "FilterChip + MessagesHeader buttons type='button' — added in de8b585",
+                "MessagesShell redundant `as Channel | null` cast removed — de8b585",
+                "MessagesShell render-time log.debug removed — de8b585"
+            ],
+            "deviations_from_plan": [
+                "ThreadDto → MessageThreadDto (plan literal mismatch; real export name).",
+                "channel: string|null → Channel|null in useThreadSelection (matches listThreads signature).",
+                "Bonus 8th file ThreadListSkeleton.tsx extracted from ThreadList.tsx to honor < 80 LOC cap (ThreadList → 76 LOC).",
+                "MessagesShell scaffolds future-task slots (5-16..5-20) with Polish placeholders + // TODO markers — intentional staging."
+            ],
+            "carry_forward_followups": [
+                "ThreadListSkeleton width arrays cosmetic — defer.",
+                "UNMATCHED empty-state copy collapsed with ALL — defer.",
+                "Cross-filter chip counts: 'Wszystkie' shows current-filter result count, not true global — architectural, needs server total field if we care.",
+                "Search debounce: plan acceptance says debounces, plan code sample doesn't. Owner decision deferred. 2-char min cutoff in api.ts mitigates."
+            ]
+        },
+        {
+            "id": "5-16",
+            "title": "ThreadHeader + MessageBubble + SelectedThread (10s polling)",
+            "status": "done",
+            "commit_sha": "05de133",
+            "dispatch_log": "docs/dispatch-log/5-16-20260510T103110Z.md",
+            "fixup_sha": "d52b74e",
+            "deviations_from_plan": [
+                "ThreadDto → MessageThreadDto + ThreadDetailDto unpacking (plan literal mismatch).",
+                "ReplyComposer.tsx stub created at the 5-17 path because SelectedThread imports it; 5-17 will overwrite.",
+                "type='button' added to IconBtn + MessageBubble retry button per project convention.",
+                "SelectedThread originally landed at 86 LOC (6 over 80 cap). Extracted polling concern to useThreadPoller.ts in fixup d52b74e — SelectedThread now 48 LOC, useThreadPoller 59 LOC."
+            ]
+        },
+        {
+            "id": "5-17",
+            "title": "ReplyComposer + TemplatePicker (TWO-STAGE)",
+            "status": "done",
+            "commit_sha": "a714bfd",
+            "fixup_sha": "3dcd2ff",
+            "precondition_sha": "e7e6885",
+            "dispatch_log": "docs/dispatch-log/5-17-20260510T110000Z.md",
+            "review_log": "docs/dispatch-log/5-17-review-20260510T110325Z.md",
+            "precondition_log": "docs/dispatch-log/5-17a-20260510T105523Z.md",
+            "review_verdict": "APPROVED-WITH-FOLLOWUP",
+            "review_blockers_resolved": [
+                "Hand-built TemplatePicker missing Esc dismiss + focus-return + ARIA roles (a11y). Fixed in 3dcd2ff.",
+                "WHATSAPP edge: useReplyComposerState now defaults non-EMAIL/SMS channels to EMAIL on init."
+            ],
+            "notes": [
+                "Plan referenced ThreadDto / clientEmail / clientPhone fields that did not exist. Backend precondition slice (commit e7e6885, log 5-17a) added the fields to MessageThreadDto record + TS interface so 5-18 + 5-20 inherit the same wiring.",
+                "Plan called for @radix-ui/react-dropdown-menu, which is not installed. TemplatePicker rolled hand-built dropdown (zero new deps) per simplest-but-working directive.",
+                "ReplyComposer accepted at 142 LOC — ~35 LOC logic, ~107 LOC JSX/SVG. Hook extraction satisfied the cap's intent."
+            ]
+        },
+        {
+            "id": "5-18",
+            "title": "ThreadClientPanel (right rail)",
+            "status": "done",
+            "commit_sha": "95c8498",
+            "dispatch_log": "docs/dispatch-log/5-18-20260510T110926Z.md",
+            "review_verdict": "APPROVED",
+            "notes": [
+                "Plan errata: ThreadDto → MessageThreadDto; recentOrderId/Code/Status/totalOrders fields not on DTO so the active-order card always renders the placeholder branch (— per plan footnote line 7028) and the totals grid renders — for both cells.",
+                "WHATSAPP chip color promoted to 3-way switch: EMAIL=blue, SMS=violet, WHATSAPP=emerald.",
+                "MessagesShell wiring: setLoadedThread setter passed directly as the SelectedThread onLoaded prop (signature matches); right rail guarded at parent by selectedId && loadedThread && loadedThread.clientId so unmatched threads don't render the panel at all.",
+                "ThreadClientPanel landed at 129 LOC (over 80 cap) — JSX-density across 4 sections; within the 142 LOC precedent set by 5-17 ReplyComposer. MessagesShell at 67 LOC.",
+                "TS strict-mode self-fix: string[0] indexing replaced with charAt(0) in initials computation (avoids string|undefined in noUncheckedIndexedAccess)."
+            ]
+        },
+        {
+            "id": "5-19",
+            "title": "EmptyState + UnmatchedThreadPanel + assign/discard wiring",
+            "status": "done",
+            "commit_sha": "a784c01",
+            "dispatch_log": "docs/dispatch-log/5-19-20260510T111602Z.md",
+            "review_verdict": "APPROVED",
+            "notes": [
+                "Plan errata: ThreadDto → MessageThreadDto; UnmatchedThreadPanel signature changed to accept ThreadDetailDto (not MessageThreadDto) so the last-inbound bubble derives lastMsg from detail.messages[length-1] without any backend call.",
+                "@radix-ui/react-alert-dialog NOT installed — Discard confirmation built as @radix-ui/react-dialog with destructive button styling. Visually + semantically equivalent.",
+                "ClientCreateModal.onCreate is synchronous (client: ClientDto) => void; the assignUnmatched call lives in a sibling async handler in UnmatchedThreadPanel rather than inside onCreate, preserving the modal's internal close/reset flow.",
+                "Integration glue NOT in plan but added per Opus dispatch: SelectedThread branches on detail.thread.unmatched (renders UnmatchedThreadPanel instead of normal flow); MessagesShell replaces hardcoded \"Wybierz wątek…\" with <EmptyState variant=\"no-selection\"/> and threads onResolved → sel.setSelectedId(null).",
+                "LOC counts: EmptyState 74, AssignUnmatchedDialog 75, UnmatchedThreadPanel 171 (over cap; 2 embedded dialogs + 4 state booleans, justified vs 5-17/5-18 precedent), SelectedThread 56, MessagesShell 65."
+            ]
+        },
+        {
+            "id": "5-20",
+            "title": "NewMessageDialog (cross-thread compose)",
+            "status": "done",
+            "commit_sha": "21c80e6",
+            "precondition_sha": "cbdb5c6",
+            "dispatch_log": "docs/dispatch-log/5-20-20260510T112611Z.md",
+            "precondition_log": "docs/dispatch-log/5-20a-20260510T112256Z.md",
+            "review_verdict": "APPROVED",
+            "notes": [
+                "Plan errata: sendNewToClient returns MessageDto (not {threadId}). Backend precondition slice (cbdb5c6, log 5-20a) added threadId: UUID to MessageDto record + 5 mapper sites + TS interface so result.threadId is a real field. M5 backend tests still 72/0/0/0.",
+                "effectiveChannel auto-fallback verified: when channel=EMAIL but client has no email and has phone, effectiveChannel promotes to SMS; EMAIL toggle button shown disabled + inactive while SMS shows active. Send goes via SMS.",
+                "MessagesShell wiring: removed `void newMsgOpen` suppression, mounted <NewMessageDialog open=newMsgOpen onOpenChange=setNewMsgOpen onSent=(threadId)=>sel.setSelectedId(threadId)/>. Radix Portal places dialog at document.body so placement in tree is cosmetic.",
+                "LOC counts: NewMessageDialog 133 (over 80 cap; pure JSX density; consistent with 5-17 142, 5-18 129, 5-19 UnmatchedThreadPanel 171). MessagesShell 65 (unchanged net)."
+            ]
+        },
+        {
+            "id": "5-21",
+            "title": "Closure — mvn verify + frontend gates + milestone-5 tag + CLAUDE.md flip",
+            "status": "completed",
+            "commit_sha": "061f99a",
+            "dispatch_log": "docs/dispatch-log/5-21-20260510T113542Z.md",
+            "review_verdict": "APPROVED",
+            "notes": [
+                "Suite: 302 total / 0 failures / 1 error (pre-existing flake) / 0 skipped. M4 close was 201; M5 added 101 cases.",
+                "Flake: MessagesControllerIntegrationTest.emptyThreadReturnsEmptyList — AdminWebTestBase.seedUsers() clients.deleteAll() hits FK from prior test class's uncleaned order. Pre-existing since task 5-16. Fix in M6: add orderRepository.deleteAll() to AdminWebTestBase.seedUsers() before clients.deleteAll().",
+                "Frontend: typecheck 0 errors, lint 0 errors (eslint direct, not next lint), build SUCCESSFUL.",
+                "milestone-5 tag created locally. Not pushed to remote (consistent with M0b–M4 precedent).",
+                "CLAUDE.md status row flipped to [x] Milestone 5: Inbound parsing + reply UI + cross-client inbox."
+            ]
+        },
+        {
+            "id": "6-1",
+            "title": "AdminWebTestBase FK ordering fix",
+            "status": "completed",
+            "commit_sha": "11bc14e",
+            "dispatch_log": "docs/dispatch-log/6-1-20260510T152600Z.md"
+        },
+        {
+            "id": "6-2",
+            "title": "MessageRouter split + sendRetry/send dedup",
+            "status": "completed",
+            "commit_sha": "bc9d54c",
+            "dispatch_log": "docs/dispatch-log/6-2-20260510T174000Z.md"
+        },
+        {
+            "id": "6-3",
+            "title": "V013 message_thread uniqueness migration + @NotNull",
+            "status": "completed",
+            "commit_sha": "8228905",
+            "dispatch_log": "docs/dispatch-log/6-3-20260510T154435Z.md"
+        },
+        {
+            "id": "6-4",
+            "title": "pnpm lint verification + closure-bar wiring",
+            "status": "completed",
+            "commit_sha": "816a88c",
+            "dispatch_log": "docs/dispatch-log/6-4-20260510T155449Z.md"
+        },
+        {
+            "id": "6-5",
+            "title": "GET /api/admin/dashboard/kpis",
+            "status": "completed",
+            "commit_sha": "250b3ca",
+            "dispatch_log": "docs/dispatch-log/6-5-20260510T155706Z.md"
+        },
+        {
+            "id": "6-6",
+            "title": "GET /api/admin/dashboard/charts",
+            "status": "completed",
+            "commit_sha": "d8dc017",
+            "dispatch_log": "docs/dispatch-log/6-6-20260510T160357Z.md",
+            "review_verdict": "APPROVED",
+            "notes": [
+                "Separate DashboardChartsController created (merged DashboardController would be ~130 LOC > 120 cap).",
+                "Plan test ordersPerWeek[0].repairs corrected to filter-based assertion — controller zero-fills oldest→newest so current-week order lands at index 7, not 0.",
+                "Window calc simplified: toLocalDate().with(DayOfWeek.MONDAY).minusWeeks(7) vs plan's IsoFields manipulation — same result, cleaner code."
+            ]
+        },
+        {
+            "id": "6-7",
+            "title": "GET /api/admin/orders/calendar",
+            "status": "completed",
+            "commit_sha": "3428f2a",
+            "dispatch_log": "docs/dispatch-log/6-7-20260510T161335Z.md",
+            "review_verdict": "APPROVED"
+        },
+        {
+            "id": "6-8",
+            "title": "GET /api/admin/orders/kanban",
+            "status": "completed",
+            "commit_sha": "c19940a",
+            "dispatch_log": "docs/dispatch-log/6-8-20260510T162332Z.md",
+            "review_verdict": "APPROVED",
+            "notes": [
+                "Plan used @Validated/@Min/@Max for limitPerColumn validation — ConstraintViolationException maps to 500 by default. Replaced with explicit ResponseStatusException(BAD_REQUEST) guard (same pattern as CalendarController). All 7 ITs green.",
+                "countByStatusNotDeleted reused from 6-5 (no duplication). Two new native queries added to OrderRepository.",
+                "Suite: 333 → 340 (+7)."
+            ]
+        },
+        {
+            "id": "6-9",
+            "title": "POST /api/admin/orders/bulk/status (TWO-STAGE)",
+            "status": "completed",
+            "commit_sha": "f81c188",
+            "stage_1_sha": "f81c188",
+            "fixup_sha": "00084b0",
+            "dispatch_log": "docs/dispatch-log/6-9-20260510T163138Z.md",
+            "stage2_log": "docs/dispatch-log/6-9-stage2-20260510T164315Z.md"
+        },
+        {
+            "id": "6-10",
+            "title": "lib/dashboard/api-server.ts + types.ts",
+            "status": "completed",
+            "commit_sha": "edf4258",
+            "dispatch_log": "docs/dispatch-log/6-10-20260510T165631Z.md"
+        },
+        {
+            "id": "6-11",
+            "title": "KpiTilesRow + OrdersWeekChart + MixDonut",
+            "status": "completed",
+            "commit_sha": "738b548",
+            "dispatch_log": "docs/dispatch-log/6-11-20260510T170315Z.md"
+        },
+        {
+            "id": "6-12",
+            "title": "ReadyForPickupPanel + RecentMessagesPanel + dashboard page wiring",
+            "status": "completed",
+            "commit_sha": "5be4995",
+            "dispatch_log": "docs/dispatch-log/6-12-20260510T175734Z.md"
+        },
+        {
+            "id": "6-13",
+            "title": "lib/calendar + OrderViewTabs shared component",
+            "status": "completed",
+            "commit_sha": "785d2cc",
+            "dispatch_log": "docs/dispatch-log/6-13-20260510T180400Z.md"
+        },
+        {
+            "id": "6-14",
+            "title": "CalendarMonthGrid + CalendarCell",
+            "status": "completed",
+            "commit_sha": "7edf9a1",
+            "dispatch_log": "docs/dispatch-log/6-14-20260510T180907Z.md"
+        },
+        {
+            "id": "6-15",
+            "title": "BezTerminuPanel",
+            "status": "completed",
+            "commit_sha": "d8bcdac",
+            "dispatch_log": "docs/dispatch-log/6-15-20260510T181328Z.md"
+        },
+        {
+            "id": "6-16",
+            "title": "Calendar page wiring + states",
+            "status": "completed",
+            "commit_sha": "964fc74",
+            "dispatch_log": "docs/dispatch-log/6-16-20260510T181835Z.md"
+        },
+        {
+            "id": "6-17",
+            "title": "lib/kanban/api-server.ts + types.ts",
+            "status": "completed",
+            "commit_sha": "3bcc341",
+            "dispatch_log": "docs/dispatch-log/6-17-20260510T182413Z.md"
+        },
+        {
+            "id": "6-18",
+            "title": "KanbanBoard + KanbanColumn + KanbanCard (static)",
+            "status": "completed",
+            "commit_sha": "2c46cd1",
+            "dispatch_log": "docs/dispatch-log/6-18-20260510T182729Z.md"
+        },
+        {
+            "id": "6-19",
+            "title": "useKanbanDnd + StatusChangeTriggerDialog extraction + drag flow (TWO-STAGE)",
+            "status": "completed",
+            "stage_1_sha": "15d54b5",
+            "fixup_sha": "5b50c01",
+            "commit_sha": "15d54b5",
+            "dispatch_log": "docs/dispatch-log/6-19-stage1-20260510T182729Z.md",
+            "review_mode": "two-stage",
+            "review_verdict": "NEEDS-FIXUP",
+            "stage2_log": "docs/dispatch-log/6-19-stage2-20260510T184056Z.md",
+            "review_followups_resolved": [
+                "KanbanColumn drop-target ring-2 ring-[var(--pink)] — fixed in 5b50c01",
+                "StatusChangeConfirm.tsx orphan deleted — 5b50c01"
+            ],
+            "deferred_followups": [
+                "Wire useKanbanDnd into kanban page (6-20 scope)",
+                "sendTriggers full wiring to single-order endpoint (M7 scope)",
+                "errorToast UI rendering (6-20 scope)"
+            ]
+        },
+        {
+            "id": "6-20",
+            "title": "Kanban page wiring + states",
+            "status": "completed",
+            "commit_sha": "36cf69c",
+            "dispatch_log": "docs/dispatch-log/6-20-20260510T184545Z.md"
+        },
+        {
+            "id": "6-21",
+            "title": "SavedFilterPresets chip row + URL plumbing (+ inline 6-21a backend slice)",
+            "status": "completed",
+            "commit_sha": "0d8432e",
+            "backend_slice_sha": "b0d6738",
+            "dispatch_log": "docs/dispatch-log/6-21-20260510T185003Z.md"
+        },
+        {
+            "id": "6-22",
+            "title": "useOrderRowSelection + BulkActionBar + BulkResultModal (TWO-STAGE)",
+            "status": "completed",
+            "commit_sha": "6044f49",
+            "stage_1_sha": "f8d23ee",
+            "fixup_sha": "6044f49",
+            "dispatch_log": "docs/dispatch-log/6-22-stage1-20260510T190347Z.md",
+            "stage2_log": "docs/dispatch-log/6-22-stage2-20260510T190936Z.md"
+        },
+        {
+            "id": "6-23",
+            "title": "RowQuickActionsMenu (three-dot dropdown)",
+            "status": "completed",
+            "commit_sha": "7b87dec",
+            "dispatch_log": "docs/dispatch-log/6-23-20260510T191323Z.md"
+        },
+        {
+            "id": "7-1",
+            "title": "Extend UpdateClientRequest + ClientService.update for preferredChannel + rodoConsent",
+            "status": "completed",
+            "commit_sha": "e9b64ee",
+            "dispatch_log": "docs/dispatch-log/7-1-20260510T212516Z.md"
+        },
+        {
+            "id": "7-2",
+            "title": "Add clientId filter to OrderController.list -> OrderService.list -> OrderSpecifications.forList",
+            "status": "completed",
+            "commit_sha": "681c529",
+            "dispatch_log": "docs/dispatch-log/7-2-20260510T213247Z.md"
+        },
+        {
+            "id": "7-3",
+            "title": "Add clientId filter to ThreadController.list + new MessageThreadRepository derived method",
+            "status": "completed",
+            "commit_sha": "c34e533",
+            "dispatch_log": "docs/dispatch-log/7-3-20260510T213807Z.md"
+        },
+        {
+            "id": "7-4",
+            "title": "ClientSummaryService + ClientSummaryDto + GET /api/admin/clients/{id}/summary (TWO-STAGE)",
+            "status": "completed",
+            "commit_sha": "feb75b3",
+            "stage_1_sha": "feb75b3",
+            "dispatch_log": "docs/dispatch-log/7-4-stage1-20260510T214209Z.md",
+            "stage2_log": "docs/dispatch-log/7-4-stage2-20260510T215219Z.md",
+            "fixup_sha": null
+        },
+        {
+            "id": "7-5",
+            "title": "Extend lib/clients — types, api, api-server (listClients, getClient, getClientSummary, updateClient)",
+            "status": "completed",
+            "commit_sha": "0c7d453",
+            "dispatch_log": "docs/dispatch-log/7-5-20260510T215452Z.md"
+        },
+        {
+            "id": "7-6",
+            "title": "ClientListSearchBox CC — debounced typeahead + tests",
+            "status": "completed",
+            "commit_sha": "9c4b408",
+            "dispatch_log": "docs/dispatch-log/7-6-20260510T222947Z.md"
+        },
+        {
+            "id": "7-7",
+            "title": "ClientListTable SC — paginated rows + inline RODO pill (placeholder until 7-10)",
+            "status": "completed",
+            "commit_sha": "4dbafe3",
+            "dispatch_log": "docs/dispatch-log/7-7-20260511T003400Z.md"
+        },
+        {
+            "id": "7-8",
+            "title": "/admin/clients/page.tsx — list page Server Component (search + paginated list shell)",
+            "status": "completed",
+            "commit_sha": "d213177",
+            "dispatch_log": "docs/dispatch-log/7-8-20260510T223956Z.md"
+        },
+        {
+            "id": "7-9",
+            "title": "[id]/layout.tsx + ClientTabNav CC (shared shell + active-tab styling)",
+            "status": "completed",
+            "commit_sha": "a83a10e",
+            "dispatch_log": "docs/dispatch-log/7-9-20260511T004500Z.md"
+        },
+        {
+            "id": "7-10",
+            "title": "ClientHeader SC + RodoBadge SC + EditClient island stub (real modal in 7-15)",
+            "status": "completed",
+            "commit_sha": "f1626c6",
+            "dispatch_log": "docs/dispatch-log/7-10-20260511T005200Z.md"
+        },
+        {
+            "id": "7-11",
+            "title": "ClientSummaryTiles SC — 4 dashboard tiles wired to /summary",
+            "status": "completed",
+            "commit_sha": "85b3504",
+            "dispatch_log": "docs/dispatch-log/7-11-20260511T005800Z.md"
+        },
+        {
+            "id": "7-12",
+            "title": "/admin/clients/[id]/page.tsx — overview tab (parallel fetches, 404 guard)",
+            "status": "completed",
+            "commit_sha": "df5e55d",
+            "dispatch_log": "docs/dispatch-log/7-12-20260511T010200Z.md"
+        },
+        {
+            "id": "7-13",
+            "title": "/admin/clients/[id]/zlecenia/page.tsx — orders sub-tab",
+            "status": "completed",
+            "commit_sha": "f4207e5",
+            "dispatch_log": "docs/dispatch-log/7-13-20260511T010600Z.md"
+        },
+        {
+            "id": "7-14",
+            "title": "/admin/clients/[id]/wiadomosci/page.tsx — threads sub-tab",
+            "status": "completed",
+            "commit_sha": "de20ad6",
+            "dispatch_log": "docs/dispatch-log/7-14-20260511T010900Z.md"
+        },
+        {
+            "id": "7-15",
+            "title": "EditClientModal CC + useEditClientModalForm hook + RTL tests",
+            "status": "completed",
+            "commit_sha": "a2d2ce1",
+            "dispatch_log": "docs/dispatch-log/7-15-20260510T232139Z.md",
+            "review_mode": "combined-single-stage (owner-directed; TWO-STAGE flag in plan superseded by anti-bloat directive)"
+        },
+        {
+            "id": "7-16",
+            "title": "PlaceholderCard SC + /admin/sklep + /admin/aktualnosci stub pages + smoke tests",
+            "status": "completed",
+            "commit_sha": "311666d",
+            "dispatch_log": "docs/dispatch-log/7-16-20260510T232140Z.md"
+        },
+        {
+            "id": "7-17",
+            "title": "Sidebar wiring + active-state (manual UAT skipped; milestone-7 tag deferred to owner)",
+            "status": "completed",
+            "commit_sha": "ad4babb",
+            "dispatch_log": "docs/dispatch-log/7-17-20260510T232141Z.md"
+        },
+        {
+            "id": "8-1",
+            "title": "New whatsapp-gateway Maven module (interface + Logging impl + autoconfig)",
+            "status": "completed",
+            "commit_sha": "a46bcc0",
+            "dispatch_log": "docs/dispatch-log/8-1-20260511T200546Z.md"
+        },
+        {
+            "id": "8-2",
+            "title": "Wire WhatsApp into MessageGatewayDispatcher switch + recipient-hash util",
+            "status": "completed",
+            "commit_sha": "5f08092",
+            "dispatch_log": "docs/dispatch-log/8-2-20260511T201110Z.md"
+        },
+        {
+            "id": "8-3",
+            "title": "V014 — add trace_id column to audit_log (TWO-STAGE)",
+            "status": "completed",
+            "commit_sha": "9530b1c",
+            "dispatch_log": "docs/dispatch-log/8-3-20260511T201504Z.md"
+        },
+        {
+            "id": "8-4",
+            "title": "Backend OTel dependencies (Spring Boot starter + OTLP exporter + JDBC instr)",
+            "status": "completed",
+            "commit_sha": "6012d44",
+            "dispatch_log": "docs/dispatch-log/8-4-20260511T201924Z.md"
+        },
+        {
+            "id": "8-5",
+            "title": "OTel YAML configuration in application.yaml + application-local.yaml",
+            "status": "completed",
+            "commit_sha": "350eac5",
+            "dispatch_log": "docs/dispatch-log/8-5-20260511T202245Z.md"
+        },
+        {
+            "id": "8-6",
+            "title": "Manual span on MessageGatewayDispatcher.dispatch (TWO-STAGE)",
+            "status": "completed",
+            "stage_1_sha": "cf18f9b",
+            "stage_1_completed_at": "2026-05-11T20:51:56Z",
+            "commit_sha": "89e804e",
+            "dispatch_log": "docs/dispatch-log/8-6-20260511T205156Z.md",
+            "stage2_log": "docs/dispatch-log/8-6-stage2-20260511T205939Z.md",
+            "fixup_sha": "89e804e",
+            "review_mode": "two-stage",
+            "review_verdict": "NEEDS-FIXUP"
+        },
+        {
+            "id": "8-7",
+            "title": "AuditLogAspect — trace_id capture + audit.write manual span + LOC extraction (TWO-STAGE)",
+            "status": "completed",
+            "stage_1_sha": "579e130",
+            "commit_sha": "579e130",
+            "dispatch_log": "docs/dispatch-log/8-7-20260511T210622Z.md",
+            "stage2_log": "docs/dispatch-log/8-7-stage2-20260511T211307Z.md",
+            "review_mode": "two-stage",
+            "review_verdict": "APPROVED-WITH-FOLLOWUP"
+        },
+        {
+            "id": "8-8",
+            "title": "DemoSeedRunner skeleton (@Profile local + @ConditionalOnProperty + idempotent guard)",
+            "status": "completed",
+            "commit_sha": "6bcdca7",
+            "dispatch_log": "docs/dispatch-log/8-8-20260511T212214Z.md"
+        },
+        {
+            "id": "8-9",
+            "title": "Seed clients + orders + photos via service layer (TWO-STAGE)",
+            "status": "completed",
+            "stage_1_sha": "527a0f1",
+            "commit_sha": "527a0f1",
+            "dispatch_log": "docs/dispatch-log/8-9-20260511T212730Z.md",
+            "stage2_log": "docs/dispatch-log/8-9-stage2-20260511T213436Z.md",
+            "fixup_sha": null,
+            "review_mode": "two-stage",
+            "review_verdict": "APPROVED-WITH-FOLLOWUP"
+        },
+        {
+            "id": "8-10",
+            "title": "Seed sample MessageThread with 4 alternating messages",
+            "status": "completed",
+            "commit_sha": "2cbba62",
+            "dispatch_log": "docs/dispatch-log/8-10-20260511T214025Z.md"
+        },
+        {
+            "id": "8-11",
+            "title": "Add Jaeger all-in-one to docker-compose.yml + OTLP env wiring",
+            "status": "completed",
+            "commit_sha": "8edf1f3",
+            "dispatch_log": "docs/dispatch-log/8-11-20260511T214550Z.md"
+        },
+        {
+            "id": "8-12",
+            "title": "make demo Makefile target + colored banner output",
+            "status": "completed",
+            "commit_sha": "8c3ec38",
+            "dispatch_log": "docs/dispatch-log/8-12-20260511T214736Z.md"
+        },
+        {
+            "id": "8-13",
+            "title": "README 'Run the demo' section + .env.example",
+            "status": "completed",
+            "commit_sha": "2da81d0",
+            "dispatch_log": "docs/dispatch-log/8-13-20260511T214912Z.md"
+        },
+        {
+            "id": "8-14",
+            "title": "Frontend OTel deps + instrumentation.ts (Next register hook)",
+            "status": "completed",
+            "commit_sha": "1e54ff2",
+            "dispatch_log": "docs/dispatch-log/8-14-20260511T215120Z.md"
+        },
+        {
+            "id": "8-15",
+            "title": "Browser OTel client + /api/otlp Next proxy route (TWO-STAGE)",
+            "status": "completed",
+            "commit_sha": "7f86f63",
+            "dispatch_log": "docs/dispatch-log/8-15-20260511T215458Z.md",
+            "stage_1_sha": "7f86f63",
+            "stage2_log": "docs/dispatch-log/8-15-stage2-20260511T220113Z.md",
+            "stage2_verdict": "APPROVED-WITH-FOLLOWUP"
+        },
+        {
+            "id": "8-16",
+            "title": "End-to-end OTel propagation smoke test (backend IT + frontend vitest)",
+            "status": "completed",
+            "commit_sha": "783a6a9",
+            "dispatch_log": "docs/dispatch-log/8-16-20260511T220619Z.md"
+        },
+        {
+            "id": "8-17",
+            "title": "docs/MODULE_MAP.md — feature-to-file lookup table",
+            "status": "completed",
+            "commit_sha": "e892fd1",
+            "dispatch_log": "docs/dispatch-log/8-17-20260511T221215Z.md"
+        },
+        {
+            "id": "8-18",
+            "title": "tools/where-is bash script + make target",
+            "status": "completed",
+            "commit_sha": "b59861b",
+            "dispatch_log": "docs/dispatch-log/8-18-20260511T221626Z.md"
+        },
+        {
+            "id": "8-19",
+            "title": "ReportIssueButton client component + clipboard JSON + vitest",
+            "status": "completed",
+            "commit_sha": "bc459bf",
+            "dispatch_log": "docs/dispatch-log/8-19-20260511T221958Z.md"
+        },
+        {
+            "id": "8-20",
+            "title": "Sidebar wire-up for 'Zgłoś problem' button",
+            "status": "completed",
+            "commit_sha": "eb23485",
+            "dispatch_log": "docs/dispatch-log/8-20-20260511T222350Z.md"
+        },
+        {
+            "id": "8-21",
+            "title": "Playwright setup in apps/web (config + smoke spec + .gitignore)",
+            "status": "completed",
+            "commit_sha": "1f62fea",
+            "dispatch_log": "docs/dispatch-log/8-21-20260511T222750Z.md"
+        },
+        {
+            "id": "8-22",
+            "title": "Full demo-flow E2E spec — new-order → process → deliver + trace assertion (TWO-STAGE)",
+            "status": "stage_1_complete",
+            "stage_1_sha": "57009db",
+            "dispatch_log": "docs/dispatch-log/8-22-20260511T223140Z.md",
+            "stage_1_fixup_sha": "cdc83b4",
+            "stage_1_fixup_commits": [
+                "204fb67",
+                "d8d0b33",
+                "1150d31",
+                "cdc83b4"
+            ],
+            "stage_1_fixup_note": "Continuation agent unblocked: OTel URL fix, CSRF disable, Docker playwright service, spec corrections"
+        },
+        {
+            "id": "8-23",
+            "title": "Self-verification fix-loop + milestone-8 tag + DEMO-HANDOVER doc",
+            "status": "pending",
+            "commit_sha": null,
+            "dispatch_log": null
+        },
+        {
+            "id": "m8-fb-1a",
+            "title": "Frontend sort UI for orders list",
+            "status": "completed",
+            "commit_sha": "106e245",
+            "dispatch_log": "docs/dispatch-log/m8-fb-1a-20260512T094056Z.md",
+            "verdict": "APPROVED"
+        },
+        {
+            "id": "m8-fb-1b",
+            "title": "Status-change note: V015 migration + aspect wiring + dialog + timeline display",
+            "status": "completed",
+            "commit_sha": "102f46b",
+            "backend_commit_sha": "9cc0780",
+            "dispatch_log": "docs/dispatch-log/m8-fb-1b-20260512T094056Z.md",
+            "verdict": "APPROVED"
+        },
+        {
+            "id": "m8-fb-2",
+            "title": "Sidebar nav: link /admin/triggers + /admin/templates under new Komunikacja section",
+            "status": "pending",
+            "dispatch_log": "docs/dispatch-log/m8-fb-2-20260512T111132Z.md"
+        },
+        {
+            "id": "9-1",
+            "title": "Tokens + fonts + Tailwind preset + globals.css utility classes (foundation, solo dispatch)",
+            "status": "completed",
+            "commit_sha": "53874a6",
+            "dispatch_log": "docs/dispatch-log/9-1-2026-05-15T191814Z.md"
+        },
+        {
+            "id": "9-2",
+            "title": "<Tape> primitive",
+            "status": "completed",
+            "commit_sha": "3bdc5d1",
+            "dispatch_log": "docs/dispatch-log/9-2-2026-05-15T193231Z.md"
+        },
+        {
+            "id": "9-3",
+            "title": "<Stamp> primitive",
+            "status": "completed",
+            "commit_sha": "3be36c8",
+            "dispatch_log": "docs/dispatch-log/9-3-20260515T193831Z.md"
+        },
+        {
+            "id": "9-4",
+            "title": "<Sticker> primitive",
+            "status": "completed",
+            "commit_sha": "1626320",
+            "dispatch_log": "docs/dispatch-log/9-4-2026-05-15T213547Z.md"
+        },
+        {
+            "id": "9-5",
+            "title": "<Pill> primitive (orderStatusColor mapping)",
+            "status": "completed",
+            "commit_sha": "84d0a59",
+            "dispatch_log": "docs/dispatch-log/9-5-2026-05-15T214231Z.md"
+        },
+        {
+            "id": "9-6",
+            "title": "<Chip> primitive",
+            "status": "completed",
+            "commit_sha": "1626320",
+            "dispatch_log": "docs/dispatch-log/9-6-2026-05-15T194001Z.md"
+        },
+        {
+            "id": "9-7",
+            "title": "<Splatter> SVG primitive",
+            "status": "completed",
+            "commit_sha": "3583aec",
+            "dispatch_log": "docs/dispatch-log/9-7-2026-05-15T213748Z.md"
+        },
+        {
+            "id": "9-8",
+            "title": "<PhImg> diagonal-stripe placeholder",
+            "status": "completed",
+            "commit_sha": "3bdc5d1",
+            "dispatch_log": "docs/dispatch-log/9-8-2026-05-15T214500Z.md"
+        },
+        {
+            "id": "9-9",
+            "title": "<DrShoesMark> brand logo SVG",
+            "status": "completed",
+            "commit_sha": "e8a7220",
+            "dispatch_log": "docs/dispatch-log/9-9-2026-05-15T213900Z.md"
+        },
+        {
+            "id": "9-10",
+            "title": "<AdminCard> wrapper",
+            "status": "completed",
+            "commit_sha": "763d57f",
+            "dispatch_log": null
+        },
+        {
+            "id": "9-11",
+            "title": "<StatTile> with accent left-bar",
+            "status": "completed",
+            "commit_sha": "e8a7220",
+            "dispatch_log": "docs/dispatch-log/9-11-2026-05-15T193955Z.md"
+        },
+        {
+            "id": "9-12",
+            "title": "<Toggle> ink ribbon + acid dot",
+            "status": "completed",
+            "commit_sha": "3bdc5d1",
+            "dispatch_log": "docs/dispatch-log/9-12-2026-05-15T1940Z.md"
+        },
+        {
+            "id": "9-13",
+            "title": "<Button> with pop-shadow variants",
+            "status": "completed",
+            "commit_sha": "84d0a59",
+            "dispatch_log": null,
+            "completed_at": "2026-05-15T194500Z"
+        },
+        {
+            "id": "9-14",
+            "title": "icons.tsx (~25 1-stroke SVG icons)",
+            "status": "completed",
+            "commit_sha": "6535a2f",
+            "dispatch_log": "docs/dispatch-log/9-14-2026-05-15T194101Z.md"
+        },
+        {
+            "id": "9-15",
+            "title": "AdminSidebar + AdminSidebarNav rewrite (ink ribbon shell)",
+            "status": "completed",
+            "commit_sha": "1d81b0e",
+            "dispatch_log": "docs/dispatch-log/9-15-2026-05-15T21-47-00Z.md"
+        },
+        {
+            "id": "9-16",
+            "title": "AdminTopbar + AdminPageHeaderContext",
+            "status": "completed",
+            "commit_sha": "b7ee2b7",
+            "dispatch_log": "docs/dispatch-log/9-16-2026-05-15T1947Z.md"
+        },
+        {
+            "id": "9-17",
+            "title": "AdminLayout integration + per-page usePageHeader callsites",
+            "status": "done",
+            "commit_sha": "2ee3444",
+            "dispatch_log": "docs/dispatch-log/9-17-2026-05-15T2155Z.md"
+        },
+        {
+            "id": "9-18",
+            "title": "<StatTile> integration in KpiTilesRow restyle",
+            "status": "completed",
+            "commit_sha": "ec80caa",
+            "dispatch_log": "docs/dispatch-log/9-18-2026-05-15T2003Z.md"
+        },
+        {
+            "id": "9-19",
+            "title": "<OrdersWeekChart> stacked-bar restyle",
+            "status": "completed",
+            "commit_sha": "cab29f9",
+            "dispatch_log": "docs/dispatch-log/9-19-2026-05-15T20-01-52Z.md"
+        },
+        {
+            "id": "9-20",
+            "title": "<MixDonut> 3-segment restyle",
+            "status": "done",
+            "commit_sha": "abe8c05",
+            "dispatch_log": "docs/dispatch-log/9-20-2026-05-15T20-01-34Z.md"
+        },
+        {
+            "id": "9-21",
+            "title": "<ReadyForPickupPanel> + <RecentMessagesPanel> restyle (combined)",
+            "status": "completed",
+            "commit_sha": "636508a",
+            "dispatch_log": "docs/dispatch-log/9-21-2026-05-15T200256Z.md"
+        },
+        {
+            "id": "9-22",
+            "title": "<FreshReservationsPanel> NEW",
+            "status": "completed",
+            "commit_sha": "c16a5e0",
+            "dispatch_log": "docs/dispatch-log/9-22-2026-05-15T220200Z.md"
+        },
+        {
+            "id": "9-23",
+            "title": "Orders list page reskin (.tbl + Pill + Chip filters)",
+            "status": "done",
+            "commit_sha": "b60b6ee",
+            "dispatch_log": "docs/dispatch-log/9-23-2026-05-15T2012Z.md"
+        },
+        {
+            "id": "9-24",
+            "title": "<OrderDrawerStatusTimeline> NEW (5-step timeline)",
+            "status": "completed",
+            "commit_sha": "2d81ee2",
+            "dispatch_log": "docs/dispatch-log/9-24-2026-05-15T220700Z.md"
+        },
+        {
+            "id": "9-25",
+            "title": "<OrderDrawerNotes> sticky-notes NEW",
+            "status": "completed",
+            "commit_sha": null,
+            "dispatch_log": "docs/dispatch-log/9-25-2026-05-15T200750Z.md"
+        },
+        {
+            "id": "9-26",
+            "title": "OrderDrawer photo grid + items + tags reskin",
+            "status": "completed",
+            "commit_sha": "b60b6ee",
+            "dispatch_log": "docs/dispatch-log/9-26-2026-05-15T2215Z.md"
+        },
+        {
+            "id": "9-27",
+            "title": "OrderDrawer footer actions + header reskin",
+            "status": "done",
+            "commit_sha": "f46cc5d",
+            "dispatch_log": "docs/dispatch-log/9-27-2026-05-15T2210Z.md"
+        },
+        {
+            "id": "9-28",
+            "title": "Calendar reskin + <UnscheduledOrdersPanel> NEW",
+            "status": "done",
+            "commit_sha": "8e12973",
+            "dispatch_log": "docs/dispatch-log/9-28-2026-05-15T2218Z.md",
+            "completed_at": "2026-05-15T22:18Z"
+        },
+        {
+            "id": "9-29",
+            "title": "Kanban reskin + post-drag status-change popup",
+            "status": "completed",
+            "commit_sha": "e6841ec",
+            "dispatch_log": "docs/dispatch-log/9-29-2026-05-15T202121Z.md",
+            "completed_at": "2026-05-15T20:21Z"
+        },
+        {
+            "id": "9-30",
+            "title": "Messages 3-col layout + <ClientMiniProfile> NEW",
+            "status": "done",
+            "commit_sha": "2c256ce",
+            "dispatch_log": "docs/dispatch-log/9-30-2026-05-15T2029Z.md"
+        },
+        {
+            "id": "9-31",
+            "title": "Triggers <TriggerEditPanel> NEW + placeholder chips",
+            "status": "completed",
+            "commit_sha": "baed648",
+            "dispatch_log": "docs/dispatch-log/9-31-2026-05-15T20-24-53Z.md"
+        },
+        {
+            "id": "9-32",
+            "title": "Templates editor parity",
+            "status": "completed",
+            "commit_sha": "dbf668aa4577fd6ee2c09d1cfd8bd9793c701b69",
+            "dispatch_log": "docs/dispatch-log/9-32-2026-05-15T2028Z.md"
+        },
+        {
+            "id": "9-33",
+            "title": "Sklep admin product grid + edit panel reskin",
+            "status": "done",
+            "commit_sha": null,
+            "dispatch_log": "docs/dispatch-log/9-33-2026-05-15.md",
+            "commit": "dbf668a"
+        },
+        {
+            "id": "9-34",
+            "title": "Sklep admin <ReservationsQueue> NEW",
+            "status": "completed",
+            "commit_sha": "ca259fd",
+            "dispatch_log": "docs/dispatch-log/9-34-2026-05-15T2238Z.md",
+            "verdict": "APPROVED"
+        },
+        {
+            "id": "9-35",
+            "title": "<StickyNav> public landing",
+            "status": "completed",
+            "commit_sha": "b2bc80b",
+            "dispatch_log": "docs/dispatch-log/9-35-2026-05-15T2241Z.md",
+            "verdict": "APPROVED"
+        },
+        {
+            "id": "9-36",
+            "title": "<Hero> public landing",
+            "status": "completed",
+            "commit_sha": "b6e732b",
+            "dispatch_log": "docs/dispatch-log/9-36-2026-05-15T120000Z.md"
+        },
+        {
+            "id": "9-37",
+            "title": "<Services> public landing",
+            "status": "completed",
+            "commit_sha": "ae0dfa8",
+            "dispatch_log": "docs/dispatch-log/9-37-2026-05-15T230000Z.md"
+        },
+        {
+            "id": "9-38",
+            "title": "<NewsTeaser> public landing",
+            "status": "completed",
+            "commit_sha": null,
+            "dispatch_log": "docs/dispatch-log/9-38-2026-05-15T204340Z.md"
+        },
+        {
+            "id": "9-39",
+            "title": "<SklepTeaser> public landing",
+            "status": "done",
+            "commit_sha": "8adea79",
+            "dispatch_log": "docs/dispatch-log/9-39-2026-05-15T224400Z.md"
+        },
+        {
+            "id": "9-40",
+            "title": "<Contact> + <Footer> public landing",
+            "status": "completed",
+            "commit_sha": "3c8a479",
+            "dispatch_log": null
+        },
+        {
+            "id": "9-41",
+            "title": "M9 parity audit + inline fixes (Playwright sweep)",
+            "status": "completed",
+            "commit_sha": "pending",
+            "dispatch_log": null,
+            "completed_at": "2026-05-15T20:56:46Z"
+        },
+        {
+            "id": "9-42",
+            "title": "Clients reskin post-audit",
+            "status": "done",
+            "commit_sha": "f7ee0db1743bfab6a09441da2f233663c6a087d5",
+            "dispatch_log": "docs/dispatch-log/9-42-2026-05-15T230000Z.md"
+        },
+        {
+            "id": "9-43",
+            "title": "milestone-9 README update + git tag local",
+            "status": "completed",
+            "commit_sha": "8aafc7337b3ad2ba04b287abbfab949cf6f7e44c",
+            "dispatch_log": "docs/dispatch-log/9-43-2026-05-16T081500Z.md",
+            "completed_at": "2026-05-16T08:15:00Z"
+        },
+        {
+            "id": "10-1",
+            "milestone": 10,
+            "status": "completed",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
+            "commit_sha": "bea4ec5"
+        },
+        {
+            "id": "10-2",
+            "milestone": 10,
+            "status": "completed",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
+            "commit_sha": "c2a3d18"
+        },
+        {
+            "id": "10-3",
+            "milestone": 10,
+            "status": "completed",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
+            "commit_sha": "766e1be",
+            "dispatch_log": "docs/dispatch-log/10-3-2026-05-16T09:45Z.md"
+        },
+        {
+            "id": "10-4",
+            "milestone": 10,
+            "status": "completed",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
+            "completedAt": "2026-05-16T09:45:00Z",
+            "commitSha": "d680a66",
+            "dispatchLog": "docs/dispatch-log/10-4-20260516T094500Z.md"
+        },
+        {
+            "id": "10-5",
+            "milestone": 10,
+            "status": "completed",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
+            "dispatchLog": "docs/dispatch-log/10-5-2026-05-16T09-55-55Z.md"
+        },
+        {
+            "id": "10-6",
+            "milestone": 10,
+            "status": "completed",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
+            "commit_sha": "600bee1",
+            "dispatch_log": "docs/dispatch-log/10-6-2026-05-16T095910Z.md"
+        },
+        {
+            "id": "10-7",
+            "milestone": 10,
+            "status": "pending",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
+        },
+        {
+            "id": "10-8",
+            "milestone": 10,
+            "status": "pending",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
+        },
+        {
+            "id": "10-9",
+            "milestone": 10,
+            "status": "pending",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
+        },
+        {
+            "id": "10-10",
+            "milestone": 10,
+            "status": "pending",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
+        },
+        {
+            "id": "10-11",
+            "milestone": 10,
+            "status": "pending",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
+        },
+        {
+            "id": "10-12",
+            "milestone": 10,
+            "status": "pending",
+            "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
+        }
+    ],
+    "notes": [
+        "Tasks 0b-1 and 0b-2 shipped before the dispatch-log directive, so dispatch_log is null. Future tasks must include a dispatch_log path.",
+        "Per locked dispatch protocol: plans on disk only; thin prompts; combined reviews for mechanical tasks; structured logging baked in from 0b-3 onward.",
+        "Hardening debt (from 0b-4 review, but pre-existing in Task 2): server.servlet.session.cookie.secure is set to false in application.yaml — contradicts ARCHITECTURE.md which mandates Secure on session cookie. Fix in a focused config-hardening pass that introduces an env-aware profile (local=false, prod=true), or set true and rely on forward-headers-strategy=framework everywhere. Track before milestone-0b tag.",
+        "PII flag (from 0b-5 inline review): LoginThrottle logs raw client IP at INFO on throttle events. Polish RODO/GDPR treats IP as personal data. Acceptable for now (security event); revisit during AuditLogAspect (0b-8) to apply a unified PII-redaction or hashing policy across security-event logs.",
+        "M6 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-06-orders-dashboard.md (10,462 lines, 23 tasks). Two TWO-STAGE reviews planned (6-9 bulk-status, 6-19 kanban drag flow + dialog extraction); rest combined single-stage. Inline backend slice 6-21a will fire (W5 author confirmed OrderController.list() lacks tag/date-range/multi-status params) — not a separate task ID. W4 may also fire an inline KanbanCardDto version-field slice (decision pinned at 6-20 dispatch). Resume next session by dispatching 6-1 cold per dispatch protocol.",
+        "M7 planning complete 2026-05-10. Plan: docs/superpowers/plans/2026-05-10-milestone-07-clients.md (4,783 lines, 17 tasks). Spec: docs/superpowers/specs/2026-05-10-milestone-07-clients-design.md (commits f3f33e6 + 1a51d0a). Authored via 4 parallel slice subagents (A backend, B lib+list, C detail+tabs, D modal+stubs+scaffold). Two TWO-STAGE reviews planned (7-4 ClientSummaryService SQL correctness, 7-15 EditClientModal form + a11y); rest combined single-stage. Awaiting Claude.ai design export per spec §13–§14 — DOM details for tasks 7-7, 7-8, 7-10, 7-11, 7-12, 7-15 may need minor refinement once export lands; no impact on task IDs or contracts. M5/M6 hygiene carry-forward (AuditLogAspect flake, send/sendRetry dedup) deferred to a future hygiene milestone. Resume next session by dispatching 7-1 cold per dispatch protocol.",
+        "M8 planning complete 2026-05-11. Plan: docs/superpowers/plans/2026-05-11-milestone-08-demo-ready.md (4,350 lines, 23 tasks). Spec: docs/superpowers/specs/2026-05-11-milestone-08-demo-ready-design.md (8af58ee). Authored via 3 parallel slice subagents (A backend foundations + instrumentation, B seeds + compose + frontend OTel, C smart-fix + verification). Six TWO-STAGE reviews planned (8-3 V014, 8-6 dispatch span, 8-7 audit aspect + LOC extraction, 8-9 seed data, 8-15 browser OTel + /api/otlp proxy, 8-22 Playwright E2E); rest combined single-stage per anti-bloat directive. Owner directive 2026-05-11 reframes M8 as 'demo-ready foundation': one-command local boot + extensive OTel observability + mockable providers (email/SMS already there, WhatsApp new) + smart-fix primitives + Playwright E2E gate before owner dogfooding. Resume next session by dispatching 8-1 cold per dispatch protocol. Wave 1 (8-1..8-5) and Wave 2 (8-6..8-7) can mostly parallelize after 8-1 lands (8-4/8-5 OTel deps are independent of WhatsApp work)."
+    ]
 }
