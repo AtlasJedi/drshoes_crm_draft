@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createLogger } from "@/lib/log";
-import { AdminCard, I } from "@repo/ui";
+import { AdminCard, I } from "@drshoes/ui";
 import { addOrderItem, updateOrderItem, removeOrderItem, getOrder } from "@/lib/orders/api";
 import type { OrderDto, OrderItemDto, OrderItemKind } from "@/lib/orders/types";
 import { ItemEditRow, type ItemEditState } from "./ItemEditRow";

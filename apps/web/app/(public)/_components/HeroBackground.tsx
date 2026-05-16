@@ -3,7 +3,7 @@
 // < 40 LOC per granulate directive.
 
 import React from "react";
-import { PhImg, Splatter } from "@repo/ui";
+import { PhImg, Splatter } from "@drshoes/ui";
 
 export function HeroBackground() {
   return (

@@ -1,0 +1,535 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic: Dr Shoes
+      - navigation:
+        - generic: Pulpit
+        - link:
+          - /url: /admin
+          - text: Dashboard
+        - generic: Operacje
+        - link:
+          - /url: /admin/orders
+          - text: Zamówienia
+        - link:
+          - /url: /admin/clients
+          - text: Klienci
+        - link:
+          - /url: /admin/messages
+          - img
+          - generic: Wiadomości
+        - generic: Komunikacja
+        - link:
+          - /url: /admin/triggers
+          - text: Trigery
+        - link:
+          - /url: /admin/templates
+          - text: Szablony wiadomości
+        - generic: Sklep
+        - link:
+          - /url: /admin/sklep
+          - text: Sklep
+        - link:
+          - /url: /admin/aktualnosci
+          - text: Aktualności
+        - generic:
+          - button: Zgłoś problem
+      - generic:
+        - text: Zalogowany jako Misza Doctor
+        - generic: OWNER
+    - main:
+      - generic:
+        - generic:
+          - heading [level=1]: Zlecenia
+          - link:
+            - /url: /admin/orders/new
+            - text: + Nowe zlecenie
+        - generic:
+          - tablist:
+            - tab: Lista
+            - tab: Kalendarz
+            - tab: Kanban
+        - generic:
+          - generic: "Presety:"
+          - button: Pilne na ten tydzień
+          - button: Gotowe do odbioru
+          - button: Zaległe
+          - button [disabled]: + zapisz widok
+        - generic:
+          - generic:
+            - text: Status
+            - combobox
+          - group:
+            - generic: Typ
+            - generic:
+              - generic:
+                - checkbox
+                - text: Naprawa
+              - generic:
+                - checkbox
+                - text: Custom buty
+              - generic:
+                - checkbox
+                - text: Custom kurtka
+          - generic:
+            - text: Wykonawca
+            - combobox
+          - generic:
+            - text: Szukaj
+            - searchbox
+        - generic:
+          - generic:
+            - table:
+              - rowgroup:
+                - row:
+                  - columnheader:
+                    - checkbox
+                  - columnheader:
+                    - button:
+                      - generic: Kod
+                  - columnheader:
+                    - button:
+                      - generic: Status
+                  - columnheader: Klient
+                  - columnheader: Pozycje
+                  - columnheader:
+                    - button:
+                      - generic: Przyjęto
+                  - columnheader: Termin odbioru
+                  - columnheader:
+                    - button:
+                      - generic: Wydano
+                  - columnheader: Wykonawca
+                  - columnheader:
+                    - button:
+                      - generic: Utworzono
+                      - generic: ↓
+                  - columnheader: Suma
+                  - columnheader
+              - rowgroup:
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0022
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: 55ab2e11…
+                  - cell: LOREM
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 6,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0021
+                  - cell:
+                    - generic: Wydane
+                  - cell: 5c094beb…
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 80,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0020
+                  - cell:
+                    - generic: Wydane
+                  - cell: 5c094beb…
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 80,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0019
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: 5c094beb…
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 80,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0018
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: 5c094beb…
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 80,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0017
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: 5c094beb…
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 80,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0016
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: 09d8480e…
+                  - cell: Custom design — konsultacja
+                  - cell: —
+                  - cell: 26.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0015
+                  - cell:
+                    - generic: Anulowane
+                  - cell: 5c094beb…
+                  - cell: Zbyt uszkodzone — rezygnacja
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0014
+                  - cell:
+                    - generic: Wydane
+                  - cell: ee0dab01…
+                  - cell: Przyklejenie zelówki
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0013
+                  - cell:
+                    - generic: Wydane
+                  - cell: 4b5aa6ad…
+                  - cell: Malowanie logo na kurtce
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0012
+                  - cell:
+                    - generic: Wydane
+                  - cell: 55ab2e11…
+                  - cell: Uzupełnienie obcasa
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0011
+                  - cell:
+                    - generic: Gotowe do odbioru
+                  - cell: 0db2d5d4…
+                  - cell: Hand-painted florals — sneakers
+                  - cell: —
+                  - cell: 13.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0010
+                  - cell:
+                    - generic: Gotowe do odbioru
+                  - cell: 09d8480e…
+                  - cell: Renowacja skóry — buty wizytowe
+                  - cell: —
+                  - cell: 13.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0009
+                  - cell:
+                    - generic: Gotowe do odbioru
+                  - cell: 5c094beb…
+                  - cell: Wymiana zamka — kozaki
+                  - cell: —
+                  - cell: 14.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0008
+                  - cell:
+                    - generic: W realizacji
+                  - cell: ee0dab01…
+                  - cell: Custom painting — kurtka bomber
+                  - cell: —
+                  - cell: 15.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0007
+                  - cell:
+                    - generic: W realizacji
+                  - cell: 4b5aa6ad…
+                  - cell: Custom painting — Air Force 1
+                  - cell: —
+                  - cell: 17.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0006
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: 55ab2e11…
+                  - cell: Wymiana podeszwy — trampki
+                  - cell: —
+                  - cell: 19.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0005
+                  - cell:
+                    - generic: Wstępnie przyjęte
+                  - cell: 0db2d5d4…
+                  - cell: Naprawa zelówek — buty skórzane
+                  - cell: —
+                  - cell: 22.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0004
+                  - cell:
+                    - generic: W realizacji
+                  - cell: 22f6264e…
+                  - cell: definitive smoke test
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 30,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0003
+                  - cell:
+                    - generic: Czeka na klienta
+                  - cell: 22f6264e…
+                  - cell: smoke test order
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 50,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0002
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: 22f6264e…
+                  - cell: czarne sneakery 2
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 120,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0001
+                  - cell:
+                    - generic: W realizacji
+                  - cell: 22f6264e…
+                  - cell: czarne sneakery
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 120,00 zł
+                  - cell:
+                    - button: ⋯
+  - alert
+  - dialog "DR-2026-0022" [ref=e441]:
+    - generic [ref=e442]:
+      - generic [ref=e443]:
+        - heading "DR-2026-0022" [level=2] [ref=e444]
+        - generic [ref=e445]: Przyjęte
+      - button "Zamknij" [active] [ref=e446] [cursor=pointer]: ×
+    - generic [ref=e447]:
+      - generic [ref=e448]:
+        - generic [ref=e449]:
+          - generic [ref=e450]: Klient
+          - paragraph [ref=e451]: 55ab2e11-424a-4205-8c26-1fbe874c7293
+        - generic [ref=e452]:
+          - generic [ref=e453]: Opis
+          - textbox [ref=e454]: LOREM
+        - generic [ref=e455]:
+          - generic [ref=e456]: Planowany odbiór
+          - textbox [ref=e457]
+        - generic [ref=e458]:
+          - generic [ref=e459]: Wykonawca
+          - combobox [ref=e460]:
+            - option "— brak —"
+            - option "Misza Doctor" [selected]
+            - option "Pomocnik"
+      - generic [ref=e462]:
+        - paragraph [ref=e463]: Status
+        - generic [ref=e464]:
+          - button "Wstępnie przyjęte" [ref=e465] [cursor=pointer]
+          - button "Przyjęte" [disabled] [ref=e466]
+          - button "W realizacji" [ref=e467] [cursor=pointer]
+          - button "Czeka na klienta" [ref=e468] [cursor=pointer]
+          - button "Gotowe do odbioru" [ref=e469] [cursor=pointer]
+          - button "Wydane" [ref=e470] [cursor=pointer]
+          - button "Anulowane" [ref=e471] [cursor=pointer]
+      - generic [ref=e472]:
+        - paragraph [ref=e473]: Pozycje
+        - generic [ref=e474]:
+          - generic [ref=e475]: Naprawa
+          - generic [ref=e476]: "1"
+          - generic [ref=e477]: 1,00 zł
+          - button "Edytuj pozycję" [ref=e478] [cursor=pointer]: ✎
+          - button "Usuń pozycję" [ref=e479] [cursor=pointer]: ✕
+        - generic [ref=e480]:
+          - generic [ref=e481]: Naprawa
+          - generic [ref=e482]: "2"
+          - generic [ref=e483]: 2,00 zł
+          - button "Edytuj pozycję" [ref=e484] [cursor=pointer]: ✎
+          - button "Usuń pozycję" [ref=e485] [cursor=pointer]: ✕
+        - generic [ref=e486]:
+          - generic [ref=e487]: Naprawa
+          - generic [ref=e488]: "3"
+          - generic [ref=e489]: 3,00 zł
+          - button "Edytuj pozycję" [ref=e490] [cursor=pointer]: ✎
+          - button "Usuń pozycję" [ref=e491] [cursor=pointer]: ✕
+        - button "+ Dodaj pozycję" [ref=e492] [cursor=pointer]
+      - generic [ref=e493]:
+        - paragraph [ref=e494]: Historia
+        - list [ref=e495]:
+          - listitem [ref=e496]:
+            - generic [ref=e497]: 🆕
+            - generic [ref=e498]:
+              - text: Zamówienie utworzone
+              - generic [ref=e499]: · Misza Doctor
+              - generic [ref=e500]: 12.05.2026, 10:41
+      - generic [ref=e501]:
+        - paragraph [ref=e502]: Zdjęcia
+        - generic [ref=e503]:
+          - button "Prześlij zdjęcia" [ref=e504] [cursor=pointer]
+          - paragraph [ref=e505]: Brak zdjęć. Prześlij pierwsze zdjęcie.
+      - generic [ref=e506]:
+        - generic [ref=e507]:
+          - paragraph [ref=e508]: Komunikacja z klientem
+          - button "Wyślij wiadomość" [ref=e509] [cursor=pointer]
+        - paragraph [ref=e510]: Brak wiadomości.

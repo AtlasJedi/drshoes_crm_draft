@@ -1,0 +1,389 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic: Dr Shoes
+      - navigation:
+        - generic: Pulpit
+        - link:
+          - /url: /admin
+          - text: Dashboard
+        - generic: Operacje
+        - link:
+          - /url: /admin/orders
+          - text: Zamówienia
+        - link:
+          - /url: /admin/clients
+          - text: Klienci
+        - link:
+          - /url: /admin/messages
+          - img
+          - generic: Wiadomości
+        - generic: Komunikacja
+        - link:
+          - /url: /admin/triggers
+          - text: Trigery
+        - link:
+          - /url: /admin/templates
+          - text: Szablony wiadomości
+        - generic: Sklep
+        - link:
+          - /url: /admin/sklep
+          - text: Sklep
+        - link:
+          - /url: /admin/aktualnosci
+          - text: Aktualności
+        - generic:
+          - button: Zgłoś problem
+      - generic:
+        - text: Zalogowany jako Test Admin
+        - generic: OWNER
+    - main:
+      - generic:
+        - generic:
+          - heading [level=1]: Zlecenia
+          - link:
+            - /url: /admin/orders/new
+            - text: + Nowe zlecenie
+        - generic:
+          - tablist:
+            - tab: Lista
+            - tab: Kalendarz
+            - tab: Kanban
+        - generic:
+          - generic: "Presety:"
+          - button: Pilne na ten tydzień
+          - button: Gotowe do odbioru
+          - button: Zaległe
+          - button [disabled]: + zapisz widok
+        - generic:
+          - generic:
+            - generic: Status
+            - button:
+              - text: Wszystkie
+              - generic: ▾
+          - group:
+            - generic: Typ
+            - generic:
+              - generic:
+                - checkbox
+                - text: Naprawa
+              - generic:
+                - checkbox
+                - text: Custom buty
+              - generic:
+                - checkbox
+                - text: Custom kurtka
+          - generic:
+            - text: Wykonawca
+            - combobox
+          - generic:
+            - text: Szukaj
+            - searchbox
+        - generic:
+          - generic:
+            - table:
+              - rowgroup:
+                - row:
+                  - columnheader:
+                    - checkbox
+                  - columnheader:
+                    - button:
+                      - generic: Kod
+                  - columnheader:
+                    - button:
+                      - generic: Status
+                  - columnheader: Klient
+                  - columnheader: Pozycje
+                  - columnheader:
+                    - button:
+                      - generic: Przyjęto
+                  - columnheader: Termin odbioru
+                  - columnheader:
+                    - button:
+                      - generic: Wydano
+                  - columnheader: Wykonawca
+                  - columnheader:
+                    - button:
+                      - generic: Utworzono
+                      - generic: ↓
+                  - columnheader: Suma
+                  - columnheader
+              - rowgroup:
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0046
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: Piotr Zieliński
+                  - cell: Custom design — konsultacja
+                  - cell: 10.05.2026
+                  - cell: 26.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0045
+                  - cell:
+                    - generic: Anulowane
+                  - cell: Katarzyna Kowalczyk
+                  - cell: Zbyt uszkodzone — rezygnacja
+                  - cell: 08.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0044
+                  - cell:
+                    - generic: Wydane
+                  - cell: Tomasz Wójcik
+                  - cell: Przyklejenie zelówki
+                  - cell: 07.05.2026
+                  - cell: —
+                  - cell: 12.05.2026
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0043
+                  - cell:
+                    - generic: Wydane
+                  - cell: Ewa Wiśniewska
+                  - cell: Malowanie logo na kurtce
+                  - cell: 06.05.2026
+                  - cell: —
+                  - cell: 12.05.2026
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0042
+                  - cell:
+                    - generic: Wydane
+                  - cell: Marek Nowak
+                  - cell: Uzupełnienie obcasa
+                  - cell: 05.05.2026
+                  - cell: —
+                  - cell: 12.05.2026
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0041
+                  - cell:
+                    - generic: Gotowe do odbioru
+                  - cell: Anna Kowalska
+                  - cell: Hand-painted florals — sneakers
+                  - cell: 03.05.2026
+                  - cell: 13.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0040
+                  - cell:
+                    - generic: Gotowe do odbioru
+                  - cell: Piotr Zieliński
+                  - cell: Renowacja skóry — buty wizytowe
+                  - cell: 02.05.2026
+                  - cell: 13.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0039
+                  - cell:
+                    - generic: Czeka na klienta
+                  - cell: Katarzyna Kowalczyk
+                  - cell: Wymiana zamka — kozaki
+                  - cell: 30.04.2026
+                  - cell: 14.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0038
+                  - cell:
+                    - generic: W realizacji
+                  - cell: Tomasz Wójcik
+                  - cell: Custom painting — kurtka bomber
+                  - cell: 28.04.2026
+                  - cell: 15.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0037
+                  - cell:
+                    - generic: W realizacji
+                  - cell: Ewa Wiśniewska
+                  - cell: Custom painting — Air Force 1
+                  - cell: 27.04.2026
+                  - cell: 17.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0036
+                  - cell:
+                    - generic: Przyjęte
+                  - cell: Marek Nowak
+                  - cell: Wymiana podeszwy — trampki
+                  - cell: 24.04.2026
+                  - cell: 19.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+                - row:
+                  - cell:
+                    - checkbox
+                  - cell: DR-2026-0035
+                  - cell:
+                    - generic: Wstępnie przyjęte
+                  - cell: Anna Kowalska
+                  - cell: Naprawa zelówek — buty skórzane
+                  - cell: 21.04.2026
+                  - cell: 22.05.2026
+                  - cell: —
+                  - cell: —
+                  - cell: 12.05.2026 17:19
+                  - cell: 0,00 zł
+                  - cell:
+                    - button: ⋯
+  - alert
+  - dialog "DR-2026-0046":
+    - generic:
+      - generic:
+        - heading [level=2]: DR-2026-0046
+        - generic: Przyjęte
+      - button: ×
+    - generic:
+      - generic:
+        - generic:
+          - generic: Klient
+          - paragraph: Piotr Zieliński
+        - generic:
+          - generic: Opis
+          - textbox: Custom design — konsultacja
+        - generic:
+          - generic: Planowany odbiór
+          - textbox: 2026-05-26
+        - generic:
+          - generic: Wykonawca
+          - combobox
+        - generic:
+          - generic: Wycena
+          - textbox:
+            - /placeholder: 0,00
+        - generic:
+          - generic: Zaliczka
+          - textbox:
+            - /placeholder: 0,00
+        - generic:
+          - generic: Do zapłaty przy odbiorze
+          - paragraph: —
+      - generic:
+        - paragraph: Status
+        - generic:
+          - group:
+            - button [disabled]: Przyjęte
+            - button: Realizacja
+            - button: Czeka
+            - button: Gotowe
+            - button: Wydane
+          - button: Anuluj
+      - generic:
+        - paragraph: Pozycje
+        - generic:
+          - generic: Custom buty
+          - generic: Custom design — konsultacja
+          - generic: 0,00 zł
+          - button: ✎
+          - button: ✕
+        - button: + Dodaj pozycję
+      - generic:
+        - paragraph: Historia
+        - list:
+          - listitem:
+            - generic: 🆕
+            - generic:
+              - text: Zamówienie utworzone
+              - generic: · Misza Doctor
+              - generic: 12.05.2026, 17:19
+      - generic:
+        - paragraph: Zdjęcia
+        - generic:
+          - button: Prześlij zdjęcia
+          - paragraph: Brak zdjęć. Prześlij pierwsze zdjęcie.
+      - generic:
+        - generic:
+          - paragraph: Komunikacja z klientem
+          - button: Wyślij wiadomość
+        - paragraph: Brak wiadomości.
+  - dialog "Zmiana statusu" [ref=e351]:
+    - heading "Zmiana statusu" [level=2] [ref=e352]
+    - paragraph [ref=e353]:
+      - generic [ref=e354]:
+        - text: Przyjęte →
+        - strong [ref=e355]: W realizacji
+    - generic [ref=e356]:
+      - paragraph [ref=e357]: "Co się stanie:"
+      - paragraph [ref=e358]: Brak skonfigurowanego wyzwalacza dla tego przejścia.
+    - generic [ref=e359]:
+      - text: Notatka (opcjonalnie)
+      - textbox "Notatka (opcjonalnie)" [active] [ref=e360]:
+        - /placeholder: Dodaj notatkę do tej zmiany statusu…
+    - generic [ref=e361]:
+      - button "Tylko zmień status" [ref=e362] [cursor=pointer]
+      - button "Anuluj" [ref=e363] [cursor=pointer]

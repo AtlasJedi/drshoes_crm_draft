@@ -36,7 +36,7 @@ export function ClientHeader({ client }: Props) {
   return (
     <div className="admin-card p-6 mb-6 flex items-start justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="font-display text-3xl leading-tight text-admin-ink mb-3">
+        <h1 className="t-display text-admin-ink mb-3" style={{ fontSize: "clamp(28px, 4vw, 38px)" }}>
           {client.firstName} {client.lastName ?? ""}
         </h1>
 

@@ -4,7 +4,7 @@
 // < 30 LOC per granulate directive.
 
 import { createLogger } from "@/lib/log";
-import { Chip } from "@repo/ui";
+import { Chip } from "@drshoes/ui";
 
 const log = createLogger("order-drawer-tags");
 

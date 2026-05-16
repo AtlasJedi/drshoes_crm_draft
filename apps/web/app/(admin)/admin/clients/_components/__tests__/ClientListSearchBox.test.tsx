@@ -57,4 +57,12 @@ describe("ClientListSearchBox", () => {
       expect.stringContaining("q=J%C3%B3zef"),
     );
   });
+
+  it("search input has t-mono and border-ink classes", async () => {
+    const { ClientListSearchBox } = await import("../ClientListSearchBox");
+    render(<ClientListSearchBox initialQ="" />);
+    const input = screen.getByRole("textbox");
+    expect(input.className).toMatch(/t-mono/);
+    expect(input.className).toMatch(/border-ink/);
+  });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { Pill, I } from "@repo/ui";
+import { Pill, I } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";
 import type { OrderStatus } from "@/lib/orders/types";
 

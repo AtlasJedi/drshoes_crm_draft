@@ -1,7 +1,7 @@
 "use client";
 
 import { createLogger } from "@/lib/log";
-import { Tape, Toggle, Chip, I } from "@repo/ui";
+import { Tape, Toggle, Chip, I } from "@drshoes/ui";
 import { useTriggerEditForm } from "./useTriggerEditForm";
 import type { TriggerDto } from "@/lib/messaging/types";
 

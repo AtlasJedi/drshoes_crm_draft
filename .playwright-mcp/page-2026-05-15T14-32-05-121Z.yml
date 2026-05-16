@@ -1,0 +1,297 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]: Dr Shoes
+      - navigation [ref=e5]:
+        - generic [ref=e6]: Pulpit
+        - link "Dashboard" [ref=e7] [cursor=pointer]:
+          - /url: /admin
+        - generic [ref=e8]: Operacje
+        - link "Zamówienia" [ref=e9] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Klienci" [ref=e10] [cursor=pointer]:
+          - /url: /admin/clients
+        - link "Wiadomości" [ref=e11] [cursor=pointer]:
+          - /url: /admin/messages
+          - img [ref=e12]
+          - generic [ref=e14]: Wiadomości
+        - generic [ref=e15]: Komunikacja
+        - link "Trigery" [ref=e16] [cursor=pointer]:
+          - /url: /admin/triggers
+        - link "Szablony wiadomości" [ref=e17] [cursor=pointer]:
+          - /url: /admin/templates
+        - generic [ref=e18]: Sklep
+        - link "Sklep" [ref=e19] [cursor=pointer]:
+          - /url: /admin/sklep
+        - link "Aktualności" [ref=e20] [cursor=pointer]:
+          - /url: /admin/aktualnosci
+        - button "Zgłoś problem" [ref=e22] [cursor=pointer]
+      - generic [ref=e23]:
+        - text: Zalogowany jako
+        - text: Test Admin
+        - generic [ref=e24]: OWNER
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - heading "Zlecenia" [level=1] [ref=e28]
+          - link "+ Nowe zlecenie" [ref=e29] [cursor=pointer]:
+            - /url: /admin/orders/new
+        - tablist "Widok zleceń" [ref=e31]:
+          - tab "Lista" [ref=e32] [cursor=pointer]
+          - tab "Kalendarz" [ref=e33] [cursor=pointer]
+          - tab "Kanban" [ref=e34] [cursor=pointer]
+        - generic [ref=e35]:
+          - generic [ref=e36]: "Presety:"
+          - button "Pilne na ten tydzień" [ref=e37] [cursor=pointer]
+          - button "Gotowe do odbioru" [ref=e38] [cursor=pointer]
+          - button "Zaległe" [ref=e39] [cursor=pointer]
+          - button "Zapisz widok (wkrótce)" [disabled] [ref=e40] [cursor=pointer]: + zapisz widok
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e43]: Status
+            - button "Wszystkie" [ref=e44] [cursor=pointer]:
+              - text: Wszystkie
+              - generic [ref=e45]: ▾
+          - group "Typ" [ref=e46]:
+            - generic [ref=e47]: Typ
+            - generic [ref=e48]:
+              - generic [ref=e49] [cursor=pointer]:
+                - checkbox "Naprawa" [ref=e50]
+                - text: Naprawa
+              - generic [ref=e51] [cursor=pointer]:
+                - checkbox "Custom buty" [ref=e52]
+                - text: Custom buty
+              - generic [ref=e53] [cursor=pointer]:
+                - checkbox "Custom kurtka" [ref=e54]
+                - text: Custom kurtka
+          - generic [ref=e55]:
+            - text: Wykonawca
+            - combobox "Wykonawca" [ref=e56]:
+              - option "Wszyscy" [selected]
+              - option "Misza Doctor"
+              - option "Pomocnik"
+              - option "Test Admin"
+          - generic [ref=e57]:
+            - text: Szukaj
+            - searchbox "Szukaj" [ref=e58]
+        - table [ref=e61]:
+          - rowgroup [ref=e62]:
+            - 'row "Zaznacz wszystkie Sortuj po: Kod Sortuj po: Status Klient Pozycje Sortuj po: Przyjęto Termin odbioru Sortuj po: Wydano Wykonawca Sortuj po: Utworzono Suma" [ref=e63]':
+              - columnheader "Zaznacz wszystkie" [ref=e64]:
+                - checkbox "Zaznacz wszystkie" [ref=e65]
+              - 'columnheader "Sortuj po: Kod" [ref=e66]':
+                - 'button "Sortuj po: Kod" [ref=e67] [cursor=pointer]':
+                  - generic [ref=e68]: Kod
+              - 'columnheader "Sortuj po: Status" [ref=e69]':
+                - 'button "Sortuj po: Status" [ref=e70] [cursor=pointer]':
+                  - generic [ref=e71]: Status
+              - columnheader "Klient" [ref=e72]
+              - columnheader "Pozycje" [ref=e73]
+              - 'columnheader "Sortuj po: Przyjęto" [ref=e74]':
+                - 'button "Sortuj po: Przyjęto" [ref=e75] [cursor=pointer]':
+                  - generic [ref=e76]: Przyjęto
+              - columnheader "Termin odbioru" [ref=e77]
+              - 'columnheader "Sortuj po: Wydano" [ref=e78]':
+                - 'button "Sortuj po: Wydano" [ref=e79] [cursor=pointer]':
+                  - generic [ref=e80]: Wydano
+              - columnheader "Wykonawca" [ref=e81]
+              - 'columnheader "Sortuj po: Utworzono" [ref=e82]':
+                - 'button "Sortuj po: Utworzono" [ref=e83] [cursor=pointer]':
+                  - generic [ref=e84]: Utworzono
+                  - generic [ref=e85]: ↓
+              - columnheader "Suma" [ref=e86]
+              - columnheader [ref=e87]
+          - rowgroup [ref=e88]:
+            - row "Zaznacz zlecenie DR-2026-0046 DR-2026-0046 Przyjęte Piotr Zieliński Custom design — konsultacja 10.05.2026 26.05.2026 — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e89] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0046" [ref=e90]:
+                - checkbox "Zaznacz zlecenie DR-2026-0046" [ref=e91]
+              - cell "DR-2026-0046" [ref=e92]
+              - cell "Przyjęte" [ref=e93]:
+                - generic [ref=e94]: Przyjęte
+              - cell "Piotr Zieliński" [ref=e95]
+              - cell "Custom design — konsultacja" [ref=e96]
+              - cell "10.05.2026" [ref=e97]
+              - cell "26.05.2026" [ref=e98]
+              - cell "—" [ref=e99]
+              - cell "—" [ref=e100]
+              - cell "12.05.2026 17:19" [ref=e101]
+              - cell "0,00 zł" [ref=e102]
+              - cell "Opcje zlecenia" [ref=e103]:
+                - button "Opcje zlecenia" [ref=e104]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0045 DR-2026-0045 Anulowane Katarzyna Kowalczyk Zbyt uszkodzone — rezygnacja 08.05.2026 — — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e105] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0045" [ref=e106]:
+                - checkbox "Zaznacz zlecenie DR-2026-0045" [ref=e107]
+              - cell "DR-2026-0045" [ref=e108]
+              - cell "Anulowane" [ref=e109]:
+                - generic [ref=e110]: Anulowane
+              - cell "Katarzyna Kowalczyk" [ref=e111]
+              - cell "Zbyt uszkodzone — rezygnacja" [ref=e112]
+              - cell "08.05.2026" [ref=e113]
+              - cell "—" [ref=e114]
+              - cell "—" [ref=e115]
+              - cell "—" [ref=e116]
+              - cell "12.05.2026 17:19" [ref=e117]
+              - cell "0,00 zł" [ref=e118]
+              - cell "Opcje zlecenia" [ref=e119]:
+                - button "Opcje zlecenia" [ref=e120]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0044 DR-2026-0044 Wydane Tomasz Wójcik Przyklejenie zelówki 07.05.2026 — 12.05.2026 — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e121] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0044" [ref=e122]:
+                - checkbox "Zaznacz zlecenie DR-2026-0044" [ref=e123]
+              - cell "DR-2026-0044" [ref=e124]
+              - cell "Wydane" [ref=e125]:
+                - generic [ref=e126]: Wydane
+              - cell "Tomasz Wójcik" [ref=e127]
+              - cell "Przyklejenie zelówki" [ref=e128]
+              - cell "07.05.2026" [ref=e129]
+              - cell "—" [ref=e130]
+              - cell "12.05.2026" [ref=e131]
+              - cell "—" [ref=e132]
+              - cell "12.05.2026 17:19" [ref=e133]
+              - cell "0,00 zł" [ref=e134]
+              - cell "Opcje zlecenia" [ref=e135]:
+                - button "Opcje zlecenia" [ref=e136]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0043 DR-2026-0043 Wydane Ewa Wiśniewska Malowanie logo na kurtce 06.05.2026 — 12.05.2026 — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e137] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0043" [ref=e138]:
+                - checkbox "Zaznacz zlecenie DR-2026-0043" [ref=e139]
+              - cell "DR-2026-0043" [ref=e140]
+              - cell "Wydane" [ref=e141]:
+                - generic [ref=e142]: Wydane
+              - cell "Ewa Wiśniewska" [ref=e143]
+              - cell "Malowanie logo na kurtce" [ref=e144]
+              - cell "06.05.2026" [ref=e145]
+              - cell "—" [ref=e146]
+              - cell "12.05.2026" [ref=e147]
+              - cell "—" [ref=e148]
+              - cell "12.05.2026 17:19" [ref=e149]
+              - cell "0,00 zł" [ref=e150]
+              - cell "Opcje zlecenia" [ref=e151]:
+                - button "Opcje zlecenia" [ref=e152]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0042 DR-2026-0042 Wydane Marek Nowak Uzupełnienie obcasa 05.05.2026 — 12.05.2026 — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e153] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0042" [ref=e154]:
+                - checkbox "Zaznacz zlecenie DR-2026-0042" [ref=e155]
+              - cell "DR-2026-0042" [ref=e156]
+              - cell "Wydane" [ref=e157]:
+                - generic [ref=e158]: Wydane
+              - cell "Marek Nowak" [ref=e159]
+              - cell "Uzupełnienie obcasa" [ref=e160]
+              - cell "05.05.2026" [ref=e161]
+              - cell "—" [ref=e162]
+              - cell "12.05.2026" [ref=e163]
+              - cell "—" [ref=e164]
+              - cell "12.05.2026 17:19" [ref=e165]
+              - cell "0,00 zł" [ref=e166]
+              - cell "Opcje zlecenia" [ref=e167]:
+                - button "Opcje zlecenia" [ref=e168]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0041 DR-2026-0041 Gotowe do odbioru Anna Kowalska Hand-painted florals — sneakers 03.05.2026 13.05.2026 — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e169] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0041" [ref=e170]:
+                - checkbox "Zaznacz zlecenie DR-2026-0041" [ref=e171]
+              - cell "DR-2026-0041" [ref=e172]
+              - cell "Gotowe do odbioru" [ref=e173]:
+                - generic [ref=e174]: Gotowe do odbioru
+              - cell "Anna Kowalska" [ref=e175]
+              - cell "Hand-painted florals — sneakers" [ref=e176]
+              - cell "03.05.2026" [ref=e177]
+              - cell "13.05.2026" [ref=e178]
+              - cell "—" [ref=e179]
+              - cell "—" [ref=e180]
+              - cell "12.05.2026 17:19" [ref=e181]
+              - cell "0,00 zł" [ref=e182]
+              - cell "Opcje zlecenia" [ref=e183]:
+                - button "Opcje zlecenia" [ref=e184]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0040 DR-2026-0040 Gotowe do odbioru Piotr Zieliński Renowacja skóry — buty wizytowe 02.05.2026 13.05.2026 — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e185] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0040" [ref=e186]:
+                - checkbox "Zaznacz zlecenie DR-2026-0040" [ref=e187]
+              - cell "DR-2026-0040" [ref=e188]
+              - cell "Gotowe do odbioru" [ref=e189]:
+                - generic [ref=e190]: Gotowe do odbioru
+              - cell "Piotr Zieliński" [ref=e191]
+              - cell "Renowacja skóry — buty wizytowe" [ref=e192]
+              - cell "02.05.2026" [ref=e193]
+              - cell "13.05.2026" [ref=e194]
+              - cell "—" [ref=e195]
+              - cell "—" [ref=e196]
+              - cell "12.05.2026 17:19" [ref=e197]
+              - cell "0,00 zł" [ref=e198]
+              - cell "Opcje zlecenia" [ref=e199]:
+                - button "Opcje zlecenia" [ref=e200]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0039 DR-2026-0039 Czeka na klienta Katarzyna Kowalczyk Wymiana zamka — kozaki 30.04.2026 14.05.2026 — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e201] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0039" [ref=e202]:
+                - checkbox "Zaznacz zlecenie DR-2026-0039" [ref=e203]
+              - cell "DR-2026-0039" [ref=e204]
+              - cell "Czeka na klienta" [ref=e205]:
+                - generic [ref=e206]: Czeka na klienta
+              - cell "Katarzyna Kowalczyk" [ref=e207]
+              - cell "Wymiana zamka — kozaki" [ref=e208]
+              - cell "30.04.2026" [ref=e209]
+              - cell "14.05.2026" [ref=e210]
+              - cell "—" [ref=e211]
+              - cell "—" [ref=e212]
+              - cell "12.05.2026 17:19" [ref=e213]
+              - cell "0,00 zł" [ref=e214]
+              - cell "Opcje zlecenia" [ref=e215]:
+                - button "Opcje zlecenia" [ref=e216]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0038 DR-2026-0038 W realizacji Tomasz Wójcik Custom painting — kurtka bomber 28.04.2026 15.05.2026 — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e217] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0038" [ref=e218]:
+                - checkbox "Zaznacz zlecenie DR-2026-0038" [ref=e219]
+              - cell "DR-2026-0038" [ref=e220]
+              - cell "W realizacji" [ref=e221]:
+                - generic [ref=e222]: W realizacji
+              - cell "Tomasz Wójcik" [ref=e223]
+              - cell "Custom painting — kurtka bomber" [ref=e224]
+              - cell "28.04.2026" [ref=e225]
+              - cell "15.05.2026" [ref=e226]
+              - cell "—" [ref=e227]
+              - cell "—" [ref=e228]
+              - cell "12.05.2026 17:19" [ref=e229]
+              - cell "0,00 zł" [ref=e230]
+              - cell "Opcje zlecenia" [ref=e231]:
+                - button "Opcje zlecenia" [ref=e232]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0037 DR-2026-0037 W realizacji Ewa Wiśniewska Custom painting — Air Force 1 27.04.2026 17.05.2026 — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e233] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0037" [ref=e234]:
+                - checkbox "Zaznacz zlecenie DR-2026-0037" [ref=e235]
+              - cell "DR-2026-0037" [ref=e236]
+              - cell "W realizacji" [ref=e237]:
+                - generic [ref=e238]: W realizacji
+              - cell "Ewa Wiśniewska" [ref=e239]
+              - cell "Custom painting — Air Force 1" [ref=e240]
+              - cell "27.04.2026" [ref=e241]
+              - cell "17.05.2026" [ref=e242]
+              - cell "—" [ref=e243]
+              - cell "—" [ref=e244]
+              - cell "12.05.2026 17:19" [ref=e245]
+              - cell "0,00 zł" [ref=e246]
+              - cell "Opcje zlecenia" [ref=e247]:
+                - button "Opcje zlecenia" [ref=e248]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0036 DR-2026-0036 Przyjęte Marek Nowak Wymiana podeszwy — trampki 24.04.2026 19.05.2026 — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e249] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0036" [ref=e250]:
+                - checkbox "Zaznacz zlecenie DR-2026-0036" [ref=e251]
+              - cell "DR-2026-0036" [ref=e252]
+              - cell "Przyjęte" [ref=e253]:
+                - generic [ref=e254]: Przyjęte
+              - cell "Marek Nowak" [ref=e255]
+              - cell "Wymiana podeszwy — trampki" [ref=e256]
+              - cell "24.04.2026" [ref=e257]
+              - cell "19.05.2026" [ref=e258]
+              - cell "—" [ref=e259]
+              - cell "—" [ref=e260]
+              - cell "12.05.2026 17:19" [ref=e261]
+              - cell "0,00 zł" [ref=e262]
+              - cell "Opcje zlecenia" [ref=e263]:
+                - button "Opcje zlecenia" [ref=e264]: ⋯
+            - row "Zaznacz zlecenie DR-2026-0035 DR-2026-0035 Wstępnie przyjęte Anna Kowalska Naprawa zelówek — buty skórzane 21.04.2026 22.05.2026 — — 12.05.2026 17:19 0,00 zł Opcje zlecenia" [ref=e265] [cursor=pointer]:
+              - cell "Zaznacz zlecenie DR-2026-0035" [ref=e266]:
+                - checkbox "Zaznacz zlecenie DR-2026-0035" [ref=e267]
+              - cell "DR-2026-0035" [ref=e268]
+              - cell "Wstępnie przyjęte" [ref=e269]:
+                - generic [ref=e270]: Wstępnie przyjęte
+              - cell "Anna Kowalska" [ref=e271]
+              - cell "Naprawa zelówek — buty skórzane" [ref=e272]
+              - cell "21.04.2026" [ref=e273]
+              - cell "22.05.2026" [ref=e274]
+              - cell "—" [ref=e275]
+              - cell "—" [ref=e276]
+              - cell "12.05.2026 17:19" [ref=e277]
+              - cell "0,00 zł" [ref=e278]
+              - cell "Opcje zlecenia" [ref=e279]:
+                - button "Opcje zlecenia" [ref=e280]: ⋯
+  - alert [ref=e281]

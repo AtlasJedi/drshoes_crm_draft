@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import type { CalendarOrderDto } from "@/lib/calendar/types";
 import { colorOfStatus } from "./utils";
-import { Tape } from "@repo/ui";
+import { Tape } from "@drshoes/ui";
 
 interface CalendarCellProps {
   day: number;

@@ -13,7 +13,7 @@ interface Props {
 export function ClientsPageHeaderSetter({ total }: Props) {
   usePageHeader({
     title: "Klienci",
-    subtitle: total !== undefined ? `${total} w bazie` : undefined,
+    subtitle: total !== undefined ? `${total} klientów` : undefined,
   });
   return null;
 }

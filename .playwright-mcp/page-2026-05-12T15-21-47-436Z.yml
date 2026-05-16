@@ -1,0 +1,162 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]: Dr Shoes
+      - navigation [ref=e5]:
+        - generic [ref=e6]: Pulpit
+        - link "Dashboard" [ref=e7] [cursor=pointer]:
+          - /url: /admin
+        - generic [ref=e8]: Operacje
+        - link "Zamówienia" [ref=e9] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Klienci" [ref=e10] [cursor=pointer]:
+          - /url: /admin/clients
+        - link "Wiadomości" [ref=e11] [cursor=pointer]:
+          - /url: /admin/messages
+          - img [ref=e12]
+          - generic [ref=e14]: Wiadomości
+        - generic [ref=e15]: Komunikacja
+        - link "Trigery" [ref=e16] [cursor=pointer]:
+          - /url: /admin/triggers
+        - link "Szablony wiadomości" [ref=e17] [cursor=pointer]:
+          - /url: /admin/templates
+        - generic [ref=e18]: Sklep
+        - link "Sklep" [ref=e19] [cursor=pointer]:
+          - /url: /admin/sklep
+        - link "Aktualności" [ref=e20] [cursor=pointer]:
+          - /url: /admin/aktualnosci
+        - button "Zgłoś problem" [ref=e22] [cursor=pointer]
+      - generic [ref=e23]:
+        - text: Zalogowany jako
+        - text: Misza Doctor
+        - generic [ref=e24]: OWNER
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - tablist "Widok zleceń" [ref=e28]:
+          - tab "Lista" [ref=e29] [cursor=pointer]
+          - tab "Kalendarz" [ref=e30] [cursor=pointer]
+          - tab "Kanban" [ref=e31] [cursor=pointer]
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - generic [ref=e35]:
+                - generic [ref=e36]: Przyjęte
+                - generic [ref=e37]:
+                  - 'generic "Sortowanie: pilne pierwsze, potem najstarsze" [ref=e38]': Pilne ↑ · Najstarsze ↑
+                  - generic [ref=e39]: "2"
+              - generic [ref=e40]:
+                - button "DR-2026-0036 Marek Nowak Wymiana podeszwy — trampki 19.05" [ref=e41]:
+                  - generic [ref=e43]: DR-2026-0036
+                  - generic [ref=e46]:
+                    - generic [ref=e47]: Marek Nowak
+                    - generic [ref=e48]: Wymiana podeszwy — trampki
+                  - generic [ref=e49]:
+                    - generic [ref=e50]: "19.05"
+                    - generic [ref=e51]: T
+                - button "DR-2026-0046 Piotr Zieliński Custom design — konsultacja 26.05" [ref=e52]:
+                  - generic [ref=e54]: DR-2026-0046
+                  - generic [ref=e57]:
+                    - generic [ref=e58]: Piotr Zieliński
+                    - generic [ref=e59]: Custom design — konsultacja
+                  - generic [ref=e60]:
+                    - generic [ref=e61]: "26.05"
+                    - generic [ref=e62]: T
+            - generic [ref=e63]:
+              - generic [ref=e64]:
+                - generic [ref=e65]: W realizacji
+                - generic [ref=e66]:
+                  - 'generic "Sortowanie: pilne pierwsze, potem najstarsze" [ref=e67]': Pilne ↑ · Najstarsze ↑
+                  - generic [ref=e68]: "2"
+              - generic [ref=e69]:
+                - button "DR-2026-0037 Ewa Wiśniewska Custom painting — Air Force 1 17.05" [ref=e70]:
+                  - generic [ref=e72]: DR-2026-0037
+                  - generic [ref=e75]:
+                    - generic [ref=e76]: Ewa Wiśniewska
+                    - generic [ref=e77]: Custom painting — Air Force 1
+                  - generic [ref=e78]:
+                    - generic [ref=e79]: "17.05"
+                    - generic [ref=e80]: T
+                - button "DR-2026-0038 Tomasz Wójcik Custom painting — kurtka bomber 15.05" [ref=e81]:
+                  - generic [ref=e83]: DR-2026-0038
+                  - generic [ref=e86]:
+                    - generic [ref=e87]: Tomasz Wójcik
+                    - generic [ref=e88]: Custom painting — kurtka bomber
+                  - generic [ref=e89]:
+                    - generic [ref=e90]: "15.05"
+                    - generic [ref=e91]: T
+            - generic [ref=e92]:
+              - generic [ref=e93]:
+                - generic [ref=e94]: Czeka na klienta
+                - generic [ref=e95]:
+                  - 'generic "Sortowanie: pilne pierwsze, potem najstarsze" [ref=e96]': Pilne ↑ · Najstarsze ↑
+                  - generic [ref=e97]: "1"
+              - button "DR-2026-0039 pilne Katarzyna Kowalczyk Wymiana zamka — kozaki 14.05" [ref=e99]:
+                - generic [ref=e100]:
+                  - generic [ref=e101]: DR-2026-0039
+                  - generic [ref=e102]: pilne
+                - generic [ref=e105]:
+                  - generic [ref=e106]: Katarzyna Kowalczyk
+                  - generic [ref=e107]: Wymiana zamka — kozaki
+                - generic [ref=e108]:
+                  - generic [ref=e109]: "14.05"
+                  - generic [ref=e110]: T
+            - generic [ref=e111]:
+              - generic [ref=e112]:
+                - generic [ref=e113]: Gotowe do odbioru
+                - generic [ref=e114]:
+                  - 'generic "Sortowanie: pilne pierwsze, potem najstarsze" [ref=e115]': Pilne ↑ · Najstarsze ↑
+                  - generic [ref=e116]: "2"
+              - generic [ref=e117]:
+                - button "DR-2026-0040 pilne Piotr Zieliński Renowacja skóry — buty wizytowe 13.05" [ref=e118]:
+                  - generic [ref=e119]:
+                    - generic [ref=e120]: DR-2026-0040
+                    - generic [ref=e121]: pilne
+                  - generic [ref=e124]:
+                    - generic [ref=e125]: Piotr Zieliński
+                    - generic [ref=e126]: Renowacja skóry — buty wizytowe
+                  - generic [ref=e127]:
+                    - generic [ref=e128]: "13.05"
+                    - generic [ref=e129]: T
+                - button "DR-2026-0041 pilne Anna Kowalska Hand-painted florals — sneakers 13.05" [ref=e130]:
+                  - generic [ref=e131]:
+                    - generic [ref=e132]: DR-2026-0041
+                    - generic [ref=e133]: pilne
+                  - generic [ref=e136]:
+                    - generic [ref=e137]: Anna Kowalska
+                    - generic [ref=e138]: Hand-painted florals — sneakers
+                  - generic [ref=e139]:
+                    - generic [ref=e140]: "13.05"
+                    - generic [ref=e141]: T
+            - generic [ref=e142]:
+              - generic [ref=e143]:
+                - generic [ref=e144]: Wydane
+                - generic [ref=e145]:
+                  - 'generic "Sortowanie: pilne pierwsze, potem najstarsze" [ref=e146]': Pilne ↑ · Najstarsze ↑
+                  - generic [ref=e147]: "3"
+              - generic [ref=e148]:
+                - button "DR-2026-0042 Marek Nowak Uzupełnienie obcasa —" [ref=e149]:
+                  - generic [ref=e151]: DR-2026-0042
+                  - generic [ref=e154]:
+                    - generic [ref=e155]: Marek Nowak
+                    - generic [ref=e156]: Uzupełnienie obcasa
+                  - generic [ref=e157]:
+                    - generic [ref=e158]: —
+                    - generic [ref=e159]: T
+                - button "DR-2026-0043 Ewa Wiśniewska Malowanie logo na kurtce —" [ref=e160]:
+                  - generic [ref=e162]: DR-2026-0043
+                  - generic [ref=e165]:
+                    - generic [ref=e166]: Ewa Wiśniewska
+                    - generic [ref=e167]: Malowanie logo na kurtce
+                  - generic [ref=e168]:
+                    - generic [ref=e169]: —
+                    - generic [ref=e170]: T
+                - button "DR-2026-0044 Tomasz Wójcik Przyklejenie zelówki —" [ref=e171]:
+                  - generic [ref=e173]: DR-2026-0044
+                  - generic [ref=e176]:
+                    - generic [ref=e177]: Tomasz Wójcik
+                    - generic [ref=e178]: Przyklejenie zelówki
+                  - generic [ref=e179]:
+                    - generic [ref=e180]: —
+                    - generic [ref=e181]: T
+          - status [ref=e182]
+  - alert [ref=e183]

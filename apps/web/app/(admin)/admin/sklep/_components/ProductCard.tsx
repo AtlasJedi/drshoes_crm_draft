@@ -4,7 +4,7 @@
 // Grid card for a single product. Stamp overlay top-left, edit/eye overlays top-right.
 
 import { createLogger } from "@/lib/log";
-import { Stamp, PhImg, I } from "@repo/ui";
+import { Stamp, PhImg, I } from "@drshoes/ui";
 import type { ProductDto, ProductStatus } from "@/lib/sklep/types";
 
 const log = createLogger("sklep.productcard");

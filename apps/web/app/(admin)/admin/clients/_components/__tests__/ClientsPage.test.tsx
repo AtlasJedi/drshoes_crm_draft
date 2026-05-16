@@ -39,11 +39,13 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("ClientsPage", () => {
-  it("renders Klienci heading", async () => {
+  it("renders search input (topbar carries Klienci title via usePageHeader)", async () => {
+    // The h1 Klienci heading was moved to the topbar via ClientsPageHeaderSetter.
+    // Verify the page renders its main content (search box is the first visible element).
     const { default: Page } = await import("../../page");
     const node = await Page({ searchParams: Promise.resolve({}) });
     render(node as React.ReactElement);
-    expect(screen.getByText("Klienci")).toBeInTheDocument();
+    expect(screen.getByRole("textbox")).toBeInTheDocument();
   });
 
   it("renders client name from list", async () => {
@@ -53,11 +55,11 @@ describe("ClientsPage", () => {
     expect(screen.getByText(/Kowalski/)).toBeInTheDocument();
   });
 
-  it("renders search input", async () => {
+  it("renders client list table", async () => {
     const { default: Page } = await import("../../page");
     const node = await Page({ searchParams: Promise.resolve({}) });
-    render(node as React.ReactElement);
-    expect(screen.getByRole("textbox")).toBeInTheDocument();
+    const { container } = render(node as React.ReactElement);
+    expect(container.querySelector("table")).toBeInTheDocument();
   });
 
   it("shows empty state when content is empty", async () => {

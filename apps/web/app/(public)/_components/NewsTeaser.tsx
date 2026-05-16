@@ -5,7 +5,7 @@
 // < 60 LOC per granulate directive.
 
 import React from "react";
-import { Splatter, Tape, Button, I } from "@repo/ui";
+import { Splatter, Tape, Button, I } from "@drshoes/ui";
 import { NewsTeaserCard } from "./NewsTeaserCard";
 
 interface NewsEntry {

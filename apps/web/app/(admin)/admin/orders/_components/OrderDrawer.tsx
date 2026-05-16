@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
 import type { Route } from "next";
-import { I } from "@repo/ui";
+import { I } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";
 import type { OrderDto } from "@/lib/orders/types";
 import type { UserStubDto } from "@/lib/users/types";

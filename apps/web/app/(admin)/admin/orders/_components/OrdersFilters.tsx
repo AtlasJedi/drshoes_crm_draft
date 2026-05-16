@@ -7,7 +7,7 @@ import { createLogger } from "@/lib/log";
 import { KIND_LABELS_PL, STATUS_LABELS_PL } from "@/lib/orders/status";
 import type { OrderStatus, OrderItemKind } from "@/lib/orders/types";
 import type { UserStubDto } from "@/lib/users/types";
-import { Chip } from "@repo/ui";
+import { Chip } from "@drshoes/ui";
 
 const log = createLogger("orders-filters");
 

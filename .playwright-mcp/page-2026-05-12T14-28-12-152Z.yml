@@ -1,0 +1,127 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]: Dr Shoes
+      - navigation [ref=e5]:
+        - generic [ref=e6]: Pulpit
+        - link "Dashboard" [ref=e7] [cursor=pointer]:
+          - /url: /admin
+        - generic [ref=e8]: Operacje
+        - link "Zamówienia" [ref=e9] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Klienci" [ref=e10] [cursor=pointer]:
+          - /url: /admin/clients
+        - link "Wiadomości" [ref=e11] [cursor=pointer]:
+          - /url: /admin/messages
+          - img [ref=e12]
+          - generic [ref=e14]: Wiadomości
+        - generic [ref=e15]: Komunikacja
+        - link "Trigery" [ref=e16] [cursor=pointer]:
+          - /url: /admin/triggers
+        - link "Szablony wiadomości" [ref=e17] [cursor=pointer]:
+          - /url: /admin/templates
+        - generic [ref=e18]: Sklep
+        - link "Sklep" [ref=e19] [cursor=pointer]:
+          - /url: /admin/sklep
+        - link "Aktualności" [ref=e20] [cursor=pointer]:
+          - /url: /admin/aktualnosci
+        - button "Zgłoś problem" [ref=e22] [cursor=pointer]
+      - generic [ref=e23]:
+        - text: Zalogowany jako
+        - text: Misza Doctor
+        - generic [ref=e24]: OWNER
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - heading "Klienci" [level=1] [ref=e28]
+        - textbox "Szukaj klienta" [ref=e30]:
+          - /placeholder: Szukaj klienta po imieniu, nazwisku, telefonie lub e-mailu…
+        - table [ref=e33]:
+          - rowgroup [ref=e34]:
+            - row "Imię i nazwisko Telefon E-mail Kanał Status RODO" [ref=e35]:
+              - columnheader "Imię i nazwisko" [ref=e36]
+              - columnheader "Telefon" [ref=e37]
+              - columnheader "E-mail" [ref=e38]
+              - columnheader "Kanał" [ref=e39]
+              - columnheader "Status RODO" [ref=e40]
+          - rowgroup [ref=e41]:
+            - row "Kowalska, Anna +48 600 100 200 a@k.pl Email brak zgody RODO" [ref=e42]:
+              - cell "Kowalska, Anna" [ref=e43]:
+                - link "Kowalska, Anna" [ref=e44] [cursor=pointer]:
+                  - /url: /admin/clients/22f6264e-e20f-480f-8f5b-4765231d50b1
+              - cell "+48 600 100 200" [ref=e45]
+              - cell "a@k.pl" [ref=e46]
+              - cell "Email" [ref=e47]:
+                - generic [ref=e48]: Email
+              - cell "brak zgody RODO" [ref=e49]:
+                - generic [ref=e50]: brak zgody RODO
+            - row "Kowalska, Anna +48 600 100 200 a@k.pl Email brak zgody RODO" [ref=e51]:
+              - cell "Kowalska, Anna" [ref=e52]:
+                - link "Kowalska, Anna" [ref=e53] [cursor=pointer]:
+                  - /url: /admin/clients/0c2cf074-94e6-41a8-a312-bb5e68453229
+              - cell "+48 600 100 200" [ref=e54]
+              - cell "a@k.pl" [ref=e55]
+              - cell "Email" [ref=e56]:
+                - generic [ref=e57]: Email
+              - cell "brak zgody RODO" [ref=e58]:
+                - generic [ref=e59]: brak zgody RODO
+            - row "Kowalska, Anna +48501234567 anna.kowalska@example.pl Email zgoda · 05.2026" [ref=e60]:
+              - cell "Kowalska, Anna" [ref=e61]:
+                - link "Kowalska, Anna" [ref=e62] [cursor=pointer]:
+                  - /url: /admin/clients/0db2d5d4-2120-461c-bf8b-02b1ce119c9f
+              - cell "+48501234567" [ref=e63]
+              - cell "anna.kowalska@example.pl" [ref=e64]
+              - cell "Email" [ref=e65]:
+                - generic [ref=e66]: Email
+              - cell "zgoda · 05.2026" [ref=e67]:
+                - generic [ref=e68]: zgoda · 05.2026
+            - row "Nowak, Marek +48512345678 — SMS zgoda · 05.2026" [ref=e69]:
+              - cell "Nowak, Marek" [ref=e70]:
+                - link "Nowak, Marek" [ref=e71] [cursor=pointer]:
+                  - /url: /admin/clients/55ab2e11-424a-4205-8c26-1fbe874c7293
+              - cell "+48512345678" [ref=e72]
+              - cell "—" [ref=e73]
+              - cell "SMS" [ref=e74]:
+                - generic [ref=e75]: SMS
+              - cell "zgoda · 05.2026" [ref=e76]:
+                - generic [ref=e77]: zgoda · 05.2026
+            - row "Wiśniewska, Ewa +48523456789 ewa.wisniews@example.pl Email brak zgody RODO" [ref=e78]:
+              - cell "Wiśniewska, Ewa" [ref=e79]:
+                - link "Wiśniewska, Ewa" [ref=e80] [cursor=pointer]:
+                  - /url: /admin/clients/4b5aa6ad-068b-484d-bc77-c7d5d7998e92
+              - cell "+48523456789" [ref=e81]
+              - cell "ewa.wisniews@example.pl" [ref=e82]
+              - cell "Email" [ref=e83]:
+                - generic [ref=e84]: Email
+              - cell "brak zgody RODO" [ref=e85]:
+                - generic [ref=e86]: brak zgody RODO
+            - row "Kowalczyk, Katarzyna +48534567890 k.kowalczyk@example.pl Email brak zgody RODO" [ref=e87]:
+              - cell "Kowalczyk, Katarzyna" [ref=e88]:
+                - link "Kowalczyk, Katarzyna" [ref=e89] [cursor=pointer]:
+                  - /url: /admin/clients/5c094beb-2863-415c-8095-38c7d78e6319
+              - cell "+48534567890" [ref=e90]
+              - cell "k.kowalczyk@example.pl" [ref=e91]
+              - cell "Email" [ref=e92]:
+                - generic [ref=e93]: Email
+              - cell "brak zgody RODO" [ref=e94]:
+                - generic [ref=e95]: brak zgody RODO
+            - row "Zieliński, Piotr +48545678901 p.zielinski@example.pl SMS zgoda · 05.2026" [ref=e96]:
+              - cell "Zieliński, Piotr" [ref=e97]:
+                - link "Zieliński, Piotr" [ref=e98] [cursor=pointer]:
+                  - /url: /admin/clients/09d8480e-8706-44f1-93ec-b74f047d0261
+              - cell "+48545678901" [ref=e99]
+              - cell "p.zielinski@example.pl" [ref=e100]
+              - cell "SMS" [ref=e101]:
+                - generic [ref=e102]: SMS
+              - cell "zgoda · 05.2026" [ref=e103]:
+                - generic [ref=e104]: zgoda · 05.2026
+            - row "Wójcik, Tomasz — t.wojcik@example.pl WhatsApp zgoda · 05.2026" [ref=e105]:
+              - cell "Wójcik, Tomasz" [ref=e106]:
+                - link "Wójcik, Tomasz" [ref=e107] [cursor=pointer]:
+                  - /url: /admin/clients/ee0dab01-f880-4abb-aea1-fca8b55be3d5
+              - cell "—" [ref=e108]
+              - cell "t.wojcik@example.pl" [ref=e109]
+              - cell "WhatsApp" [ref=e110]:
+                - generic [ref=e111]: WhatsApp
+              - cell "zgoda · 05.2026" [ref=e112]:
+                - generic [ref=e113]: zgoda · 05.2026
+  - alert [ref=e114]

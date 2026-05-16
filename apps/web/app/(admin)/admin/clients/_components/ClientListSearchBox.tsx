@@ -34,7 +34,7 @@ export function ClientListSearchBox({ initialQ }: Props) {
       value={value}
       onChange={(e) => setValue(e.target.value)}
       placeholder="Szukaj klienta po imieniu, nazwisku, telefonie lub e-mailu…"
-      className="w-full max-w-lg h-10 px-3 border border-admin-line rounded-sm focus:outline-none focus:ring-2 focus:ring-acid text-sm"
+      className="t-mono w-full max-w-lg h-10 px-3 border border-ink rounded-sm focus:outline-none focus:ring-2 focus:ring-acid text-sm placeholder:text-admin-mute placeholder:opacity-60"
       aria-label="Szukaj klienta"
     />
   );

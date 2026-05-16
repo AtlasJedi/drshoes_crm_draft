@@ -9,7 +9,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { Route } from "next";
-import { PhImg, I } from "@repo/ui";
+import { PhImg, I } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";
 import type { KanbanCardDto } from "@/lib/kanban/types";
 

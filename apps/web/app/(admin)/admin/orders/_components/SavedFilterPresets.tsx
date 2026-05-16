@@ -7,7 +7,7 @@
  */
 import { useRouter, useSearchParams } from "next/navigation";
 import { createLogger } from "@/lib/log";
-import { Chip } from "@repo/ui";
+import { Chip } from "@drshoes/ui";
 
 const log = createLogger("saved-filter-presets");
 

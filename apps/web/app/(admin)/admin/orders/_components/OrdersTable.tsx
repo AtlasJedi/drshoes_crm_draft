@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import type { OrderListRow } from "@/lib/orders/types";
-import { Pill, PhImg } from "@repo/ui";
+import { Pill, PhImg } from "@drshoes/ui";
 import { RowQuickActionsMenu } from "./RowQuickActionsMenu";
 import { SortableColumnHeader } from "./SortableColumnHeader";
 

@@ -2,7 +2,7 @@
 // Public landing: Sklep / shop teaser — 4 static product tiles + non-functional filter pills.
 // Design: handoff/design/landing.jsx Sklep function (~line 158).
 import React from "react";
-import { Tape } from "@repo/ui";
+import { Tape } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";
 import { ProductTile, type ProductEntry } from "./ProductTile";
 

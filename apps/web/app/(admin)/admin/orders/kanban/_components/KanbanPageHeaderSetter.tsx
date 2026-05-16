@@ -5,7 +5,7 @@
  * ~20 LOC.
  */
 import { usePageHeader } from "@/app/(admin)/admin/_components/PageHeaderContext";
-import { Button } from "@repo/ui";
+import { Button } from "@drshoes/ui";
 import Link from "next/link";
 import type { Route } from "next";
 

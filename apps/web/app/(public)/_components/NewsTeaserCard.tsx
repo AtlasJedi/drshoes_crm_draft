@@ -4,7 +4,7 @@
 // < 70 LOC per granulate directive.
 
 import React from "react";
-import { PhImg, Stamp } from "@repo/ui";
+import { PhImg, Stamp } from "@drshoes/ui";
 
 export interface NewsTeaserCardProps {
   date: string;

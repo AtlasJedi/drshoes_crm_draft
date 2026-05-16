@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { createLogger } from "@/lib/log";
 import { usePageHeader } from "@/app/(admin)/admin/_components/PageHeaderContext";
-import { Button, Chip } from "@repo/ui";
+import { Button, Chip } from "@drshoes/ui";
 import type { ProductDto, ProductStatus } from "@/lib/sklep/types";
 import { ProductCard } from "./ProductCard";
 import { ProductEditPanel } from "./ProductEditPanel";

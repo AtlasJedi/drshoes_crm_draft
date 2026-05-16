@@ -5,7 +5,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { KanbanCard } from "./KanbanCard";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
 import { sortKanbanCards } from "@/lib/kanban/sort";
-import { I } from "@repo/ui";
+import { I } from "@drshoes/ui";
 import type { KanbanColumnDto } from "@/lib/kanban/types";
 
 /** CSS variable per column status — matches admin.jsx:625-631 */

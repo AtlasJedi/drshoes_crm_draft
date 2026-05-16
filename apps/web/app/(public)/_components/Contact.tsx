@@ -5,7 +5,7 @@
 // < 78 LOC per granulate directive.
 
 import React from "react";
-import { Tape, Stamp, Sticker, I } from "@repo/ui";
+import { Tape, Stamp, Sticker, I } from "@drshoes/ui";
 
 export function Contact() {
   return (

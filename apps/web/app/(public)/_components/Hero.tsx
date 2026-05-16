@@ -4,8 +4,8 @@
 // < 65 LOC per granulate directive.
 
 import React from "react";
-import { Tape, Sticker, Button } from "@repo/ui";
-import { I } from "@repo/ui";
+import { Tape, Sticker, Button } from "@drshoes/ui";
+import { I } from "@drshoes/ui";
 import { HeroBackground } from "./HeroBackground";
 import { HeroHeadline } from "./HeroHeadline";
 

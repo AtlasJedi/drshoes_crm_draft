@@ -1,0 +1,85 @@
+- generic [active] [ref=e1]:
+  - text:   () 
+  - generic [ref=e2]:
+    - banner:
+      - generic:
+        - generic:
+          - generic:
+            - link "Go to homepage" [ref=e3] [cursor=pointer]:
+              - /url: https://drshoes.pl
+              - text: dr shoes
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - navigation:
+                      - list [ref=e4]:
+                        - listitem [ref=e5]:
+                          - link "usługi" [ref=e6] [cursor=pointer]:
+                            - /url: https://drshoes.pl/uslugi/
+                        - listitem [ref=e7]:
+                          - link "sklep" [ref=e8] [cursor=pointer]:
+                            - /url: https://drshoes.pl/sklep/
+                        - listitem [ref=e9]:
+                          - link "wyślij buty" [ref=e10] [cursor=pointer]:
+                            - /url: https://drshoes.pl/wyslij-buty/
+                        - listitem [ref=e11]:
+                          - link "kontakt" [ref=e12] [cursor=pointer]:
+                            - /url: https://drshoes.pl/kontakt/
+                - text: 
+    - banner [ref=e13]
+    - generic [ref=e16]:
+      - paragraph [ref=e18]: 4 0 4
+      - paragraph [ref=e19]: Not found!
+      - paragraph [ref=e20]:
+        - text: We’re sorry, the page you have looked for does not exist in our database!
+        - text: Perhaps you would like to go to our
+        - link "home page" [ref=e21] [cursor=pointer]:
+          - /url: https://drshoes.pl
+        - text: "?"
+  - contentinfo [ref=e22]:
+    - generic [ref=e23]:
+      - complementary [ref=e25]:
+        - generic [ref=e28]:
+          - paragraph [ref=e29]:
+            - link "cennik" [ref=e30] [cursor=pointer]:
+              - /url: https://drshoes.pl/cennik/
+          - paragraph [ref=e31]:
+            - link "formularz wysyłki" [ref=e32] [cursor=pointer]:
+              - /url: https://drshoes.pl/wp-content/uploads/2019/02/formularz-wysyłki.pdf
+          - paragraph [ref=e33]:
+            - link "moje konto" [ref=e34] [cursor=pointer]:
+              - /url: https://drshoes.pl/moje-konto/
+          - paragraph [ref=e35]:
+            - link "sklep" [ref=e36] [cursor=pointer]:
+              - /url: https://drshoes.pl/sklep/
+        - generic [ref=e38]:
+          - paragraph [ref=e39]:
+            - link "polityka prywatności" [ref=e40] [cursor=pointer]:
+              - /url: https://drshoes.pl/polityka-prywatnosci/
+          - paragraph [ref=e41]:
+            - link "regulamin" [ref=e42] [cursor=pointer]:
+              - /url: https://drshoes.pl/regulamin/
+        - generic [ref=e45]:
+          - paragraph [ref=e46]:
+            - text: dr shoes
+            - text: Al.Marcinkowskiego 26
+            - text: 61-745 Poznań
+          - paragraph [ref=e47]:
+            - text: godziny otwarcia
+            - text: pn – pt 9:00 – 18:00
+          - paragraph [ref=e48]: tel. 514 296 809
+          - list [ref=e49]:
+            - listitem [ref=e50]:
+              - link "Facebook" [ref=e51] [cursor=pointer]:
+                - /url: https://www.facebook.com/Drshoespl/
+                - generic [ref=e52]: 
+            - listitem [ref=e53]:
+              - link "Instagram" [ref=e54] [cursor=pointer]:
+                - /url: https://www.instagram.com/drshoespl/
+                - generic [ref=e55]: 
+      - separator [ref=e57]
+  - iframe [ref=e61]:
+    - generic [ref=f10e6]:
+      - text: protected by
+      - strong [ref=f10e7]: reCAPTCHA

@@ -6,8 +6,8 @@
 
 import { useState, useRef } from "react";
 import { createLogger } from "@/lib/log";
-import { Tape } from "@repo/ui";
-import { I } from "@repo/ui";
+import { Tape } from "@drshoes/ui";
+import { I } from "@drshoes/ui";
 import { updateTemplate } from "@/lib/messaging/api";
 import type { TemplateDto, Channel } from "@/lib/messaging/types";
 

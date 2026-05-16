@@ -1,7 +1,7 @@
 "use client";
 
 import { createLogger } from "@/lib/log";
-import { Toggle, Chip, I } from "@repo/ui";
+import { Toggle, Chip, I } from "@drshoes/ui";
 import { toggleTrigger } from "@/lib/messaging/api";
 import type { TriggerDto } from "@/lib/messaging/types";
 

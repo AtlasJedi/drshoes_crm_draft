@@ -1,6 +1,6 @@
 // ClientMiniProfileIdentity — avatar + name + joined date + sticker row.
 // < 40 LOC per granulate directive.
-import { Sticker } from "@repo/ui";
+import { Sticker } from "@drshoes/ui";
 
 interface Props {
   ini: string;

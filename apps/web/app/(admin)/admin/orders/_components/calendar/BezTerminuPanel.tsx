@@ -11,7 +11,7 @@ import type { Route } from "next";
 import type { CalendarOrderDto } from "@/lib/calendar/types";
 import type { OrderStatus } from "@/lib/orders/types";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
-import { AdminCard, Chip, I } from "@repo/ui";
+import { AdminCard, Chip, I } from "@drshoes/ui";
 import { colorOfStatus } from "./utils";
 
 interface BezTerminuPanelProps {

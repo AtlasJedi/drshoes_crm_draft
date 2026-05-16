@@ -90,4 +90,27 @@ describe("ClientListTable", () => {
     render(<ClientListTable page={page} currentPage={0} q="" />);
     expect(screen.queryByText(/Następna/i)).not.toBeInTheDocument();
   });
+
+  it("table root has .tbl class", async () => {
+    const { ClientListTable } = await import("../ClientListTable");
+    const page = makePage([{ firstName: "Test" }]);
+    const { container } = render(<ClientListTable page={page} currentPage={0} q="" />);
+    const table = container.querySelector("table");
+    expect(table).toHaveClass("tbl");
+  });
+
+  it("renders <RodoBadge> data-testid not inline pill", async () => {
+    const { ClientListTable } = await import("../ClientListTable");
+    const page = makePage([{ rodoConsentAt: "2026-04-01T00:00:00Z" }]);
+    render(<ClientListTable page={page} currentPage={0} q="" />);
+    expect(screen.getByTestId("rodo-badge")).toBeInTheDocument();
+  });
+
+  it("channel cell uses .chip class", async () => {
+    const { ClientListTable } = await import("../ClientListTable");
+    const page = makePage([{ preferredChannel: "EMAIL" }]);
+    const { container } = render(<ClientListTable page={page} currentPage={0} q="" />);
+    const chip = container.querySelector(".chip");
+    expect(chip).toBeInTheDocument();
+  });
 });

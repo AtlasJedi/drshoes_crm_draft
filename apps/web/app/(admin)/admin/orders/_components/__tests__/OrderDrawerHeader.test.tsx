@@ -8,7 +8,7 @@ import { render, screen } from "@testing-library/react";
 import { OrderDrawerHeader } from "../OrderDrawerHeader";
 
 // @repo/ui is a workspace package not aliased in vitest — stub it out.
-vi.mock("@repo/ui", () => ({
+vi.mock("@drshoes/ui", () => ({
   Pill: ({ status }: { status: string }) => <span data-testid="pill">{status}</span>,
   I: {
     close: () => <svg data-testid="icon-close" />,

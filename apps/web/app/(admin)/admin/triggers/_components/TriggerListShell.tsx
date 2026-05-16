@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import { usePageHeader } from "@/app/(admin)/admin/_components/PageHeaderContext";
-import { Button, Chip } from "@repo/ui";
+import { Button, Chip } from "@drshoes/ui";
 import { getTriggers } from "@/lib/messaging/api";
 import type { TriggerDto } from "@/lib/messaging/types";
 import { TriggerCard } from "./TriggerCard";

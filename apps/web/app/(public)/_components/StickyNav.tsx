@@ -4,9 +4,9 @@
 // < 80 LOC per granulate directive.
 
 import React from "react";
-import { DrShoesMark } from "@repo/ui";
-import { Button } from "@repo/ui";
-import { I } from "@repo/ui";
+import { DrShoesMark } from "@drshoes/ui";
+import { Button } from "@drshoes/ui";
+import { I } from "@drshoes/ui";
 
 const NAV_LINKS = [
   { label: "Aktualności", href: "#aktualnosci" },

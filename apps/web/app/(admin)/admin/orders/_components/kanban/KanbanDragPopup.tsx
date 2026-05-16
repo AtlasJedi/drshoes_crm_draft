@@ -4,7 +4,7 @@
 // Non-modal: renders as a fixed div (no Radix Portal/Overlay).
 // ~60 LOC.
 
-import { I } from "@repo/ui";
+import { I } from "@drshoes/ui";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
 import type { PendingMove } from "./useKanbanDnd";
 

@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { createLogger } from "@/lib/log";
-import { Tape, PhImg, Chip, I } from "@repo/ui";
+import { Tape, PhImg, Chip, I } from "@drshoes/ui";
 import type { ProductDto, ProductStatus } from "@/lib/sklep/types";
 import { ReservationsQueue } from "./ReservationsQueue";
 

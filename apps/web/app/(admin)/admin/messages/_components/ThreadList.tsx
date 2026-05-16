@@ -10,8 +10,8 @@ import { listThreads } from "@/lib/messaging/api";
 import type { MessageThreadDto, ThreadFilter, Channel } from "@/lib/messaging/types";
 import { ThreadListRow } from "./ThreadListRow";
 import { ThreadListSkeleton } from "./ThreadListSkeleton";
-import { Chip } from "@repo/ui";
-import { I } from "@repo/ui";
+import { Chip } from "@drshoes/ui";
+import { I } from "@drshoes/ui";
 
 const log = createLogger("messaging.threadlist");
 const POLL_MS = 30_000;

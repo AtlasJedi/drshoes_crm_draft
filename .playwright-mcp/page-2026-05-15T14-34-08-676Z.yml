@@ -1,0 +1,156 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]: Dr Shoes
+      - navigation [ref=e5]:
+        - generic [ref=e6]: Pulpit
+        - link "Dashboard" [ref=e7] [cursor=pointer]:
+          - /url: /admin
+        - generic [ref=e8]: Operacje
+        - link "Zamówienia" [ref=e9] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Klienci" [ref=e10] [cursor=pointer]:
+          - /url: /admin/clients
+        - link "Wiadomości" [ref=e11] [cursor=pointer]:
+          - /url: /admin/messages
+          - img [ref=e12]
+          - generic [ref=e14]: Wiadomości
+        - generic [ref=e15]: Komunikacja
+        - link "Trigery" [ref=e16] [cursor=pointer]:
+          - /url: /admin/triggers
+        - link "Szablony wiadomości" [ref=e17] [cursor=pointer]:
+          - /url: /admin/templates
+        - generic [ref=e18]: Sklep
+        - link "Sklep" [ref=e19] [cursor=pointer]:
+          - /url: /admin/sklep
+        - link "Aktualności" [ref=e20] [cursor=pointer]:
+          - /url: /admin/aktualnosci
+        - button "Zgłoś problem" [ref=e22] [cursor=pointer]
+      - generic [ref=e23]:
+        - text: Zalogowany jako
+        - text: Test Admin
+        - generic [ref=e24]: OWNER
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - heading "Wiadomości" [level=1] [ref=e29]
+            - generic [ref=e30]: odświeżono · 16:33 · live
+          - generic [ref=e31]:
+            - button "Odśwież" [ref=e32] [cursor=pointer]:
+              - img [ref=e33]
+              - text: Odśwież
+            - button "Nowa wiadomość" [ref=e36] [cursor=pointer]:
+              - img [ref=e37]
+              - text: Nowa wiadomość
+        - generic [ref=e39]:
+          - complementary [ref=e40]:
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - textbox "Szukaj wątków" [ref=e43]:
+                  - /placeholder: Szukaj klienta, treści, numeru…
+                - img [ref=e44]
+              - generic [ref=e47]:
+                - button "Wszystkie 1" [ref=e82] [cursor=pointer]:
+                  - text: Wszystkie
+                  - generic [ref=e49]: "1"
+                - button "Nieprzeczytane 0" [ref=e50] [cursor=pointer]:
+                  - text: Nieprzeczytane
+                  - generic [ref=e51]: "0"
+                - button "Niesparowane 0" [ref=e52] [cursor=pointer]:
+                  - text: Niesparowane
+                  - generic [ref=e53]: "0"
+            - button "AK Anna Kowalska EMAIL —" [active] [ref=e83] [cursor=pointer]:
+              - generic [ref=e84]: AK
+              - generic [ref=e86]:
+                - generic [ref=e87]: Anna Kowalska
+                - generic [ref=e88]: EMAIL
+              - generic [ref=e90]: —
+          - main [ref=e74]:
+            - generic [ref=e92]:
+              - generic [ref=e93]:
+                - generic [ref=e94]:
+                  - generic [ref=e95]: AK
+                  - generic [ref=e96]:
+                    - generic [ref=e97]:
+                      - heading "Anna Kowalska" [level=2] [ref=e98]
+                      - generic [ref=e99]: EMAIL
+                    - generic [ref=e100]:
+                      - link "→ profil klienta" [ref=e101] [cursor=pointer]:
+                        - /url: /admin/clients/3407688f-3c6d-4852-9f21-fd7fc15cd481
+                      - generic [ref=e102]: ·
+                      - generic [ref=e103]: ostatnia aktywność —
+                - generic [ref=e104]:
+                  - button "Oznacz jako przeczytane" [ref=e105] [cursor=pointer]:
+                    - img [ref=e106]
+                  - button "Archiwizuj (wkrótce)" [disabled] [ref=e108]:
+                    - img [ref=e109]
+                  - button "Więcej" [ref=e112] [cursor=pointer]:
+                    - img [ref=e113]
+              - generic [ref=e117]:
+                - generic [ref=e119]:
+                  - generic [ref=e120]:
+                    - generic [ref=e121]: —
+                    - generic [ref=e122]: Wysłane
+                  - generic [ref=e123]: Dzień dobry! Potwierdzamy przyjęcie zlecenia DR-2026-0035. Planowany odbiór za około 7 dni.
+                - generic [ref=e125]:
+                  - generic [ref=e126]:
+                    - generic [ref=e127]: Anna Kowalska
+                    - generic [ref=e128]: ·
+                    - generic [ref=e129]: —
+                  - generic [ref=e130]: Dziękuję! Czy mogę przyjść wcześniej?
+                - generic [ref=e132]:
+                  - generic [ref=e133]:
+                    - generic [ref=e134]: —
+                    - generic [ref=e135]: Wysłane
+                  - generic [ref=e136]: Oczywiście, proszę zadzwonić przed przyjazdem.
+                - generic [ref=e138]:
+                  - generic [ref=e139]:
+                    - generic [ref=e140]: Anna Kowalska
+                    - generic [ref=e141]: ·
+                    - generic [ref=e142]: —
+                  - generic [ref=e143]: Świetnie, zadzwonię jutro. Dziękuję!
+              - generic [ref=e144]:
+                - generic [ref=e145]:
+                  - generic [ref=e146]:
+                    - button "EMAIL" [ref=e147] [cursor=pointer]
+                    - button "SMS" [ref=e148] [cursor=pointer]
+                  - generic [ref=e149]: wyślij na anna.kowalska@example.pl
+                - textbox "Temat" [ref=e150]
+                - textbox "Napisz odpowiedź…" [ref=e152]
+                - generic [ref=e153]:
+                  - generic [ref=e154]:
+                    - button "Załącz (wkrótce)" [disabled] [ref=e155]:
+                      - img [ref=e156]
+                    - button "Szablon" [ref=e159] [cursor=pointer]:
+                      - img [ref=e160]
+                    - generic [ref=e163]: ⌘ + Enter — wyślij
+                  - button "Wyślij" [disabled] [ref=e164]:
+                    - img [ref=e165]
+                    - text: Wyślij
+          - complementary [ref=e168]:
+            - generic [ref=e170]:
+              - generic [ref=e171]: AK
+              - generic [ref=e172]: Anna Kowalska
+              - generic [ref=e173]: klient od 2026
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - generic [ref=e176]: Email
+                - generic [ref=e177]: anna.kowalska@example.pl
+              - generic [ref=e178]:
+                - generic [ref=e179]: Telefon
+                - generic [ref=e180]: "+48501234567"
+              - generic [ref=e181]:
+                - generic [ref=e182]: Preferowany kanał
+                - generic [ref=e183]: EMAIL
+            - generic [ref=e184]:
+              - generic [ref=e185]: Aktywne zlecenie
+              - generic [ref=e186]: —
+            - generic [ref=e187]:
+              - generic [ref=e188]:
+                - generic [ref=e189]: Wszystkie
+                - generic [ref=e190]: —
+              - generic [ref=e191]:
+                - generic [ref=e192]: Razem
+                - generic [ref=e193]: —
+  - alert [ref=e81]

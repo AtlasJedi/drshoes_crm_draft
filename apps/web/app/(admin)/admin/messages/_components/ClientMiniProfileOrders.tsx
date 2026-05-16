@@ -1,7 +1,7 @@
 // ClientMiniProfileOrders — active orders mini-list with PhImg + DR code + Pill.
 // < 50 LOC per granulate directive.
-import { Pill } from "@repo/ui";
-import { PhImg } from "@repo/ui";
+import { Pill } from "@drshoes/ui";
+import { PhImg } from "@drshoes/ui";
 import type { OrderListRow } from "@/lib/orders/types";
 
 interface Props {
