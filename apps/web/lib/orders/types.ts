@@ -144,6 +144,8 @@ export interface UpdateOrderRequest {
 export interface ChangeStatusRequest {
   targetStatus: OrderStatus;
   expectedVersion: number;
+  /** When false, backend skips trigger evaluation. Omit or true = fire triggers (default). */
+  sendTriggers?: boolean;
   /** Optional operator note (max 1000 chars). Omit or pass undefined to send no note. */
   note?: string;
 }

@@ -78,14 +78,16 @@ export async function changeStatus(
   id: string,
   targetStatus: ChangeStatusRequest["targetStatus"],
   expectedVersion: number,
+  sendTriggers: boolean,
   note?: string,
 ): Promise<ChangeStatusResponse> {
   const req: ChangeStatusRequest = {
     targetStatus,
     expectedVersion,
+    sendTriggers,
     ...(note && note.trim() ? { note: note.trim() } : {}),
   };
-  log.info("op=changeStatus", { id, targetStatus, expectedVersion, hasNote: !!note });
+  log.info("op=changeStatus", { id, targetStatus, expectedVersion, sendTriggers, hasNote: !!note });
   return api.post<ChangeStatusResponse>(`/admin/orders/${id}/status`, req);
 }
 

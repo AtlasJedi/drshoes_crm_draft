@@ -4,6 +4,7 @@ import com.drshoes.app.AdminWebTestBase;
 import com.drshoes.app.audit.AuditLogRepository;
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
+import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.order.domain.OrderItemRepository;
 import com.drshoes.app.order.domain.OrderRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +42,7 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
     @Autowired private ClientRepository clientRepository;
     @Autowired private OrderRepository orderRepository;
     @Autowired private OrderItemRepository orderItemRepository;
+    @Autowired private MessageRepository messageRepository;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private JdbcTemplate jdbc;
 
@@ -54,16 +56,21 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
         c.setFirstName("Test");
         c.setLastName("Klient");
         c.setPhone("+48 600 000 099");
+        // Email is required so that the PRZYJETE trigger (now fired on every order create
+        // since fix-C) and the GOTOWE_DO_ODBIORU trigger can persist a Message row instead
+        // of bailing at null_or_blank_recipient.
+        c.setEmail("test.klient@example.com");
         clientId = clientRepository.save(c).getId();
     }
 
     /**
      * JUnit 5: subclass @AfterEach runs before superclass @AfterEach.
-     * Delete orders (and items) before AdminWebTestBase tries to delete clients,
-     * to avoid FK violation: order_.client_id → client.id.
+     * Delete messages, items, then orders before AdminWebTestBase tries to delete clients,
+     * to avoid FK violations.
      */
     @AfterEach
     void cleanupOrders() {
+        messageRepository.deleteAll();
         orderItemRepository.deleteAll();
         orderRepository.deleteAll();
     }
@@ -77,8 +84,13 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
         // Regression guard: OrderController must be in com.drshoes.app.order.api so
         // AuditLogAspect's pointcut (execution(public * com.drshoes.app..api..*Controller.*(..)))
         // fires. This test would fail if controller lived outside .api.
+        //
+        // Filter by path/method since fix-C now also fires the PRZYJETE trigger on
+        // create — that emits an additional internal audit row from MessageRouter.
         loginAsOwner();
-        long before = auditLogs.count();
+        long before = auditLogs.findAll().stream()
+            .filter(a -> "POST".equals(a.getMethod()) && "/api/admin/orders".equals(a.getPath()))
+            .count();
 
         mockMvc().perform(post("/api/admin/orders")
                 .contentType("application/json")
@@ -87,7 +99,9 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
                 .with(csrf()))
             .andExpect(status().isCreated());
 
-        long written = auditLogs.count() - before;
+        long written = auditLogs.findAll().stream()
+            .filter(a -> "POST".equals(a.getMethod()) && "/api/admin/orders".equals(a.getPath()))
+            .count() - before;
         assertThat(written)
             .as("AuditLogAspect must write exactly one row for POST /api/admin/orders")
             .isEqualTo(1);
@@ -427,6 +441,55 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
             "SELECT note FROM audit_log WHERE path = ? ORDER BY created_at DESC LIMIT 1",
             String.class, "/api/admin/orders/" + orderId + "/status");
         assertThat(storedNote).isNull();
+    }
+
+    // -------------------------------------------------------------------------
+    // POST /api/admin/orders/{id}/status — sendTriggers flag (Slice F)
+    // -------------------------------------------------------------------------
+
+    @Test
+    void changeStatus_sendTriggersFalse_doesNotCreateMessageRow() throws Exception {
+        loginAsOwner();
+        // Create order (starts as PRZYJETE); transition to GOTOWE_DO_ODBIORU which has
+        // a seeded trigger (V006). sendTriggers=false must suppress message creation.
+        UUID orderId = createOrderAndReturnId("sendTriggers=false test");
+
+        long messagesBefore = messageRepository.count();
+
+        mockMvc().perform(post("/api/admin/orders/" + orderId + "/status")
+                .contentType("application/json")
+                .content("""
+                    {"targetStatus":"GOTOWE_DO_ODBIORU","expectedVersion":0,"sendTriggers":false}""")
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.order.status").value("GOTOWE_DO_ODBIORU"));
+
+        long messagesAfter = messageRepository.count();
+        assertThat(messagesAfter)
+            .as("sendTriggers=false must not create any Message row")
+            .isEqualTo(messagesBefore);
+    }
+
+    @Test
+    void changeStatus_sendTriggersTrue_createsMessageRow() throws Exception {
+        loginAsOwner();
+        // sendTriggers=true (or omitted) with a matching seeded trigger must produce a Message.
+        UUID orderId = createOrderAndReturnId("sendTriggers=true test");
+
+        long messagesBefore = messageRepository.count();
+
+        mockMvc().perform(post("/api/admin/orders/" + orderId + "/status")
+                .contentType("application/json")
+                .content("""
+                    {"targetStatus":"GOTOWE_DO_ODBIORU","expectedVersion":0,"sendTriggers":true}""")
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.order.status").value("GOTOWE_DO_ODBIORU"));
+
+        long messagesAfter = messageRepository.count();
+        assertThat(messagesAfter)
+            .as("sendTriggers=true with a matching trigger must create at least one Message row")
+            .isGreaterThan(messagesBefore);
     }
 
     // -------------------------------------------------------------------------
