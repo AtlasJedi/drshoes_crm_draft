@@ -34,6 +34,7 @@ function buildQuery(
   if (filters.tag) p.set("tag", filters.tag);
   if (filters.plannedPickupAtFrom) p.set("plannedPickupAtFrom", filters.plannedPickupAtFrom);
   if (filters.plannedPickupAtTo) p.set("plannedPickupAtTo", filters.plannedPickupAtTo);
+  if (filters.urgent) p.set("urgent", "true");
   p.set("page", String(page));
   p.set("size", String(size));
   // Forward sort param if valid (backend validates; we do a client-side pre-check too)

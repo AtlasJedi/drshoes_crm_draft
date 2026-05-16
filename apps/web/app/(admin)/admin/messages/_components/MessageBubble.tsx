@@ -35,7 +35,7 @@ export function MessageBubble({ message: m, clientName, onRetried }: Props) {
 
   return (
     <div className={"flex " + (inbound ? "justify-start" : "justify-end")}>
-      <div className={"max-w-[78%] " + (inbound ? "" : "items-end flex flex-col")}>
+      <div className={"max-w-[min(78%,640px)] " + (inbound ? "" : "items-end flex flex-col")}>
         <div className="text-[11px] text-admin-mute mb-1 flex items-center gap-2">
           {inbound ? (
             <><span className="font-semibold text-ink/80">{clientName ?? m.id}</span><span>·</span><span>{ts}</span></>
@@ -43,7 +43,7 @@ export function MessageBubble({ message: m, clientName, onRetried }: Props) {
             <><span>{ts}</span><MessageStatusBadge status={m.deliveryStatus} /></>
           )}
         </div>
-        <div className={(inbound ? "bg-white border border-admin-line text-ink" : "bg-ink text-paper") + " rounded-lg px-3.5 py-2.5 text-[14px] leading-relaxed"}>
+        <div className={(inbound ? "bg-white border border-admin-line text-ink" : "bg-ink text-paper") + " rounded-lg px-3.5 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap break-words"}>
           {m.body}
         </div>
         {m.deliveryStatus === "FAILED" && !inbound && (

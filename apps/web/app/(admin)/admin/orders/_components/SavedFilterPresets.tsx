@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createLogger } from "@/lib/log";
 import { Chip } from "@drshoes/ui";
 import { STATUS_LABELS_PL } from "@/lib/orders/status";
-import type { OrderStatus } from "@/lib/orders/types";
+import type { OrderStatus, OrderListRow } from "@/lib/orders/types";
 
 const log = createLogger("saved-filter-presets");
 
@@ -79,14 +79,34 @@ function isActive(preset: Preset, current: URLSearchParams): boolean {
 }
 
 function hasAnyFilter(params: URLSearchParams): boolean {
-  const filterKeys = ["status", "type", "craftsmanId", "q", "tag", "plannedPickupAtFrom", "plannedPickupAtTo", "sort"];
+  const filterKeys = ["status", "type", "craftsmanId", "q", "tag", "plannedPickupAtFrom", "plannedPickupAtTo", "sort", "urgent"];
   return filterKeys.some((k) => params.has(k));
 }
 
-export function SavedFilterPresets() {
+interface Props {
+  rows?: OrderListRow[];
+}
+
+export function SavedFilterPresets({ rows = [] }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const presets = buildPresets();
+
+  const pilneActive = searchParams.get("urgent") === "true";
+  const pilneCount = rows.filter((r) => r.urgent).length;
+
+  function togglePilne() {
+    const p = new URLSearchParams(searchParams.toString());
+    if (pilneActive) {
+      p.delete("urgent");
+      log.info("op=togglePilne action=off");
+    } else {
+      p.delete("page");
+      p.set("urgent", "true");
+      log.info("op=togglePilne action=on");
+    }
+    router.replace(`/admin/orders?${p.toString()}`);
+  }
 
   function applyPreset(preset: Preset) {
     const p = new URLSearchParams();
@@ -115,6 +135,16 @@ export function SavedFilterPresets() {
           Wszystkie
         </Chip>
       )}
+
+      <Chip
+        active={pilneActive}
+        color="pink"
+        aria-pressed={pilneActive}
+        data-testid="preset-pilne"
+        onClick={togglePilne}
+      >
+        Pilne{pilneCount > 0 && <span className="ml-1 font-semibold">· {pilneCount}</span>}
+      </Chip>
 
       {presets.map((preset, i) => {
         const active = i === activeIdx;

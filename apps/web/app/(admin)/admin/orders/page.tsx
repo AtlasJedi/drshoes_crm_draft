@@ -23,6 +23,7 @@ interface SearchParams {
   plannedPickupAtFrom?: string;
   plannedPickupAtTo?: string;
   sort?: string;
+  urgent?: string;
 }
 
 export default async function OrdersPage({
@@ -47,6 +48,7 @@ export default async function OrdersPage({
   const page = Math.max(0, parseInt(sp.page ?? "0", 10) || 0);
   const orderId = sp.orderId;
   const sort = sp.sort;
+  const urgent = sp.urgent === "true" ? true : undefined;
 
   let pageData = null;
   let users: UserStubDto[] = [];
@@ -59,7 +61,7 @@ export default async function OrdersPage({
       ReturnType<typeof listUsersServer>,
       ...Array<Promise<OrderDto>>,
     ] = [
-      listOrdersServer({ status, type, craftsmanId, q, tag, plannedPickupAtFrom, plannedPickupAtTo }, page, 25, sort),
+      listOrdersServer({ status, type, craftsmanId, q, tag, plannedPickupAtFrom, plannedPickupAtTo, urgent }, page, 25, sort),
       listUsersServer(),
     ];
     if (orderId) fetches.push(getOrderServer(orderId));
@@ -97,7 +99,7 @@ export default async function OrdersPage({
         </div>
       ) : (
         <>
-          <SavedFilterPresets />
+          <SavedFilterPresets rows={pageData?.content ?? []} />
           <OrdersFilters
             initial={filtersInitial}
             users={users}

@@ -183,4 +183,6 @@ export interface OrderListFilters {
   plannedPickupAtFrom?: string;
   /** Upper bound for planned_pickup_at (exclusive next day), format YYYY-MM-DD. */
   plannedPickupAtTo?: string;
+  /** When true, filters to urgent orders only (receivedAt ≥ 14 days, active statuses). */
+  urgent?: boolean;
 }

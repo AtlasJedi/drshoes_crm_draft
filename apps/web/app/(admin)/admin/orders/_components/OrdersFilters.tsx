@@ -53,8 +53,15 @@ export function OrdersFilters({ initial, users, visible, total }: Props) {
     const val = e.target.value;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      push({ q: val || undefined });
-      if (!val) setSearchOpen(false);
+      const trimmed = val.trim().toLowerCase();
+      if (trimmed === "pilne" || trimmed.startsWith("pilne na ")) {
+        log.info("op=qRewrite", { from: val, to: "urgent=true" });
+        push({ urgent: "true", q: undefined });
+        setSearchOpen(false);
+      } else {
+        push({ q: val || undefined, urgent: undefined });
+        if (!val) setSearchOpen(false);
+      }
     }, 250);
   }
 
