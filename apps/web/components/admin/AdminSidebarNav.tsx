@@ -69,6 +69,9 @@ export function AdminSidebarNav({ userEmail }: Props) {
       <NavLink href="/admin/sklep" label="Sklep" />
       <NavLink href="/admin/aktualnosci" label="Aktualności" />
 
+      <SectionLabel>KONFIGURACJA</SectionLabel>
+      <NavLink href="/admin/settings/miejsca" label="Miejsca" exact />
+
       <div className="mt-auto px-[14px] pt-4">
         <ReportIssueButton user={userEmail} />
       </div>

@@ -72,4 +72,20 @@ describe("AdminSidebarNav", () => {
     const link = screen.getByRole("link", { name: /triggery/i });
     expect(link.className).not.toMatch(/active/);
   });
+
+  it("renders KONFIGURACJA section with Miejsca link", () => {
+    mockUsePathname.mockReturnValue("/admin/settings/miejsca");
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    expect(screen.getByText("KONFIGURACJA")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /miejsca/i })).toHaveAttribute(
+      "href",
+      "/admin/settings/miejsca"
+    );
+  });
+
+  it("marks Miejsca active when on the route", () => {
+    mockUsePathname.mockReturnValue("/admin/settings/miejsca");
+    render(<AdminSidebarNav userEmail="x@x.pl" />);
+    expect(screen.getByRole("link", { name: /miejsca/i })).toHaveClass("active");
+  });
 });
