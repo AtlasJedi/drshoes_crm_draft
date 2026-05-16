@@ -1947,8 +1947,10 @@
     {
       "id": "10-9",
       "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
+      "status": "completed",
+      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
+      "commit": "392e454",
+      "dispatch_log": "docs/dispatch-log/10-9-20260516T1034Z.md"
     },
     {
       "id": "10-10",
