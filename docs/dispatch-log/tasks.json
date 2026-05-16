@@ -1955,8 +1955,10 @@
     {
       "id": "10-10",
       "milestone": 10,
-      "status": "pending",
-      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md"
+      "status": "completed",
+      "plan": "docs/superpowers/plans/2026-05-16-m10-notes-and-locations.md",
+      "commit_sha": "2102080",
+      "dispatch_log": "docs/dispatch-log/10-10-2026-05-16T1038Z.md"
     },
     {
       "id": "10-11",
