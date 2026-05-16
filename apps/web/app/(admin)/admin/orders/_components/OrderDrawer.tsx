@@ -60,7 +60,7 @@ export function OrderDrawer({ initialOrder, users }: Props) {
   return (
     <Dialog.Root open onOpenChange={handleOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40" />
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
         <Dialog.Content
           aria-describedby={undefined}
           style={{
@@ -69,9 +69,9 @@ export function OrderDrawer({ initialOrder, users }: Props) {
             top: 0,
             bottom: 0,
             width: 540,
-            background: "var(--paper)",
-            borderLeft: "3px solid var(--ink)",
-            boxShadow: "-12px 0 30px rgba(0,0,0,0.18)",
+            background: "var(--paper, #f4efe6)",
+            borderLeft: "3px solid var(--ink, #0a0a0a)",
+            boxShadow: "-12px 0 30px rgba(0,0,0,0.25)",
             display: "flex",
             flexDirection: "column",
             animation: "drawerIn 0.25s ease",
