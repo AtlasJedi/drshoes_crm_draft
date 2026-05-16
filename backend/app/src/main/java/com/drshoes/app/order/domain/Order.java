@@ -70,6 +70,9 @@ public class Order {
     @Column(name = "currency", nullable = false, length = 3)
     private String currency = "PLN";
 
+    @Column(name = "location", length = 64)
+    private String location;
+
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
@@ -138,6 +141,9 @@ public class Order {
 
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
