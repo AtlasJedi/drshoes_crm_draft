@@ -2029,9 +2029,9 @@
     {
       "id": "v2-B",
       "title": "Calendar overhaul — two markers per order [TWO-STAGE]",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "1b70c7b",
+      "dispatch_log": "docs/dispatch-log/v2-B-20260516T230916Z.md"
     },
     {
       "id": "v2-F",
