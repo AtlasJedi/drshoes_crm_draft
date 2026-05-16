@@ -4,6 +4,28 @@
 
 :root {
   color-scheme: light;
+  /* Design tokens — mirror packages/ui/src/tokens.ts so inline var(--X) resolves.
+     Source of truth is tokens.ts; keep these in sync. */
+  --ink: #0a0a0a;
+  --ink-2: #1a1a1a;
+  --ink-3: #2a2a2a;
+  --paper: #f4efe6;
+  --paper-2: #ebe4d4;
+  --paper-3: #ddd3bd;
+  --admin-bg: #f7f5ef;
+  --admin-surface: #ffffff;
+  --admin-line: #e3ddcc;
+  --admin-ink: #1a1a1c;
+  --admin-mute: #6b6960;
+  --acid: #d8ff3a;
+  --magenta: #ff2e7e;
+  --pink: #ff2e7e;
+  --blue: #2b5cff;
+  --orange: #ff5a1f;
+  --green: #18b06b;
+  --red: #e1342b;
+  --line: rgba(10, 10, 10, 0.18);
+  --line-2: rgba(10, 10, 10, 0.08);
 }
 
 html, body {
