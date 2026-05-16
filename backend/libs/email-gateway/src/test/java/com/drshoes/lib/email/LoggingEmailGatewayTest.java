@@ -16,7 +16,7 @@ class LoggingEmailGatewayTest {
 
     @Test
     void send_returns_accepted_receipt_with_provider_id() {
-        var m = new OutboundMessage(Channel.EMAIL, "x@y.pl", "subj", "body", List.of(), "k1");
+        var m = OutboundMessage.of(Channel.EMAIL, "x@y.pl", "subj", "body", List.of(), "k1");
         var r = new LoggingEmailGateway().send(m);
         assertThat(r.initialStatus()).isEqualTo(DeliveryStatus.SENT);
         assertThat(r.providerMessageId()).startsWith("logging-");

@@ -74,7 +74,7 @@ class PostmarkEmailGatewayIntegrationTest {
                                  "To":"jan@example.com"}
                                 """)));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Test", "Hello.", List.of(), "idem-test-1");
 
         DeliveryReceipt receipt = gateway.send(msg);
@@ -96,7 +96,7 @@ class PostmarkEmailGatewayIntegrationTest {
                                 {"ErrorCode":10,"Message":"Invalid email address."}
                                 """)));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.EMAIL, "bad@example.com", "Test", "Hello.", List.of(), "idem-test-2");
 
         DeliveryReceipt receipt = gateway.send(msg);
@@ -114,7 +114,7 @@ class PostmarkEmailGatewayIntegrationTest {
                         .withStatus(422)
                         .withBody("{}")));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Test", "Hello.", List.of(), "idem-test-3");
 
         DeliveryReceipt receipt = gateway.send(msg);
@@ -133,7 +133,7 @@ class PostmarkEmailGatewayIntegrationTest {
                         .withStatus(500)
                         .withBody("Internal Server Error")));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Test", "Hello.", List.of(), "idem-test-4");
 
         DeliveryReceipt receipt = gateway.send(msg);
@@ -165,7 +165,7 @@ class PostmarkEmailGatewayIntegrationTest {
                                  "SubmittedAt":"2026-05-09T10:00:01Z","To":"jan@example.com"}
                                 """)));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Retry Test", "Hello.", List.of(), "idem-test-5");
 
         DeliveryReceipt receipt = gateway.send(msg);
@@ -182,7 +182,7 @@ class PostmarkEmailGatewayIntegrationTest {
                 .willReturn(aResponse()
                         .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Retry Test", "Hello.", List.of(), "idem-test-6");
 
         DeliveryReceipt receipt = gateway.send(msg);

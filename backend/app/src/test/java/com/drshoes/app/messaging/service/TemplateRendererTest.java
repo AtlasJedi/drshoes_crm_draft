@@ -19,7 +19,10 @@ class TemplateRendererTest {
         "DR-2026-0001",                              // numer_zlecenia
         List.of("naprawa", "custom buty"),           // typ_pracy raw labels
         OffsetDateTime.of(2026, 5, 9, 10, 30, 0, 0, ZoneOffset.of("+02:00")),
-        "Dr Shoes"
+        "Dr Shoes",
+        "ul. Mostowa 5a, 61-854 Poznań",             // adresWarsztatu
+        "pon–pt 10:00–18:00 · sob 11:00–15:00",     // godzinyOtwarcia
+        "https://drshoes.pl"                         // urlWarsztatu
     );
     String body = "Czesc {imie_klienta}, zlecenie {numer_zlecenia} ({typ_pracy}). Odbior: {data_odbioru}. {nazwa_warsztatu}";
 
@@ -30,21 +33,35 @@ class TemplateRendererTest {
   }
 
   @Test
+  void workshopPlaceholdersSubstituted() {
+    var ctx = new TemplateContext(
+        "Anna", "DR-2026-0001", List.of(), null,
+        "Dr Shoes",
+        "ul. Mostowa 5a",
+        "pon–pt 10:00–18:00",
+        "https://drshoes.pl"
+    );
+    String body = "{adres_warsztatu} / {godziny_otwarcia} / {url_warsztatu}";
+    assertThat(renderer.render(body, ctx))
+        .isEqualTo("ul. Mostowa 5a / pon–pt 10:00–18:00 / https://drshoes.pl");
+  }
+
+  @Test
   void missingPlannedPickupRendersEmDash() {
-    var ctx = new TemplateContext("Anna", "DR-2026-0002", List.of(), null, "Dr Shoes");
+    var ctx = new TemplateContext("Anna", "DR-2026-0002", List.of(), null, "Dr Shoes", null, null, null);
     assertThat(renderer.render("{data_odbioru}", ctx)).isEqualTo("—");
   }
 
   @Test
   void deferredLinkPlaceholderRendersEmDash() {
-    var ctx = new TemplateContext("Anna", "DR-2026-0003", List.of(), null, "Dr Shoes");
+    var ctx = new TemplateContext("Anna", "DR-2026-0003", List.of(), null, "Dr Shoes", null, null, null);
     assertThat(renderer.render("Galeria: {link_do_zdjec}", ctx)).isEqualTo("Galeria: —");
   }
 
   @Test
   void unknownPlaceholderLeftIntact() {
     // Documents current behavior: only known placeholders are substituted; unknown left literal.
-    var ctx = new TemplateContext("Anna", "DR-2026-0004", List.of(), null, "Dr Shoes");
+    var ctx = new TemplateContext("Anna", "DR-2026-0004", List.of(), null, "Dr Shoes", null, null, null);
     assertThat(renderer.render("Hello {nonsense}", ctx)).isEqualTo("Hello {nonsense}");
   }
 }

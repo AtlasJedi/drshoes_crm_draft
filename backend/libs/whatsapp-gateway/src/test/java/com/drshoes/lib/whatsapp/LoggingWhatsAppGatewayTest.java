@@ -16,7 +16,7 @@ class LoggingWhatsAppGatewayTest {
 
     @Test
     void send_returns_accepted_receipt_with_log_wa_prefix() {
-        var m = new OutboundMessage(Channel.WHATSAPP, "+48500000000", null, "hi", List.of(), "k");
+        var m = OutboundMessage.of(Channel.WHATSAPP, "+48500000000", null, "hi", List.of(), "k");
         var r = new LoggingWhatsAppGateway().send(m);
         assertThat(r.initialStatus()).isEqualTo(DeliveryStatus.SENT);
         assertThat(r.providerMessageId()).startsWith("log-wa-");
@@ -24,7 +24,7 @@ class LoggingWhatsAppGatewayTest {
 
     @Test
     void send_does_not_throw_for_minimal_message() {
-        var m = new OutboundMessage(Channel.WHATSAPP, "+48123456789", null, "body", List.of(), null);
+        var m = OutboundMessage.of(Channel.WHATSAPP, "+48123456789", null, "body", List.of(), null);
         assertThat(new LoggingWhatsAppGateway().send(m)).isNotNull();
     }
 }

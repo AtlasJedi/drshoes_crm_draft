@@ -68,7 +68,8 @@ public class MessageGatewayDispatcher {
     public MessageEntity dispatch(MessageEntity saved, String recipient, String subject, String body) {
         return spanHelper.dispatchWithSpan(saved.getChannel(), saved.getId(), recipient, () -> {
             Channel ch = Channel.valueOf(saved.getChannel());
-            var outbound = new OutboundMessage(ch, recipient, subject, body, null, null);
+            var outbound = new OutboundMessage(ch, recipient, subject, body, null, null,
+                    saved.getBodyHtml());
 
             try {
                 DeliveryReceipt receipt = switch (ch) {

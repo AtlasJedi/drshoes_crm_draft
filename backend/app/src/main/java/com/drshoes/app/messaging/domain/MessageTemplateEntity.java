@@ -35,6 +35,10 @@ public class MessageTemplateEntity {
     @Column(nullable = false, columnDefinition = "text")
     private String body;
 
+    /** HTML body for multipart/alternative emails. Null for SMS/WhatsApp templates. */
+    @Column(name = "body_html", columnDefinition = "text")
+    private String bodyHtml;
+
     @Column(nullable = false)
     private Boolean active = true;
 
@@ -61,6 +65,8 @@ public class MessageTemplateEntity {
 
     public String getBody() { return body; }
     public void setBody(String body) { this.body = body; }
+
+    public String getBodyHtml() { return bodyHtml; }
 
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }

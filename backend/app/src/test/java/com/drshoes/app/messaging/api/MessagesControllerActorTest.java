@@ -63,7 +63,12 @@ class MessagesControllerActorTest extends AdminWebTestBase {
         order.setStatus(OrderStatus.PRZYJETE);
         UUID orderId = orders.save(order).getId();
 
-        UUID templateId = templates.findAll().iterator().next().getId();
+        // Pick an EMAIL template explicitly — the first from findAll() could be SMS (null subject).
+        UUID templateId = templates.findAll().stream()
+                .filter(t -> "EMAIL".equals(t.getChannel()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No EMAIL template seeded"))
+                .getId();
 
         mockMvc().perform(post("/api/admin/orders/{orderId}/messages", orderId)
                 .with(csrf())

@@ -30,6 +30,9 @@ public class PlaceholderResolver {
                                             : String.join(", ", ctx.typyPracy()));
     strategies.put("data_odbioru",   ctx -> ctx.dataOdbioru() == null ? "—" : PL.format(ctx.dataOdbioru()));
     strategies.put("nazwa_warsztatu",ctx -> blankToDash(ctx.nazwaWarsztatu()));
+    strategies.put("adres_warsztatu",ctx -> blankToDash(ctx.adresWarsztatu()));
+    strategies.put("godziny_otwarcia",ctx -> blankToDash(ctx.godzinyOtwarcia()));
+    strategies.put("url_warsztatu",  ctx -> blankToDash(ctx.urlWarsztatu()));
     strategies.put("link_do_zdjec",  ctx -> {
       log.warn("op=template.render placeholder=link_do_zdjec reason=deferred_until_M3");
       return "—";

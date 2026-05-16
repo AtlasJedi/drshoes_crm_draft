@@ -2,6 +2,7 @@ package com.drshoes.app.messaging.service;
 
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
+import com.drshoes.app.messaging.config.WorkshopProperties;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderItem;
 import com.drshoes.app.order.domain.OrderItemKind;
@@ -32,11 +33,17 @@ class TemplateContextBuilderTest {
     @Mock OrderItemRepository orderItems;
     @Mock ClientRepository clients;
 
+    private WorkshopProperties workshopProps;
     private TemplateContextBuilder builder;
 
     @BeforeEach
     void setUp() {
-        builder = new TemplateContextBuilder(orders, orderItems, clients);
+        workshopProps = new WorkshopProperties();
+        workshopProps.setName("Dr Shoes");
+        workshopProps.setAddress("ul. Testowa 1");
+        workshopProps.setOpeningHours("pon–pt 10:00–18:00");
+        workshopProps.setUrl("https://drshoes.pl");
+        builder = new TemplateContextBuilder(orders, orderItems, clients, workshopProps);
     }
 
     @Test
@@ -56,6 +63,24 @@ class TemplateContextBuilderTest {
         assertThat(ctx.numerZlecenia()).isEqualTo("ZL-001");
         assertThat(ctx.nazwaWarsztatu()).isEqualTo("Dr Shoes");
         assertThat(ctx.dataOdbioru()).isNull();
+    }
+
+    @Test
+    @DisplayName("buildContext pulls workshop name/address/hours/url from WorkshopProperties")
+    void buildContext_workshopFieldsFromProperties() {
+        UUID orderId  = UUID.randomUUID();
+        UUID clientId = UUID.randomUUID();
+
+        stubOrder(orderId, "ZL-099", null);
+        stubClient(clientId, "Ala");
+        stubItems(orderId);
+
+        TemplateContext ctx = builder.buildContext(orderId, clientId);
+
+        assertThat(ctx.nazwaWarsztatu()).isEqualTo("Dr Shoes");
+        assertThat(ctx.adresWarsztatu()).isEqualTo("ul. Testowa 1");
+        assertThat(ctx.godzinyOtwarcia()).isEqualTo("pon–pt 10:00–18:00");
+        assertThat(ctx.urlWarsztatu()).isEqualTo("https://drshoes.pl");
     }
 
     @Test

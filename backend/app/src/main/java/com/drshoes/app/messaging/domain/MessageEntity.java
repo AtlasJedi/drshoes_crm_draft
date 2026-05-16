@@ -61,6 +61,10 @@ public class MessageEntity {
     @Column(nullable = false, columnDefinition = "text")
     private String body;
 
+    /** Rendered HTML body for multipart/alternative emails. Null for SMS/WhatsApp messages. */
+    @Column(name = "body_html", columnDefinition = "text")
+    private String bodyHtml;
+
     /** JSONB column — array of s3_keys; raw JSON string. */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "jsonb")
@@ -149,6 +153,9 @@ public class MessageEntity {
 
     public String getBody() { return body; }
     public void setBody(String body) { this.body = body; }
+
+    public String getBodyHtml() { return bodyHtml; }
+    public void setBodyHtml(String bodyHtml) { this.bodyHtml = bodyHtml; }
 
     public String getAttachments() { return attachments; }
     public void setAttachments(String attachments) { this.attachments = attachments; }

@@ -20,7 +20,7 @@ class PostmarkPayloadMapperTest {
     // ── Case 1: plain-text body ─────────────────────────────────────────────
     @Test
     void plainTextBody_emitsTextBody() {
-        var msg = new OutboundMessage(
+        var msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Zlecenie #42",
                 "Twoje buty są gotowe.", List.of(), "idem-1");
 
@@ -38,7 +38,7 @@ class PostmarkPayloadMapperTest {
     // ── Case 2: HTML body ───────────────────────────────────────────────────
     @Test
     void htmlBody_emitsHtmlBody() {
-        var msg = new OutboundMessage(
+        var msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Zlecenie #42",
                 "<p>Twoje buty są gotowe.</p>", List.of(), "idem-2");
 
@@ -55,7 +55,7 @@ class PostmarkPayloadMapperTest {
         byte[] pdfBytes = "PDF-CONTENT".getBytes(StandardCharsets.UTF_8);
         // Attachment record: storageKey, mime, bytes
         var attachment  = new Attachment("report.pdf", "application/pdf", (long) pdfBytes.length);
-        var msg = new OutboundMessage(
+        var msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Raport",
                 "Zobacz załącznik.", List.of(attachment), "idem-3");
         Map<String, byte[]> bytes = Map.of("report.pdf", pdfBytes);
@@ -76,7 +76,7 @@ class PostmarkPayloadMapperTest {
     void attachmentExceeds10MB_throwsIllegalArgument() {
         byte[] big = new byte[10 * 1024 * 1024 + 1];
         var attachment = new Attachment("big.bin", "application/octet-stream", (long) big.length);
-        var msg = new OutboundMessage(
+        var msg = OutboundMessage.of(
                 Channel.EMAIL, "jan@example.com", "Big",
                 "Duzy plik.", List.of(attachment), "idem-4");
         Map<String, byte[]> bytes = Map.of("big.bin", big);

@@ -15,9 +15,10 @@ public class LoggingEmailGateway implements EmailGateway {
     @Override
     public DeliveryReceipt send(OutboundMessage m) {
         var id = "logging-" + UUID.randomUUID();
-        log.info("[email/noop] to={} subject={} bodyLen={} attachments={} idem={} provider_id={}",
-                m.recipient(), m.subject(), m.body().length(), m.attachments().size(),
-                m.idempotencyKey(), id);
+        log.info("[email/noop] to={} subject={} bodyLen={} htmlLen={} attachments={} idem={} provider_id={}",
+                m.recipient(), m.subject(), m.body().length(),
+                m.bodyHtml() != null ? m.bodyHtml().length() : 0,
+                m.attachments().size(), m.idempotencyKey(), id);
         return DeliveryReceipt.accepted(id);
     }
 }

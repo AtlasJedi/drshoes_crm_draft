@@ -94,7 +94,7 @@ public class MessageRouter {
 
         var msg = buildOutbound(thread.getId(), orig.getOrderId(), orig.getClientId(),
                 orig.getChannel(), orig.getTemplateId(), null,
-                orig.getSubject(), orig.getBody(), actorId);
+                orig.getSubject(), orig.getBody(), orig.getBodyHtml(), actorId);
         var persisted = dispatcher.dispatch(msg, recipient, orig.getSubject(), orig.getBody());
 
         log.info("op=message.sendRetry outcome={} orderId={} newMessageId={} channel={}",
@@ -113,7 +113,7 @@ public class MessageRouter {
         UUID actorId = actor == null ? null : actor.userId();
 
         var msg = buildOutbound(threadId, orderId, clientId, channel,
-                null, null, subject, body, actorId);
+                null, null, subject, body, null, actorId);
         var persisted = dispatcher.dispatch(msg, recipient, subject, body);
 
         log.info("op=message.sendReply outcome={} threadId={} messageId={} channel={} actor={}",
@@ -134,7 +134,7 @@ public class MessageRouter {
         UUID actorId = actor == null ? null : actor.userId();
 
         var msg = buildOutbound(thread.getId(), null, clientId, channel,
-                null, null, subject, body, actorId);
+                null, null, subject, body, null, actorId);
         var persisted = dispatcher.dispatch(msg, recipient, subject, body);
 
         log.info("op=message.sendNewToClient outcome={} clientId={} channel={} threadId={} messageId={} actor={}",
@@ -154,6 +154,8 @@ public class MessageRouter {
         String renderedSubject = template.getSubject() == null
                 ? null : renderer.render(template.getSubject(), ctx);
         String renderedBody = renderer.render(template.getBody(), ctx);
+        String renderedHtml = template.getBodyHtml() == null
+                ? null : renderer.render(template.getBodyHtml(), ctx);
 
         var thread = threadService.findOrCreateForClient(clientId);
         String recipient = recipientResolver.resolve(clientId, channel);
@@ -164,7 +166,7 @@ public class MessageRouter {
         }
 
         var msg = buildOutbound(thread.getId(), orderId, clientId, channel,
-                templateId, triggerId, renderedSubject, renderedBody, actorId);
+                templateId, triggerId, renderedSubject, renderedBody, renderedHtml, actorId);
         var persisted = dispatcher.dispatch(msg, recipient, renderedSubject, renderedBody);
 
         log.info("op=message.send outcome={} orderId={} messageId={} channel={} triggerId={}",
@@ -174,7 +176,7 @@ public class MessageRouter {
 
     private MessageEntity buildOutbound(UUID threadId, UUID orderId, UUID clientId,
                                         String channel, UUID templateId, UUID triggerId,
-                                        String subject, String body, UUID actorId) {
+                                        String subject, String body, String bodyHtml, UUID actorId) {
         var msg = MessageEntity.newMessage();
         msg.setThreadId(threadId);
         msg.setOrderId(orderId);
@@ -185,6 +187,7 @@ public class MessageRouter {
         msg.setTriggerId(triggerId);
         msg.setSubject(subject);
         msg.setBody(body);
+        msg.setBodyHtml(bodyHtml);
         msg.setDeliveryStatus(DeliveryStatus.QUEUED.name());
         msg.setSentBy(actorId);
         return messages.saveAndFlush(msg);

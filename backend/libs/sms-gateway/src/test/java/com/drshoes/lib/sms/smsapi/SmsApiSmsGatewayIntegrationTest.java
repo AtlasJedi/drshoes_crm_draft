@@ -77,7 +77,7 @@ class SmsApiSmsGatewayIntegrationTest {
                                  "count":1}
                                 """)));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.SMS, "+48600100200", null,
                 "Twoje buty są gotowe.", List.of(), "idem-sms-test-1");
 
@@ -105,7 +105,7 @@ class SmsApiSmsGatewayIntegrationTest {
                                 {"error":13,"message":"Wrong phone number"}
                                 """)));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.SMS, "bad-phone1", null,
                 "Test.", List.of(), "idem-sms-test-2");
 
@@ -126,7 +126,7 @@ class SmsApiSmsGatewayIntegrationTest {
                         .withHeader("Content-Type", "text/plain")
                         .withBody("Bad Request")));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.SMS, "+48600100300", null,
                 "Test 400.", List.of(), "idem-sms-test-3");
 
@@ -164,7 +164,7 @@ class SmsApiSmsGatewayIntegrationTest {
                                  "count":1}
                                 """)));
 
-        OutboundMessage msg = new OutboundMessage(
+        OutboundMessage msg = OutboundMessage.of(
                 Channel.SMS, "+48600100200", null,
                 "Retry test.", List.of(), "idem-sms-test-4");
 

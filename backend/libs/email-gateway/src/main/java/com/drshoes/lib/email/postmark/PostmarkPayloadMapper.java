@@ -54,11 +54,18 @@ public final class PostmarkPayloadMapper {
         payload.put("Subject", msg.subject());
         payload.put("MessageStream", messageStream);
 
-        boolean isHtml = msg.body().contains("<");
-        if (isHtml) {
-            payload.put("HtmlBody", msg.body());
-        } else {
+        if (msg.bodyHtml() != null) {
+            // Multipart/alternative: explicit HTML body + plain-text fallback
+            payload.put("HtmlBody", msg.bodyHtml());
             payload.put("TextBody", msg.body());
+        } else {
+            // Body-sniff fallback for legacy callers: if body contains '<', treat as HTML
+            boolean isHtml = msg.body().contains("<");
+            if (isHtml) {
+                payload.put("HtmlBody", msg.body());
+            } else {
+                payload.put("TextBody", msg.body());
+            }
         }
 
         if (!msg.attachments().isEmpty() && !attachmentBytes.isEmpty()) {

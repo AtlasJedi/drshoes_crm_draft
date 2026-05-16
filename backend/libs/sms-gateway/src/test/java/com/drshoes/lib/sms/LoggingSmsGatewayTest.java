@@ -16,7 +16,7 @@ class LoggingSmsGatewayTest {
 
     @Test
     void send_returns_accepted_receipt() {
-        var m = new OutboundMessage(Channel.SMS, "+48500000000", null, "hi", List.of(), "k");
+        var m = OutboundMessage.of(Channel.SMS, "+48500000000", null, "hi", List.of(), "k");
         var r = new LoggingSmsGateway().send(m);
         assertThat(r.initialStatus()).isEqualTo(DeliveryStatus.SENT);
         assertThat(r.providerMessageId()).startsWith("logging-");

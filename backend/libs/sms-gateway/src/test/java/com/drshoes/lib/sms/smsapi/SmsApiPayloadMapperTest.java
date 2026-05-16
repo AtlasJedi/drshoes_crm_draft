@@ -18,7 +18,7 @@ class SmsApiPayloadMapperTest {
     //   (with optional check_idx=1 for dedup). Verified against smsapi.pl/docs 2026-05-09.
     @Test
     void basicMessage_emitsRequiredFields() {
-        var msg = new OutboundMessage(
+        var msg = OutboundMessage.of(
                 Channel.SMS, "+48600100200", null,
                 "Twoje buty są gotowe.", List.of(), "idem-sms-1");
 
@@ -34,7 +34,7 @@ class SmsApiPayloadMapperTest {
     // ── Case 2: null idempotency key — idx field omitted ─────────────────
     @Test
     void nullIdempotencyKey_fieldOmitted() {
-        var msg = new OutboundMessage(
+        var msg = OutboundMessage.of(
                 Channel.SMS, "+48600100200", null,
                 "Wiadomość testowa.", List.of(), null);
 
@@ -47,7 +47,7 @@ class SmsApiPayloadMapperTest {
     @Test
     void longMessage_emittedFullyNoTruncation() {
         String longBody = "A".repeat(200);
-        var msg = new OutboundMessage(
+        var msg = OutboundMessage.of(
                 Channel.SMS, "+48600100200", null,
                 longBody, List.of(), "idem-long-1");
 
@@ -60,7 +60,7 @@ class SmsApiPayloadMapperTest {
     // ── Case 4: custom from — emitted as provided, no validation in mapper ──
     @Test
     void customFrom_emittedAsProvided() {
-        var msg = new OutboundMessage(
+        var msg = OutboundMessage.of(
                 Channel.SMS, "+44123456789", null,
                 "Your shoes are ready.", List.of(), null);
 

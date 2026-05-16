@@ -2,6 +2,7 @@ package com.drshoes.app.messaging.service;
 
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
+import com.drshoes.app.messaging.config.WorkshopProperties;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderItemKind;
 import com.drshoes.app.order.domain.OrderItemRepository;
@@ -23,13 +24,16 @@ public class TemplateContextBuilder {
     private final OrderRepository orders;
     private final OrderItemRepository orderItems;
     private final ClientRepository clients;
+    private final WorkshopProperties workshop;
 
     public TemplateContextBuilder(OrderRepository orders,
                                   OrderItemRepository orderItems,
-                                  ClientRepository clients) {
+                                  ClientRepository clients,
+                                  WorkshopProperties workshop) {
         this.orders = orders;
         this.orderItems = orderItems;
         this.clients = clients;
+        this.workshop = workshop;
     }
 
     /**
@@ -59,7 +63,10 @@ public class TemplateContextBuilder {
                 order.getCode(),
                 typyPracy,
                 dataOdbioru,
-                "Dr Shoes"
+                workshop.getName(),
+                workshop.getAddress(),
+                workshop.getOpeningHours(),
+                workshop.getUrl()
         );
     }
 

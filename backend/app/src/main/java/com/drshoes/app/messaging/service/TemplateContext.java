@@ -8,5 +8,8 @@ public record TemplateContext(
     String numerZlecenia,
     List<String> typyPracy,         // raw kind labels in PL, joined by renderer
     OffsetDateTime dataOdbioru,     // nullable
-    String nazwaWarsztatu
+    String nazwaWarsztatu,
+    String adresWarsztatu,          // nullable — from WorkshopProperties
+    String godzinyOtwarcia,         // nullable — from WorkshopProperties
+    String urlWarsztatu             // nullable — from WorkshopProperties
 ) {}
