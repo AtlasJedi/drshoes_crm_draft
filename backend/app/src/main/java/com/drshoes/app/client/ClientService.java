@@ -50,8 +50,9 @@ public class ClientService {
         c.setPhone(req.phone());
         c.setEmail(req.email());
         c.setNotes(req.notes());
+        if (Boolean.TRUE.equals(req.rodoConsent())) c.setRodoConsentAt(Instant.now());
         Client saved = repo.save(c);
-        log.info("op=createClient clientId={} outcome=ok", saved.getId());
+        log.info("op=createClient clientId={} rodoConsent={} outcome=ok", saved.getId(), req.rodoConsent());
         return ClientDto.of(saved);
     }
 

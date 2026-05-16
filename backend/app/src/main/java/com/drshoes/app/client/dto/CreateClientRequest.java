@@ -8,5 +8,10 @@ public record CreateClientRequest(
     @Size(max = 80) String lastName,
     @Size(max = 40) String phone,
     @Size(max = 120) String email,
-    @Size(max = 2000) String notes
-) {}
+    @Size(max = 2000) String notes,
+    Boolean rodoConsent
+) {
+    public CreateClientRequest {
+        if (rodoConsent == null) rodoConsent = Boolean.TRUE;
+    }
+}

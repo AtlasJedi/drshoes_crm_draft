@@ -28,10 +28,31 @@ class ClientServiceTest {
         when(repo.save(any(Client.class))).thenAnswer(inv -> {
             Client c = inv.getArgument(0); c.setId(UUID.randomUUID()); return c;
         });
-        var dto = svc.create(new CreateClientRequest("Jan", "Nowak", "+48", "j@n.pl", "vip"));
+        var dto = svc.create(new CreateClientRequest("Jan", "Nowak", "+48", "j@n.pl", "vip", null));
         assertThat(dto.firstName()).isEqualTo("Jan");
         assertThat(dto.id()).isNotNull();
         verify(repo).save(any(Client.class));
+    }
+
+    @Test
+    void createWithDefaultRodoStampsConsentAt() {
+        when(repo.save(any(Client.class))).thenAnswer(inv -> {
+            Client c = inv.getArgument(0); c.setId(UUID.randomUUID()); return c;
+        });
+        // null rodoConsent → compact ctor defaults to TRUE → rodoConsentAt stamped
+        var req = new CreateClientRequest("Ewa", null, "+48600000002", null, null, null);
+        svc.create(req);
+        verify(repo).save(argThat((Client c) -> c.getRodoConsentAt() != null));
+    }
+
+    @Test
+    void createWithRodoFalseLeavesConsentAtNull() {
+        when(repo.save(any(Client.class))).thenAnswer(inv -> {
+            Client c = inv.getArgument(0); c.setId(UUID.randomUUID()); return c;
+        });
+        var req = new CreateClientRequest("Ewa", null, "+48600000003", null, null, Boolean.FALSE);
+        svc.create(req);
+        verify(repo).save(argThat((Client c) -> c.getRodoConsentAt() == null));
     }
 
     @Test
@@ -63,7 +84,7 @@ class ClientServiceTest {
     @Test
     void createWithNeitherPhoneNorEmailThrows() {
         assertThatThrownBy(() -> svc.create(
-                new CreateClientRequest("Jan", "Brak", null, null, null)))
+                new CreateClientRequest("Jan", "Brak", null, null, null, null)))
             .isInstanceOf(ClientContactMissingException.class);
         verify(repo, never()).save(any());
     }

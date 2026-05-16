@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import * as Switch from "@radix-ui/react-switch";
 import { createLogger } from "@/lib/log";
 import { createClient } from "@/lib/clients/api";
 import { HttpError } from "@/lib/api";
@@ -20,11 +21,12 @@ export function ClientCreateModal({ open, onOpenChange, onCreate }: ClientCreate
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [rodoConsent, setRodoConsent] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   function reset() {
-    setFirstName(""); setLastName(""); setPhone(""); setEmail(""); setError(null); setLoading(false);
+    setFirstName(""); setLastName(""); setPhone(""); setEmail(""); setRodoConsent(true); setError(null); setLoading(false);
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -33,7 +35,7 @@ export function ClientCreateModal({ open, onOpenChange, onCreate }: ClientCreate
     setError(null);
     setLoading(true);
     log.info("op=createClient attempt");
-    const req: CreateClientRequest = { firstName, lastName: lastName || null, phone: phone || null, email: email || null };
+    const req: CreateClientRequest = { firstName, lastName: lastName || null, phone: phone || null, email: email || null, rodoConsent };
     try {
       const client = await createClient(req);
       log.info("op=createClient outcome=ok", { clientId: client.id });
@@ -78,6 +80,20 @@ export function ClientCreateModal({ open, onOpenChange, onCreate }: ClientCreate
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                 className="mt-1 w-full h-10 px-3 border border-admin-line rounded-sm focus:outline-none focus:ring-2 focus:ring-acid" />
             </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="ccm-rodo" className="text-sm font-medium text-admin-mute">
+                Klient wyraził zgodę na RODO
+              </label>
+              <Switch.Root
+                id="ccm-rodo"
+                checked={rodoConsent}
+                onCheckedChange={setRodoConsent}
+                className="w-10 h-6 rounded-full bg-admin-line data-[state=checked]:bg-ink transition-colors focus:outline-none focus:ring-2 focus:ring-acid"
+                aria-label="Klient wyraził zgodę na RODO"
+              >
+                <Switch.Thumb className="block w-4 h-4 bg-paper rounded-full shadow translate-x-1 data-[state=checked]:translate-x-5 transition-transform" />
+              </Switch.Root>
+            </div>
             {error && <p role="alert" className="text-sm text-orange">{error}</p>}
             <div className="flex justify-end gap-3 pt-2">
               <Dialog.Close asChild>

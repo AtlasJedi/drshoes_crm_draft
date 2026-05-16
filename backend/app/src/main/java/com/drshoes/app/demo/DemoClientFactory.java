@@ -54,7 +54,7 @@ public class DemoClientFactory {
     private UUID create(String firstName, String lastName,
                         String phone, String email,
                         String channel, boolean rodoConsent) {
-        var req = new CreateClientRequest(firstName, lastName, phone, email, null);
+        var req = new CreateClientRequest(firstName, lastName, phone, email, null, null);
         var dto = clientService.create(req);
 
         // Apply preferred channel and RODO consent via update

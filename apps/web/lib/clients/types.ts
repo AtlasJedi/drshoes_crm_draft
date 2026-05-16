@@ -35,6 +35,7 @@ export interface CreateClientRequest {
   phone?: string | null;
   email?: string | null;
   notes?: string | null;
+  rodoConsent?: boolean;
 }
 
 /**
