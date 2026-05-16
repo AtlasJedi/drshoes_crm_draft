@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { listLocations, deactivateLocation } from "@/lib/locations";
 import type { StorageLocation } from "@/lib/types";
 import { LocationsList } from "./_components/LocationsList";
+import { LocationFormModal } from "./_components/LocationFormModal";
 import { createLogger } from "@/lib/log";
 import { usePageHeader } from "../../_components/PageHeaderContext";
 
@@ -41,9 +42,15 @@ export default function MiejscaPage() {
         onEdit={setEditing}
         onDeactivate={handleDeactivate}
       />
-      {/* LocationFormModal wired in 10-8 — placeholder mount points: */}
-      {/* {showAdd && <LocationFormModal onClose={() => { setShowAdd(false); reload(); }} />} */}
-      {/* {editing && <LocationFormModal target={editing} onClose={...} />} */}
+      {showAdd && (
+        <LocationFormModal onClose={(saved) => { setShowAdd(false); if (saved) reload(); }} />
+      )}
+      {editing && (
+        <LocationFormModal
+          target={editing}
+          onClose={(saved) => { setEditing(null); if (saved) reload(); }}
+        />
+      )}
     </div>
   );
 }
