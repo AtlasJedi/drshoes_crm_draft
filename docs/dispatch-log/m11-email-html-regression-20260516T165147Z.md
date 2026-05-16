@@ -86,7 +86,7 @@ Tests passed against the existing `SmtpEmailGateway` and `MessageRouter` impleme
 
 ## Commit SHA
 
-_(to be filled after commit)_
+`4c38bb6`
 
 ---
 

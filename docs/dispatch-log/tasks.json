@@ -1995,7 +1995,7 @@
       "milestone": 11,
       "title": "Email HTML regression tests — SmtpEmailGatewayTest + MessageRouterEmailHtmlTest",
       "status": "completed",
-      "commit_sha": "TBD",
+      "commit_sha": "4c38bb6",
       "dispatch_log": "docs/dispatch-log/m11-email-html-regression-20260516T165147Z.md"
     }
   ],
