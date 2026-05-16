@@ -87,13 +87,13 @@ exports[`Contact > matches snapshot 1`] = `
               class="t-display"
               style="font-size: 22px; line-height: 1;"
             >
-              ul. Włodkowica 14/2
+              ul. Mostowa 5a
             </div>
             <div
               class="t-mono"
               style="font-size: 13px; color: rgba(0, 0, 0, 0.65); margin-top: 4px;"
             >
-              50-072 Wrocław · piętro 2
+              61-854 Poznań · piętro 2
             </div>
           </div>
           <div
@@ -250,9 +250,9 @@ exports[`Contact > matches snapshot 1`] = `
       <iframe
         class="border-[3px] border-acid w-full"
         loading="lazy"
-        src="https://maps.google.com/maps?q=Wroclaw+Rynek&z=14&output=embed"
+        src="https://maps.google.com/maps?q=Poznan+Stary+Rynek&z=14&output=embed"
         style="height: 420px; display: block;"
-        title="Lokalizacja pracowni Dr Shoes — Wrocław"
+        title="Lokalizacja pracowni Dr Shoes — Poznań"
       />
     </div>
   </div>

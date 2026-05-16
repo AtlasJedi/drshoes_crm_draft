@@ -18,7 +18,8 @@ describe('Contact', () => {
 
   it('renders workshop address', () => {
     render(<Contact />);
-    expect(screen.getByText(/ul\. Włodkowica/i)).toBeInTheDocument();
+    expect(screen.getByText(/ul\. Mostowa/i)).toBeInTheDocument();
+    expect(screen.getByText(/Poznań/i)).toBeInTheDocument();
   });
 
   it('renders workshop hours', () => {

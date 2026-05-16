@@ -1,7 +1,7 @@
 // apps/web/app/(public)/_components/Contact.tsx
 // Contact section for the public landing page.
 // Design: handoff/design/landing.jsx Kontakt function (bg-ink variant per task spec 9-40).
-// Map: generic Wrocław Rynek embed — real coords deferred per spec §7.
+// Map: generic Poznań Stary Rynek embed — real coords deferred per spec §7.
 // < 78 LOC per granulate directive.
 
 import React from "react";
@@ -44,8 +44,8 @@ export function Contact() {
             <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "20px 18px", marginTop: 18 }}>
               <div style={{ color: "var(--pink)" }}>{I.pin}</div>
               <div>
-                <div className="t-display" style={{ fontSize: 22, lineHeight: 1 }}>ul. Włodkowica 14/2</div>
-                <div className="t-mono" style={{ fontSize: 13, color: "rgba(0,0,0,0.65)", marginTop: 4 }}>50-072 Wrocław · piętro 2</div>
+                <div className="t-display" style={{ fontSize: 22, lineHeight: 1 }}>ul. Mostowa 5a</div>
+                <div className="t-mono" style={{ fontSize: 13, color: "rgba(0,0,0,0.65)", marginTop: 4 }}>61-854 Poznań · piętro 2</div>
               </div>
 
               <div style={{ color: "var(--blue)" }}>{I.clock}</div>
@@ -71,10 +71,10 @@ export function Contact() {
             </div>
           </div>
 
-          {/* right: map placeholder iframe — generic Wrocław centre per spec §7 deferral */}
+          {/* right: map placeholder iframe — generic Poznań Stary Rynek centre per spec §7 deferral */}
           <iframe
-            src="https://maps.google.com/maps?q=Wroclaw+Rynek&z=14&output=embed"
-            title="Lokalizacja pracowni Dr Shoes — Wrocław"
+            src="https://maps.google.com/maps?q=Poznan+Stary+Rynek&z=14&output=embed"
+            title="Lokalizacja pracowni Dr Shoes — Poznań"
             className="border-[3px] border-acid w-full"
             style={{ height: 420, display: "block" }}
             loading="lazy"

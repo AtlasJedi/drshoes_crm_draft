@@ -24,7 +24,7 @@ export function Hero() {
       >
         {/* tape label row */}
         <div className="flex gap-3 items-center mb-6">
-          <Tape>est. 2014 · Wrocław</Tape>
+          <Tape>est. 2014 · Poznań</Tape>
           <Tape color="pink" angle={1.5}>pracownia · nie sklep</Tape>
         </div>
 

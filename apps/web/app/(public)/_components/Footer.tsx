@@ -15,7 +15,7 @@ export function Footer() {
         className="flex justify-between items-center"
         style={{ maxWidth: 1280, margin: "0 auto", fontSize: 11, opacity: 0.6 }}
       >
-        <span>© 2026 Dr Shoes · pracownia w Wrocławiu</span>
+        <span>© 2026 Dr Shoes · pracownia w Poznaniu</span>
         <span>made with paint &amp; duct tape</span>
       </div>
     </footer>
