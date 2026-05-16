@@ -2001,9 +2001,9 @@
     {
       "id": "v2-A",
       "title": "Kanban drag reuses StatusChangeTriggerDialog",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "823fd5a82355ca5ca27e91f8a1d58f846913bdd6",
+      "dispatch_log": "docs/dispatch-log/v2-A-20260517T005700Z.md"
     },
     {
       "id": "v2-C",
