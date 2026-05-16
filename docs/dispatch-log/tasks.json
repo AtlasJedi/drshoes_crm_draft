@@ -1989,6 +1989,14 @@
       "status": "completed",
       "commit_sha": "62ef2d1",
       "dispatch_log": "docs/dispatch-log/m11-adhoc-client-20260516T181600Z.md"
+    },
+    {
+      "id": "email-html-regression",
+      "milestone": 11,
+      "title": "Email HTML regression tests — SmtpEmailGatewayTest + MessageRouterEmailHtmlTest",
+      "status": "completed",
+      "commit_sha": "TBD",
+      "dispatch_log": "docs/dispatch-log/m11-email-html-regression-20260516T165147Z.md"
     }
   ],
   "notes": [
