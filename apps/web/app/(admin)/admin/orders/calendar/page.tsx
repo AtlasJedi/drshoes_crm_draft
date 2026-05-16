@@ -254,7 +254,7 @@ export default async function CalendarPage({
       )}
 
       {/* Drawer overlay */}
-      {drawerOrder && <OrderDrawer initialOrder={drawerOrder} users={[]} />}
+      {drawerOrder && <OrderDrawer initialOrder={drawerOrder} />}
     </div>
   );
 }
