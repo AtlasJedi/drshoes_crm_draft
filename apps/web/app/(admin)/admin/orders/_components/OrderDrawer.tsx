@@ -84,6 +84,7 @@ export function OrderDrawer({ initialOrder, users }: Props) {
             status={order.status}
             clientName={order.clientName}
             receivedAt={order.receivedAt}
+            location={order.location}
           />
 
           <div className="flex-1 overflow-y-auto">

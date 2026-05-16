@@ -12,6 +12,8 @@ interface Props {
   status: OrderStatus;
   clientName?: string | null;
   receivedAt?: string | null;
+  /** Current storage location name, e.g. "półka 1". Renders an acid-yellow pill next to status. */
+  location?: string | null;
 }
 
 const TZ = "Europe/Warsaw";
@@ -22,7 +24,7 @@ function fmtShortDate(iso: string | null | undefined): string {
   });
 }
 
-export function OrderDrawerHeader({ code, status, clientName, receivedAt }: Props) {
+export function OrderDrawerHeader({ code, status, clientName, receivedAt, location }: Props) {
   log.debug("op=render", { code, status });
   const sub = [
     clientName,
@@ -53,6 +55,27 @@ export function OrderDrawerHeader({ code, status, clientName, receivedAt }: Prop
       </div>
 
       <Pill status={status} />
+
+      {location && (
+        <span
+          aria-label="Aktualne miejsce"
+          className="t-mono"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "2px 8px",
+            background: "var(--acid, #d8ff3a)",
+            border: "1.5px solid var(--ink)",
+            fontSize: 11,
+            lineHeight: 1.4,
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span aria-hidden>📍</span>
+          {location}
+        </span>
+      )}
 
       <button className="btn-clean" aria-label="Więcej opcji">
         {I.more}

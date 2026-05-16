@@ -75,4 +75,23 @@ describe("OrderDrawerHeader — reskin (task 9-27)", () => {
     // sub div uses t-mono class — should be absent
     expect(container.querySelector(".t-mono")).toBeNull();
   });
+
+  it("renders acid location pill when location prop is provided", () => {
+    render(
+      <Wrapper>
+        <OrderDrawerHeader code="DR-1042" status="W_REALIZACJI" location="półka 3" />
+      </Wrapper>,
+    );
+    expect(screen.getByLabelText("Aktualne miejsce")).toBeInTheDocument();
+    expect(screen.getByText(/półka 3/)).toBeInTheDocument();
+  });
+
+  it("does not render location pill when location prop is absent", () => {
+    render(
+      <Wrapper>
+        <OrderDrawerHeader code="DR-1042" status="W_REALIZACJI" />
+      </Wrapper>,
+    );
+    expect(screen.queryByLabelText("Aktualne miejsce")).toBeNull();
+  });
 });

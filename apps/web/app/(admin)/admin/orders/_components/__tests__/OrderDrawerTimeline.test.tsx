@@ -18,6 +18,8 @@ const baseEvent: TimelineEvent = {
   actorFullName: "Anna K.",
   labels: {},
   note: null,
+  locationFrom: null,
+  locationTo: null,
 };
 
 describe("OrderDrawerTimeline — note rendering", () => {
@@ -63,5 +65,45 @@ describe("OrderDrawerTimeline — note rendering", () => {
     });
 
     expect(screen.queryByRole("blockquote")).toBeNull();
+  });
+});
+
+describe("OrderDrawerTimeline — LocationMoveChip rendering", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it("renders LocationMoveChip when both locationFrom and locationTo are set", async () => {
+    const eventWithLocation: TimelineEvent = {
+      ...baseEvent,
+      locationFrom: "półka 1",
+      locationTo: "suszarka",
+    };
+    vi.mocked(timelineApi.getOrderTimeline).mockResolvedValue([eventWithLocation]);
+
+    render(<OrderDrawerTimeline orderId="order-loc-1" refreshKey={0} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/półka 1/)).toBeTruthy();
+    });
+    expect(screen.getByText(/suszarka/)).toBeTruthy();
+    expect(screen.getByText(/→/)).toBeTruthy();
+  });
+
+  it("does not render LocationMoveChip when both locationFrom and locationTo are null", async () => {
+    const eventNoLocation: TimelineEvent = {
+      ...baseEvent,
+      locationFrom: null,
+      locationTo: null,
+    };
+    vi.mocked(timelineApi.getOrderTimeline).mockResolvedValue([eventNoLocation]);
+
+    render(<OrderDrawerTimeline orderId="order-loc-2" refreshKey={0} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Status zmieniony")).toBeTruthy();
+    });
+
+    expect(screen.queryByText(/📍/)).toBeNull();
   });
 });

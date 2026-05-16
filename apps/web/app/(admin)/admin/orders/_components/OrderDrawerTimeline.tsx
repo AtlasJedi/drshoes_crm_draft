@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createLogger } from "@/lib/log";
 import { getOrderTimeline } from "@/lib/timeline/api";
 import type { TimelineEvent, TimelineEventKind } from "@/lib/timeline/types";
+import { LocationMoveChip } from "./_LocationMoveChip";
 
 const log = createLogger("order-timeline");
 
@@ -118,6 +119,11 @@ export function OrderDrawerTimeline({ orderId, refreshKey }: Props) {
                   <span className="text-admin-mute"> · {ev.actorFullName}</span>
                 )}
                 <div className="text-admin-mute">{formatTs(ev.occurredAt)}</div>
+                {(ev.locationFrom != null || ev.locationTo != null) && (
+                  <div className="mt-1">
+                    <LocationMoveChip from={ev.locationFrom ?? null} to={ev.locationTo ?? null} />
+                  </div>
+                )}
                 {ev.note && (
                   <blockquote className="mt-1 border-l-2 border-gray-300 pl-2 text-sm text-gray-700">
                     {ev.note}
