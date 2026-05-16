@@ -95,7 +95,7 @@ describe("useKanbanDnd", () => {
     await act(async () => {
       await result.current.onConfirm(true);
     });
-    expect(changeStatus).toHaveBeenCalledWith("card-a", "W_REALIZACJI", 3);
+    expect(changeStatus).toHaveBeenCalledWith("card-a", "W_REALIZACJI", 3, true);
     expect(result.current.pendingMove).toBeNull();
     expect(result.current.errorToast).toBeNull();
     expect(result.current.columns[0]!.cards).toHaveLength(0);
@@ -115,7 +115,7 @@ describe("useKanbanDnd", () => {
     await act(async () => {
       await result.current.onConfirm(false);
     });
-    expect(changeStatus).toHaveBeenCalledWith("card-a", "W_REALIZACJI", 3);
+    expect(changeStatus).toHaveBeenCalledWith("card-a", "W_REALIZACJI", 3, false);
   });
 
   it("onConfirm reverts move and sets error toast on failure", async () => {

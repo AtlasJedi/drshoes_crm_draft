@@ -85,36 +85,37 @@ const MOCK_ORDER: OrderDto = {
   items: [],
   quotedPriceCents: 34000,
   advancePaidCents: 0,
+  urgent: false,
 };
 
 describe("OrderDrawer — reskin (task 9-27)", () => {
   it("renders DR-code in t-display header", () => {
-    render(<OrderDrawer initialOrder={MOCK_ORDER} users={[]} />);
+    render(<OrderDrawer initialOrder={MOCK_ORDER} />);
     expect(screen.getByText("DR-1042")).toBeInTheDocument();
   });
 
   it("renders client name sub in header", () => {
-    render(<OrderDrawer initialOrder={MOCK_ORDER} users={[]} />);
+    render(<OrderDrawer initialOrder={MOCK_ORDER} />);
     expect(screen.getByText(/Magdalena Kowalska/i)).toBeInTheDocument();
   });
 
   it("renders footer zmień status button", () => {
-    render(<OrderDrawer initialOrder={MOCK_ORDER} users={[]} />);
+    render(<OrderDrawer initialOrder={MOCK_ORDER} />);
     expect(screen.getByRole("button", { name: /zmień status/i })).toBeInTheDocument();
   });
 
   it("renders footer oznacz jako wydane button", () => {
-    render(<OrderDrawer initialOrder={MOCK_ORDER} users={[]} />);
+    render(<OrderDrawer initialOrder={MOCK_ORDER} />);
     expect(screen.getByRole("button", { name: /oznacz jako wydane/i })).toBeInTheDocument();
   });
 
   it("renders footer wiadomość button", () => {
-    render(<OrderDrawer initialOrder={MOCK_ORDER} users={[]} />);
+    render(<OrderDrawer initialOrder={MOCK_ORDER} />);
     expect(screen.getByRole("button", { name: /wiadomość/i })).toBeInTheDocument();
   });
 
   it("renders footer anuluj button", () => {
-    render(<OrderDrawer initialOrder={MOCK_ORDER} users={[]} />);
+    render(<OrderDrawer initialOrder={MOCK_ORDER} />);
     expect(screen.getByRole("button", { name: /anuluj zlecenie/i })).toBeInTheDocument();
   });
 });

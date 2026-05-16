@@ -8,7 +8,6 @@ import { I } from "@drshoes/ui";
 import { createLogger } from "@/lib/log";
 import { changeStatus } from "@/lib/orders/api";
 import type { OrderDto } from "@/lib/orders/types";
-import type { UserStubDto } from "@/lib/users/types";
 import { OrderDrawerHeader } from "./OrderDrawerHeader";
 import { OrderDrawerCoreFields } from "./OrderDrawerCoreFields";
 import { OrderDrawerStatusChanger } from "./OrderDrawerStatusChanger";
@@ -26,10 +25,9 @@ const log = createLogger("order-drawer");
 
 interface Props {
   initialOrder: OrderDto;
-  users: UserStubDto[];
 }
 
-export function OrderDrawer({ initialOrder, users }: Props) {
+export function OrderDrawer({ initialOrder }: Props) {
   const [order, setOrder] = useState<OrderDto>(initialOrder);
   const [refreshKey, setRefreshKey] = useState(0);
   const [composeOpen, setComposeOpen] = useState(false);
@@ -108,7 +106,7 @@ export function OrderDrawer({ initialOrder, users }: Props) {
 
           <div className="flex-1 overflow-y-auto">
             <OrderDrawerStatusTimeline currentStatus={order.status} />
-            <OrderDrawerCoreFields order={order} users={users} onOrderUpdate={handleOrderUpdated} />
+            <OrderDrawerCoreFields order={order} onOrderUpdate={handleOrderUpdated} />
 
             <OrderDrawerStatusChanger order={order} onOrderUpdated={handleOrderUpdated} />
             <OrderDrawerItems order={order} onOrderUpdated={handleOrderUpdated} />

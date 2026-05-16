@@ -126,7 +126,7 @@ export default async function OrdersPage({
       )}
 
       {drawerOrder && (
-        <OrderDrawer initialOrder={drawerOrder} users={users} />
+        <OrderDrawer initialOrder={drawerOrder} />
       )}
     </div>
   );

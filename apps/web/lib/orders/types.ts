@@ -70,6 +70,7 @@ export interface OrderDto {
   items: OrderItemDto[];
   quotedPriceCents: number;     // workshop quoted price in PLN cents; 0 = TBD
   advancePaidCents: number;     // advance already collected; 0 = none
+  urgent: boolean;              // >= 14 days in shop, not WYDANE/ANULOWANE/WSTEPNIE_PRZYJETE
 }
 
 /** Paginated list row — mirrors OrderListRow.java. */
@@ -91,6 +92,7 @@ export interface OrderListRow {
   pickedUpAt: string | null;      // ISO-8601 — null until status becomes WYDANE
   quotedPriceCents: number;       // workshop quoted price in PLN cents; 0 = TBD
   advancePaidCents: number;       // advance already collected; 0 = none
+  urgent: boolean;                // >= 14 days in shop, not WYDANE/ANULOWANE/WSTEPNIE_PRZYJETE
 }
 
 /**
