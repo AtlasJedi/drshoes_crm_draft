@@ -126,7 +126,9 @@ public class OrderService {
         if (req.currentStorageLocationId() != null) o.setCurrentStorageLocationId(req.currentStorageLocationId());
         if (req.cancelledReason() != null)          o.setCancelledReason(req.cancelledReason());
         if (req.tags() != null)                     o.setTags(req.tags());
-        if (req.quotedPriceCents() != null)         o.setQuotedPriceCents(req.quotedPriceCents());
+        if (req.quotedPriceCents() != null)
+            throw new IllegalArgumentException(
+                "quotedPriceCents is computed from items and cannot be patched directly");
         if (req.advancePaidCents() != null)         o.setAdvancePaidCents(req.advancePaidCents());
 
         // Inject diff into request attribute for AuditLogAspect to pick up

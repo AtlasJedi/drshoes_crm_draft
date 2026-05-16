@@ -375,23 +375,37 @@ class OrderServiceIntegrationTest extends AbstractIntegrationTest {
     }
 
     // ============================================================
-    // Test 20: update patches quotedPriceCents and advancePaidCents
-    // (task ux-4 — patch via UpdateOrderRequest)
+    // Test 20: update patches advancePaidCents (quotedPriceCents is now item-driven)
+    // (task ux-4 — patch via UpdateOrderRequest; M11-b1 removes quotedPriceCents from PATCH)
     // ============================================================
     @Test
-    void updateOrder_patchesQuoteAndAdvance() {
+    void updateOrder_patchesAdvance() {
         OrderDto created = svc.create(req("renowacja butów"));
 
         UpdateOrderRequest patchReq = new UpdateOrderRequest(
-            null, null, null, null, null, null, null, 50000, 20000);
+            null, null, null, null, null, null, null, null, 20000);
         OrderDto updated = svc.update(created.id(), patchReq);
 
-        assertThat(updated.quotedPriceCents()).isEqualTo(50000);
         assertThat(updated.advancePaidCents()).isEqualTo(20000);
 
         OrderDto fetched = svc.get(updated.id());
-        assertThat(fetched.quotedPriceCents()).isEqualTo(50000);
         assertThat(fetched.advancePaidCents()).isEqualTo(20000);
+    }
+
+    // ============================================================
+    // Test 20b: update with quotedPriceCents in PATCH must throw (items are the only writer)
+    // (M11-b1)
+    // ============================================================
+    @Test
+    void updateOrder_quotedPriceCentsPatch_isRejected() {
+        OrderDto created = svc.create(req("buty odrzucone"));
+
+        UpdateOrderRequest patchReq = new UpdateOrderRequest(
+            null, null, null, null, null, null, null, 99900, null);
+
+        assertThatThrownBy(() -> svc.update(created.id(), patchReq))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("quotedPriceCents");
     }
 
     // ============================================================

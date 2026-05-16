@@ -493,6 +493,22 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // -------------------------------------------------------------------------
+    // PATCH /api/admin/orders/{id} — quotedPriceCents rejection (M11-b1)
+    // -------------------------------------------------------------------------
+
+    @Test
+    void patchQuotedPriceCents_isRejected400() throws Exception {
+        loginAsOwner();
+        UUID orderId = createOrderAndReturnId("Quote patch rejection test");
+
+        mockMvc().perform(patch("/api/admin/orders/" + orderId)
+                .contentType("application/json")
+                .content("{\"quotedPriceCents\":99900}")
+                .with(csrf()))
+            .andExpect(status().isBadRequest());
+    }
+
+    // -------------------------------------------------------------------------
 
     private UUID createOrderAndReturnId(String description) throws Exception {
         MvcResult r = mockMvc().perform(post("/api/admin/orders")

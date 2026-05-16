@@ -36,12 +36,13 @@ class OrderUpdateAuditDiffIntegrationTest extends AdminWebTestBase {
     }
 
     @Test
-    void PATCH_quotedPriceCentsChange_auditNoteMatchesCenaFormat() throws Exception {
+    void PATCH_advancePaidCentsChange_auditNoteMatchesZaliczkaFormat() throws Exception {
+        // quotedPriceCents is now item-driven (M11-b1); use advancePaidCents to test diff format
         Order o = persistOrder(0, 0);
 
         mockMvc().perform(patch("/api/admin/orders/" + o.getId())
                 .contentType("application/json")
-                .content("{\"quotedPriceCents\":10000}")
+                .content("{\"advancePaidCents\":10000}")
                 .with(csrf()))
             .andExpect(status().isOk());
 
@@ -49,16 +50,17 @@ class OrderUpdateAuditDiffIntegrationTest extends AdminWebTestBase {
             "/api/admin/orders/" + o.getId() + "%", o.getId());
         assertThat(rows).isNotEmpty();
         AuditLog latest = rows.get(rows.size() - 1);
-        assertThat(latest.getNote()).isEqualTo("Cena zmieniona z 0,00 zł na 100,00 zł");
+        assertThat(latest.getNote()).isEqualTo("Zaliczka zmieniona z 0,00 zł na 100,00 zł");
     }
 
     @Test
     void PATCH_twoFieldsChanged_noteSeparatedByBullet() throws Exception {
-        Order o = persistOrder(500, 0);
+        // Use description + advancePaidCents to exercise multi-field diff separator
+        Order o = persistOrder(0, 0);
 
         mockMvc().perform(patch("/api/admin/orders/" + o.getId())
                 .contentType("application/json")
-                .content("{\"quotedPriceCents\":2000,\"advancePaidCents\":1000}")
+                .content("{\"description\":\"nowy opis\",\"advancePaidCents\":1000}")
                 .with(csrf()))
             .andExpect(status().isOk());
 
@@ -68,18 +70,17 @@ class OrderUpdateAuditDiffIntegrationTest extends AdminWebTestBase {
         String note = rows.get(rows.size() - 1).getNote();
         assertThat(note).isNotNull();
         assertThat(note).contains(" · ");
-        assertThat(note).contains("Cena zmieniona");
         assertThat(note).contains("Zaliczka zmieniona");
     }
 
     @Test
     void PATCH_noActualChanges_auditNoteIsNull() throws Exception {
-        Order o = persistOrder(1000, 500);
+        Order o = persistOrder(0, 500);
 
-        // Send the exact same values — diff should be null → note null in audit
+        // Send the exact same advancePaidCents value — diff should be null → note null in audit
         mockMvc().perform(patch("/api/admin/orders/" + o.getId())
                 .contentType("application/json")
-                .content("{\"quotedPriceCents\":1000,\"advancePaidCents\":500}")
+                .content("{\"advancePaidCents\":500}")
                 .with(csrf()))
             .andExpect(status().isOk());
 

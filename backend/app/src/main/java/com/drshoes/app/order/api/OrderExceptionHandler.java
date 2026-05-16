@@ -69,6 +69,13 @@ public class OrderExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException e) {
+        log.info("op=illegalArgument message={} outcome=400", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(error("INVALID_REQUEST", e.getMessage()));
+    }
+
     private static Map<String, Object> error(String code, String message) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("code", code);

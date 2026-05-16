@@ -73,12 +73,13 @@ public class OrderItemService {
         log.info("op=removeOrderItem orderId={} itemId={} outcome=ok", orderId, itemId);
     }
 
-    /** Sums item priceCents and writes it to the parent order. */
+    /** Sums item priceCents and writes it to the parent order (both totalPriceCents and quotedPriceCents). */
     void recomputeTotal(UUID orderId) {
         int total = itemRepo.findAllByOrderIdOrderByPosition(orderId)
             .stream().mapToInt(OrderItem::getPriceCents).sum();
         orderRepo.findById(orderId).ifPresent(o -> {
             o.setTotalPriceCents(total);
+            o.setQuotedPriceCents(total);
             orderRepo.save(o);
         });
     }
