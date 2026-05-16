@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import { createOrder } from "@/lib/orders/api";
+import { createClient } from "@/lib/clients/api";
 import type { CreateOrderRequest, CreateOrderItemRequest } from "@/lib/orders/types";
 import type { ClientDto } from "@/lib/clients/types";
 import type { UserStubDto } from "@/lib/users/types";
@@ -13,6 +14,8 @@ import { NewOrderItemRow, type ItemRowState } from "./NewOrderItemRow";
 import { plnToCents, centsToPlnDisplay } from "@/lib/orders/money";
 
 const log = createLogger("new-order-form");
+
+type ClientMode = "existing" | "adhoc";
 
 interface Props {
   users: UserStubDto[];
@@ -25,8 +28,21 @@ function makeFreshItem(): ItemRowState {
 export function NewOrderForm({ users }: Props) {
   const router = useRouter();
 
+  // --- client mode ---
+  const [clientMode, setClientMode] = useState<ClientMode>("existing");
+
+  // existing-client state
   const [client, setClient] = useState<ClientDto | null>(null);
   const [clientError, setClientError] = useState(false);
+
+  // ad-hoc client state
+  const [adhocName, setAdhocName] = useState("");
+  const [adhocPhone, setAdhocPhone] = useState("");
+  const [adhocEmail, setAdhocEmail] = useState("");
+  const [adhocNameError, setAdhocNameError] = useState<string | null>(null);
+  const [adhocContactError, setAdhocContactError] = useState<string | null>(null);
+
+  // order fields
   const [description, setDescription] = useState("");
   const [plannedPickupAt, setPlannedPickupAt] = useState("");
   const [assignedCraftsmanId, setAssignedCraftsmanId] = useState("");
@@ -52,15 +68,73 @@ export function NewOrderForm({ users }: Props) {
     setItems((prev) => prev.filter((_, i) => i !== index));
   }
 
+  function switchMode(mode: ClientMode) {
+    setClientMode(mode);
+    // clear errors when switching
+    setClientError(false);
+    setAdhocNameError(null);
+    setAdhocContactError(null);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!client) {
-      setClientError(true);
-      log.warn("op=submit outcome=validation_failed reason=no_client");
-      return;
+    let resolvedClientId: string;
+
+    if (clientMode === "existing") {
+      if (!client) {
+        setClientError(true);
+        log.warn("op=submit outcome=validation_failed reason=no_client");
+        return;
+      }
+      setClientError(false);
+      resolvedClientId = client.id;
+    } else {
+      // ad-hoc validation
+      let valid = true;
+      if (!adhocName.trim()) {
+        setAdhocNameError("Podaj imię i nazwisko");
+        valid = false;
+      } else {
+        setAdhocNameError(null);
+      }
+      if (!adhocPhone.trim() && !adhocEmail.trim()) {
+        setAdhocContactError("Podaj telefon lub email");
+        valid = false;
+      } else {
+        setAdhocContactError(null);
+      }
+      if (!valid) {
+        log.warn("op=submit outcome=validation_failed reason=adhoc_fields");
+        return;
+      }
+
+      // split full name: first token → firstName, rest → lastName
+      const parts = adhocName.trim().split(/\s+/);
+      const firstName = parts[0]!;
+      const lastName = parts.length > 1 ? parts.slice(1).join(" ") : null;
+
+      log.info("op=adhoc-client-create attempt", { firstName, hasPhone: !!adhocPhone, hasEmail: !!adhocEmail });
+      setSubmitting(true);
+      setSubmitError(null);
+
+      try {
+        const created = await createClient({
+          firstName,
+          lastName,
+          phone: adhocPhone.trim() || null,
+          email: adhocEmail.trim() || null,
+          rodoConsent: true,
+        });
+        log.info("op=adhoc-client-create outcome=ok", { clientId: created.id });
+        resolvedClientId = created.id;
+      } catch (err) {
+        log.error("op=adhoc-client-create outcome=error", { message: String(err) });
+        setSubmitError("Nie udało się utworzyć klienta. Spróbuj ponownie.");
+        setSubmitting(false);
+        return;
+      }
     }
-    setClientError(false);
 
     const builtItems: CreateOrderItemRequest[] = items.map((it) => ({
       kind: it.kind,
@@ -69,7 +143,7 @@ export function NewOrderForm({ users }: Props) {
     }));
 
     const req: CreateOrderRequest = {
-      clientId: client.id,
+      clientId: resolvedClientId,
       source: "ADMIN",
       ...(description ? { description } : {}),
       ...(plannedPickupAt
@@ -81,9 +155,11 @@ export function NewOrderForm({ users }: Props) {
       advancePaidCents: plnToCents(advancePaidPln),
     };
 
-    log.info("op=submit attempt", { clientId: client.id, itemCount: builtItems.length });
-    setSubmitting(true);
-    setSubmitError(null);
+    log.info("op=submit attempt", { clientId: resolvedClientId, itemCount: builtItems.length });
+    if (clientMode === "existing") {
+      setSubmitting(true);
+      setSubmitError(null);
+    }
 
     try {
       const created = await createOrder(req);
@@ -106,18 +182,94 @@ export function NewOrderForm({ users }: Props) {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6 max-w-2xl">
-      {/* Client */}
+      {/* Client mode switcher */}
       <div>
-        <label className={labelCls}>
-          Klient <span className="text-magenta">*</span>
-        </label>
-        <ClientPicker
-          value={client}
-          onChange={(c) => { setClient(c); setClientError(false); }}
-          disabled={submitting}
-        />
-        {clientError && (
-          <p className="mt-1 text-xs text-magenta">Wybierz klienta</p>
+        <p className={labelCls}>Klient <span className="text-magenta">*</span></p>
+        <div className="flex gap-2 mb-3">
+          <button
+            type="button"
+            onClick={() => switchMode("existing")}
+            disabled={submitting}
+            className={`px-4 py-1.5 rounded-sm border text-sm font-medium transition-colors ${
+              clientMode === "existing"
+                ? "bg-acid text-ink border-acid"
+                : "bg-white text-admin-ink border-admin-line hover:bg-acid/10"
+            }`}
+          >
+            Istniejący klient
+          </button>
+          <button
+            type="button"
+            onClick={() => switchMode("adhoc")}
+            disabled={submitting}
+            className={`px-4 py-1.5 rounded-sm border text-sm font-medium transition-colors ${
+              clientMode === "adhoc"
+                ? "bg-acid text-ink border-acid"
+                : "bg-white text-admin-ink border-admin-line hover:bg-acid/10"
+            }`}
+          >
+            Nowy klient
+          </button>
+        </div>
+
+        {clientMode === "existing" ? (
+          <>
+            <ClientPicker
+              value={client}
+              onChange={(c) => { setClient(c); setClientError(false); }}
+              disabled={submitting}
+            />
+            {clientError && (
+              <p className="mt-1 text-xs text-magenta">Wybierz klienta</p>
+            )}
+          </>
+        ) : (
+          <div className="space-y-3">
+            <div>
+              <label htmlFor="adhocName" className={labelCls}>
+                Imię i nazwisko <span className="text-magenta">*</span>
+              </label>
+              <input
+                id="adhocName"
+                type="text"
+                value={adhocName}
+                disabled={submitting}
+                onChange={(e) => { setAdhocName(e.target.value); setAdhocNameError(null); }}
+                placeholder="Jan Kowalski"
+                className={inputCls}
+              />
+              {adhocNameError && (
+                <p className="mt-1 text-xs text-magenta">{adhocNameError}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="adhocPhone" className={labelCls}>Telefon</label>
+              <input
+                id="adhocPhone"
+                type="tel"
+                value={adhocPhone}
+                disabled={submitting}
+                onChange={(e) => { setAdhocPhone(e.target.value); setAdhocContactError(null); }}
+                placeholder="+48 600 000 000"
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label htmlFor="adhocEmail" className={labelCls}>Email</label>
+              <input
+                id="adhocEmail"
+                type="email"
+                value={adhocEmail}
+                disabled={submitting}
+                onChange={(e) => { setAdhocEmail(e.target.value); setAdhocContactError(null); }}
+                placeholder="jan@kowalski.pl"
+                className={inputCls}
+              />
+            </div>
+            {adhocContactError && (
+              <p className="text-xs text-magenta">{adhocContactError}</p>
+            )}
+          </div>
         )}
       </div>
 
