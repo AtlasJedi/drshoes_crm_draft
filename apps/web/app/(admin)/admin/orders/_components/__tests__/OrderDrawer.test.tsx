@@ -59,6 +59,7 @@ vi.mock("../MessageComposerModal", () => ({
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
   useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/admin/orders",
 }));
 
 const MOCK_ORDER: OrderDto = {

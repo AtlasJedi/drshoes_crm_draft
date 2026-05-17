@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
 import type { Route } from "next";
 import { I } from "@drshoes/ui";
@@ -34,6 +34,7 @@ export function OrderDrawer({ initialOrder }: Props) {
   const [markWydaneError, setMarkWydaneError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   function handleOrderUpdated(updated: OrderDto) {
     setOrder(updated);
@@ -64,11 +65,15 @@ export function OrderDrawer({ initialOrder }: Props) {
 
   function handleOpenChange(open: boolean) {
     if (!open) {
-      log.info("op=close", { orderId: order.id });
+      log.info("op=close", { orderId: order.id, pathname });
       const params = new URLSearchParams(searchParams.toString());
       params.delete("orderId");
       const qs = params.toString();
-      router.replace((qs ? `/admin/orders?${qs}` : "/admin/orders") as Route);
+      // Stay on the page that opened the drawer (orders list, calendar, kanban,
+      // or any client-detail history view). Falls back to /admin/orders if
+      // pathname is somehow empty.
+      const base = pathname || "/admin/orders";
+      router.replace((qs ? `${base}?${qs}` : base) as Route);
     }
   }
 
