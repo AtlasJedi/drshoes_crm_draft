@@ -99,3 +99,60 @@ docker exec misza_madafaka-postgres-1 psql -U drshoes -d drshoes -c \
 | `80751ac` | feat(workshop): fix address to Marcinkowskiego 26 + add phone/maps placeholders |
 | `e0f2380` | feat(db): V030 — enrich 4 email template footers with phone + Mapa dojazdu button |
 | `f8d922f` | fix(public): correct workshop address on landing Contact section |
+
+---
+
+## Follow-up 2026-05-18
+
+### Task #1 — Public-site phone mismatch: RESOLVED
+
+**Commit:** `afda576` — `fix(public): align workshop phone to canonical +48 514 296 809`
+
+Files changed:
+- `apps/web/app/(public)/_components/Contact.tsx` — display text `+48 794 220 118` → `+48 514 296 809`; `tel:` href `+48794220118` → `+48514296809`
+- `apps/web/app/(public)/_components/__tests__/Contact.test.tsx` — assertion updated to `/\+48 514 296 809/`
+- `apps/web/app/(public)/_components/__tests__/__snapshots__/Contact.test.tsx.snap` — snapshot updated to reflect new href and display text
+
+Frontend suite after fix: 575 passed / 16 failed (all 16 pre-existing, none introduced by this change).
+
+---
+
+### Task #2 — Trigger-template visual verification: RESOLVED
+
+**Approach:** local render via HTTP server + sed substitution + Playwright screenshot. No real email sent. No demo DB rows created.
+
+**Commit:** `638fc16` — `docs(email): add rendered-template screenshots for trigger templates`
+
+**Screenshots:**
+- `docs/screenshots/email-footer-fix/zlecenie-przyjete.png`
+- `docs/screenshots/email-footer-fix/gotowe-do-odbioru.png`
+- `docs/screenshots/email-footer-fix/prosba-o-opinie.png`
+
+**Placeholder substitutions used (reproducible):**
+
+| Placeholder | Sample value |
+|-------------|-------------|
+| `{imie_klienta}` | `Anna` |
+| `{numer_zlecenia}` | `2026-0042` |
+| `{typ_pracy}` | `naprawa podeszwy, czyszczenie` (zlecenie-przyjete only) |
+| `{data_odbioru}` | `22.05.2026 o 14:00` (zlecenie-przyjete only) |
+| `{nazwa_warsztatu}` | `Dr Shoes Poznań` |
+| `{adres_warsztatu}` | `Aleje Karola Marcinkowskiego 26, 61-745 Poznań` |
+| `{godziny_otwarcia}` | `pon–pt 10:00–18:00 · sob 11:00–15:00` |
+| `{url_warsztatu}` | `https://drshoes.pl` (gotowe-do-odbioru + prosba-o-opinie only) |
+| `{telefon_warsztatu}` | `+48 514 296 809` |
+| `{mapy_url}` | `https://www.google.com/maps/dir/?api=1&destination=Aleje%20Karola%20Marcinkowskiego%2026%2C%2061-745%20Pozna%C5%84` |
+| `{link_do_zdjec}` | `https://drshoes.pl/zdjecia/sample` (not present in any of these 3 templates) |
+| `{wiadomosc_tresc}` | `` (empty — not present in any of these 3 templates) |
+
+**Rendering tool:** `/tmp/email-renders/render.sh` (sed pipeline, 700×900 Playwright viewport, fullPage screenshot).
+
+**Visual spot-check results:**
+
+| Template | Header | Body | Footer address | Footer phone | MAPA DOJAZDU btn | Odpisz STOP | Raw placeholders |
+|----------|--------|------|---------------|-------------|------------------|-------------|-----------------|
+| Zlecenie przyjete | ✓ black + blue accent + PRZYJĘTE badge | ✓ Anna, 2026-0042, naprawa podeszwy, 22.05.2026 | ✓ | ✓ +48 514 296 809 bold | ✓ acid-yellow | ✓ | none |
+| Gotowe do odbioru | ✓ black + pink accent + ODBIERZ badge | ✓ Anna, 2026-0042, address + hours in body | ✓ | ✓ +48 514 296 809 bold | ✓ acid-yellow | ✓ | none |
+| Prosba o opinie | ✓ black + green accent | ✓ Anna, 2026-0042, WYSTAW OPINIĘ CTA | ✓ | ✓ +48 514 296 809 bold | ✓ acid-yellow | ✓ | none |
+
+**Note discovered during rendering:** `{data_odbioru}` and `{typ_pracy}` are only present in `Zlecenie przyjete` (not in the other two). `{url_warsztatu}` is present in `Gotowe do odbioru` and `Prosba o opinie` (not in `Zlecenie przyjete`). All placeholders are covered by `PlaceholderResolver.java` — no surprises found.
