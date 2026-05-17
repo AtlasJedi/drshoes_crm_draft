@@ -29,6 +29,6 @@ describe('Contact', () => {
 
   it('renders phone number', () => {
     render(<Contact />);
-    expect(screen.getByText(/\+48 794 220 118/)).toBeInTheDocument();
+    expect(screen.getByText(/\+48 514 296 809/)).toBeInTheDocument();
   });
 });

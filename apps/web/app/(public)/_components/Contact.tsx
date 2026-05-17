@@ -55,7 +55,7 @@ export function Contact() {
               </div>
 
               <div>{I.phone}</div>
-              <a href="tel:+48794220118" className="t-display" style={{ fontSize: 26, color: "var(--ink)", textDecoration: "none" }}>+48 794 220 118</a>
+              <a href="tel:+48514296809" className="t-display" style={{ fontSize: 26, color: "var(--ink)", textDecoration: "none" }}>+48 514 296 809</a>
 
               <div>{I.mail}</div>
               <a href="mailto:siema@drshoes.pl" className="t-mono" style={{ fontSize: 14, color: "var(--ink)", textDecoration: "none" }}>siema@drshoes.pl</a>
