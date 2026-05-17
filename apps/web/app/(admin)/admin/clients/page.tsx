@@ -40,25 +40,29 @@ export default async function ClientsPage({
   }
 
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <ClientsPageHeaderSetter total={pageData?.totalElements} />
-      <div className="mb-5">
+      {/* SHRINK-0: page chrome — search box. Never scrolls. */}
+      <div className="shrink-0 mb-4">
         <ClientListSearchBox initialQ={q} />
       </div>
 
-      {fetchError ? (
-        <div className="p-6 border border-admin-line rounded text-admin-mute text-sm">
-          Nie udało się załadować listy. Odśwież stronę.
-        </div>
-      ) : searchResults !== null ? (
-        <ClientSearchResultsTable results={searchResults} />
-      ) : pageData && pageData.content.length === 0 ? (
-        <div className="p-8 text-center border border-admin-line rounded text-admin-mute">
-          Brak klientów do wyświetlenia.
-        </div>
-      ) : pageData ? (
-        <ClientListTable page={pageData} currentPage={page} q={q} />
-      ) : null}
+      {/* FLEX-1: scrollable table/results region */}
+      <div className="flex-1 min-h-0 overflow-auto">
+        {fetchError ? (
+          <div className="p-6 border border-admin-line rounded text-admin-mute text-sm">
+            Nie udało się załadować listy. Odśwież stronę.
+          </div>
+        ) : searchResults !== null ? (
+          <ClientSearchResultsTable results={searchResults} />
+        ) : pageData && pageData.content.length === 0 ? (
+          <div className="p-8 text-center border border-admin-line rounded text-admin-mute">
+            Brak klientów do wyświetlenia.
+          </div>
+        ) : pageData ? (
+          <ClientListTable page={pageData} currentPage={page} q={q} />
+        ) : null}
+      </div>
     </div>
   );
 }

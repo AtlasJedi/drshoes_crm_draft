@@ -84,10 +84,11 @@ export function SklepShell() {
   });
 
   return (
-    <div style={{ padding: 24, display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 20 }}>
-      {/* LEFT: filter chips + product grid */}
-      <div>
-        <div className="flex gap-2 flex-wrap mb-3.5">
+    <div className="h-full grid gap-5" style={{ gridTemplateColumns: "1.5fr 1fr" }}>
+      {/* LEFT: filter chips (sticky) + scrollable product grid */}
+      <div className="h-full flex flex-col min-h-0">
+        {/* SHRINK-0: filter chip row. Never scrolls. */}
+        <div className="shrink-0 flex gap-2 flex-wrap mb-3.5">
           {FILTER_KEYS.map(f => {
             const count = f === "wszystkie"
               ? SEED_PRODUCTS.length
@@ -99,15 +100,18 @@ export function SklepShell() {
             );
           })}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
-          {visible.map(p => (
-            <ProductCard key={p.id} product={p} onEdit={setEditing} />
-          ))}
+        {/* FLEX-1: scrollable product grid */}
+        <div className="flex-1 min-h-0 overflow-auto">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
+            {visible.map(p => (
+              <ProductCard key={p.id} product={p} onEdit={setEditing} />
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* RIGHT: edit panel or placeholder */}
-      <div>
+      {/* RIGHT: edit panel or placeholder — scrollable if content overflows */}
+      <div className="h-full overflow-auto">
         {editing ? (
           <ProductEditPanel product={editing} onClose={() => setEditing(null)} />
         ) : (

@@ -84,49 +84,53 @@ export default async function OrdersPage({
   const newHref = "/admin/orders/new" as const;
 
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <OrdersPageHeaderSetter
         activeCount={pageData?.totalElements ?? 0}
         readyCount={0}
       />
-      <div className="mb-5">
+      {/* SHRINK-0: page chrome — tabs, presets, filters. Never scrolls. */}
+      <div className="shrink-0 space-y-3 mb-3">
         <OrderViewTabs active="list" />
+        {!fetchError && (
+          <>
+            <SavedFilterPresets rows={pageData?.content ?? []} />
+            <OrdersFilters
+              initial={filtersInitial}
+              users={users}
+              visible={pageData?.content.length ?? 0}
+              total={pageData?.totalElements ?? 0}
+            />
+          </>
+        )}
       </div>
 
-      {fetchError ? (
-        <div className="p-6 border border-admin-line rounded text-admin-mute text-sm">
-          Nie udało się załadować listy. Odśwież stronę.
-        </div>
-      ) : (
-        <>
-          <SavedFilterPresets rows={pageData?.content ?? []} />
-          <OrdersFilters
-            initial={filtersInitial}
-            users={users}
-            visible={pageData?.content.length ?? 0}
-            total={pageData?.totalElements ?? 0}
+      {/* FLEX-1: scrollable list region */}
+      <div className="flex-1 min-h-0 overflow-auto">
+        {fetchError ? (
+          <div className="p-6 border border-admin-line rounded text-admin-mute text-sm">
+            Nie udało się załadować listy. Odśwież stronę.
+          </div>
+        ) : pageData && pageData.content.length === 0 ? (
+          <div className="p-8 text-center border border-admin-line rounded text-admin-mute">
+            <p className="mb-3">Brak zleceń. Załóż pierwsze.</p>
+            <Link
+              href={newHref}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded bg-acid text-ink text-sm font-medium hover:bg-acid/80 transition-colors"
+            >
+              + Nowe zlecenie
+            </Link>
+          </div>
+        ) : pageData ? (
+          <OrdersPageClient
+            rows={pageData.content}
+            totalPages={pageData.totalPages}
+            currentPage={page}
           />
+        ) : null}
+      </div>
 
-          {pageData && pageData.content.length === 0 ? (
-            <div className="p-8 text-center border border-admin-line rounded text-admin-mute">
-              <p className="mb-3">Brak zleceń. Załóż pierwsze.</p>
-              <Link
-                href={newHref}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded bg-acid text-ink text-sm font-medium hover:bg-acid/80 transition-colors"
-              >
-                + Nowe zlecenie
-              </Link>
-            </div>
-          ) : pageData ? (
-            <OrdersPageClient
-              rows={pageData.content}
-              totalPages={pageData.totalPages}
-              currentPage={page}
-            />
-          ) : null}
-        </>
-      )}
-
+      {/* OrderDrawer is a fixed overlay — sibling outside flex-col, not inside scrollable region */}
       {drawerOrder && (
         <OrderDrawer initialOrder={drawerOrder} />
       )}
