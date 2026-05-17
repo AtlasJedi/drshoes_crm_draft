@@ -13,22 +13,41 @@ import { Suspense } from "react";
 import { createLogger } from "@/lib/log";
 import { getKanbanBoardServer } from "@/lib/kanban/api-server";
 import { getTriggersServer } from "@/lib/messaging/api-server";
+import { getOrderServer } from "@/lib/orders/api-server";
 import { OrderViewTabs } from "../_components/OrderViewTabs";
 import { KanbanBoardWrapper } from "../_components/kanban/KanbanBoardWrapper";
+import { OrderDrawer } from "../_components/OrderDrawer";
 import { ErrorBanner } from "@/components/state/ErrorBanner";
 import { Skeleton } from "@/components/state/Skeleton";
+import type { OrderDto } from "@/lib/orders/types";
 
 const log = createLogger("kanban-page");
 
-export default async function KanbanPage() {
+interface SearchParams {
+  orderId?: string;
+}
+
+export default async function KanbanPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const sp = await searchParams;
+  const orderId = sp.orderId;
+
   let board: Awaited<ReturnType<typeof getKanbanBoardServer>> | null = null;
   let triggers: Awaited<ReturnType<typeof getTriggersServer>> = [];
   let fetchError = false;
+  let drawerOrder: OrderDto | null = null;
 
-  const [boardResult, triggersResult] = await Promise.allSettled([
-    getKanbanBoardServer(),
-    getTriggersServer(),
-  ]);
+  const fetches: [
+    ReturnType<typeof getKanbanBoardServer>,
+    ReturnType<typeof getTriggersServer>,
+    ...Array<ReturnType<typeof getOrderServer>>,
+  ] = [getKanbanBoardServer(), getTriggersServer()];
+  if (orderId) fetches.push(getOrderServer(orderId));
+
+  const [boardResult, triggersResult, ...rest] = await Promise.allSettled(fetches);
 
   if (boardResult.status === "fulfilled") {
     board = boardResult.value;
@@ -46,6 +65,12 @@ export default async function KanbanPage() {
       reason: String(triggersResult.reason),
     });
     // Triggers failure is non-fatal — board still renders without trigger previews
+  }
+
+  if (orderId && rest[0]?.status === "fulfilled") {
+    drawerOrder = rest[0].value as OrderDto;
+  } else if (orderId && rest[0]?.status === "rejected") {
+    log.warn("op=fetchDrawerOrder outcome=error", { orderId, reason: String(rest[0].reason) });
   }
 
   return (
@@ -88,6 +113,9 @@ export default async function KanbanPage() {
           />
         </Suspense>
       )}
+
+      {/* Drawer overlay — opened when ?orderId= is present in the URL */}
+      {drawerOrder && <OrderDrawer initialOrder={drawerOrder} />}
     </div>
   );
 }
