@@ -44,8 +44,8 @@ export function Contact() {
             <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "20px 18px", marginTop: 18 }}>
               <div style={{ color: "var(--pink)" }}>{I.pin}</div>
               <div>
-                <div className="t-display" style={{ fontSize: 22, lineHeight: 1 }}>ul. Mostowa 5a</div>
-                <div className="t-mono" style={{ fontSize: 13, color: "rgba(0,0,0,0.65)", marginTop: 4 }}>61-854 Poznań · piętro 2</div>
+                <div className="t-display" style={{ fontSize: 22, lineHeight: 1 }}>Al. K. Marcinkowskiego 26</div>
+                <div className="t-mono" style={{ fontSize: 13, color: "rgba(0,0,0,0.65)", marginTop: 4 }}>61-745 Poznań</div>
               </div>
 
               <div style={{ color: "var(--blue)" }}>{I.clock}</div>

@@ -18,8 +18,8 @@ describe('Contact', () => {
 
   it('renders workshop address', () => {
     render(<Contact />);
-    expect(screen.getByText(/ul\. Mostowa/i)).toBeInTheDocument();
-    expect(screen.getByText(/Poznań/i)).toBeInTheDocument();
+    expect(screen.getByText(/Marcinkowskiego 26/i)).toBeInTheDocument();
+    expect(screen.getByText(/61-745 Poznań/i)).toBeInTheDocument();
   });
 
   it('renders workshop hours', () => {
