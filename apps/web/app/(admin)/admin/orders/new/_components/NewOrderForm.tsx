@@ -246,11 +246,9 @@ export function NewOrderForm({ users }: Props) {
           <section className="grid border-b-[2px] border-ink" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
             <div
-              className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative"
+              className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink justify-center"
             >
-              {/* Timeline thread — clipped on top for first section */}
-              <div style={{ position: "absolute", left: 53, top: 50, bottom: 0, width: 2, background: "var(--ink)", opacity: 0.18 }} />
-              <div className="flex items-center gap-3.5 relative z-10">
+              <div className="flex items-center gap-3.5">
                 <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   1
                 </span>
@@ -390,9 +388,8 @@ export function NewOrderForm({ users }: Props) {
           {/* ── 2. OPIS ─────────────────────────────────────────────────── */}
           <section className="grid border-b-[2px] border-ink" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
-            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
-              <div style={{ position: "absolute", left: 53, top: 0, bottom: 0, width: 2, background: "var(--ink)", opacity: 0.18 }} />
-              <div className="flex items-center gap-3.5 relative z-10">
+            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink justify-center">
+              <div className="flex items-center gap-3.5">
                 <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   2
                 </span>
@@ -421,9 +418,8 @@ export function NewOrderForm({ users }: Props) {
           {/* ── 3. POZYCJE ──────────────────────────────────────────────── */}
           <section className="grid border-b-[2px] border-ink" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
-            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
-              <div style={{ position: "absolute", left: 53, top: 0, bottom: 0, width: 2, background: "var(--ink)", opacity: 0.18 }} />
-              <div className="flex items-center gap-3.5 relative z-10">
+            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink justify-center">
+              <div className="flex items-center gap-3.5">
                 <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   3
                 </span>
@@ -492,9 +488,8 @@ export function NewOrderForm({ users }: Props) {
           {/* ── 4. SZCZEGÓŁY ────────────────────────────────────────────── */}
           <section className="grid border-b-[2px] border-ink" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
-            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
-              <div style={{ position: "absolute", left: 53, top: 0, bottom: 0, width: 2, background: "var(--ink)", opacity: 0.18 }} />
-              <div className="flex items-center gap-3.5 relative z-10">
+            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink justify-center">
+              <div className="flex items-center gap-3.5">
                 <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   4
                 </span>
@@ -585,10 +580,8 @@ export function NewOrderForm({ users }: Props) {
           {/* ── 5. WYCENA ───────────────────────────────────────────────── */}
           <section className="grid" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
-            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
-              {/* Timeline thread — clipped on bottom for last section */}
-              <div style={{ position: "absolute", left: 53, top: 0, bottom: "calc(100% - 72px)", width: 2, background: "var(--ink)", opacity: 0.18 }} />
-              <div className="flex items-center gap-3.5 relative z-10">
+            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink justify-center">
+              <div className="flex items-center gap-3.5">
                 <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   5
                 </span>
