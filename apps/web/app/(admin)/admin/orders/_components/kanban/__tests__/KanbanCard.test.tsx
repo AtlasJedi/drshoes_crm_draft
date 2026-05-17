@@ -33,6 +33,7 @@ const card: KanbanCardDto = {
   plannedPickupAt: "2026-05-08T10:00:00Z",
   receivedAt: "2026-05-01T09:00:00Z",
   urgent: true,
+  version: 0,
 };
 
 describe("KanbanCard", () => {

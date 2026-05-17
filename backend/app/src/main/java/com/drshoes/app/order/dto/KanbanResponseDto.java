@@ -23,6 +23,8 @@ public record KanbanResponseDto(List<KanbanColumnDto> columns) {
         Instant plannedPickupAt,
         /** ISO-8601 timestamp when the order was received; may be null for legacy/draft orders. */
         Instant receivedAt,
-        boolean urgent
+        boolean urgent,
+        /** Optimistic-lock version — required by PATCH /api/admin/orders/{id}/status. */
+        long version
     ) {}
 }

@@ -108,7 +108,8 @@ public class KanbanController {
                 summaries.getOrDefault(o.getId(), ""),
                 o.getPlannedPickupAt(),
                 o.getReceivedAt(),
-                isUrgent(o)
+                isUrgent(o),
+                o.getVersion()
             )).toList();
 
             columns.add(new KanbanColumnDto(status, total, cards, hasMore));

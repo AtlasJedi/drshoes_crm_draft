@@ -24,9 +24,6 @@ import type { StorageLocation } from "@/lib/types";
 
 const log = createLogger("kanban.wrapper");
 
-/** Extended card shape — version may be present if backend adds it later. */
-type CardWithOptionalVersion = KanbanCardDto & { version?: number };
-
 interface Props {
   initialColumns: KanbanColumnDto[];
   triggers: TriggerDto[];
@@ -36,16 +33,13 @@ interface Props {
 
 export function KanbanBoardWrapper({ initialColumns, triggers, orderVersionMap }: Props) {
   // Build a card-id → order version map from the initial snapshot.
-  // KanbanCardDto does not currently carry version; default to 0 so that
-  // the PATCH succeeds on first attempt (backend returns 409 on mismatch,
-  // which the hook surfaces as an error toast). When backend adds version
-  // to the DTO this map will use the real value automatically.
+  // KanbanCardDto carries version from the backend; the map feeds useKanbanDnd
+  // so that PATCH /api/admin/orders/{id}/status sends the correct optimistic-lock value.
   const derivedVersionMap = useMemo(() => {
     const m = new Map<string, number>();
     for (const col of initialColumns) {
       for (const card of col.cards) {
-        const v = (card as CardWithOptionalVersion).version ?? 0;
-        m.set(card.id, v);
+        m.set(card.id, card.version);
       }
     }
     return m;

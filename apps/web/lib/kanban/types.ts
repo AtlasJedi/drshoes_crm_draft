@@ -31,6 +31,8 @@ export interface KanbanCardDto {
   receivedAt: string | null;
   /** true when tagged "pilne" OR plannedPickupAt within 48 h */
   urgent: boolean;
+  /** Optimistic-lock version — required by PATCH /api/admin/orders/{id}/status. */
+  version: number;
   /** Human-readable storage location name (denormalized). Null when not set. */
   location?: string | null;
 }

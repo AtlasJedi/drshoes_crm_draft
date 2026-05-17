@@ -10,6 +10,7 @@ function card(overrides: Partial<KanbanCardDto> & { id: string }): KanbanCardDto
     plannedPickupAt: null,
     receivedAt: null,
     urgent: false,
+    version: 0,
     ...overrides,
   };
 }
