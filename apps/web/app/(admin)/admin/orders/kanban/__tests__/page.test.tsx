@@ -37,6 +37,16 @@ vi.mock("@/lib/messaging/api-server", () => ({
   getTriggersServer: vi.fn().mockResolvedValue([]),
 }));
 
+vi.mock("@/lib/orders/api-server", () => ({
+  getOrderServer: vi.fn().mockResolvedValue(null),
+}));
+
+vi.mock("../../_components/OrderDrawer", () => ({
+  OrderDrawer: () => <div data-testid="order-drawer" />,
+}));
+
+const NO_DRAWER = { searchParams: Promise.resolve({}) };
+
 // Mock client components to avoid dnd-kit / next/navigation in jsdom
 vi.mock("../../_components/kanban/KanbanBoardWrapper", () => ({
   KanbanBoardWrapper: ({
@@ -81,14 +91,14 @@ describe("KanbanPage", () => {
   });
 
   it("renders OrderViewTabs with active=kanban", async () => {
-    const jsx = await KanbanPage();
+    const jsx = await KanbanPage(NO_DRAWER);
     render(jsx);
     const tabs = screen.getByTestId("order-view-tabs");
     expect(tabs.getAttribute("data-active")).toBe("kanban");
   });
 
   it("renders all 5 columns via KanbanBoardWrapper", async () => {
-    const jsx = await KanbanPage();
+    const jsx = await KanbanPage(NO_DRAWER);
     render(jsx);
     expect(screen.getByTestId("col-PRZYJETE")).toBeTruthy();
     expect(screen.getByTestId("col-WYDANE")).toBeTruthy();
@@ -98,7 +108,7 @@ describe("KanbanPage", () => {
     const { getKanbanBoardServer } = await import("@/lib/kanban/api-server");
     vi.mocked(getKanbanBoardServer).mockRejectedValueOnce(new Error("503"));
 
-    const jsx = await KanbanPage();
+    const jsx = await KanbanPage(NO_DRAWER);
     render(jsx);
     expect(screen.getByRole("alert")).toBeTruthy();
     expect(screen.getByText(/nie udało się załadować tablicy kanban/i)).toBeTruthy();
