@@ -28,7 +28,7 @@ describe("SavedFilterPresets", () => {
     vi.useRealTimers();
   });
 
-  it("renders compound presets + a chip per OrderStatus + the disabled save chip", () => {
+  it("renders compound presets + a chip per OrderStatus", () => {
     render(<SavedFilterPresets />);
     expect(screen.getByText(/pilne na ten tydzień/i)).toBeInTheDocument();
     expect(screen.getByText(/zaległe/i)).toBeInTheDocument();
@@ -40,7 +40,7 @@ describe("SavedFilterPresets", () => {
     expect(screen.getByText("Gotowe do odbioru")).toBeInTheDocument();
     expect(screen.getByText("Wydane")).toBeInTheDocument();
     expect(screen.getByText("Anulowane")).toBeInTheDocument();
-    expect(screen.getByText(/\+ zapisz widok/i)).toBeInTheDocument();
+    expect(screen.queryByText(/\+ zapisz widok/i)).not.toBeInTheDocument();
   });
 
   it("clicking Pilne na ten tydzień pushes correct URL params", () => {
@@ -72,14 +72,6 @@ describe("SavedFilterPresets", () => {
     expect(arg).toContain("plannedPickupAtTo=2026-06-01");
     expect(arg).toContain("status=W_REALIZACJI");
     expect(arg).toContain("status=GOTOWE_DO_ODBIORU");
-  });
-
-  it("+ zapisz widok chip is disabled and not clickable", () => {
-    render(<SavedFilterPresets />);
-    const saveChip = screen.getByText(/\+ zapisz widok/i).closest("button");
-    expect(saveChip).toBeDisabled();
-    fireEvent.click(saveChip!);
-    expect(mockReplace).not.toHaveBeenCalled();
   });
 
   it("active chip has visual highlight class when its params match current URL", () => {

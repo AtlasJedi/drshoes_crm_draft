@@ -3,8 +3,7 @@
 /**
  * Saved-filter preset chip row.
  * Two compound presets ("Pilne na ten tydzień", "Zaległe") + one chip per OrderStatus,
- * so the row covers every status available for orders. The "+ zapisz widok" chip
- * renders disabled.
+ * so the row covers every status available for orders.
  * Uses <Chip> from @repo/ui per M9 design-parity reskin.
  */
 import { useRouter, useSearchParams } from "next/navigation";
@@ -168,15 +167,6 @@ export function SavedFilterPresets({ rows = [] }: Props) {
           </Chip>
         );
       })}
-
-      <Chip
-        disabled
-        title="Wkrótce: możliwość zapisywania własnych widoków"
-        aria-label="Zapisz widok (wkrótce)"
-        style={{ borderStyle: "dashed", background: "transparent" }}
-      >
-        + zapisz widok
-      </Chip>
     </div>
   );
 }
