@@ -11,10 +11,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class WorkshopProperties {
 
     private String name        = "Dr Shoes Poznań";
-    private String address     = "ul. Mostowa 5a, 61-854 Poznań";
+    private String address     = "Aleje Karola Marcinkowskiego 26, 61-745 Poznań";
     private String openingHours = "pon–pt 10:00–18:00 · sob 11:00–15:00";
     private String url          = "https://drshoes.pl";
     private String phone        = "+48 514 296 809";
+    private String phoneLink    = "tel:+48514296809";
+    private String mapsUrl      = "https://www.google.com/maps/dir/?api=1&destination=Aleje%20Karola%20Marcinkowskiego%2026%2C%2061-745%20Pozna%C5%84";
     private String email        = "kontakt@drshoes.pl";
 
     public String getName()         { return name; }
@@ -31,6 +33,12 @@ public class WorkshopProperties {
 
     public String getPhone()        { return phone; }
     public void setPhone(String v)  { this.phone = v; }
+
+    public String getPhoneLink()         { return phoneLink; }
+    public void setPhoneLink(String v)   { this.phoneLink = v; }
+
+    public String getMapsUrl()       { return mapsUrl; }
+    public void setMapsUrl(String v) { this.mapsUrl = v; }
 
     public String getEmail()        { return email; }
     public void setEmail(String v)  { this.email = v; }

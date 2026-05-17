@@ -43,11 +43,13 @@ class TemplateContextBuilderTest {
         workshopProps.setAddress("ul. Testowa 1");
         workshopProps.setOpeningHours("pon–pt 10:00–18:00");
         workshopProps.setUrl("https://drshoes.pl");
+        workshopProps.setPhone("+48 514 296 809");
+        workshopProps.setMapsUrl("https://www.google.com/maps/dir/?api=1&destination=Test");
         builder = new TemplateContextBuilder(orders, orderItems, clients, workshopProps);
     }
 
     @Test
-    @DisplayName("buildContext maps NAPRAWA kind to 'usługa' label")
+    @DisplayName("buildContext maps NAPRAWA kind to 'naprawa' label")
     void buildContext_naprawaKind_mapsToLabel() {
         UUID orderId  = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
@@ -58,7 +60,7 @@ class TemplateContextBuilderTest {
 
         TemplateContext ctx = builder.buildContext(orderId, clientId);
 
-        assertThat(ctx.typyPracy()).containsExactly("usługa");
+        assertThat(ctx.typyPracy()).containsExactly("naprawa");
         assertThat(ctx.imieKlienta()).isEqualTo("Tomasz");
         assertThat(ctx.numerZlecenia()).isEqualTo("ZL-001");
         assertThat(ctx.nazwaWarsztatu()).isEqualTo("Dr Shoes");
@@ -81,6 +83,8 @@ class TemplateContextBuilderTest {
         assertThat(ctx.adresWarsztatu()).isEqualTo("ul. Testowa 1");
         assertThat(ctx.godzinyOtwarcia()).isEqualTo("pon–pt 10:00–18:00");
         assertThat(ctx.urlWarsztatu()).isEqualTo("https://drshoes.pl");
+        assertThat(ctx.telefonWarsztatu()).isEqualTo("+48 514 296 809");
+        assertThat(ctx.mapyUrl()).isEqualTo("https://www.google.com/maps/dir/?api=1&destination=Test");
     }
 
     @Test

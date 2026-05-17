@@ -12,13 +12,24 @@ public record TemplateContext(
     String adresWarsztatu,          // nullable — from WorkshopProperties
     String godzinyOtwarcia,         // nullable — from WorkshopProperties
     String urlWarsztatu,            // nullable — from WorkshopProperties
-    String wiadomoscTresc           // nullable — operator typed body (v2-E followup)
+    String wiadomoscTresc,          // nullable — operator typed body (v2-E followup)
+    String telefonWarsztatu,        // nullable — from WorkshopProperties.phone
+    String mapyUrl                  // nullable — Google Maps directions deeplink
 ) {
     /** Convenience constructor without wiadomoscTresc (backwards compat). */
     public TemplateContext(String imieKlienta, String numerZlecenia, List<String> typyPracy,
                            OffsetDateTime dataOdbioru, String nazwaWarsztatu,
                            String adresWarsztatu, String godzinyOtwarcia, String urlWarsztatu) {
         this(imieKlienta, numerZlecenia, typyPracy, dataOdbioru, nazwaWarsztatu,
-             adresWarsztatu, godzinyOtwarcia, urlWarsztatu, null);
+             adresWarsztatu, godzinyOtwarcia, urlWarsztatu, null, null, null);
+    }
+
+    /** Convenience constructor with wiadomoscTresc but without phone/maps (backwards compat). */
+    public TemplateContext(String imieKlienta, String numerZlecenia, List<String> typyPracy,
+                           OffsetDateTime dataOdbioru, String nazwaWarsztatu,
+                           String adresWarsztatu, String godzinyOtwarcia, String urlWarsztatu,
+                           String wiadomoscTresc) {
+        this(imieKlienta, numerZlecenia, typyPracy, dataOdbioru, nazwaWarsztatu,
+             adresWarsztatu, godzinyOtwarcia, urlWarsztatu, wiadomoscTresc, null, null);
     }
 }

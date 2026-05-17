@@ -88,6 +88,11 @@ class MessageRouterFollowupIntegrationTest extends AbstractIntegrationTest {
         assertThat(msg.getBodyHtml()).isNotNull();
         assertThat(msg.getBodyHtml()).contains("Cześć, gotowe jutro!");
         assertThat(msg.getBodyHtml()).contains("<table");   // wrapper marker
+        // Footer must contain address, phone, and map CTA (V030)
+        assertThat(msg.getBodyHtml()).contains("Aleje Karola Marcinkowskiego 26");
+        assertThat(msg.getBodyHtml()).contains("514 296 809");
+        assertThat(msg.getBodyHtml()).contains("Mapa dojazdu");
+        assertThat(msg.getBodyHtml()).contains("https://www.google.com/maps/dir/");
 
         // Subject: rendered from template
         assertThat(msg.getSubject()).isEqualTo("Dr Shoes — followup");

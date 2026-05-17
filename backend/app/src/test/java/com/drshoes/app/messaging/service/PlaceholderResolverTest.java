@@ -17,6 +17,12 @@ class PlaceholderResolverTest {
                 adres, godziny, url);
     }
 
+    private static TemplateContext ctxFull(String telefon, String mapyUrl) {
+        return new TemplateContext(
+                "Jan", "DR-001", List.of(), null, "Dr Shoes",
+                null, null, null, null, telefon, mapyUrl);
+    }
+
     @Test
     @DisplayName("adres_warsztatu returns value when set")
     void adresWarsztatu_returnsValue() {
@@ -54,6 +60,33 @@ class PlaceholderResolverTest {
     @DisplayName("url_warsztatu returns em-dash when null")
     void urlWarsztatu_nullReturnsEmDash() {
         assertThat(resolver.resolve("url_warsztatu", ctx(null, null, null))).isEqualTo("—");
+    }
+
+    @Test
+    @DisplayName("telefon_warsztatu returns value when set")
+    void telefonWarsztatu_returnsValue() {
+        assertThat(resolver.resolve("telefon_warsztatu", ctxFull("+48 514 296 809", null)))
+                .isEqualTo("+48 514 296 809");
+    }
+
+    @Test
+    @DisplayName("telefon_warsztatu returns em-dash when null")
+    void telefonWarsztatu_nullReturnsEmDash() {
+        assertThat(resolver.resolve("telefon_warsztatu", ctxFull(null, null))).isEqualTo("—");
+    }
+
+    @Test
+    @DisplayName("mapy_url returns value when set")
+    void mapyUrl_returnsValue() {
+        String url = "https://www.google.com/maps/dir/?api=1&destination=Poznan";
+        assertThat(resolver.resolve("mapy_url", ctxFull(null, url))).isEqualTo(url);
+    }
+
+    @Test
+    @DisplayName("mapy_url returns fallback google.com when null")
+    void mapyUrl_nullReturnsFallback() {
+        assertThat(resolver.resolve("mapy_url", ctxFull(null, null)))
+                .isEqualTo("https://www.google.com/");
     }
 
     @Test

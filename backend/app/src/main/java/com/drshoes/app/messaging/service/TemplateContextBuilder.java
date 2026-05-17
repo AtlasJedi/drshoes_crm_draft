@@ -92,7 +92,9 @@ public class TemplateContextBuilder {
                 workshop.getAddress(),
                 workshop.getOpeningHours(),
                 workshop.getUrl(),
-                userMessage
+                userMessage,
+                workshop.getPhone(),
+                workshop.getMapsUrl()
         );
     }
 

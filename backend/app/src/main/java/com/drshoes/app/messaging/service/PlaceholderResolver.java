@@ -32,7 +32,10 @@ public class PlaceholderResolver {
     strategies.put("nazwa_warsztatu", ctx -> blankToDash(ctx.nazwaWarsztatu()));
     strategies.put("adres_warsztatu", ctx -> blankToDash(ctx.adresWarsztatu()));
     strategies.put("godziny_otwarcia",ctx -> blankToDash(ctx.godzinyOtwarcia()));
-    strategies.put("url_warsztatu",   ctx -> blankToDash(ctx.urlWarsztatu()));
+    strategies.put("url_warsztatu",      ctx -> blankToDash(ctx.urlWarsztatu()));
+    strategies.put("telefon_warsztatu", ctx -> blankToDash(ctx.telefonWarsztatu()));
+    strategies.put("mapy_url",          ctx -> ctx.mapyUrl() != null && !ctx.mapyUrl().isBlank()
+                                               ? ctx.mapyUrl() : "https://www.google.com/");
     strategies.put("link_do_zdjec",   ctx -> {
       log.warn("op=template.render placeholder=link_do_zdjec reason=deferred_until_M3");
       return "—";
