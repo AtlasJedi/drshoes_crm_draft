@@ -195,7 +195,7 @@ export function NewOrderForm({ users }: Props) {
   }
 
   // shared styles
-  const inputBase = "flex-1 px-4 py-[13px] bg-transparent border-0 outline-none text-[16px]";
+  const inputBase = "flex-1 px-3 py-2.5 bg-transparent border-0 outline-none text-[15px]";
   const fieldInput =
     "border-[1.5px] border-ink shadow-[3px_3px_0_theme(colors.ink)] flex items-stretch transition-all focus-within:shadow-[3px_3px_0_theme(colors.ink),0_0_0_3px_theme(colors.acid)] focus-within:-translate-x-px focus-within:-translate-y-px";
 
@@ -206,14 +206,14 @@ export function NewOrderForm({ users }: Props) {
 
         {/* HEAD */}
         <div
-          className="grid items-center gap-[22px] px-8 py-[18px] bg-ink text-paper border-b-[2px] border-ink"
+          className="grid items-center gap-[22px] px-6 py-3 bg-ink text-paper border-b-[2px] border-ink"
           style={{ gridTemplateColumns: "auto 1fr auto" }}
         >
           {/* Order number placeholder */}
-          <div className="flex items-baseline gap-2.5 font-display text-[28px] leading-none">
+          <div className="flex items-baseline gap-2 font-display text-[22px] leading-none">
             <span className="text-acid">#</span>
             <span>DR----- AUTO</span>
-            <span className="font-mono text-[11px] text-white/45 tracking-[.14em] uppercase ml-2">
+            <span className="font-mono text-[10px] text-white/45 tracking-[.14em] uppercase ml-2">
               auto-nadane po zapisie
             </span>
           </div>
@@ -221,7 +221,7 @@ export function NewOrderForm({ users }: Props) {
           {/* Stamp */}
           <div className="flex justify-center">
             <span
-              className="inline-flex items-center gap-2 px-3 py-[7px] bg-acid text-ink font-stencil font-black text-[13px] uppercase tracking-[.08em] border-[1.5px] border-ink shadow-[2px_2px_0_theme(colors.ink)]"
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-acid text-ink font-stencil font-black text-[12px] uppercase tracking-[.08em] border-[1.5px] border-ink shadow-[2px_2px_0_theme(colors.ink)]"
               style={{ transform: "rotate(-1.5deg)" }}
             >
               <span className="w-1.5 h-1.5 bg-ink inline-block" />
@@ -246,15 +246,15 @@ export function NewOrderForm({ users }: Props) {
           <section className="grid border-b-[2px] border-ink" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
             <div
-              className="flex flex-col gap-3.5 px-8 py-7 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative"
+              className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative"
             >
               {/* Timeline thread — clipped on top for first section */}
               <div style={{ position: "absolute", left: 53, top: 50, bottom: 0, width: 2, background: "var(--ink)", opacity: 0.18 }} />
               <div className="flex items-center gap-3.5 relative z-10">
-                <span className="w-11 h-11 shrink-0 bg-ink text-paper font-display text-[26px] leading-none flex items-center justify-center border-[1.5px] border-ink">
+                <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   1
                 </span>
-                <h2 className="font-display text-[38px] leading-[.92] uppercase tracking-tight m-0">Klient</h2>
+                <h2 className="font-display text-[28px] leading-[.92] uppercase tracking-tight m-0">Klient</h2>
               </div>
               <span className="font-mono text-[12px] text-admin-mute uppercase tracking-[.12em] leading-[1.55]">
                 <span className="text-magenta font-bold mr-1">*</span>wymagane
@@ -262,7 +262,7 @@ export function NewOrderForm({ users }: Props) {
             </div>
 
             {/* Right content */}
-            <div className="flex flex-col gap-[18px] px-8 py-7 min-w-0">
+            <div className="flex flex-col gap-3 px-6 py-4 min-w-0">
               {/* Segmented tab switcher */}
               <div
                 className="grid border-[1.5px] border-ink shadow-[3px_3px_0_theme(colors.ink)] bg-paper"
@@ -292,7 +292,7 @@ export function NewOrderForm({ users }: Props) {
                       onClick={() => switchMode(mode)}
                       disabled={submitting}
                       className={[
-                        "relative overflow-hidden flex items-center justify-center gap-2.5 px-[14px] py-4",
+                        "relative overflow-hidden flex items-center justify-center gap-2.5 px-[14px] py-2.5",
                         "font-stencil font-black text-[16px] uppercase tracking-[.06em]",
                         "border-r-[1.5px] border-ink last:border-r-0",
                         "transition-colors duration-150 cursor-pointer",
@@ -390,13 +390,13 @@ export function NewOrderForm({ users }: Props) {
           {/* ── 2. OPIS ─────────────────────────────────────────────────── */}
           <section className="grid border-b-[2px] border-ink" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
-            <div className="flex flex-col gap-3.5 px-8 py-7 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
+            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
               <div style={{ position: "absolute", left: 53, top: 0, bottom: 0, width: 2, background: "var(--ink)", opacity: 0.18 }} />
               <div className="flex items-center gap-3.5 relative z-10">
-                <span className="w-11 h-11 shrink-0 bg-ink text-paper font-display text-[26px] leading-none flex items-center justify-center border-[1.5px] border-ink">
+                <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   2
                 </span>
-                <h2 className="font-display text-[38px] leading-[.92] uppercase tracking-tight m-0">Opis zlecenia</h2>
+                <h2 className="font-display text-[28px] leading-[.92] uppercase tracking-tight m-0">Opis zlecenia</h2>
               </div>
               <span className="font-mono text-[12px] text-admin-mute uppercase tracking-[.12em] leading-[1.55]">
                 co konkretnie zrobić
@@ -404,15 +404,15 @@ export function NewOrderForm({ users }: Props) {
             </div>
 
             {/* Right content */}
-            <div className="flex flex-col gap-[18px] px-8 py-7 min-w-0">
+            <div className="flex flex-col gap-3 px-6 py-4 min-w-0">
               <div className={fieldInput}>
                 <textarea
                   id="description"
                   value={description}
                   disabled={submitting}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
-                  className="flex-1 px-4 py-[13px] bg-transparent border-0 outline-none text-[16px] resize-y min-h-[100px] leading-[1.45]"
+                  rows={2}
+                  className="flex-1 px-3 py-2.5 bg-transparent border-0 outline-none text-[15px] resize-y min-h-[72px] leading-[1.45]"
                 />
               </div>
             </div>
@@ -421,13 +421,13 @@ export function NewOrderForm({ users }: Props) {
           {/* ── 3. POZYCJE ──────────────────────────────────────────────── */}
           <section className="grid border-b-[2px] border-ink" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
-            <div className="flex flex-col gap-3.5 px-8 py-7 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
+            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
               <div style={{ position: "absolute", left: 53, top: 0, bottom: 0, width: 2, background: "var(--ink)", opacity: 0.18 }} />
               <div className="flex items-center gap-3.5 relative z-10">
-                <span className="w-11 h-11 shrink-0 bg-ink text-paper font-display text-[26px] leading-none flex items-center justify-center border-[1.5px] border-ink">
+                <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   3
                 </span>
-                <h2 className="font-display text-[38px] leading-[.92] uppercase tracking-tight m-0">Pozycje zlecenia</h2>
+                <h2 className="font-display text-[28px] leading-[.92] uppercase tracking-tight m-0">Pozycje zlecenia</h2>
               </div>
               <span className="font-mono text-[12px] text-admin-mute uppercase tracking-[.12em] leading-[1.55]">
                 możesz dodać później
@@ -435,7 +435,7 @@ export function NewOrderForm({ users }: Props) {
             </div>
 
             {/* Right content */}
-            <div className="flex flex-col gap-[18px] px-8 py-7 min-w-0">
+            <div className="flex flex-col gap-3 px-6 py-4 min-w-0">
               <div className="border-[1.5px] border-ink shadow-[3px_3px_0_theme(colors.ink)]">
                 {/* Table header */}
                 <div
@@ -492,13 +492,13 @@ export function NewOrderForm({ users }: Props) {
           {/* ── 4. SZCZEGÓŁY ────────────────────────────────────────────── */}
           <section className="grid border-b-[2px] border-ink" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
-            <div className="flex flex-col gap-3.5 px-8 py-7 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
+            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
               <div style={{ position: "absolute", left: 53, top: 0, bottom: 0, width: 2, background: "var(--ink)", opacity: 0.18 }} />
               <div className="flex items-center gap-3.5 relative z-10">
-                <span className="w-11 h-11 shrink-0 bg-ink text-paper font-display text-[26px] leading-none flex items-center justify-center border-[1.5px] border-ink">
+                <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   4
                 </span>
-                <h2 className="font-display text-[38px] leading-[.92] uppercase tracking-tight m-0">Szczegóły</h2>
+                <h2 className="font-display text-[28px] leading-[.92] uppercase tracking-tight m-0">Szczegóły</h2>
               </div>
               <span className="font-mono text-[12px] text-admin-mute uppercase tracking-[.12em] leading-[1.55]">
                 odbiór, wykonawca, zaliczka
@@ -506,7 +506,7 @@ export function NewOrderForm({ users }: Props) {
             </div>
 
             {/* Right content */}
-            <div className="flex flex-col gap-[18px] px-8 py-7 min-w-0">
+            <div className="flex flex-col gap-3 px-6 py-4 min-w-0">
               <div className="grid grid-cols-2 gap-4">
                 {/* Date picker */}
                 <div>
@@ -526,7 +526,7 @@ export function NewOrderForm({ users }: Props) {
                       value={plannedPickupAt}
                       disabled={submitting}
                       onChange={(e) => { setPlannedPickupAt(e.target.value); setQuickPick(null); }}
-                      className="flex-1 px-4 py-[13px] bg-transparent border-0 outline-none font-mono text-[15px] tracking-[.06em]"
+                      className="flex-1 px-3 py-2.5 bg-transparent border-0 outline-none font-mono text-[14px] tracking-[.06em]"
                     />
                   </div>
                   {/* Quick-pick buttons */}
@@ -561,7 +561,7 @@ export function NewOrderForm({ users }: Props) {
                       value={assignedCraftsmanId}
                       disabled={submitting}
                       onChange={(e) => setAssignedCraftsmanId(e.target.value)}
-                      className="flex-1 px-4 py-[13px] bg-transparent border-0 outline-none text-[16px] cursor-pointer appearance-none"
+                      className="flex-1 px-3 py-2.5 bg-transparent border-0 outline-none text-[15px] cursor-pointer appearance-none"
                       style={{
                         backgroundImage:
                           "linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%)",
@@ -585,14 +585,14 @@ export function NewOrderForm({ users }: Props) {
           {/* ── 5. WYCENA ───────────────────────────────────────────────── */}
           <section className="grid" style={{ gridTemplateColumns: "280px 1fr" }}>
             {/* Left rail */}
-            <div className="flex flex-col gap-3.5 px-8 py-7 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
+            <div className="flex flex-col gap-2 px-5 py-4 bg-[var(--paper-2,#efece2)] border-r-[2px] border-ink relative">
               {/* Timeline thread — clipped on bottom for last section */}
               <div style={{ position: "absolute", left: 53, top: 0, bottom: "calc(100% - 72px)", width: 2, background: "var(--ink)", opacity: 0.18 }} />
               <div className="flex items-center gap-3.5 relative z-10">
-                <span className="w-11 h-11 shrink-0 bg-ink text-paper font-display text-[26px] leading-none flex items-center justify-center border-[1.5px] border-ink">
+                <span className="w-9 h-9 shrink-0 bg-ink text-paper font-display text-[22px] leading-none flex items-center justify-center border-[1.5px] border-ink">
                   5
                 </span>
-                <h2 className="font-display text-[38px] leading-[.92] uppercase tracking-tight m-0">Wycena</h2>
+                <h2 className="font-display text-[28px] leading-[.92] uppercase tracking-tight m-0">Wycena</h2>
               </div>
               <span className="font-mono text-[12px] text-admin-mute uppercase tracking-[.12em] leading-[1.55]">
                 wycena auto · zaliczka opcjonalna
@@ -600,23 +600,23 @@ export function NewOrderForm({ users }: Props) {
             </div>
 
             {/* Right content */}
-            <div className="flex flex-col gap-[18px] px-8 py-7 min-w-0">
+            <div className="flex flex-col gap-3 px-6 py-4 min-w-0">
               <div
                 className="grid border-[1.5px] border-ink bg-paper shadow-[3px_3px_0_theme(colors.ink)]"
                 style={{ gridTemplateColumns: "repeat(3,1fr)" }}
               >
                 {/* Wycena (auto, read-only) */}
-                <div className="px-[18px] py-4 border-r-[1.5px] border-ink">
+                <div className="px-4 py-2.5 border-r-[1.5px] border-ink">
                   <span className="block font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
                     Wycena <em className="not-italic font-mono text-[9px] tracking-[.1em] ml-1">(auto z pozycji)</em>
                   </span>
-                  <span className="font-stencil font-black text-[30px] tracking-[.01em] leading-[1.05]">
+                  <span className="font-stencil font-black text-[22px] tracking-[.01em] leading-[1.05]">
                     {centsToPlnDisplay(wycenaCents)} zł
                   </span>
                 </div>
 
                 {/* Zaliczka (editable) */}
-                <div className="px-[18px] py-4 border-r-[1.5px] border-ink focus-within:bg-acid/[0.18] transition-colors">
+                <div className="px-4 py-2.5 border-r-[1.5px] border-ink focus-within:bg-acid/[0.18] transition-colors">
                   <span className="block font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
                     Zaliczka <em className="not-italic font-mono text-[9px] tracking-[.1em] ml-1">jeśli wpłacona</em>
                   </span>
@@ -629,18 +629,18 @@ export function NewOrderForm({ users }: Props) {
                       onChange={(e) => setAdvancePaidPln(e.target.value)}
                       step="0.01"
                       min="0"
-                      className="w-full bg-transparent border-0 outline-none font-stencil font-black text-[30px] tracking-[.01em] leading-[1.05] placeholder:text-admin-mute/50"
+                      className="w-full bg-transparent border-0 outline-none font-stencil font-black text-[22px] tracking-[.01em] leading-[1.05] placeholder:text-admin-mute/50"
                     />
                     <span className="font-stencil font-black text-[30px] tracking-[.01em] leading-[1.05] shrink-0">zł</span>
                   </div>
                 </div>
 
                 {/* Do zapłaty (dark) */}
-                <div className="px-[18px] py-4 bg-ink text-paper">
+                <div className="px-4 py-2.5 bg-ink text-paper">
                   <span className="block font-mono text-[12px] text-white/55 uppercase tracking-[.14em] mb-1.5">
                     Do zapłaty
                   </span>
-                  <span className="font-stencil font-black text-[30px] text-acid tracking-[.01em] leading-[1.05]">
+                  <span className="font-stencil font-black text-[22px] text-acid tracking-[.01em] leading-[1.05]">
                     {centsToPlnDisplay(balanceCents)} zł
                   </span>
                 </div>
@@ -652,7 +652,7 @@ export function NewOrderForm({ users }: Props) {
 
         {/* FOOT */}
         <div
-          className="flex items-center justify-between gap-4 px-8 py-6 border-t-[2px] border-dashed border-ink"
+          className="flex items-center justify-between gap-4 px-6 py-3 border-t-[2px] border-dashed border-ink"
           style={{
             background:
               "repeating-linear-gradient(45deg,var(--paper,#f7f5ef) 0 12px,rgba(10,10,10,.04) 12px 13px)",
@@ -671,14 +671,14 @@ export function NewOrderForm({ users }: Props) {
               type="button"
               onClick={() => router.push("/admin/orders" as Route)}
               disabled={submitting}
-              className="px-[22px] py-[14px] bg-transparent text-ink border-[1.5px] border-ink font-stencil font-black text-[15px] uppercase tracking-[.06em] hover:bg-[var(--paper-2,#efece2)] disabled:opacity-50 transition-colors"
+              className="px-4 py-2.5 bg-transparent text-ink border-[1.5px] border-ink font-stencil font-black text-[14px] uppercase tracking-[.06em] hover:bg-[var(--paper-2,#efece2)] disabled:opacity-50 transition-colors"
             >
               Anuluj
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="relative overflow-hidden inline-flex items-center gap-3.5 px-[26px] py-4 pl-[22px] bg-acid text-ink border-2 border-ink shadow-[5px_5px_0_theme(colors.ink)] font-display text-[26px] uppercase tracking-[.02em] leading-none hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_theme(colors.ink)] active:translate-x-px active:translate-y-px active:shadow-[3px_3px_0_theme(colors.ink)] disabled:opacity-50 transition-all"
+              className="relative overflow-hidden inline-flex items-center gap-3 px-5 py-2.5 bg-acid text-ink border-2 border-ink shadow-[5px_5px_0_theme(colors.ink)] font-display text-[20px] uppercase tracking-[.02em] leading-none hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_theme(colors.ink)] active:translate-x-px active:translate-y-px active:shadow-[3px_3px_0_theme(colors.ink)] disabled:opacity-50 transition-all"
             >
               {submitting ? "Tworzenie…" : "Utwórz zlecenie"}
               <span className="w-7 h-7 inline-flex items-center justify-center bg-ink text-acid shrink-0">

@@ -27,10 +27,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   log.info("op=guard outcome=ok", { path, userId: me.id, role: me.role });
 
-  // Messages route owns its full viewport (no padding, no scroll wrapper) so
-  // it can host its own fixed-window layout. Other routes scroll INSIDE the
-  // content wrapper so AdminTopbar stays sticky instead of scrolling away.
+  // Messages route owns its full viewport (no padding, no scroll wrapper).
+  // New-order route owns its own ticket header — no topbar, no padding.
   const isMessagesRoute = path.startsWith("/admin/messages");
+  const isNewOrderRoute = path === "/admin/orders/new";
+  const isBareRoute = isMessagesRoute || isNewOrderRoute;
 
   return (
     <PageHeaderProvider>
@@ -38,8 +39,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <BrowserOtelInit />
         <AdminSidebar me={me} />
         <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <AdminTopbar />
-          <div className={isMessagesRoute ? "flex-1 min-h-0 overflow-hidden" : "flex-1 min-h-0 overflow-hidden p-6"}>
+          {!isNewOrderRoute && <AdminTopbar />}
+          <div className={isBareRoute ? "flex-1 min-h-0 overflow-hidden" : "flex-1 min-h-0 overflow-hidden p-6"}>
             {children}
           </div>
         </main>

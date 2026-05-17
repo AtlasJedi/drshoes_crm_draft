@@ -30,7 +30,7 @@ export function NewOrderItemRow({ index, item, onChange, onRemove }: Props) {
           value={item.kind}
           onChange={(e) => onChange(index, { ...item, kind: e.target.value as OrderItemKind })}
           aria-label="Rodzaj pozycji"
-          className="w-full h-full px-4 py-[13px] bg-transparent border-0 outline-none font-stencil font-black text-[14px] uppercase tracking-[.06em] cursor-pointer appearance-none"
+          className="w-full h-full px-3 py-2.5 bg-transparent border-0 outline-none font-stencil font-black text-[13px] uppercase tracking-[.06em] cursor-pointer appearance-none"
           style={{
             backgroundImage:
               "linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%)",
@@ -52,7 +52,7 @@ export function NewOrderItemRow({ index, item, onChange, onRemove }: Props) {
           type="text"
           value={item.description}
           onChange={(e) => onChange(index, { ...item, description: e.target.value })}
-          className="w-full h-full px-4 py-[13px] bg-transparent border-0 outline-none text-[16px]"
+          className="w-full h-full px-3 py-2.5 bg-transparent border-0 outline-none text-[15px]"
           aria-label="Opis pozycji"
         />
       </div>
@@ -65,7 +65,7 @@ export function NewOrderItemRow({ index, item, onChange, onRemove }: Props) {
           min="0"
           step="0.01"
           onChange={(e) => onChange(index, { ...item, pricePln: e.target.value })}
-          className="w-full bg-transparent border-0 outline-none text-right font-mono text-[16px] font-semibold pr-1 py-[13px]"
+          className="w-full bg-transparent border-0 outline-none text-right font-mono text-[14px] font-semibold pr-1 py-2.5"
           aria-label="Cena w PLN"
         />
         <span className="font-mono text-[11px] text-admin-mute shrink-0">zł</span>
