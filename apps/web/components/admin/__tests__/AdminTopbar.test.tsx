@@ -1,10 +1,6 @@
 import { fireEvent, render, screen, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/lib/messaging/useUnreadCount", () => ({
-  useUnreadCount: vi.fn(() => 0),
-}));
-
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
 let mockPathname = "/admin/dashboard";
@@ -17,9 +13,6 @@ vi.mock("next/navigation", () => ({
 
 import { AdminTopbar } from "../AdminTopbar";
 import { PageHeaderProvider, usePageHeader } from "@/app/(admin)/admin/_components/PageHeaderContext";
-import { useUnreadCount } from "@/lib/messaging/useUnreadCount";
-
-const mockUnread = useUnreadCount as ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   mockPush.mockReset();
@@ -69,26 +62,6 @@ describe("AdminTopbar", () => {
       </PageHeaderProvider>
     );
     expect(screen.getByText("⌘K")).toBeInTheDocument();
-  });
-
-  it("does NOT render pink dot when unread = 0", () => {
-    mockUnread.mockReturnValue(0);
-    const { container } = render(
-      <PageHeaderProvider>
-        <AdminTopbar />
-      </PageHeaderProvider>
-    );
-    expect(container.querySelector("[data-testid='bell-dot']")).toBeNull();
-  });
-
-  it("renders pink dot when unread > 0", () => {
-    mockUnread.mockReturnValue(5);
-    const { container } = render(
-      <PageHeaderProvider>
-        <AdminTopbar />
-      </PageHeaderProvider>
-    );
-    expect(container.querySelector("[data-testid='bell-dot']")).not.toBeNull();
   });
 
   it("pushes to /admin/orders?q=… on Enter when NOT on orders page", () => {

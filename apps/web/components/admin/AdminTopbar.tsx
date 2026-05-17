@@ -1,27 +1,24 @@
 "use client";
 
 /**
- * AdminTopbar — page title + global search + bell.
+ * AdminTopbar — page title + global search.
  * Title/subtitle pulled from PageHeaderContext (set per-page via usePageHeader).
  * Search:
  *   - On /admin/orders (and its sub-tabs): debounced 250ms live filter via
  *     router.replace, preserving other URL params. useEffect sync from URL is
  *     guarded by a "lastSentQ" ref to prevent clobbering mid-type input.
  *   - On any other page: Enter → push to /admin/orders?q=…
- * Bell dot lights up when useUnreadCount() > 0.
  */
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { Route } from "next";
 import { useEffect, useRef, useState } from "react";
 import { usePageHeaderContext } from "@/app/(admin)/admin/_components/PageHeaderContext";
-import { useUnreadCount } from "@/lib/messaging/useUnreadCount";
 import { createLogger } from "@/lib/log";
 
 const log = createLogger("admin.topbar");
 
 export function AdminTopbar() {
   const { current } = usePageHeaderContext();
-  const unread = useUnreadCount();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -86,7 +83,7 @@ export function AdminTopbar() {
     }
   }
 
-  log.debug("op=AdminTopbar.render", { title: current?.title, unread });
+  log.debug("op=AdminTopbar.render", { title: current?.title });
 
   return (
     <header className="flex items-center px-7 py-4 bg-paper border-b-2 border-ink gap-4">
@@ -146,29 +143,6 @@ export function AdminTopbar() {
             ⌘K
           </span>
         </div>
-
-        {/* Bell */}
-        <button className="btn-clean relative p-2" aria-label="Powiadomienia">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-          {unread > 0 && (
-            <span
-              data-testid="bell-dot"
-              className="absolute top-1 right-1 w-[6px] h-[6px] rounded-full bg-[var(--pink)]"
-            />
-          )}
-        </button>
 
         {current?.right}
       </div>
