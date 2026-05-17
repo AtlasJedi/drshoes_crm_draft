@@ -21,14 +21,15 @@ import type { TriggerPreview } from "./StatusChangeTriggerDialog";
 
 const log = createLogger("order-drawer-status-grid");
 
-// [status, css-var-color, short label]
+// [status, css-modifier-slug, short label]
+// Slugs match `.status-btn.s-*` selectors in globals.css (paint-fill animation).
 const BUTTONS: [OrderStatus, string, string][] = [
-  ["PRZYJETE",          "var(--blue)",    "Przyjęte"],
-  ["W_REALIZACJI",      "var(--orange)",  "Realizacja"],
-  ["CZEKA_NA_KLIENTA",  "var(--red)",     "Czeka"],
-  ["GOTOWE_DO_ODBIORU", "var(--green)",   "Gotowe"],
-  ["WYDANE",            "var(--ink)",     "Wydane"],
-  ["ANULOWANE",         "var(--red)",     "Anuluj"],
+  ["PRZYJETE",          "s-przyjete",   "Przyjęte"],
+  ["W_REALIZACJI",      "s-realizacja", "Realizacja"],
+  ["CZEKA_NA_KLIENTA",  "s-czeka",      "Czeka"],
+  ["GOTOWE_DO_ODBIORU", "s-gotowe",     "Gotowe"],
+  ["WYDANE",            "s-wydane",     "Wydane"],
+  ["ANULOWANE",         "s-anuluj",     "Anuluj"],
 ];
 
 interface Props {
@@ -72,31 +73,19 @@ export function OrderDrawerStatusGrid({ order, onOrderUpdated }: Props) {
   return (
     <section aria-label="Zmień status">
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-        {BUTTONS.map(([status, color, label]) => {
+        {BUTTONS.map(([status, slug, label]) => {
           const isActive = order.status === status;
+          const className = `status-btn ${slug}${isActive ? " active" : ""}`;
           return (
             <button
               key={status}
               type="button"
+              className={className}
               onClick={() => { if (!isActive) setTarget(status); }}
               aria-current={isActive ? "step" : undefined}
               aria-label={label}
-              style={{
-                "--c": color,
-                position: "relative", overflow: "hidden",
-                background: isActive ? color : "var(--paper)",
-                border: "1.5px solid var(--ink)",
-                boxShadow: "3px 3px 0 var(--ink)",
-                padding: "14px 10px",
-                fontFamily: "var(--font-stencil)", fontWeight: 800, fontSize: 14,
-                letterSpacing: ".06em", textTransform: "uppercase",
-                color: isActive ? "var(--paper)" : color,
-                cursor: isActive ? "default" : "pointer",
-                minHeight: 52,
-                transition: "color .15s",
-              } as React.CSSProperties}
             >
-              {label}
+              <span className="label">{label}</span>
             </button>
           );
         })}

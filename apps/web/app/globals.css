@@ -394,3 +394,86 @@ body { margin: 0; }
   from { transform: scale(1)    rotate(0deg); }
   to   { transform: scale(1.55) rotate(-1.5deg); }
 }
+
+/* ---------- status buttons (paint-fill from bottom) ---------- */
+/* Source: design/handoff/order-drawer-redesign/index.html .status-btn         */
+/* Used by: apps/web/.../OrderDrawerStatusGrid.tsx                              */
+.status-btn {
+  --c: var(--ink);
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 14px 10px;
+  font-family: var(--font-stencil);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--c);
+  cursor: pointer;
+  transition: color .15s, transform .1s, box-shadow .1s;
+  min-height: 52px;
+}
+.status-btn > .label { position: relative; z-index: 2; }
+/* paint fill that slides up from below on hover/active */
+.status-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--c);
+  transform: translateY(101%);
+  transition: transform .25s cubic-bezier(.6, 0, 0, 1);
+  z-index: 1;
+}
+/* skewed white stripe accent that sweeps across on hover */
+.status-btn::after {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 35%;
+  height: 130%;
+  background: rgba(255, 255, 255, .18);
+  transform: skewX(-22deg) translateX(-200%);
+  transition: transform .55s cubic-bezier(.4, 0, .2, 1);
+  z-index: 3;
+  pointer-events: none;
+}
+.status-btn:hover::before,
+.status-btn.active::before { transform: translateY(0); }
+.status-btn:hover::after   { transform: skewX(-22deg) translateX(450%); }
+.status-btn:hover,
+.status-btn.active         { color: var(--paper); }
+.status-btn.active .label::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  right: -10px;
+  width: 6px;
+  height: 6px;
+  background: var(--paper);
+  transform: rotate(45deg);
+}
+.status-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+/* The active button is non-interactive: kill hover paint and pointer cues. */
+.status-btn[aria-current="step"] {
+  cursor: default;
+}
+.status-btn[aria-current="step"]:hover::after { transform: skewX(-22deg) translateX(-200%); }
+
+/* per-status color binding */
+.status-btn.s-przyjete   { --c: var(--blue); }
+.status-btn.s-realizacja { --c: var(--orange); }
+.status-btn.s-czeka      { --c: var(--red); }
+.status-btn.s-gotowe     { --c: var(--green); }
+.status-btn.s-wydane     { --c: var(--ink); }
+.status-btn.s-anuluj     { --c: var(--red); background: var(--paper); }
+/* anuluj uses a diagonal hatch fill for that street-warning feel */
+.status-btn.s-anuluj::before {
+  background: repeating-linear-gradient(45deg, var(--red) 0 8px, #b9241d 8px 16px);
+}
