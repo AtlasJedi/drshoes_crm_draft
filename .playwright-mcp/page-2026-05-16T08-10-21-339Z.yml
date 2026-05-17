@@ -1,6 +1,0 @@
-- generic [active] [ref=e1]:
-  - main [ref=e2]:
-    - generic [ref=e3]:
-      - heading "Dr Shoes" [level=1] [ref=e4]
-      - paragraph [ref=e5]: Logowanie…
-  - alert [ref=e6]

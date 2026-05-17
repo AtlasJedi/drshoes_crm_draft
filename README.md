@@ -1,35 +1,37 @@
 # Dr Shoes
 
-Two-layer web product (public landing + admin CRM) for Dr Shoes — shoe repair, custom painting, custom jacket painting workshop in Poland.
+Two-layer web CRM for a shoe repair and custom painting workshop in Poland. Consists of a public-facing landing page and a full admin panel for managing orders, clients, messaging, triggers, and photos — all UI copy in Polish, code and comments in English.
 
-See `ARCHITECTURE.md` for the full design. UI strings are Polish; code/comments are English.
+## Prerequisites
 
-## Quick start
+| Requirement | Version | Notes |
+|---|---|---|
+| Docker Engine | ≥ 24 | runtime for all containers |
+| Docker Compose plugin | ≥ 2.20 | `docker compose up` orchestration |
+| RAM | ≥ 4 GB | Postgres + Spring Boot + Next.js + Jaeger running simultaneously |
+| Free disk | ≥ 10 GB | images + DB volumes + order photos (MinIO) |
+| Open ports | 3000, 8080 | 5432 is local-only unless you expose it |
 
-Prereqs: Docker, Java 21, Node 20+, pnpm 9, Maven 3.9.
+**No Java or Node.js needed on client machines** — everything runs inside containers. Java 21, Node 20, and pnpm 9 are only needed when building from source in a development environment.
 
-```sh
-make up        # boots postgres + minio + backend + web
-make test      # runs full backend + frontend test suite
-make down      # stops everything
-```
+First `make demo` downloads ~1.5 GB of images; subsequent runs start in seconds from the local cache.
 
-After `make up`:
-- Public site:  http://localhost:3000
-- Admin shell:  http://localhost:3000/admin
-- Backend API:  http://localhost:8080
-- Health:       http://localhost:8080/actuator/health
-- MinIO console: http://localhost:9001 (drshoes / drshoes-dev-secret)
+## Quick install (client / production)
 
-## Run the demo
+```bash
+# 1. Clone the repo
+git clone https://github.com/AtlasJedi/misza_madafaka.git
+cd misza_madafaka
 
-One command boots the full stack (Postgres, MinIO, Jaeger, backend, frontend) and seeds sample data:
+# 2. Configure environment
+cp .env.example .env
+nano .env   # fill in required secrets — see DEPLOYMENT.md for full reference
 
-```sh
+# 3. Boot everything and seed sample data
 make demo
 ```
 
-When ready, the banner prints:
+When the stack is ready, `make demo` prints:
 
 ```
 ✅ Dr Shoes demo gotowy
@@ -40,29 +42,86 @@ When ready, the banner prints:
    MinIO:      http://localhost:9001  (drshoes / drshoes-dev-secret)
 ```
 
-Running `make demo` a second time is safe — the seed runner skips automatically when sample data is already present.
+Running `make demo` a second time is safe — the seed runner detects existing data and skips automatically.
 
-### Troubleshooting
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the complete environment variable reference, email setup (Gmail vs custom domain), first-login admin creation, and backup/restore instructions.
 
-**Postgres port conflict** — If port `5432` is already in use, override it:
+## Developer quick start
 
-```sh
+```bash
+make up        # build images and boot full stack (postgres + minio + backend + web)
+make test      # full backend (Maven verify) + frontend (vitest) test suite
+make down      # stop all containers
+make clean     # stop and delete volumes (wipes database and object storage)
+make logs      # tail all container logs
+```
+
+After `make up`, services are available at:
+
+| Service | URL |
+|---|---|
+| Public site | http://localhost:3000 |
+| Admin panel | http://localhost:3000/admin |
+| Backend API | http://localhost:8080 |
+| Health check | http://localhost:8080/actuator/health |
+| MinIO console | http://localhost:9001 (drshoes / drshoes-dev-secret) |
+| Jaeger tracing | http://localhost:16686 |
+
+## Environment variables
+
+Copy `.env.example` to `.env` before the first boot. The most important categories:
+
+- **Database credentials** — `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
+- **Object storage** — `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` (MinIO for local dev; swap for Cloudflare R2 credentials in production)
+- **JWT secret** — generated in `.env.example`, rotate before production
+- **Email / SMTP** — `SPRING_MAIL_HOST`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD` (optional for local dev; required in production)
+- **SMS** — `MESSAGING_SMS_PROVIDER` (optional; backend has the sms-gateway microlib wired, provider config needed separately)
+- **Demo seed** — `DRSHOES_DEMO_SEED_ENABLED=false` must be set in production
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the complete variable list, Gmail vs Resend email setup walkthrough, and a production-ready checklist.
+
+## Architecture overview
+
+The backend is a Maven multi-module Spring Boot 3.4 application on Java 21, exposing a REST API consumed by a Next.js 16 App Router frontend. All state lives in PostgreSQL 16 with Flyway managing schema migrations. Photo storage uses MinIO locally and Cloudflare R2 in production. OpenTelemetry traces are collected and viewed in Jaeger.
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS, Radix UI |
+| Backend | Java 21, Spring Boot 3.4, Maven multi-module |
+| Database | PostgreSQL 16, Flyway migrations |
+| Object storage | MinIO (dev) / Cloudflare R2 (prod) |
+| Observability | OpenTelemetry, Jaeger |
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design document covering module structure, data model, auth/RBAC, messaging pipeline, and deployment topology.
+
+## Project layout
+
+```
+backend/          Spring Boot multi-module (app + messaging-core + email-gateway + sms-gateway + storage)
+apps/web/         Next.js 16 — (public) landing + (admin) CRM route groups
+packages/ui/      Shared design tokens, Tailwind preset, Radix components
+packages/api-types/  TypeScript types
+docs/             Schema, API contract, plans, dispatch logs
+design/spec/      Original brief, locked decisions, data model, API surface, design system
+design/prototype/ Canonical visual prototype (HTML + JSX + CSS)
+design/archive/   Past per-milestone design exports
+infra/            Deploy manifests (Cloudflare Containers, GitHub Actions)
+```
+
+## Troubleshooting
+
+**Port conflict on 5432** — If Postgres is already running locally, override the port:
+
+```bash
 POSTGRES_PORT=5433 make demo
 ```
 
-**M2 / Apple Silicon** — All images in `docker-compose.yml` are published as multi-arch manifests (`postgres:16-alpine`, `minio/minio:RELEASE.2024-10-13T13-34-11Z`, `jaegertracing/all-in-one:1.62`). No `--platform` flag should be required. If Docker reports `no matching manifest`, ensure Docker Desktop is updated to ≥ 4.20.
+**M2 / Apple Silicon** — All images in `docker-compose.yml` are published as multi-arch manifests. No `--platform` flag is needed. If Docker reports `no matching manifest`, update Docker Desktop to ≥ 4.20.
 
-**Backend takes > 60 s to start** — The `until curl` loop in `make demo` waits indefinitely. If the backend never becomes healthy, check logs with `make logs` and look for Flyway migration failures.
+**Backend slow to start** — `make demo` waits indefinitely for the health endpoint. If the backend never becomes healthy, check for Flyway migration failures:
 
-## Layout
-
-- `backend/` — Spring Boot multi-module Maven project (`app` + four reusable libs).
-- `apps/web/` — Next.js 16 (public landing + `/admin/*` route group).
-- `packages/ui` — shared design tokens + Tailwind preset.
-- `packages/api-types` — TypeScript types generated from backend OpenAPI.
-- `docs/` — schema, API contract, plans.
-- `design/spec/` — original brief, locked decisions, data model, API surface, design system spec.
-- `design/prototype/` — canonical visual prototype (HTML + JSX + CSS).
-- `design/archive/` — past per-milestone design exports.
-- `handoff/` — temp drop zone for pending design prompts going out + exports coming in (kept empty otherwise).
-- `infra/` — deploy manifests (Cloudflare Containers, GitHub Actions) — added in a later milestone.
+```bash
+make logs
+# or just the backend
+docker compose logs backend | grep -i "flyway\|migration\|error"
+```

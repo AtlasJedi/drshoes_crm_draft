@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<title>Dr Shoes · maile transakcyjne — review</title>
+<meta name="viewport" content="width=1400" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Big+Shoulders+Stencil+Display:wght@700;800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #f4efe6;
+    --paper-2: #ebe4d4;
+    --paper-3: #ddd3bd;
+    --acid: #d8ff3a;
+    --magenta: #ff2e7e;
+    --blue: #2b5cff;
+    --orange: #ff5a1f;
+    --green: #18b06b;
+    --line: #d8d2c0;
+    --mute: #6b6960;
+    --font-display: "Anton", Impact, sans-serif;
+    --font-stencil: "Big Shoulders Stencil Display", "Anton", Impact, sans-serif;
+    --font-body: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--paper-3);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 1480px; margin: 0 auto; padding: 56px 56px 96px; }
+
+  /* Hero header */
+  .hero {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 48px; padding-bottom: 28px; margin-bottom: 36px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--ink); color: var(--acid);
+    padding: 4px 10px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+  }
+  h1.title {
+    font-family: var(--font-display);
+    font-size: 88px; line-height: .88; margin: 16px 0 0;
+    text-transform: uppercase; letter-spacing: -0.01em;
+  }
+  h1.title em {
+    font-style: normal; position: relative; display: inline-block; padding: 0 4px;
+  }
+  h1.title em::after {
+    content: ""; position: absolute; inset: 6px -6px 8px -6px;
+    background: var(--acid); z-index: -1; transform: skew(-6deg);
+  }
+  .sub {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink); max-width: 460px; line-height: 1.6;
+  }
+  .sub strong {
+    font-family: var(--font-stencil); font-weight: 800;
+    font-size: 13px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .sub code {
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* TOC */
+  .toc {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    margin-bottom: 56px;
+  }
+  .toc a {
+    display: block;
+    background: var(--paper); color: var(--ink); text-decoration: none;
+    border: 1.5px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    padding: 14px 16px 16px;
+    transition: transform .1s, box-shadow .1s;
+  }
+  .toc a:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+  .toc .toc-n { font-family: var(--font-display); font-size: 28px; line-height: 1; display: block; margin-bottom: 4px; }
+  .toc .toc-key { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); margin-bottom: 8px; }
+  .toc .toc-sub { font-family: var(--font-stencil); font-weight: 800; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; line-height: 1.3; }
+  .toc-dot { display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: middle; border: 1.5px solid var(--ink); }
+
+  /* Email card */
+  .mail {
+    margin-bottom: 72px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .mail-head {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 18px;
+    align-items: center;
+    padding: 14px 22px;
+    background: var(--ink); color: var(--paper);
+  }
+  .mail-num {
+    font-family: var(--font-display); font-size: 30px; line-height: 1;
+    color: var(--paper);
+  }
+  .mail-meta {
+    display: flex; flex-direction: column; gap: 4px; min-width: 0;
+  }
+  .mail-key {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--acid); letter-spacing: .14em; text-transform: uppercase;
+  }
+  .mail-key .dot { display: inline-block; width: 10px; height: 10px; margin-right: 8px; vertical-align: middle; }
+  .mail-subject {
+    font-family: var(--font-stencil); font-weight: 800;
+    font-size: 18px; letter-spacing: .02em; text-transform: uppercase;
+    color: var(--paper);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .mail-files {
+    display: flex; flex-direction: column; gap: 2px; text-align: right;
+    font-family: var(--font-mono); font-size: 10px;
+    color: rgba(244,239,230,.7);
+  }
+  .mail-files a {
+    color: var(--acid); text-decoration: none; border-bottom: 1px dotted var(--acid);
+  }
+
+  /* Inbox-preview line */
+  .inbox-preview {
+    padding: 10px 22px;
+    background: #efece2;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 11px; color: var(--mute);
+    display: flex; gap: 14px;
+  }
+  .inbox-preview .lbl { color: var(--ink); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+  .inbox-preview .pre { color: var(--ink); }
+
+  /* Body grid: rendered html + plain text */
+  .mail-body {
+    display: grid; grid-template-columns: 640px 1fr; gap: 0;
+  }
+  .pane-html {
+    background: var(--paper-2);
+    padding: 24px;
+    border-right: 1.5px solid var(--ink);
+  }
+  .pane-html iframe {
+    width: 600px; max-width: 100%;
+    border: 1.5px solid var(--ink);
+    background: var(--paper-2);
+    display: block; margin: 0 auto;
+  }
+  .pane-text {
+    background: #161616;
+    color: #e3ddcc;
+    padding: 18px 22px;
+    overflow: auto;
+  }
+  .pane-text-head {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--acid); letter-spacing: .14em; text-transform: uppercase;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #2a2a2a;
+    margin-bottom: 12px;
+  }
+  .pane-text pre {
+    margin: 0;
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.65;
+    color: #e3ddcc;
+    white-space: pre;
+  }
+
+  /* Placeholders panel (per email) */
+  .placeholders {
+    padding: 14px 22px;
+    background: var(--paper);
+    border-top: 1.5px solid var(--ink);
+    display: flex; flex-wrap: wrap; gap: 6px 10px;
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--mute);
+  }
+  .placeholders .lbl {
+    color: var(--ink); font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    margin-right: 6px;
+  }
+  .placeholders code {
+    color: var(--ink); background: var(--paper-2);
+    border: 1px solid var(--line); padding: 1px 6px;
+  }
+
+  /* Legend / token recap */
+  .legend {
+    margin-top: 16px;
+    padding: 16px 0;
+    border-top: 1.5px solid var(--ink);
+    display: flex; gap: 18px; flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 11px; color: var(--mute);
+  }
+  .legend strong { color: var(--ink); }
+  .legend .sw { display: inline-block; width: 10px; height: 10px; vertical-align: middle; margin-right: 6px; border: 1px solid var(--ink); }
+
+  /* responsiveness for the review file itself */
+  @media (max-width: 1200px) {
+    .mail-body { grid-template-columns: 1fr; }
+    .pane-html { border-right: none; border-bottom: 1.5px solid var(--ink); }
+    .toc { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div>
+      <span class="eyebrow">handoff · maile transakcyjne</span>
+      <h1 class="title">4 maile<br /><em>do dewa</em></h1>
+    </div>
+    <p class="sub">
+      <strong>Stack do review</strong><br />
+      Cztery template'y email-HTML (`table` + inline CSS) — gotowe do podstawienia placeholderów Mustache.
+      Każdy: <code>subject</code>, <code>preheader</code>, rendered preview po lewej i fallback plain-text po prawej.
+      Dark mode via <code>prefers-color-scheme</code> — odśwież po przełączeniu motywu OS. Pełne decyzje w <code>email-tokens.md</code>.
+    </p>
+  </header>
+
+  <nav class="toc">
+    <a href="#mail-1">
+      <span class="toc-n">01</span>
+      <span class="toc-key"><span class="toc-dot" style="background:var(--blue)"></span>ORDER_RECEIVED</span>
+      <span class="toc-sub">Mamy Twoje buty</span>
+    </a>
+    <a href="#mail-2">
+      <span class="toc-n">02</span>
+      <span class="toc-key"><span class="toc-dot" style="background:var(--magenta)"></span>READY_FOR_PICKUP</span>
+      <span class="toc-sub">Gotowe do odbioru</span>
+    </a>
+    <a href="#mail-3">
+      <span class="toc-n">03</span>
+      <span class="toc-key"><span class="toc-dot" style="background:var(--orange)"></span>PICKUP_REMINDER</span>
+      <span class="toc-sub">Jutro odbiór</span>
+    </a>
+    <a href="#mail-4">
+      <span class="toc-n">04</span>
+      <span class="toc-key"><span class="toc-dot" style="background:var(--green)"></span>FEEDBACK_REQUEST</span>
+      <span class="toc-sub">Jak chodzi w nowych?</span>
+    </a>
+  </nav>
+
+  <div id="stack"></div>
+
+  <footer class="legend">
+    <span><span class="sw" style="background:var(--blue)"></span><strong>ORDER_RECEIVED</strong> #2b5cff</span>
+    <span><span class="sw" style="background:var(--magenta)"></span><strong>READY_FOR_PICKUP</strong> #ff2e7e</span>
+    <span><span class="sw" style="background:var(--orange)"></span><strong>PICKUP_REMINDER</strong> #ff5a1f</span>
+    <span><span class="sw" style="background:var(--green)"></span><strong>FEEDBACK_REQUEST</strong> #18b06b</span>
+    <span><strong>CTA</strong> ink #0a0a0a / acid #d8ff3a · 16px Impact uppercase · padding 16px 28px (min hit ≥ 44px)</span>
+    <span><strong>Type</strong> Impact (stencil) · -apple-system (body) · SF Mono (codes) — bez webfontów</span>
+  </footer>
+
+</div>
+
+<script>
+  const SAMPLE = {
+    numer_zlecenia: "DR-2026-0042",
+    imie_klienta: "Marek",
+    typ_pracy: "Naprawa cholewki + nowe fleki",
+    data_odbioru: "16 maja 2026, czwartek (do 18:00)",
+    adres_warsztatu: "ul. Świdnicka 21, 50-066 Wrocław",
+    godziny_otwarcia: "pn–pt 10:00–18:00 · sob 10:00–14:00",
+    url_warsztatu: "https://maps.app/dr-shoes",
+    nazwa_warsztatu: "Dr Shoes",
+  };
+
+  const MAILS = [
+    {
+      n: "01", id: "mail-1", key: "ORDER_RECEIVED",
+      color: "#2b5cff",
+      subject: "Mamy Twoje buty · zlecenie {numer_zlecenia}",
+      preheader: "Zlecenie przyjęte. Damy znać, gdy będzie gotowe.",
+      file: "templates/01-order-received.html",
+      txt:  "templates/01-order-received.txt",
+      placeholders: ["imie_klienta","numer_zlecenia","typ_pracy","data_odbioru","nazwa_warsztatu","adres_warsztatu","godziny_otwarcia"],
+    },
+    {
+      n: "02", id: "mail-2", key: "READY_FOR_PICKUP",
+      color: "#ff2e7e",
+      subject: "Gotowe do odbioru · {numer_zlecenia}",
+      preheader: "Twoje buty czekają. Adres, godziny i mapa w środku.",
+      file: "templates/02-ready-for-pickup.html",
+      txt:  "templates/02-ready-for-pickup.txt",
+      placeholders: ["imie_klienta","numer_zlecenia","adres_warsztatu","godziny_otwarcia","url_warsztatu","nazwa_warsztatu"],
+    },
+    {
+      n: "03", id: "mail-3", key: "PICKUP_REMINDER",
+      color: "#ff5a1f",
+      subject: "Jutro odbiór · {numer_zlecenia}",
+      preheader: "Przypomnienie o jutrzejszym odbiorze. Nie pasuje? Odpisz.",
+      file: "templates/03-pickup-reminder.html",
+      txt:  "templates/03-pickup-reminder.txt",
+      placeholders: ["imie_klienta","numer_zlecenia","data_odbioru","adres_warsztatu","godziny_otwarcia","url_warsztatu","nazwa_warsztatu"],
+    },
+    {
+      n: "04", id: "mail-4", key: "FEEDBACK_REQUEST",
+      color: "#18b06b",
+      subject: "Jak chodzi w nowych? · {numer_zlecenia}",
+      preheader: "Trzy dni z naprawionymi butami. Powiedz, jak Ci się chodzi.",
+      file: "templates/04-feedback-request.html",
+      txt:  "templates/04-feedback-request.txt",
+      placeholders: ["imie_klienta","numer_zlecenia","url_warsztatu","nazwa_warsztatu","adres_warsztatu","godziny_otwarcia"],
+    },
+  ];
+
+  function fillPlaceholders(src) {
+    return src.replace(/\{(\w+)\}/g, (m, k) => SAMPLE[k] !== undefined ? SAMPLE[k] : m);
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  }
+
+  function placeholderChips(list) {
+    return list.map(p => `<code>{${p}}</code>`).join("");
+  }
+
+  async function loadMail(m) {
+    const [html, txt] = await Promise.all([
+      fetch(m.file).then(r => r.text()),
+      fetch(m.txt).then(r => r.text()),
+    ]);
+    const filled = fillPlaceholders(html);
+    const filledTxt = fillPlaceholders(txt);
+    const subjectFilled = fillPlaceholders(m.subject);
+
+    return `
+      <article class="mail" id="${m.id}">
+        <header class="mail-head">
+          <div class="mail-num">${m.n}</div>
+          <div class="mail-meta">
+            <div class="mail-key"><span class="dot" style="background:${m.color}"></span>${m.key}</div>
+            <div class="mail-subject" title="${escapeHtml(subjectFilled)}">${escapeHtml(subjectFilled)}</div>
+          </div>
+          <div class="mail-files">
+            <span>HTML &nbsp;<a href="${m.file}" target="_blank">${m.file}</a></span>
+            <span>TXT &nbsp;&nbsp;<a href="${m.txt}" target="_blank">${m.txt}</a></span>
+          </div>
+        </header>
+
+        <div class="inbox-preview">
+          <span><span class="lbl">Preheader:</span> <span class="pre">${escapeHtml(fillPlaceholders(m.preheader))}</span></span>
+        </div>
+
+        <div class="mail-body">
+          <div class="pane-html">
+            <iframe data-mail="${m.id}" srcdoc='${filled.replace(/'/g, "&#39;")}' scrolling="no" sandbox="allow-same-origin"></iframe>
+          </div>
+          <div class="pane-text">
+            <div class="pane-text-head">Plain-text fallback · ≤ 70 kol.</div>
+            <pre>${escapeHtml(filledTxt)}</pre>
+          </div>
+        </div>
+
+        <div class="placeholders">
+          <span class="lbl">Placeholders</span>${placeholderChips(m.placeholders)}
+        </div>
+      </article>
+    `;
+  }
+
+  function resizeIframe(iframe) {
+    try {
+      const doc = iframe.contentDocument;
+      if (!doc) return;
+      const h = Math.max(
+        doc.documentElement.scrollHeight,
+        doc.body.scrollHeight
+      );
+      iframe.style.height = (h + 8) + "px";
+    } catch (_) { /* sandboxed cross-origin: skip */ }
+  }
+
+  (async () => {
+    const stack = document.getElementById("stack");
+    const parts = await Promise.all(MAILS.map(loadMail));
+    stack.innerHTML = parts.join("");
+
+    // Resize iframes to fit content
+    const iframes = stack.querySelectorAll("iframe");
+    iframes.forEach((f) => {
+      if (f.contentDocument && f.contentDocument.readyState === "complete") {
+        resizeIframe(f);
+      } else {
+        f.addEventListener("load", () => resizeIframe(f));
+      }
+      // Re-measure after a tick to catch font swap reflow
+      setTimeout(() => resizeIframe(f), 250);
+      setTimeout(() => resizeIframe(f), 1200);
+    });
+  })();
+</script>
+
+</body>
+</html>

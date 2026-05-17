@@ -1,0 +1,118 @@
+<!--
+  ┌─────────────────────────────────────────────────────────────┐
+  │ TEMPLATE: ORDER_RECEIVED                                    │
+  │ Subject:    Mamy Twoje buty · zlecenie {numer_zlecenia}     │
+  │ Preheader:  Zlecenie przyjęte. Damy znać gdy będzie gotowe. │
+  │ Status:     --blue (#2b5cff)                                │
+  │ Gesty:      accent bar + tape "PRZYJĘTE"                    │
+  │ Placeholders: {imie_klienta} {numer_zlecenia} {typ_pracy}   │
+  │               {data_odbioru} {nazwa_warsztatu}              │
+  │               {adres_warsztatu} {godziny_otwarcia}          │
+  └─────────────────────────────────────────────────────────────┘
+-->
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="x-apple-disable-message-reformatting" />
+<meta name="color-scheme" content="light dark" />
+<meta name="supported-color-schemes" content="light dark" />
+<title>Mamy Twoje buty · zlecenie {numer_zlecenia}</title>
+<style>
+  @media (prefers-color-scheme: dark) {
+    body, .body-bg { background:#0a0a0a !important; }
+    .stage-bg { background:#161616 !important; }
+    .ink-text { color:#f4efe6 !important; }
+    .mute-text { color:#b8b3a5 !important; }
+    .line-b { border-bottom-color:#2a2a2a !important; }
+    .footer-bg { background:#161616 !important; }
+    .code-card { background:#0a0a0a !important; border-color:#3a3a3a !important; }
+    .accent { background:#4a82ff !important; }
+  }
+  @media only screen and (max-width:480px) {
+    .px-32 { padding-left:20px !important; padding-right:20px !important; }
+    .order-num { font-size:36px !important; line-height:40px !important; }
+    .headline { font-size:24px !important; line-height:28px !important; }
+    .wordmark { font-size:26px !important; line-height:26px !important; }
+  }
+</style>
+</head>
+<body class="body-bg" style="margin:0;padding:0;background:#ebe4d4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0a0a0a;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:transparent;opacity:0;mso-hide:all;">
+Zlecenie przyjęte. Damy znać, gdy będzie gotowe.&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ebe4d4;">
+<tr><td align="center" style="padding:24px 12px;">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:100%;">
+
+  <!-- HEADER -->
+  <tr><td style="background:#0a0a0a;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td class="px-32" valign="top" style="padding:24px 32px 22px;">
+          <div class="wordmark" style="font-family:Impact,'Arial Black','Helvetica Inserat',sans-serif;color:#f4efe6;font-size:32px;line-height:32px;letter-spacing:.02em;text-transform:uppercase;font-weight:900;">DR.SHOES</div>
+          <div style="font-family:'SF Mono','Menlo','Consolas',monospace;color:#d8ff3a;font-size:10px;line-height:14px;letter-spacing:.18em;text-transform:uppercase;margin-top:6px;">warsztat szewski · wrocław</div>
+        </td>
+        <td class="px-32" align="right" valign="middle" width="150" style="padding:24px 32px 22px;text-align:right;">
+          <div style="display:inline-block;background:#2b5cff;color:#f4efe6;font-family:Impact,'Arial Black',sans-serif;font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;padding:5px 12px;transform:rotate(-2deg);">Przyjęte</div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- ACCENT BAR -->
+  <tr><td class="accent" height="6" style="background:#2b5cff;height:6px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td></tr>
+
+  <!-- BODY -->
+  <tr><td class="stage-bg px-32" style="background:#f4efe6;padding:36px 32px 8px;">
+    <p class="mute-text" style="margin:0 0 8px;font-size:15px;line-height:22px;color:#6b6960;">Cześć {imie_klienta},</p>
+    <h1 class="headline ink-text" style="margin:0 0 14px;font-family:Impact,'Arial Black',sans-serif;font-size:32px;line-height:34px;letter-spacing:-.01em;text-transform:uppercase;color:#0a0a0a;font-weight:900;">Twoje buty są u nas.</h1>
+    <p class="ink-text" style="margin:0 0 28px;font-size:16px;line-height:24px;color:#0a0a0a;">Przyjęliśmy zlecenie. Damy znać, gdy będzie gotowe — nie musisz nic robić.</p>
+  </td></tr>
+
+  <!-- ORDER CODE -->
+  <tr><td class="stage-bg px-32" style="background:#f4efe6;padding:0 32px 28px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="code-card" style="border:2px solid #0a0a0a;background:#ebe4d4;">
+      <tr><td style="padding:18px 22px 20px;">
+        <div class="mute-text" style="font-family:'SF Mono','Menlo','Consolas',monospace;font-size:10px;line-height:14px;letter-spacing:.18em;text-transform:uppercase;color:#6b6960;margin-bottom:6px;">Zlecenie</div>
+        <div class="order-num ink-text" style="font-family:Impact,'Arial Black','Helvetica Inserat',sans-serif;font-size:48px;line-height:48px;letter-spacing:-.02em;color:#0a0a0a;font-weight:900;">{numer_zlecenia}</div>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- DETAILS -->
+  <tr><td class="stage-bg px-32" style="background:#f4efe6;padding:0 32px 36px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td class="line-b mute-text" width="160" valign="top" style="padding:14px 0;border-bottom:1px solid #d8d2c0;font-family:'SF Mono','Menlo','Consolas',monospace;font-size:11px;line-height:16px;letter-spacing:.14em;text-transform:uppercase;color:#6b6960;">Praca</td>
+        <td class="line-b ink-text" valign="top" style="padding:14px 0;border-bottom:1px solid #d8d2c0;font-size:16px;line-height:22px;color:#0a0a0a;">{typ_pracy}</td>
+      </tr>
+      <tr>
+        <td class="mute-text" width="160" valign="top" style="padding:14px 0 0;font-family:'SF Mono','Menlo','Consolas',monospace;font-size:11px;line-height:16px;letter-spacing:.14em;text-transform:uppercase;color:#6b6960;">Data odbioru</td>
+        <td class="ink-text" valign="top" style="padding:14px 0 0;font-size:16px;line-height:22px;color:#0a0a0a;">{data_odbioru}</td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- SIGN OFF -->
+  <tr><td class="stage-bg px-32 ink-text" style="background:#f4efe6;padding:0 32px 40px;font-size:15px;line-height:22px;color:#0a0a0a;">
+    Do zobaczenia,<br />ekipa <strong>{nazwa_warsztatu}</strong>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr><td class="footer-bg mute-text" style="background:#ebe4d4;border-top:1px solid #d8d2c0;padding:20px 32px 24px;font-size:12px;line-height:18px;color:#6b6960;">
+    <strong class="ink-text" style="color:#0a0a0a;">{nazwa_warsztatu}</strong><br />
+    {adres_warsztatu} · {godziny_otwarcia}<br />
+    <span style="opacity:.85;">Odpisz STOP, jeśli nie chcesz dostawać powiadomień o swoich zleceniach.</span>
+  </td></tr>
+
+</table>
+
+</td></tr>
+</table>
+</body>
+</html>
