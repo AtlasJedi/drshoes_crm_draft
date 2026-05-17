@@ -20,7 +20,7 @@ export default async function NewOrderPage() {
   }
 
   return (
-    <div>
+    <div className="h-full overflow-auto">
       <NewOrderPageHeaderSetter />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-admin-ink">Nowe zlecenie</h1>

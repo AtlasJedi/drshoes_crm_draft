@@ -29,7 +29,7 @@ export function NewOrderForm({ users }: Props) {
   const router = useRouter();
 
   // --- client mode ---
-  const [clientMode, setClientMode] = useState<ClientMode>("existing");
+  const [clientMode, setClientMode] = useState<ClientMode>("adhoc");
 
   // existing-client state
   const [client, setClient] = useState<ClientDto | null>(null);
@@ -188,18 +188,6 @@ export function NewOrderForm({ users }: Props) {
         <div className="flex gap-2 mb-3">
           <button
             type="button"
-            onClick={() => switchMode("existing")}
-            disabled={submitting}
-            className={`px-4 py-1.5 rounded-sm border text-sm font-medium transition-colors ${
-              clientMode === "existing"
-                ? "bg-acid text-ink border-acid"
-                : "bg-white text-admin-ink border-admin-line hover:bg-acid/10"
-            }`}
-          >
-            Istniejący klient
-          </button>
-          <button
-            type="button"
             onClick={() => switchMode("adhoc")}
             disabled={submitting}
             className={`px-4 py-1.5 rounded-sm border text-sm font-medium transition-colors ${
@@ -209,6 +197,18 @@ export function NewOrderForm({ users }: Props) {
             }`}
           >
             Nowy klient
+          </button>
+          <button
+            type="button"
+            onClick={() => switchMode("existing")}
+            disabled={submitting}
+            className={`px-4 py-1.5 rounded-sm border text-sm font-medium transition-colors ${
+              clientMode === "existing"
+                ? "bg-acid text-ink border-acid"
+                : "bg-white text-admin-ink border-admin-line hover:bg-acid/10"
+            }`}
+          >
+            Istniejący klient
           </button>
         </div>
 
