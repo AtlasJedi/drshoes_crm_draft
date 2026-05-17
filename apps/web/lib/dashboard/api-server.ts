@@ -35,7 +35,10 @@ export async function getDashboardKpisServer(): Promise<DashboardKpiDto> {
   return serverGet<DashboardKpiDto>("/api/admin/dashboard/kpis", "dashboard/kpis");
 }
 
-export async function getDashboardChartsServer(): Promise<DashboardChartsDto> {
-  log.info("op=getDashboardChartsServer");
-  return serverGet<DashboardChartsDto>("/api/admin/dashboard/charts", "dashboard/charts");
+export async function getDashboardChartsServer(period = "WEEK"): Promise<DashboardChartsDto> {
+  log.info("op=getDashboardChartsServer", { period });
+  return serverGet<DashboardChartsDto>(
+    `/api/admin/dashboard/charts?period=${encodeURIComponent(period)}`,
+    "dashboard/charts"
+  );
 }

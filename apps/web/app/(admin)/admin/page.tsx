@@ -27,23 +27,26 @@ async function KpiSection() {
   return <KpiTilesRow kpis={kpis} />;
 }
 
-async function ChartsSection() {
+async function ChartsSection({ period }: { period: string }) {
   let charts;
   try {
-    charts = await getDashboardChartsServer();
+    charts = await getDashboardChartsServer(period);
   } catch {
     return <ErrorBanner message="Nie udało się załadować wykresów." />;
   }
   const total = charts.mixByType.reduce((s, r) => s + r.count, 0);
   return (
     <div className="grid grid-cols-[2fr_1fr] gap-5">
-      <OrdersWeekChart rows={charts.ordersPerWeek} />
+      <OrdersWeekChart rows={charts.ordersPerWeek} period={period} />
       <MixDonut mix={charts.mixByType} totalActive={total} />
     </div>
   );
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
+  const sp = await searchParams;
+  const period = (sp.period ?? "WEEK").toUpperCase();
+  const safePeriod = ["WEEK", "MONTH", "QUARTER"].includes(period) ? period : "WEEK";
   return (
     <div className="h-full flex flex-col">
       <DashboardPageHeaderSetter />
@@ -54,7 +57,7 @@ export default async function AdminPage() {
           </Suspense>
 
           <Suspense fallback={<Skeleton height="h-52" />}>
-            <ChartsSection />
+            <ChartsSection period={safePeriod} />
           </Suspense>
 
           <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-5">

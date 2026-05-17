@@ -87,6 +87,49 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     List<Object[]> countPerIsoWeek(@Param("windowStart") Instant windowStart);
 
     /**
+     * Groups orders by calendar month (Warsaw tz) for last N months.
+     * Returns rows: [period_label TEXT "YYYY-MM", repairs BIGINT, custom_ BIGINT].
+     */
+    @Query(value = """
+        SELECT
+            TO_CHAR(DATE_TRUNC('month', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'YYYY-MM') AS period_label,
+            COUNT(*) FILTER (WHERE EXISTS (
+                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
+            )) AS repairs,
+            COUNT(*) FILTER (WHERE NOT EXISTS (
+                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
+            )) AS custom_
+        FROM order_ o
+        WHERE o.deleted_at IS NULL
+          AND o.received_at >= :windowStart
+        GROUP BY period_label
+        ORDER BY period_label
+        """, nativeQuery = true)
+    List<Object[]> countPerIsoMonth(@Param("windowStart") Instant windowStart);
+
+    /**
+     * Groups orders by calendar quarter (Warsaw tz) for last N quarters.
+     * Returns rows: [period_label TEXT "YYYY-Q{1..4}", repairs BIGINT, custom_ BIGINT].
+     */
+    @Query(value = """
+        SELECT
+            TO_CHAR(DATE_TRUNC('quarter', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'YYYY')
+              || '-Q' || EXTRACT(QUARTER FROM (o.received_at AT TIME ZONE 'Europe/Warsaw'))::int AS period_label,
+            COUNT(*) FILTER (WHERE EXISTS (
+                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
+            )) AS repairs,
+            COUNT(*) FILTER (WHERE NOT EXISTS (
+                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
+            )) AS custom_
+        FROM order_ o
+        WHERE o.deleted_at IS NULL
+          AND o.received_at >= :windowStart
+        GROUP BY period_label
+        ORDER BY period_label
+        """, nativeQuery = true)
+    List<Object[]> countPerIsoQuarter(@Param("windowStart") Instant windowStart);
+
+    /**
      * Returns per-kind order counts for the mix donut.
      * NAPRAWA bucket = orders with ANY NAPRAWA item;
      * remaining orders are CUSTOM (V025 merged CUSTOM_BUTY + CUSTOM_KURTKA).

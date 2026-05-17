@@ -1,14 +1,16 @@
 /**
- * Stacked bar chart — orders per week for last 8 ISO weeks.
- * Chip row (tydzień/miesiąc/kwartał) is visual-only for M9; behaviour deferred to M10.
- * Pure server component — chip toggle state is not interactive.
- * ~70 LOC.
+ * Stacked bar chart — orders by period (week/month/quarter).
+ * Chip row (tydzień/miesiąc/kwartał) triggers full-page server re-render via URL param.
+ * Server component — chips are Next.js <Link> elements.
+ * ~80 LOC.
  */
+import Link from "next/link";
 import { Chip } from "@drshoes/ui";
 import type { OrdersPerWeekRowDto } from "@/lib/dashboard/types";
 
 interface Props {
   rows: OrdersPerWeekRowDto[];
+  period?: string;
 }
 
 const VIEW_H = 220;
@@ -16,25 +18,29 @@ const BAR_BOTTOM = 190;
 const SCALE = 7;
 
 const CHIPS = [
-  { label: "tydzień", active: true },
-  { label: "miesiąc", active: false },
-  { label: "kwartał", active: false },
+  { label: "tydzień",  period: "WEEK",    subtitle: "ostatnie 8 tygodni" },
+  { label: "miesiąc",  period: "MONTH",   subtitle: "ostatnie 6 miesięcy" },
+  { label: "kwartał",  period: "QUARTER", subtitle: "ostatnie 4 kwartały" },
 ];
 
-export function OrdersWeekChart({ rows }: Props) {
+export function OrdersWeekChart({ rows, period = "WEEK" }: Props) {
+  const activePeriod = period.toUpperCase();
+  const activeChip = CHIPS.find(c => c.period === activePeriod) ?? CHIPS[0]!;
+
   return (
     <div className="admin-card p-[22px]">
       <div className="flex justify-between items-start mb-[18px]">
         <div>
-          <div className="t-display text-[22px]">Zlecenia / tydzień</div>
-          <div className="t-mono text-[11px] text-admin-mute">ostatnie 8 tygodni</div>
+          <div className="t-display text-[22px]">Zlecenia / {activeChip.label}</div>
+          <div className="t-mono text-[11px] text-admin-mute">{activeChip.subtitle}</div>
         </div>
-        {/* Chip toggles — visual only; M10 backlog item wires time-range filter */}
         <div className="flex gap-1.5">
           {CHIPS.map((c) => (
-            <Chip key={c.label} active={c.active}>
-              {c.label}
-            </Chip>
+            <Link key={c.period} href={`?period=${c.period}`}>
+              <Chip active={activePeriod === c.period}>
+                {c.label}
+              </Chip>
+            </Link>
           ))}
         </div>
       </div>
