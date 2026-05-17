@@ -9,7 +9,7 @@ import { ItemEditRow, type ItemEditState } from "./ItemEditRow";
 import { OrderItemRow } from "./OrderItemRow";
 
 const log = createLogger("order-items");
-const BLANK: ItemEditState = { kind: "NAPRAWA", description: "", pricePln: "" };
+const BLANK: ItemEditState = { kind: "USLUGA", description: "", pricePln: "" };
 const toCents = (pln: string) => { const v = parseFloat(pln.replace(",", ".")); return isFinite(v) ? Math.round(v * 100) : 0; };
 const toState = (item: OrderItemDto): ItemEditState => ({ kind: item.kind as OrderItemKind, description: item.description ?? "", pricePln: (item.priceCents / 100).toFixed(2) });
 

@@ -19,54 +19,70 @@ interface Props {
 const KIND_OPTIONS = Object.entries(KIND_LABELS_PL) as [OrderItemKind, string][];
 
 export function NewOrderItemRow({ index, item, onChange, onRemove }: Props) {
-  const inputCls =
-    "h-9 px-2 border border-admin-line rounded-sm focus:outline-none focus:ring-2 focus:ring-acid text-sm";
-
   return (
-    <div className="flex gap-2 items-start">
+    <div
+      className="grid items-stretch border-b border-[rgba(10,10,10,0.08)] last:border-b-0 focus-within:bg-acid/[0.08]"
+      style={{ gridTemplateColumns: "140px 1fr 110px 36px" }}
+    >
       {/* Kind select */}
-      <select
-        value={item.kind}
-        onChange={(e) => onChange(index, { ...item, kind: e.target.value as OrderItemKind })}
-        className={inputCls + " w-36 bg-white"}
-        aria-label="Rodzaj pozycji"
-      >
-        {KIND_OPTIONS.map(([k, label]) => (
-          <option key={k} value={k}>{label}</option>
-        ))}
-      </select>
+      <div className="border-r border-[rgba(10,10,10,0.08)]">
+        <select
+          value={item.kind}
+          onChange={(e) => onChange(index, { ...item, kind: e.target.value as OrderItemKind })}
+          aria-label="Rodzaj pozycji"
+          className="w-full h-full px-3 py-[11px] bg-transparent border-0 outline-none font-stencil font-black text-[12px] uppercase tracking-[.06em] cursor-pointer appearance-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%)",
+            backgroundPosition: "calc(100% - 14px) 50%, calc(100% - 9px) 50%",
+            backgroundSize: "5px 5px",
+            backgroundRepeat: "no-repeat",
+            paddingRight: 28,
+          }}
+        >
+          {KIND_OPTIONS.map(([k, label]) => (
+            <option key={k} value={k}>{label}</option>
+          ))}
+        </select>
+      </div>
 
       {/* Description */}
-      <input
-        type="text"
-        value={item.description}
-        placeholder="Opis (opcjonalnie)"
-        onChange={(e) => onChange(index, { ...item, description: e.target.value })}
-        className={inputCls + " flex-1 min-w-0"}
-        aria-label="Opis pozycji"
-      />
+      <div className="border-r border-[rgba(10,10,10,0.08)]">
+        <input
+          type="text"
+          value={item.description}
+          placeholder="Opis (opcjonalnie)"
+          onChange={(e) => onChange(index, { ...item, description: e.target.value })}
+          className="w-full h-full px-[14px] py-[11px] bg-transparent border-0 outline-none text-sm"
+          aria-label="Opis pozycji"
+        />
+      </div>
 
       {/* Price (PLN) */}
-      <input
-        type="number"
-        value={item.pricePln}
-        min="0"
-        step="0.01"
-        placeholder="0.00"
-        onChange={(e) => onChange(index, { ...item, pricePln: e.target.value })}
-        className={inputCls + " w-24 text-right"}
-        aria-label="Cena w PLN"
-      />
-      <span className="h-9 flex items-center text-sm text-admin-mute select-none">zł</span>
+      <div className="border-r border-[rgba(10,10,10,0.08)] flex items-center pr-3">
+        <input
+          type="number"
+          value={item.pricePln}
+          min="0"
+          step="0.01"
+          placeholder="0,00"
+          onChange={(e) => onChange(index, { ...item, pricePln: e.target.value })}
+          className="w-full bg-transparent border-0 outline-none text-right font-mono text-sm font-semibold pr-1 py-[11px]"
+          aria-label="Cena w PLN"
+        />
+        <span className="font-mono text-[11px] text-admin-mute shrink-0">zł</span>
+      </div>
 
       {/* Remove */}
       <button
         type="button"
         onClick={() => onRemove(index)}
         aria-label="Usuń pozycję"
-        className="h-9 px-2 text-admin-mute hover:text-magenta text-sm transition-colors"
+        className="flex items-center justify-center text-admin-mute hover:text-red-600 hover:bg-red-50 transition-colors"
       >
-        ✕
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+          <path d="M5 5l14 14M19 5L5 19" />
+        </svg>
       </button>
     </div>
   );

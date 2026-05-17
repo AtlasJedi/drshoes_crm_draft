@@ -24,8 +24,8 @@ export type OrderStatus =
   | "WYDANE"
   | "ANULOWANE";
 
-/** 2 item kinds. Matches V025 DB CHECK and OrderItemKind.java. */
-export type OrderItemKind = "NAPRAWA" | "CUSTOM";
+/** 4 item kinds. Matches V029 DB CHECK and OrderItemKind.java. */
+export type OrderItemKind = "USLUGA" | "CUSTOM" | "NAPRAWA" | "RENOWACJA";
 
 /** Order source channel. Matches OrderSource.java. */
 export type OrderSource = "ADMIN" | "PUBLIC_INTAKE" | "IMPORT";

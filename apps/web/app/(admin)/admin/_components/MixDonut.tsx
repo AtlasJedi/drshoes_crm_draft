@@ -1,20 +1,18 @@
 /**
  * Donut chart — current order type mix.
- * 2 segments: Usługa acid / Custom pink.
+ * 4 segments: Usługa acid / Custom pink / Naprawa orange / Renowacje blue.
  * Legend rows with 14px coloured square + label + percent.
  * Pure server component.
  * ~75 LOC.
  */
 import type { MixByTypeRowDto } from "@/lib/dashboard/types";
-
-const KIND_LABELS: Record<string, string> = {
-  NAPRAWA: "Usługa",
-  CUSTOM:  "Custom",
-};
+import { KIND_LABELS_PL } from "@/lib/orders/status";
 
 const KIND_COLORS: Record<string, string> = {
-  NAPRAWA: "var(--acid)",
-  CUSTOM:  "var(--pink)",
+  USLUGA:    "var(--acid)",
+  NAPRAWA:   "var(--orange)",
+  RENOWACJA: "var(--blue)",
+  CUSTOM:    "var(--pink)",
 };
 
 const CIRC = 490;
@@ -90,7 +88,7 @@ export function MixDonut({ mix, totalActive }: Props) {
           <LegendRow
             key={row.kind}
             color={KIND_COLORS[row.kind] ?? "var(--ink)"}
-            label={KIND_LABELS[row.kind] ?? row.kind}
+            label={KIND_LABELS_PL[row.kind as keyof typeof KIND_LABELS_PL] ?? row.kind}
             percent={row.percent}
           />
         ))}

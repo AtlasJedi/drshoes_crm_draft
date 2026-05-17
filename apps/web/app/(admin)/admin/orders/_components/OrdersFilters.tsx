@@ -11,7 +11,7 @@ import { Chip } from "@drshoes/ui";
 
 const log = createLogger("orders-filters");
 
-const ALL_KINDS: OrderItemKind[] = ["NAPRAWA", "CUSTOM"];
+const ALL_KINDS: OrderItemKind[] = ["USLUGA", "CUSTOM", "NAPRAWA", "RENOWACJA"];
 
 interface Props {
   initial: {

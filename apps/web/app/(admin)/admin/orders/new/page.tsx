@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { createLogger } from "@/lib/log";
 import { listUsersServer } from "@/lib/orders/api-server";
 import { NewOrderForm } from "./_components/NewOrderForm";
@@ -22,16 +21,6 @@ export default async function NewOrderPage() {
   return (
     <div className="h-full overflow-auto">
       <NewOrderPageHeaderSetter />
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-admin-ink">Nowe zlecenie</h1>
-        <Link
-          href="/admin/orders"
-          className="text-sm text-admin-mute hover:text-admin-ink transition-colors"
-        >
-          ← Wróć do zleceń
-        </Link>
-      </div>
-
       <NewOrderForm users={users} />
     </div>
   );
