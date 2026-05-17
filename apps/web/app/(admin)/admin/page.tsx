@@ -45,25 +45,29 @@ async function ChartsSection() {
 
 export default async function AdminPage() {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="h-full flex flex-col">
       <DashboardPageHeaderSetter />
-      <Suspense fallback={<Skeleton height="h-24" />}>
-        <KpiSection />
-      </Suspense>
+      <div className="flex-1 min-h-0 overflow-auto">
+        <div className="flex flex-col gap-5">
+          <Suspense fallback={<Skeleton height="h-24" />}>
+            <KpiSection />
+          </Suspense>
 
-      <Suspense fallback={<Skeleton height="h-52" />}>
-        <ChartsSection />
-      </Suspense>
+          <Suspense fallback={<Skeleton height="h-52" />}>
+            <ChartsSection />
+          </Suspense>
 
-      <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-5">
-        <Suspense fallback={<Skeleton height="h-12" rows={3} />}>
-          <ReadyForPickupPanel />
-        </Suspense>
-        <Suspense fallback={<Skeleton height="h-10" rows={4} />}>
-          <RecentMessagesPanel />
-        </Suspense>
-        {/* FreshReservationsPanel uses static placeholder until M10 backend slice ships */}
-        <FreshReservationsPanel />
+          <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-5">
+            <Suspense fallback={<Skeleton height="h-12" rows={3} />}>
+              <ReadyForPickupPanel />
+            </Suspense>
+            <Suspense fallback={<Skeleton height="h-10" rows={4} />}>
+              <RecentMessagesPanel />
+            </Suspense>
+            {/* FreshReservationsPanel uses static placeholder until M10 backend slice ships */}
+            <FreshReservationsPanel />
+          </div>
+        </div>
       </div>
     </div>
   );
