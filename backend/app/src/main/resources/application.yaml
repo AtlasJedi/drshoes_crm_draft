@@ -58,6 +58,8 @@ drshoes:
   demo:
     seed:
       enabled: ${DRSHOES_DEMO_SEED_ENABLED:false}
+  music:
+    youtube-api-key: ${YOUTUBE_API_KEY:}
 
 logging:
   pattern:
