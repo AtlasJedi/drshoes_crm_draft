@@ -17,6 +17,6 @@ public interface MusicPlaylistTrackRepository extends JpaRepository<MusicPlaylis
     /** Tracks belonging to a specific playlist — used for ownership checks. */
     Optional<MusicPlaylistTrack> findByIdAndPlaylistId(UUID trackId, UUID playlistId);
 
-    /** Max sort_order within a playlist — used for append logic. */
-    Optional<Integer> findTopByPlaylistIdOrderBySortOrderDesc(UUID playlistId);
+    /** Last track (highest sort_order) within a playlist — used for append logic. */
+    Optional<MusicPlaylistTrack> findTopByPlaylistIdOrderBySortOrderDesc(UUID playlistId);
 }

@@ -118,7 +118,7 @@ public class MusicPlaylistService {
                                     String thumbnailUrl) {
         MusicPlaylist playlist = requirePlaylist(playlistId);
         int nextOrder = trackRepo.findTopByPlaylistIdOrderBySortOrderDesc(playlistId)
-            .map(max -> max + 1)
+            .map(last -> last.getSortOrder() + 1)
             .orElse(0);
         MusicPlaylistTrack track = new MusicPlaylistTrack(
             playlist, videoId, title, channelTitle, thumbnailUrl, nextOrder

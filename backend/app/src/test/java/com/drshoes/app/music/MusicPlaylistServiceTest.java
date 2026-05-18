@@ -91,8 +91,11 @@ class MusicPlaylistServiceTest {
         UUID playlistId = UUID.randomUUID();
         MusicPlaylist playlist = new MusicPlaylist("My Playlist");
 
+        MusicPlaylistTrack lastTrack = new MusicPlaylistTrack(
+            playlist, "vid003", "Track C", "Chan Y", null, 2);
         when(playlistRepo.findById(playlistId)).thenReturn(Optional.of(playlist));
-        when(trackRepo.findTopByPlaylistIdOrderBySortOrderDesc(playlistId)).thenReturn(Optional.of(2));
+        when(trackRepo.findTopByPlaylistIdOrderBySortOrderDesc(playlistId))
+            .thenReturn(Optional.of(lastTrack));
         when(trackRepo.save(any(MusicPlaylistTrack.class))).thenAnswer(inv -> inv.getArgument(0));
 
         PlaylistTrackDto result = service.addTrack(
