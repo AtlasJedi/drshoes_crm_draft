@@ -12,7 +12,7 @@
  * ~90 LOC.
  */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import YouTube, { type YouTubeEvent } from "react-youtube";
 import Link from "next/link";
 import type { Route } from "next";
@@ -68,12 +68,15 @@ export function PersistentMiniPlayer() {
     volume,
     playPause,
     advance,
+    seek,
+    setVolume,
     _onReady,
     _onStateChange,
     _onEnd,
   } = useMusicContext();
 
   const [volOpen, setVolOpen] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
 
   if (!current) return null;
 
@@ -137,16 +140,31 @@ export function PersistentMiniPlayer() {
           </button>
         </div>
 
-        {/* progress bar */}
+        {/* progress bar — click-to-seek */}
         <div className="mini-prog">
           <span className="time">{fmt(currentTime)}</span>
-          <div className="bar" role="progressbar" aria-valuenow={Math.round(progress * 100)} aria-valuemin={0} aria-valuemax={100}>
+          <div
+            ref={barRef}
+            className="bar"
+            role="progressbar"
+            aria-valuenow={Math.round(progress * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Pasek postępu"
+            style={{ cursor: "pointer" }}
+            onClick={(e) => {
+              const rect = barRef.current?.getBoundingClientRect();
+              if (!rect || duration <= 0) return;
+              const pct = (e.clientX - rect.left) / rect.width;
+              seek(Math.max(0, Math.min(1, pct)) * duration);
+            }}
+          >
             <div className="fill" style={{ width: `${progress * 100}%` }} />
           </div>
           <span className="time">{fmt(duration)}</span>
         </div>
 
-        {/* volume */}
+        {/* volume — interactive slider */}
         <div className="mini-vol">
           <button
             type="button"
@@ -157,9 +175,17 @@ export function PersistentMiniPlayer() {
             {ICO.vol}
           </button>
           {volOpen && (
-            <div className="popout" role="tooltip" aria-label="Poziom głośności">
+            <div className="popout" role="dialog" aria-label="Poziom głośności">
               <div className="vlabel">{volume}</div>
-              <div className="vbar">
+              <div
+                className="vbar"
+                style={{ cursor: "pointer" }}
+                onClick={(e) => {
+                  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                  const pct = 1 - (e.clientY - rect.top) / rect.height;
+                  setVolume(Math.round(Math.max(0, Math.min(1, pct)) * 100));
+                }}
+              >
                 <div className="vfill" style={{ height: `${volume}%` }} />
               </div>
             </div>

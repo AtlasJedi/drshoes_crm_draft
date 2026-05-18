@@ -1,77 +1,131 @@
 "use client";
 
 /**
- * MusicClient — refactored for v2. State is now owned by MusicProvider (context).
- * This component is a thin consumer: search + display current + queue list.
- * The YouTube iframe lives in PersistentMiniPlayer — NOT here.
- *
- * Slice B will replace this page with a three-column layout.
- * ~55 LOC.
+ * MusicClient v2 — three-column command center.
+ * Orchestrates PlaylistsCol | SearchColV2 | QueueCol.
+ * All state is owned by MusicProvider; this is a thin coordinator.
+ * ~90 LOC.
  */
 
+import { useState } from "react";
 import { useMusicContext, usePickTrack } from "@/components/admin/music/MusicProvider";
-import { SearchBar } from "./components/SearchBar";
-import { PlayerControls } from "./components/PlayerControls";
-import { QueueList } from "./components/QueueList";
+import type { Track } from "@/lib/music";
+import { PlaylistsCol } from "./components/PlaylistsCol";
+import { SearchColV2 } from "./components/SearchColV2";
+import { QueueCol } from "./components/QueueCol";
+import { NewPlaylistModal } from "./components/NewPlaylistModal";
+
+type ModalMode =
+  | { kind: "new" }
+  | { kind: "queue" }
+  | { kind: "track"; track: Track }
+  | null;
 
 export function MusicClient() {
   const {
     current,
     queue,
-    playing,
-    currentTime,
-    duration,
-    volume,
-    playPause,
-    skipBack,
-    skipForward,
-    advance,
-    skipToQueueIndex,
+    playlists,
+    enqueue,
     removeFromQueue,
-    seek,
-    setVolume,
+    skipToQueueIndex,
+    createPlaylist,
+    deletePlaylist,
+    addTrackToPlaylist,
+    loadPlaylistToQueue,
+    saveQueueAsPlaylist,
   } = useMusicContext();
 
   const pick = usePickTrack();
 
+  const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
+  const [modal, setModal] = useState<ModalMode>(null);
+
+  // ── playlist handlers ──────────────────────────────────────
+  async function handleLoadPlaylist(id: string) {
+    await loadPlaylistToQueue(id);
+    setActivePlaylistId(id);
+  }
+
+  async function handleDeletePlaylist(id: string) {
+    if (!confirm("Usunąć playlistę? Tej operacji nie można cofnąć.")) return;
+    await deletePlaylist(id);
+    if (activePlaylistId === id) setActivePlaylistId(null);
+  }
+
+  // ── modal save handlers ────────────────────────────────────
+  async function handleModalSave(name: string) {
+    if (!modal) return;
+    if (modal.kind === "queue") {
+      await saveQueueAsPlaylist(name);
+    } else if (modal.kind === "track") {
+      const pl = await createPlaylist(name);
+      await addTrackToPlaylist(pl.id, modal.track);
+    } else {
+      await createPlaylist(name);
+    }
+  }
+
+  // ── search + add handlers ──────────────────────────────────
+  function handleAddToQueue(track: Track) {
+    enqueue(track);
+  }
+
+  async function handleAddToPlaylist(playlistId: string, track: Track) {
+    await addTrackToPlaylist(playlistId, track);
+  }
+
+  function handleNewPlaylistForTrack(track: Track) {
+    setModal({ kind: "track", track });
+  }
+
+  // ── current-track playlist handlers ───────────────────────
+  function handleAddCurrentToQueue() {
+    if (current) enqueue(current);
+  }
+
+  async function handleAddCurrentToPlaylist(playlistId: string) {
+    if (current) await addTrackToPlaylist(playlistId, current);
+  }
+
   return (
-    <div className="flex flex-col gap-6 max-w-3xl">
-      <SearchBar onPick={pick} />
+    <>
+      <div className="cmd">
+        <PlaylistsCol
+          playlists={playlists}
+          activeId={activePlaylistId}
+          onSelect={setActivePlaylistId}
+          onLoad={handleLoadPlaylist}
+          onDelete={handleDeletePlaylist}
+          onNew={() => setModal({ kind: "new" })}
+        />
+        <SearchColV2
+          playlists={playlists}
+          onPlay={pick}
+          onAddToQueue={handleAddToQueue}
+          onAddToPlaylist={handleAddToPlaylist}
+          onNewPlaylist={handleNewPlaylistForTrack}
+        />
+        <QueueCol
+          current={current}
+          queue={queue}
+          playlists={playlists}
+          onRemoveFromQueue={removeFromQueue}
+          onSkipToQueue={skipToQueueIndex}
+          onAddCurrentToPlaylist={handleAddCurrentToPlaylist}
+          onAddCurrentToQueue={handleAddCurrentToQueue}
+          onNewPlaylistForCurrent={() => setModal({ kind: "track", track: current! })}
+          onSaveQueue={() => setModal({ kind: "queue" })}
+        />
+      </div>
 
-      {current && (
-        <>
-          <div className="flex items-start gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="t-stencil text-[10px] tracking-[.15em] opacity-60">NOW PLAYING</div>
-              <div className="text-lg truncate">{current.title}</div>
-              <div className="text-sm opacity-70 truncate">{current.channelTitle}</div>
-            </div>
-          </div>
-
-          {/* PlayerControls is secondary — the MiniPlayer bar is the primary control.
-              Kept visible on /admin/muzyka for convenience. Slice B will replace this. */}
-          <PlayerControls
-            playing={playing}
-            currentTime={currentTime}
-            duration={duration}
-            volume={volume}
-            hasNext={queue.length > 0}
-            onPlayPause={playPause}
-            onSkipBack={skipBack}
-            onSkipForward={skipForward}
-            onNext={advance}
-            onSeek={seek}
-            onVolume={setVolume}
-          />
-        </>
+      {modal && (
+        <NewPlaylistModal
+          queueMode={modal.kind === "queue"}
+          onSave={handleModalSave}
+          onClose={() => setModal(null)}
+        />
       )}
-
-      <QueueList
-        current={current}
-        queue={queue}
-        onSkipTo={skipToQueueIndex}
-        onRemove={removeFromQueue}
-      />
-    </div>
+    </>
   );
 }

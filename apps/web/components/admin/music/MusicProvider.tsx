@@ -6,7 +6,7 @@
  * (always mounted while current != null), never on the /admin/muzyka page.
  *
  * State persisted to localStorage via music-storage.ts (throttled 1s writes).
- * ~100 LOC.
+ * Playlist state (CRUD) extended in Slice B.
  */
 
 import {
@@ -18,11 +18,30 @@ import {
   useState,
 } from "react";
 import type { YouTubePlayer } from "react-youtube";
-import type { Track } from "@/lib/music";
+import type {
+  Track,
+  PlaylistSummary,
+  PlaylistDetail,
+} from "@/lib/music";
+import {
+  listPlaylists,
+  getPlaylist,
+  createPlaylist as apiCreatePlaylist,
+  renamePlaylist as apiRenamePlaylist,
+  deletePlaylist as apiDeletePlaylist,
+  addTrackToPlaylist as apiAddTrack,
+  removeTrackFromPlaylist as apiRemoveTrack,
+} from "@/lib/music";
 import { loadMusicState, saveMusicState } from "@/lib/music-storage";
 import { createLogger } from "@/lib/log";
 
 const log = createLogger("music.provider");
+
+// ──────────────────────────────────────────────
+// Re-exports for consumers
+// ──────────────────────────────────────────────
+
+export type { PlaylistSummary, PlaylistDetail } from "@/lib/music";
 
 // ──────────────────────────────────────────────
 // Types
@@ -35,6 +54,10 @@ export interface MusicState {
   currentTime: number;
   duration: number;
   volume: number;
+  playlists: PlaylistSummary[];
+  playlistDetail: Record<string, PlaylistDetail>;
+  playlistsLoading: boolean;
+  playlistsError: string | null;
 }
 
 export interface MusicActions {
@@ -49,6 +72,16 @@ export interface MusicActions {
   seek: (s: number) => void;
   setVolume: (v: number) => void;
   clear: () => void;
+  // ── playlist actions ──
+  reloadPlaylists: () => Promise<void>;
+  loadPlaylistDetail: (id: string) => Promise<PlaylistDetail>;
+  createPlaylist: (name: string) => Promise<PlaylistSummary>;
+  renamePlaylist: (id: string, name: string) => Promise<void>;
+  deletePlaylist: (id: string) => Promise<void>;
+  addTrackToPlaylist: (id: string, track: Track) => Promise<void>;
+  removeTrackFromPlaylist: (playlistId: string, trackId: string) => Promise<void>;
+  loadPlaylistToQueue: (id: string) => Promise<void>;
+  saveQueueAsPlaylist: (name: string) => Promise<PlaylistSummary>;
   /** Called by PersistentMiniPlayer to hand us the YT player ref */
   _registerPlayer: (player: YouTubePlayer) => void;
   /** Called by PersistentMiniPlayer on state change event */
@@ -65,7 +98,7 @@ export type MusicContextValue = MusicState & MusicActions;
 // Context
 // ──────────────────────────────────────────────
 
-const MusicContext = createContext<MusicContextValue | null>(null);
+export const MusicContext = createContext<MusicContextValue | null>(null);
 
 export function useMusicContext(): MusicContextValue {
   const ctx = useContext(MusicContext);
@@ -89,6 +122,12 @@ export function MusicProvider({ children }: Props) {
   const [duration, setDuration] = useState(0);
   const [volume, setVolumeState] = useState(80);
 
+  // ── playlist state ─────────────────────────────────────────
+  const [playlists, setPlaylists] = useState<PlaylistSummary[]>([]);
+  const [playlistDetail, setPlaylistDetail] = useState<Record<string, PlaylistDetail>>({});
+  const [playlistsLoading, setPlaylistsLoading] = useState(false);
+  const [playlistsError, setPlaylistsError] = useState<string | null>(null);
+
   const playerRef = useRef<YouTubePlayer | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -100,6 +139,10 @@ export function MusicProvider({ children }: Props) {
     if (saved.queue.length > 0) setQueue(saved.queue);
     if (saved.volume !== 80) setVolumeState(saved.volume);
   }, []);
+
+  // ── playlist initial load on mount ───────────────────
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { void reloadPlaylistsImpl(); }, []);
 
   // ── persist state changes to localStorage ────────────
   useEffect(() => {
@@ -135,15 +178,6 @@ export function MusicProvider({ children }: Props) {
     setDuration(0);
     setPlaying(false);
     log.info("op=music.playNow", { videoId: t.videoId });
-  }, []);
-
-  /** If nothing playing: set as current. Otherwise: append to queue. */
-  const pick = useCallback((t: Track) => {
-    setCurrent((c) => {
-      if (!c) return t;
-      setQueue((q) => [...q, t]);
-      return c;
-    });
   }, []);
 
   const advance = useCallback(() => {
@@ -201,6 +235,123 @@ export function MusicProvider({ children }: Props) {
     setPlaying(false);
   }, []);
 
+  // ── playlist actions ──────────────────────────────────
+
+  /** Defined as plain async fn so useEffect (no stale-closure risk) and the
+   *  exposed `reloadPlaylists` action can both call it. */
+  async function reloadPlaylistsImpl() {
+    setPlaylistsLoading(true);
+    setPlaylistsError(null);
+    try {
+      const data = await listPlaylists();
+      setPlaylists(data);
+      log.info("op=music.playlists.loaded count=" + data.length);
+    } catch (e) {
+      const msg = (e as Error).message ?? "network";
+      log.warn("op=music.playlists.load outcome=fail msg=" + msg);
+      setPlaylistsError(msg);
+    } finally {
+      setPlaylistsLoading(false);
+    }
+  }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const reloadPlaylists = useCallback(async () => { await reloadPlaylistsImpl(); }, []);
+
+  const loadPlaylistDetail = useCallback(async (id: string): Promise<PlaylistDetail> => {
+    const detail = await getPlaylist(id);
+    setPlaylistDetail((prev) => ({ ...prev, [id]: detail }));
+    log.info("op=music.playlist.detail.loaded id=" + id + " trackCount=" + detail.tracks.length);
+    return detail;
+  }, []);
+
+  const createPlaylist = useCallback(async (name: string): Promise<PlaylistSummary> => {
+    const pl = await apiCreatePlaylist(name);
+    setPlaylists((prev) => [pl, ...prev]);
+    log.info("op=music.playlist.created id=" + pl.id + " name=" + pl.name);
+    return pl;
+  }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const renamePlaylist = useCallback(async (id: string, name: string): Promise<void> => {
+    await apiRenamePlaylist(id, name);
+    await reloadPlaylistsImpl();
+    log.info("op=music.playlist.renamed id=" + id + " name=" + name);
+  }, []);
+
+  const deletePlaylist = useCallback(async (id: string): Promise<void> => {
+    await apiDeletePlaylist(id);
+    setPlaylists((prev) => prev.filter((p) => p.id !== id));
+    setPlaylistDetail((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    log.info("op=music.playlist.deleted id=" + id);
+  }, []);
+
+  const addTrackToPlaylist = useCallback(async (id: string, track: Track): Promise<void> => {
+    await apiAddTrack(id, track);
+    setPlaylists((prev) =>
+      prev.map((p) => p.id === id ? { ...p, trackCount: p.trackCount + 1 } : p)
+    );
+    log.info("op=music.playlist.track.added playlistId=" + id + " videoId=" + track.videoId);
+  }, []);
+
+  const removeTrackFromPlaylist = useCallback(async (playlistId: string, trackId: string): Promise<void> => {
+    await apiRemoveTrack(playlistId, trackId);
+    setPlaylists((prev) =>
+      prev.map((p) => p.id === playlistId ? { ...p, trackCount: Math.max(0, p.trackCount - 1) } : p)
+    );
+    setPlaylistDetail((prev) => {
+      const existing = prev[playlistId];
+      if (!existing) return prev;
+      return {
+        ...prev,
+        [playlistId]: {
+          ...existing,
+          tracks: existing.tracks.filter((t) => t.id !== trackId),
+        },
+      };
+    });
+    log.info("op=music.playlist.track.removed playlistId=" + playlistId + " trackId=" + trackId);
+  }, []);
+
+  const loadPlaylistToQueue = useCallback(async (id: string): Promise<void> => {
+    const detail = await getPlaylist(id);
+    setPlaylistDetail((prev) => ({ ...prev, [id]: detail }));
+    if (detail.tracks.length === 0) return;
+    const [first, ...rest] = detail.tracks;
+    if (!first) return;
+    const toTrack = (pt: {
+      videoId: string; title: string;
+      channelTitle: string; thumbnailUrl: string | null;
+    }): Track => ({
+      videoId: pt.videoId,
+      title: pt.title,
+      channelTitle: pt.channelTitle,
+      thumbnailUrl: pt.thumbnailUrl ?? "",
+    });
+    setCurrent(toTrack(first));
+    setQueue(rest.map(toTrack));
+    setCurrentTime(0);
+    setDuration(0);
+    setPlaying(false);
+    log.info("op=music.playlist.loadToQueue id=" + id + " tracks=" + detail.tracks.length);
+  }, []);
+
+  const saveQueueAsPlaylist = useCallback(async (name: string): Promise<PlaylistSummary> => {
+    const pl = await apiCreatePlaylist(name);
+    const tracks: Track[] = current ? [current, ...queue] : [...queue];
+    for (const t of tracks) {
+      await apiAddTrack(pl.id, t);
+    }
+    await reloadPlaylistsImpl();
+    log.info("op=music.playlist.saveQueue id=" + pl.id + " trackCount=" + tracks.length);
+    return pl;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current, queue]);
+
   // ── iframe bridge callbacks (used by PersistentMiniPlayer) ──
   const _registerPlayer = useCallback((player: YouTubePlayer) => {
     playerRef.current = player;
@@ -230,23 +381,30 @@ export function MusicProvider({ children }: Props) {
     currentTime,
     duration,
     volume,
+    playlists,
+    playlistDetail,
+    playlistsLoading,
+    playlistsError,
     enqueue,
     playNow,
     advance,
     removeFromQueue,
     skipToQueueIndex,
-    // pick is exposed as enqueue-or-play shorthand used by MusicClient
-    // For backwards-compat with SearchBar/MusicClient "pick" pattern:
-    // calling enqueue when current==null sets current; otherwise appends.
-    // We expose this as `enqueue` overloaded by context — but MusicClient
-    // needs the "pick" behavior. We keep `enqueue` as the pure append action
-    // and expose `playNow` for forcing. MusicClient uses its own adapter below.
     playPause,
     skipBack,
     skipForward,
     seek,
     setVolume,
     clear,
+    reloadPlaylists,
+    loadPlaylistDetail,
+    createPlaylist,
+    renamePlaylist,
+    deletePlaylist,
+    addTrackToPlaylist,
+    removeTrackFromPlaylist,
+    loadPlaylistToQueue,
+    saveQueueAsPlaylist,
     _registerPlayer,
     _onReady,
     _onStateChange,

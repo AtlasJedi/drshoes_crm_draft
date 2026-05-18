@@ -11,6 +11,7 @@ import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { MessagesNavItem } from "@/app/(admin)/admin/_components/Sidebar/MessagesNavItem";
 import { ReportIssueButton } from "@/components/admin/ReportIssueButton";
+import { MusicSidebarDot } from "@/components/admin/music/MusicSidebarDot";
 import { createLogger } from "@/lib/log";
 
 const log = createLogger("admin.sidebar.nav");
@@ -70,7 +71,10 @@ export function AdminSidebarNav({ userEmail }: Props) {
       <NavLink href="/admin/aktualnosci" label="Aktualności" />
 
       <SectionLabel>PRZERWA</SectionLabel>
-      <NavLink href="/admin/muzyka" label="Muzyka" />
+      <div className="flex items-center">
+        <NavLink href="/admin/muzyka" label="Muzyka" />
+        <MusicSidebarDot />
+      </div>
 
       <SectionLabel>KONFIGURACJA</SectionLabel>
       <NavLink href="/admin/settings/miejsca" label="Miejsca" exact />

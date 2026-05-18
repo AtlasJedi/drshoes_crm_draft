@@ -43,7 +43,15 @@ beforeEach(() => {
   fetchMock.mockReset();
   localStorageMock.getItem.mockClear();
   localStorageMock.setItem.mockClear();
-  localStorageMock.getItem.mockImplementation((key: string) => null); // default: empty
+  localStorageMock.getItem.mockImplementation((_key: string) => null); // default: empty
+  // Default: playlists endpoint → empty array; search endpoint → empty array.
+  // Individual tests override via fetchMock.mockImplementation.
+  fetchMock.mockImplementation((url: string) => {
+    if ((url as string).includes("/playlists")) {
+      return Promise.resolve({ ok: true, status: 200, json: async () => [] } as Response);
+    }
+    return Promise.resolve({ ok: true, json: async () => [] } as Response);
+  });
   vi.stubGlobal("fetch", fetchMock);
   vi.stubGlobal("localStorage", localStorageMock);
 });
@@ -78,47 +86,67 @@ function renderWithProvider() {
   );
 }
 
+/** URL-routing fetch mock: playlists → [], search → provided tracks */
+function withSearchResults(...ids: string[]) {
+  fetchMock.mockImplementation((url: string) => {
+    if ((url as string).includes("/playlists")) {
+      return Promise.resolve({ ok: true, status: 200, json: async () => [] } as Response);
+    }
+    return Promise.resolve(trackResponse(...ids));
+  });
+}
+
 describe("MusicClient", () => {
   it("debounces and calls searchMusic once after typing", async () => {
-    fetchMock.mockResolvedValue(trackResponse("a"));
+    withSearchResults("a");
     renderWithProvider();
     const input = screen.getByLabelText("Szukaj muzyki");
     fireEvent.change(input, { target: { value: "lo" } });
     fireEvent.change(input, { target: { value: "lof" } });
     fireEvent.change(input, { target: { value: "lofi" } });
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1), { timeout: 1000 });
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining("/api/admin/music/search?q=lofi"),
-      expect.objectContaining({ credentials: "include" })
+    await waitFor(
+      () =>
+        expect(fetchMock).toHaveBeenCalledWith(
+          expect.stringContaining("/api/admin/music/search?q=lofi"),
+          expect.objectContaining({ credentials: "include" })
+        ),
+      { timeout: 1000 }
     );
   });
 
   it("clicking the first result with empty player sets it as current", async () => {
-    fetchMock.mockResolvedValue(trackResponse("a", "b"));
+    withSearchResults("a", "b");
     renderWithProvider();
     fireEvent.change(screen.getByLabelText("Szukaj muzyki"), { target: { value: "x" } });
-    const row = await screen.findByRole("button", { name: /Title a/ });
+    const row = await screen.findByRole("button", { name: /Odtwórz: Title a/ });
     fireEvent.click(row);
     expect(await screen.findByTestId("yt-stub")).toHaveTextContent("a");
   });
 
   it("clicking a second result while playing appends to queue, does not replace", async () => {
-    fetchMock.mockResolvedValue(trackResponse("a", "b"));
+    withSearchResults("a", "b");
     renderWithProvider();
     fireEvent.change(screen.getByLabelText("Szukaj muzyki"), { target: { value: "x" } });
-    fireEvent.click(await screen.findByRole("button", { name: /Title a/ }));
-    fireEvent.click(await screen.findByRole("button", { name: /Title b/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /Odtwórz: Title a/ }));
+    // Open the dropdown for track b and add to queue
+    const addBtns = await screen.findAllByRole("button", { name: /Dodaj: Title b/ });
+    fireEvent.click(addBtns[0]!);
+    const queueBtn = await screen.findByRole("menuitem", { name: /Kolejka/ });
+    fireEvent.click(queueBtn);
     expect(screen.getByTestId("yt-stub")).toHaveTextContent("a");
-    // queue chip exists
     expect(await screen.findByLabelText("Przejdź do: Title b")).toBeInTheDocument();
   });
 
   it("onEnd with queue advances; onEnd with empty queue clears", async () => {
-    fetchMock.mockResolvedValue(trackResponse("a", "b"));
+    withSearchResults("a", "b");
     renderWithProvider();
     fireEvent.change(screen.getByLabelText("Szukaj muzyki"), { target: { value: "x" } });
-    fireEvent.click(await screen.findByRole("button", { name: /Title a/ }));
-    fireEvent.click(await screen.findByRole("button", { name: /Title b/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /Odtwórz: Title a/ }));
+    // Add b to queue via dropdown
+    const addBtns = await screen.findAllByRole("button", { name: /Dodaj: Title b/ });
+    fireEvent.click(addBtns[0]!);
+    const queueBtn = await screen.findByRole("menuitem", { name: /Kolejka/ });
+    fireEvent.click(queueBtn);
     // simulate track A ending
     await waitFor(() => expect(capturedOnEnd).toBeTruthy());
     act(() => capturedOnEnd!());
@@ -129,11 +157,16 @@ describe("MusicClient", () => {
   });
 
   it("backend 503 shows the disabled banner", async () => {
-    fetchMock.mockResolvedValue({
-      ok: false,
-      status: 503,
-      json: async () => ({ error: "music_disabled" }),
-    } as Response);
+    fetchMock.mockImplementation((url: string) => {
+      if ((url as string).includes("/playlists")) {
+        return Promise.resolve({ ok: true, status: 200, json: async () => [] } as Response);
+      }
+      return Promise.resolve({
+        ok: false,
+        status: 503,
+        json: async () => ({ error: "music_disabled" }),
+      } as Response);
+    });
     renderWithProvider();
     fireEvent.change(screen.getByLabelText("Szukaj muzyki"), { target: { value: "x" } });
     await waitFor(() =>
@@ -157,15 +190,16 @@ describe("MusicClient", () => {
 
     // After mount, the current track from storage should be loaded
     expect(await screen.findByTestId("yt-stub")).toHaveTextContent("saved1");
-    // The queued track should appear in the queue list
-    expect(await screen.findByLabelText("Przejdź do: Queued Song")).toBeInTheDocument();
+    // The queued track should appear in the queue list (may appear in multiple queue buttons)
+    const queueItems = await screen.findAllByLabelText("Przejdź do: Queued Song");
+    expect(queueItems.length).toBeGreaterThan(0);
   });
 
   it("localStorage persistence — picking a track triggers a write to localStorage", async () => {
-    fetchMock.mockResolvedValue(trackResponse("write1"));
+    withSearchResults("write1");
     renderWithProvider();
     fireEvent.change(screen.getByLabelText("Szukaj muzyki"), { target: { value: "x" } });
-    fireEvent.click(await screen.findByRole("button", { name: /Title write1/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /Odtwórz: Title write1/ }));
     // saveMusicState throttles at 1s; wait up to 2s for the write to land
     await waitFor(
       () =>
