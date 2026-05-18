@@ -5,6 +5,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { BrowserOtelInit } from "@/components/admin/BrowserOtelInit";
 import { PageHeaderProvider } from "@/app/(admin)/admin/_components/PageHeaderContext";
+import { AdminMusicShell } from "@/app/(admin)/admin/_components/AdminMusicShell";
 import { createLogger } from "@/lib/log";
 
 const log = createLogger("admin-layout");
@@ -34,16 +35,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <PageHeaderProvider>
-      <div className="h-screen bg-admin-bg text-admin-ink flex overflow-hidden">
-        <BrowserOtelInit />
-        <AdminSidebar me={me} />
-        <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <AdminMusicShell>
+        <div className="adm-side">
+          <BrowserOtelInit />
+          <AdminSidebar me={me} />
+        </div>
+        <div className="adm-main">
           <AdminTopbar />
           <div className={isMessagesRoute ? "flex-1 min-h-0 overflow-hidden" : "flex-1 min-h-0 overflow-hidden p-6"}>
             {children}
           </div>
-        </main>
-      </div>
+        </div>
+      </AdminMusicShell>
     </PageHeaderProvider>
   );
 }

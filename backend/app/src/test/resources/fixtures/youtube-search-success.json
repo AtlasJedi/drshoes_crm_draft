@@ -1,0 +1,30 @@
+{
+  "kind": "youtube#searchListResponse",
+  "items": [
+    {
+      "id": { "kind": "youtube#video", "videoId": "n61ULEU7CO0" },
+      "snippet": {
+        "title": "Best of lofi hip hop 2021",
+        "channelTitle": "Lofi Girl",
+        "thumbnails": {
+          "default": { "url": "https://i.ytimg.com/vi/n61ULEU7CO0/default.jpg" },
+          "medium":  { "url": "https://i.ytimg.com/vi/n61ULEU7CO0/mqdefault.jpg" }
+        }
+      }
+    },
+    {
+      "id": { "kind": "youtube#video", "videoId": "jfKfPfyJRdk" },
+      "snippet": {
+        "title": "lofi hip hop radio",
+        "channelTitle": "Lofi Girl",
+        "thumbnails": {
+          "default": { "url": "https://i.ytimg.com/vi/jfKfPfyJRdk/default.jpg" }
+        }
+      }
+    },
+    {
+      "id": { "kind": "youtube#channel", "channelId": "UCSJ4gkVC6NrvII8umztf0Ow" },
+      "snippet": { "title": "Lofi Girl Channel", "channelTitle": "Lofi Girl" }
+    }
+  ]
+}
