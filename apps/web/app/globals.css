@@ -477,3 +477,227 @@ body { margin: 0; }
 .status-btn.s-anuluj::before {
   background: repeating-linear-gradient(45deg, var(--red) 0 8px, #b9241d 8px 16px);
 }
+
+/* ============================================================
+   Admin shell — CSS grid layout with named areas.
+   Sourced from design/handoff/muzyka-redesign/styles.css.
+   Replaces the old flexbox admin shell from pre-music-v2.
+   ============================================================ */
+
+:root {
+  --side-w: 230px;
+  --topbar-h: 76px;
+  --mini-h: 64px;
+}
+
+.adm-shell {
+  display: grid;
+  grid-template-columns: var(--side-w) 1fr;
+  grid-template-rows: 1fr var(--mini-h);
+  grid-template-areas:
+    "side main"
+    "mini mini";
+  height: 100vh;
+  overflow: hidden;
+  background: var(--admin-bg, #f7f5ef);
+  color: var(--admin-ink, #1a1a1c);
+}
+.adm-shell.no-mini {
+  grid-template-rows: 1fr 0;
+}
+.adm-shell.no-mini .mini {
+  display: none;
+}
+
+.adm-side {
+  grid-area: side;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.adm-main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Mini-player bar — bottom full-width strip.
+   Sourced verbatim from design/handoff/muzyka-redesign/styles.css (.mini* rules).
+   ============================================================ */
+
+.mini {
+  grid-area: mini;
+  display: grid;
+  grid-template-columns: var(--side-w) 1fr;
+  background: var(--ink);
+  color: var(--paper);
+  border-top: 3px solid var(--acid);
+  position: relative;
+  z-index: 5;
+}
+.mini::before {
+  content: "TERAZ GRA";
+  position: absolute;
+  top: -3px; left: 18px;
+  background: var(--acid); color: var(--ink);
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: .18em; padding: 2px 8px 3px;
+  transform: translateY(-100%);
+  border: 1.5px solid var(--ink); border-bottom: 0;
+}
+.mini-l {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+  border-right: 1px solid rgba(255,255,255,.08);
+  min-width: 0;
+}
+.mini-thumb {
+  width: 44px; height: 34px;
+  background: linear-gradient(135deg, #4a3a2e 0%, #1a1410 100%);
+  border: 1.5px solid var(--acid);
+  flex-shrink: 0;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 8px;
+  color: rgba(216,255,58,.6);
+  letter-spacing: .1em;
+}
+.mini-thumb::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 70% 30%, rgba(216,255,58,.35), transparent 50%);
+}
+.mini-meta { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.mini-title {
+  font-family: var(--font-body); font-weight: 600; font-size: 13px;
+  color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mini-ch {
+  font-family: var(--font-mono); font-size: 10px;
+  color: rgba(255,255,255,.5); letter-spacing: .04em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mini-r {
+  display: flex; align-items: center; gap: 0;
+  padding: 0 16px;
+  min-width: 0;
+}
+.mini-ctl { display: flex; align-items: center; gap: 6px; padding-right: 14px; border-right: 1px solid rgba(255,255,255,.08); }
+.mini-btn {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--paper);
+  border: 1.5px solid rgba(255,255,255,.18);
+  cursor: pointer;
+}
+.mini-btn:hover { border-color: var(--paper); background: rgba(255,255,255,.05); }
+.mini-btn.disabled { opacity: .3; cursor: not-allowed; }
+.mini-btn.play {
+  background: var(--acid); color: var(--ink); border-color: var(--acid);
+  width: 42px; height: 42px;
+}
+.mini-btn.play:hover { background: #fff; border-color: #fff; }
+
+.mini-prog {
+  flex: 1; min-width: 0;
+  padding: 0 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.mini-prog .time {
+  font-family: var(--font-mono); font-size: 10px;
+  color: rgba(255,255,255,.6); letter-spacing: .04em;
+  white-space: nowrap;
+}
+.mini-prog .bar {
+  flex: 1;
+  height: 2px; background: rgba(255,255,255,.14);
+  position: relative;
+  cursor: pointer;
+}
+.mini-prog .bar:hover { height: 4px; }
+.mini-prog .bar .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--acid);
+}
+.mini-prog .bar .fill::after {
+  content: ""; position: absolute; right: -4px; top: 50%;
+  width: 8px; height: 8px; background: var(--acid);
+  border-radius: 50%; transform: translateY(-50%);
+  opacity: 0; transition: opacity .12s;
+}
+.mini-prog .bar:hover .fill::after { opacity: 1; }
+
+.mini-vol {
+  position: relative;
+  padding: 0 14px;
+  border-left: 1px solid rgba(255,255,255,.08);
+  display: flex; align-items: center; height: 100%;
+}
+.mini-vol .ico-btn {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.7); cursor: pointer;
+  background: transparent; border: 0;
+}
+.mini-vol .ico-btn:hover { color: var(--paper); }
+.mini-vol .popout {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 8px;
+  background: var(--ink); color: var(--paper);
+  border: 1.5px solid var(--acid);
+  box-shadow: 3px 3px 0 rgba(216,255,58,.4);
+  padding: 12px 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  width: 44px;
+}
+.mini-vol .popout .vbar {
+  width: 4px; height: 90px;
+  background: rgba(255,255,255,.14);
+  position: relative;
+}
+.mini-vol .popout .vbar .vfill {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: var(--acid);
+}
+.mini-vol .popout .vbar .vfill::before {
+  content: ""; position: absolute;
+  top: -4px; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 4px; background: var(--acid);
+}
+.mini-vol .popout .vlabel {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: .1em; color: rgba(255,255,255,.7);
+}
+
+.mini-open {
+  margin-left: 4px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: var(--acid); color: var(--ink);
+  border: 1.5px solid var(--acid);
+  font-family: var(--font-stencil); font-weight: 800; font-size: 11px;
+  letter-spacing: .08em; text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.mini-open:hover { background: #fff; }
+.mini-open .arr { width: 12px; height: 12px; }
+
+/* now-playing dot in sidebar for Muzyka link */
+.now-dot {
+  margin-left: auto;
+  width: 6px; height: 6px;
+  background: var(--acid); border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(216,255,58,.25);
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
