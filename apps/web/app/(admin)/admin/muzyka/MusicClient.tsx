@@ -51,7 +51,7 @@ export function MusicClient() {
         return q;
       }
       const [next, ...rest] = q;
-      setCurrent(next);
+      setCurrent(next ?? null);
       return rest;
     });
   }, []);
@@ -136,7 +136,7 @@ export function MusicClient() {
         queue={queue}
         onSkipTo={(i) => {
           setQueue((q) => {
-            const next = q[i];
+            const next = q[i] ?? null;
             const before = q.slice(0, i);
             const after = q.slice(i + 1);
             // current track goes back to head of queue? No — we drop it (simplest).

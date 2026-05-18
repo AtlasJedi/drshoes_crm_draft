@@ -69,6 +69,9 @@ export function AdminSidebarNav({ userEmail }: Props) {
       <NavLink href="/admin/sklep" label="Sklep" />
       <NavLink href="/admin/aktualnosci" label="Aktualności" />
 
+      <SectionLabel>PRZERWA</SectionLabel>
+      <NavLink href="/admin/muzyka" label="Muzyka" />
+
       <SectionLabel>KONFIGURACJA</SectionLabel>
       <NavLink href="/admin/settings/miejsca" label="Miejsca" exact />
 
