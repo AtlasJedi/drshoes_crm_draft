@@ -84,12 +84,10 @@ public final class OrderSpecifications {
             if (clientId != null)
                 preds.add(cb.equal(root.get("clientId"), clientId));
             if (Boolean.TRUE.equals(urgent)) {
-                Instant cutoff = Instant.now().minusSeconds(14L * 86400L);
+                Instant cutoff = Instant.now().minusSeconds(4L * 86400L);
                 preds.add(cb.isNotNull(root.get("receivedAt")));
                 preds.add(cb.lessThanOrEqualTo(root.get("receivedAt"), cutoff));
-                preds.add(root.get("status").in(
-                    OrderStatus.PRZYJETE, OrderStatus.W_REALIZACJI,
-                    OrderStatus.CZEKA_NA_KLIENTA, OrderStatus.GOTOWE_DO_ODBIORU));
+                preds.add(cb.equal(root.get("status"), OrderStatus.PRZYJETE));
             }
             return cb.and(preds.toArray(new Predicate[0]));
         };

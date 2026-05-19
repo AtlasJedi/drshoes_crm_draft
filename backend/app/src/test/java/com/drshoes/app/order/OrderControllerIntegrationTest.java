@@ -515,15 +515,21 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
     @Test
     void listOrders_urgentTrue_returnsOnlyUrgent() throws Exception {
         loginAsOwner();
-        UUID urgentId    = insertOrder(java.time.Instant.now().minusSeconds(20L * 86400L), "W_REALIZACJI");
-        UUID freshId     = insertOrder(java.time.Instant.now().minusSeconds(2L * 86400L),  "PRZYJETE");
-        UUID deliveredId = insertOrder(java.time.Instant.now().minusSeconds(100L * 86400L), "WYDANE");
+        // Urgent: PRZYJETE + 5 days old (>= 4d threshold)
+        UUID urgentId       = insertOrder(java.time.Instant.now().minusSeconds(5L * 86400L),   "PRZYJETE");
+        // Not urgent: PRZYJETE but only 2 days old (< 4d threshold)
+        UUID freshId        = insertOrder(java.time.Instant.now().minusSeconds(2L * 86400L),   "PRZYJETE");
+        // Not urgent: WYDANE regardless of age
+        UUID deliveredId    = insertOrder(java.time.Instant.now().minusSeconds(100L * 86400L), "WYDANE");
+        // Regression: W_REALIZACJI + 30 days old → not urgent (status != PRZYJETE)
+        UUID inProgressId   = insertOrder(java.time.Instant.now().minusSeconds(30L * 86400L),  "W_REALIZACJI");
 
         mockMvc().perform(get("/api/admin/orders").param("urgent", "true"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content[?(@.id == '" + urgentId    + "')]").exists())
-            .andExpect(jsonPath("$.content[?(@.id == '" + freshId     + "')]").doesNotExist())
-            .andExpect(jsonPath("$.content[?(@.id == '" + deliveredId + "')]").doesNotExist());
+            .andExpect(jsonPath("$.content[?(@.id == '" + urgentId     + "')]").exists())
+            .andExpect(jsonPath("$.content[?(@.id == '" + freshId      + "')]").doesNotExist())
+            .andExpect(jsonPath("$.content[?(@.id == '" + deliveredId  + "')]").doesNotExist())
+            .andExpect(jsonPath("$.content[?(@.id == '" + inProgressId + "')]").doesNotExist());
     }
 
     // -------------------------------------------------------------------------
