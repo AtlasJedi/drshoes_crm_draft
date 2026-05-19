@@ -63,69 +63,80 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     long sumTotalPricePickedUpBetween(@Param("from") Instant from, @Param("to") Instant to);
 
     /**
-     * Returns order counts per ISO week for the last N weeks ending with (and including) weekStart.
-     * weekStart is the Monday of the most-recent week (UTC midnight).
-     * Returns rows: [week_iso TEXT, repairs BIGINT, custom_ BIGINT].
-     * An order is "repair" if ANY of its items has kind='NAPRAWA'; else "custom".
-     * Weeks with no orders are NOT returned — caller must zero-fill the 8-slot window.
+     * Returns order counts per ISO week, classified by each order's PRIMARY item kind
+     * (first item by position ASC, id ASC as tiebreak). Orders with no items are excluded.
+     * Returns rows: [period_label TEXT "IYYY-\"W\"IW", primary_kind TEXT, order_count BIGINT].
+     * Periods with no orders are NOT returned — caller zero-fills all 5 kind buckets per slot.
      */
     @Query(value = """
+        WITH first_kind AS (
+          SELECT DISTINCT ON (oi.order_id)
+            oi.order_id,
+            oi.kind
+          FROM order_item oi
+          ORDER BY oi.order_id, oi.position ASC, oi.id ASC
+        )
         SELECT
-            TO_CHAR(DATE_TRUNC('week', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'IYYY-"W"IW') AS week_iso,
-            COUNT(*) FILTER (WHERE EXISTS (
-                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
-            )) AS repairs,
-            COUNT(*) FILTER (WHERE NOT EXISTS (
-                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
-            )) AS custom_
+          TO_CHAR(DATE_TRUNC('week', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'IYYY-"W"IW') AS period_label,
+          fk.kind AS primary_kind,
+          COUNT(*) AS order_count
         FROM order_ o
+        JOIN first_kind fk ON fk.order_id = o.id
         WHERE o.deleted_at IS NULL
           AND o.received_at >= :windowStart
-        GROUP BY week_iso
-        ORDER BY week_iso
+        GROUP BY period_label, fk.kind
+        ORDER BY period_label, fk.kind
         """, nativeQuery = true)
     List<Object[]> countPerIsoWeek(@Param("windowStart") Instant windowStart);
 
     /**
-     * Groups orders by calendar month (Warsaw tz) for last N months.
-     * Returns rows: [period_label TEXT "YYYY-MM", repairs BIGINT, custom_ BIGINT].
+     * Groups orders by calendar month (Warsaw tz), classified by primary item kind.
+     * Returns rows: [period_label TEXT "YYYY-MM", primary_kind TEXT, order_count BIGINT].
      */
     @Query(value = """
+        WITH first_kind AS (
+          SELECT DISTINCT ON (oi.order_id)
+            oi.order_id,
+            oi.kind
+          FROM order_item oi
+          ORDER BY oi.order_id, oi.position ASC, oi.id ASC
+        )
         SELECT
-            TO_CHAR(DATE_TRUNC('month', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'YYYY-MM') AS period_label,
-            COUNT(*) FILTER (WHERE EXISTS (
-                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
-            )) AS repairs,
-            COUNT(*) FILTER (WHERE NOT EXISTS (
-                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
-            )) AS custom_
+          TO_CHAR(DATE_TRUNC('month', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'YYYY-MM') AS period_label,
+          fk.kind AS primary_kind,
+          COUNT(*) AS order_count
         FROM order_ o
+        JOIN first_kind fk ON fk.order_id = o.id
         WHERE o.deleted_at IS NULL
           AND o.received_at >= :windowStart
-        GROUP BY period_label
-        ORDER BY period_label
+        GROUP BY period_label, fk.kind
+        ORDER BY period_label, fk.kind
         """, nativeQuery = true)
     List<Object[]> countPerIsoMonth(@Param("windowStart") Instant windowStart);
 
     /**
-     * Groups orders by calendar quarter (Warsaw tz) for last N quarters.
-     * Returns rows: [period_label TEXT "YYYY-Q{1..4}", repairs BIGINT, custom_ BIGINT].
+     * Groups orders by calendar quarter (Warsaw tz), classified by primary item kind.
+     * Returns rows: [period_label TEXT "YYYY-Q{1..4}", primary_kind TEXT, order_count BIGINT].
      */
     @Query(value = """
+        WITH first_kind AS (
+          SELECT DISTINCT ON (oi.order_id)
+            oi.order_id,
+            oi.kind
+          FROM order_item oi
+          ORDER BY oi.order_id, oi.position ASC, oi.id ASC
+        )
         SELECT
-            TO_CHAR(DATE_TRUNC('quarter', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'YYYY')
-              || '-Q' || EXTRACT(QUARTER FROM (o.received_at AT TIME ZONE 'Europe/Warsaw'))::int AS period_label,
-            COUNT(*) FILTER (WHERE EXISTS (
-                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
-            )) AS repairs,
-            COUNT(*) FILTER (WHERE NOT EXISTS (
-                SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA'
-            )) AS custom_
+          TO_CHAR(DATE_TRUNC('quarter', o.received_at AT TIME ZONE 'Europe/Warsaw'), 'YYYY')
+            || '-Q' || EXTRACT(QUARTER FROM (o.received_at AT TIME ZONE 'Europe/Warsaw'))::int AS period_label,
+          fk.kind AS primary_kind,
+          COUNT(*) AS order_count
         FROM order_ o
+        JOIN first_kind fk ON fk.order_id = o.id
         WHERE o.deleted_at IS NULL
           AND o.received_at >= :windowStart
-        GROUP BY period_label
-        ORDER BY period_label
+        GROUP BY period_label, fk.kind
+        ORDER BY period_label, fk.kind
         """, nativeQuery = true)
     List<Object[]> countPerIsoQuarter(@Param("windowStart") Instant windowStart);
 

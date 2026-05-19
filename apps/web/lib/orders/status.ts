@@ -64,3 +64,28 @@ export const KIND_LABELS_PL: Record<OrderItemKind, string> = {
   SZEWC:       "Szewc",
   CUSTOM:      "Custom",
 };
+
+/**
+ * Canonical CSS-variable colors per OrderItemKind.
+ * Record<OrderItemKind, string> ensures TypeScript flags any missing kind when the enum grows.
+ * Promoted from MixDonut.tsx to be shared with OrdersWeekChart.tsx.
+ */
+export const KIND_COLORS: Record<OrderItemKind, string> = {
+  CZYSZCZENIE: "var(--acid)",
+  RENOWACJA:   "var(--blue)",
+  NAPRAWA:     "var(--orange)",
+  SZEWC:       "var(--green)",
+  CUSTOM:      "var(--pink)",
+};
+
+/**
+ * Canonical iteration order matching enum declaration order.
+ * Iterate this — never hardcode a list of kind strings in a component.
+ */
+export const KIND_ORDER: readonly OrderItemKind[] = [
+  "CZYSZCZENIE",
+  "RENOWACJA",
+  "NAPRAWA",
+  "SZEWC",
+  "CUSTOM",
+];

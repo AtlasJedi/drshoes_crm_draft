@@ -78,8 +78,14 @@ describe("getDashboardChartsServer", () => {
   it("returns parsed DashboardChartsDto on 200", async () => {
     const payload = {
       ordersPerWeek: [
-        { weekIso: "2026-W10", repairs: 12, custom: 8 },
-        { weekIso: "2026-W11", repairs: 14, custom: 6 },
+        {
+          weekIso: "2026-W10",
+          byKind: { CZYSZCZENIE: 12, RENOWACJA: 0, NAPRAWA: 8, SZEWC: 0, CUSTOM: 0 },
+        },
+        {
+          weekIso: "2026-W11",
+          byKind: { CZYSZCZENIE: 0, RENOWACJA: 3, NAPRAWA: 14, SZEWC: 2, CUSTOM: 6 },
+        },
       ],
       mixByType: [
         { kind: "CZYSZCZENIE", count: 19, percent: 55 },
@@ -93,6 +99,8 @@ describe("getDashboardChartsServer", () => {
 
     expect(result.ordersPerWeek).toHaveLength(2);
     expect(result.ordersPerWeek[0]!.weekIso).toBe("2026-W10");
+    expect(result.ordersPerWeek[0]!.byKind["CZYSZCZENIE"]).toBe(12);
+    expect(result.ordersPerWeek[1]!.byKind["NAPRAWA"]).toBe(14);
     expect(result.mixByType[0]!.kind).toBe("CZYSZCZENIE");
   });
 

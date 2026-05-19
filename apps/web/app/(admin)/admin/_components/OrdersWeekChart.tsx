@@ -2,11 +2,14 @@
  * Stacked bar chart — orders by period (week/month/quarter).
  * Chip row (tydzień/miesiąc/kwartał) triggers full-page server re-render via URL param.
  * Server component — chips are Next.js <Link> elements.
- * ~80 LOC.
+ *
+ * Bars and legend are driven entirely by KIND_ORDER from lib/orders/status.ts.
+ * Adding a new OrderItemKind requires zero changes here.
  */
 import Link from "next/link";
 import { Chip } from "@drshoes/ui";
 import type { OrdersPerWeekRowDto } from "@/lib/dashboard/types";
+import { KIND_COLORS, KIND_LABELS_PL, KIND_ORDER } from "@/lib/orders/status";
 
 interface Props {
   rows: OrdersPerWeekRowDto[];
@@ -54,13 +57,27 @@ export function OrdersWeekChart({ rows, period = "WEEK" }: Props) {
         </g>
         {rows.map((row, i) => {
           const x = 30 + i * 86;
-          const repairTop = BAR_BOTTOM - row.repairs * SCALE;
-          const customTop = repairTop - row.custom * SCALE;
           const label = row.weekIso.replace(/^\d{4}-/, "");
+          // Stack rects bottom-up in KIND_ORDER. cumY tracks the top of the next segment.
+          let cumY = BAR_BOTTOM;
+          const rects = KIND_ORDER.map((kind) => {
+            const count = row.byKind[kind] ?? 0;
+            const h = count * SCALE;
+            const y = cumY - h;
+            cumY = y;
+            if (h === 0) return null;
+            return (
+              <rect
+                key={kind}
+                x={x} y={y}
+                width="40" height={h}
+                fill={KIND_COLORS[kind]}
+              />
+            );
+          });
           return (
             <g key={row.weekIso}>
-              <rect x={x} y={repairTop} width="40" height={BAR_BOTTOM - repairTop} fill="var(--ink)" />
-              <rect x={x} y={customTop} width="40" height={repairTop - customTop} fill="var(--acid)" stroke="var(--ink)" />
+              {rects}
               <text x={x + 20} y="210" textAnchor="middle" fontSize="10"
                 fontFamily="JetBrains Mono" fill="rgba(0,0,0,0.5)">{label}</text>
             </g>
@@ -68,13 +85,17 @@ export function OrdersWeekChart({ rows, period = "WEEK" }: Props) {
         })}
       </svg>
 
-      <div className="flex gap-4 mt-2">
-        <span className="t-mono text-[11px] inline-flex items-center gap-1.5">
-          <span className="inline-block w-2.5 h-2.5 bg-[var(--ink)]" /> naprawy
-        </span>
-        <span className="t-mono text-[11px] inline-flex items-center gap-1.5">
-          <span className="inline-block w-2.5 h-2.5 bg-[var(--acid)] border border-[var(--ink)]" /> custom
-        </span>
+      {/* Legend — driven by KIND_ORDER; adding a kind updates this automatically */}
+      <div className="flex flex-wrap gap-4 mt-2">
+        {KIND_ORDER.map((kind) => (
+          <span key={kind} className="t-mono text-[11px] inline-flex items-center gap-1.5">
+            <span
+              className="inline-block w-2.5 h-2.5"
+              style={{ background: KIND_COLORS[kind] }}
+            />
+            {KIND_LABELS_PL[kind]}
+          </span>
+        ))}
       </div>
     </div>
   );

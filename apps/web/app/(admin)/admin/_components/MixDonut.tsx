@@ -6,15 +6,7 @@
  * ~75 LOC.
  */
 import type { MixByTypeRowDto } from "@/lib/dashboard/types";
-import { KIND_LABELS_PL } from "@/lib/orders/status";
-
-const KIND_COLORS: Record<string, string> = {
-  CZYSZCZENIE: "var(--acid)",
-  RENOWACJA:   "var(--blue)",
-  NAPRAWA:     "var(--orange)",
-  SZEWC:       "var(--green)",
-  CUSTOM:      "var(--pink)",
-};
+import { KIND_COLORS, KIND_LABELS_PL } from "@/lib/orders/status";
 
 const CIRC = 490;
 const R = 78;

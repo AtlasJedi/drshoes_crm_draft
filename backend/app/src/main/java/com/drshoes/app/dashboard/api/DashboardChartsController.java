@@ -3,6 +3,7 @@ package com.drshoes.app.dashboard.api;
 import com.drshoes.app.dashboard.dto.DashboardChartsDto;
 import com.drshoes.app.dashboard.dto.DashboardChartsDto.MixByTypeRowDto;
 import com.drshoes.app.dashboard.dto.DashboardChartsDto.OrdersPerWeekRowDto;
+import com.drshoes.app.order.domain.OrderItemKind;
 import com.drshoes.app.order.domain.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class DashboardChartsController {
                         .atStartOfDay(WARSAW);
                 List<String> monthLabels = buildMonthLabels(monthWindowStart, 6);
                 List<Object[]> rawMonths = orderRepo.countPerIsoMonth(monthWindowStart.toInstant());
-                Map<String, long[]> monthMap = buildPeriodMap(rawMonths);
+                Map<String, Map<String, Long>> monthMap = buildPeriodMap(rawMonths);
                 ordersPerWeek = fillPeriods(monthLabels, monthMap);
             }
             case "QUARTER" -> {
@@ -62,27 +63,26 @@ public class DashboardChartsController {
                         .atStartOfDay(WARSAW);
                 List<String> quarterLabels = buildQuarterLabels(quarterWindowStart, 4);
                 List<Object[]> rawQuarters = orderRepo.countPerIsoQuarter(quarterWindowStart.toInstant());
-                Map<String, long[]> quarterMap = buildPeriodMap(rawQuarters);
+                Map<String, Map<String, Long>> quarterMap = buildPeriodMap(rawQuarters);
                 ordersPerWeek = fillPeriods(quarterLabels, quarterMap);
             }
             default -> {
-                // WEEK — existing logic
+                // WEEK
                 ZonedDateTime weekWindowStart = nowWarsaw.toLocalDate()
                         .with(DayOfWeek.MONDAY)
                         .minusWeeks(7)
                         .atStartOfDay(WARSAW);
                 List<String> weekLabels = buildWeekLabels(weekWindowStart, 8);
                 List<Object[]> rawWeeks = orderRepo.countPerIsoWeek(weekWindowStart.toInstant());
-                Map<String, long[]> weekMap = buildPeriodMap(rawWeeks);
+                Map<String, Map<String, Long>> weekMap = buildPeriodMap(rawWeeks);
                 ordersPerWeek = fillPeriods(weekLabels, weekMap);
             }
         }
 
-        // Mix donut — 5 kinds (V033). Zero-fill so all 5 buckets always appear.
-        List<String> KIND_ORDER = List.of("CZYSZCZENIE", "RENOWACJA", "NAPRAWA", "SZEWC", "CUSTOM");
+        // Mix donut — derived from enum; adding a new OrderItemKind auto-extends this.
         List<Object[]> rawMix = orderRepo.countByItemKind();
-        Map<String, Long> kindCounts = new LinkedHashMap<>();
-        for (String k : KIND_ORDER) kindCounts.put(k, 0L);
+        Map<String, Long> kindCounts = zeroFilledKindMap();
+        // zeroFilledKindMap() already inserts all 5 kinds at 0; just overwrite with real counts below.
         for (Object[] row : rawMix) {
             String kind = (String) row[0];
             long count  = ((Number) row[1]).longValue();
@@ -102,22 +102,35 @@ public class DashboardChartsController {
         return new DashboardChartsDto(ordersPerWeek, mixByType);
     }
 
-    private static Map<String, long[]> buildPeriodMap(List<Object[]> rows) {
-        Map<String, long[]> map = new LinkedHashMap<>();
+    /**
+     * Accumulates raw query rows (period_label, primary_kind, order_count) into a map
+     * keyed by period label, value = map of kind → count (all 5 kinds, zero-filled).
+     * Derived entirely from OrderItemKind.values() — no hardcoded kind names.
+     */
+    private static Map<String, Map<String, Long>> buildPeriodMap(List<Object[]> rows) {
+        Map<String, Map<String, Long>> map = new LinkedHashMap<>();
         for (Object[] row : rows) {
             String label = (String) row[0];
-            long repairs = ((Number) row[1]).longValue();
-            long custom  = ((Number) row[2]).longValue();
-            map.put(label, new long[]{repairs, custom});
+            String kind  = (String) row[1];
+            long count   = ((Number) row[2]).longValue();
+            map.computeIfAbsent(label, k -> zeroFilledKindMap()).put(kind, count);
         }
         return map;
     }
 
-    private static List<OrdersPerWeekRowDto> fillPeriods(List<String> labels, Map<String, long[]> map) {
+    /** Builds a LinkedHashMap with all OrderItemKind names preset to 0, in enum declaration order. */
+    private static Map<String, Long> zeroFilledKindMap() {
+        Map<String, Long> m = new LinkedHashMap<>();
+        for (OrderItemKind k : OrderItemKind.values()) m.put(k.name(), 0L);
+        return m;
+    }
+
+    private static List<OrdersPerWeekRowDto> fillPeriods(List<String> labels,
+                                                          Map<String, Map<String, Long>> map) {
         List<OrdersPerWeekRowDto> result = new ArrayList<>();
         for (String label : labels) {
-            long[] counts = map.getOrDefault(label, new long[]{0L, 0L});
-            result.add(new OrdersPerWeekRowDto(label, counts[0], counts[1]));
+            Map<String, Long> byKind = map.getOrDefault(label, zeroFilledKindMap());
+            result.add(new OrdersPerWeekRowDto(label, byKind));
         }
         return result;
     }

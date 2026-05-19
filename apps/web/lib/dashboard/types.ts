@@ -24,10 +24,10 @@ export interface DashboardKpiDto {
 
 /** One row in the orders-per-week stacked bar. Mirrors DashboardChartsDto.OrdersPerWeekRowDto */
 export interface OrdersPerWeekRowDto {
-  /** ISO week string, e.g. "2026-W11". */
+  /** ISO week/month/quarter label, e.g. "2026-W11", "2026-05", "2026-Q2". */
   weekIso: string;
-  repairs: number;
-  custom: number;
+  /** Per-kind order counts. All 5 OrderItemKind keys always present (zero-filled by backend). */
+  byKind: Record<import("@/lib/orders/types").OrderItemKind, number>;
 }
 
 /** One slice in the mix donut. Mirrors DashboardChartsDto.MixByTypeRowDto */

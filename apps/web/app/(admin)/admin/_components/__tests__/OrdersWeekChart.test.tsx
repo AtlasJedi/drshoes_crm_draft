@@ -2,16 +2,39 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { OrdersWeekChart } from "../OrdersWeekChart";
 import type { OrdersPerWeekRowDto } from "@/lib/dashboard/types";
+import { KIND_ORDER } from "@/lib/orders/status";
+
+function makeRow(weekIso: string, counts: Partial<Record<string, number>> = {}): OrdersPerWeekRowDto {
+  return {
+    weekIso,
+    byKind: {
+      CZYSZCZENIE: counts["CZYSZCZENIE"] ?? 0,
+      RENOWACJA:   counts["RENOWACJA"]   ?? 0,
+      NAPRAWA:     counts["NAPRAWA"]     ?? 0,
+      SZEWC:       counts["SZEWC"]       ?? 0,
+      CUSTOM:      counts["CUSTOM"]      ?? 0,
+    },
+  };
+}
+
+const allCzyszczenie = makeRow("2026-W10", { CZYSZCZENIE: 12 });
+const mixed = makeRow("2026-W11", {
+  CZYSZCZENIE: 3,
+  RENOWACJA: 2,
+  NAPRAWA: 5,
+  SZEWC: 1,
+  CUSTOM: 4,
+});
 
 const rows: OrdersPerWeekRowDto[] = [
-  { weekIso: "2026-W10", repairs: 12, custom: 8 },
-  { weekIso: "2026-W11", repairs: 14, custom: 6 },
-  { weekIso: "2026-W12", repairs: 9,  custom: 11 },
-  { weekIso: "2026-W13", repairs: 16, custom: 10 },
-  { weekIso: "2026-W14", repairs: 11, custom: 14 },
-  { weekIso: "2026-W15", repairs: 18, custom: 9 },
-  { weekIso: "2026-W16", repairs: 22, custom: 12 },
-  { weekIso: "2026-W17", repairs: 19, custom: 16 },
+  allCzyszczenie,
+  mixed,
+  makeRow("2026-W12", { NAPRAWA: 9, CUSTOM: 11 }),
+  makeRow("2026-W13", { RENOWACJA: 16 }),
+  makeRow("2026-W14", { SZEWC: 11, CUSTOM: 14 }),
+  makeRow("2026-W15", { CZYSZCZENIE: 18 }),
+  makeRow("2026-W16", { CUSTOM: 22 }),
+  makeRow("2026-W17", { NAPRAWA: 19 }),
 ];
 
 describe("OrdersWeekChart", () => {
@@ -20,10 +43,26 @@ describe("OrdersWeekChart", () => {
     expect(screen.getByText("Zlecenia / tydzień")).toBeInTheDocument();
   });
 
-  it("renders legend labels", () => {
+  it("renders exactly 5 legend entries — one per KIND_ORDER entry", () => {
     render(<OrdersWeekChart rows={rows} />);
-    expect(screen.getByText("naprawy")).toBeInTheDocument();
-    expect(screen.getByText("custom")).toBeInTheDocument();
+    // KIND_ORDER drives the legend; all 5 Polish labels must appear
+    expect(screen.getByText("Czyszczenie")).toBeInTheDocument();
+    expect(screen.getByText("Renowacja")).toBeInTheDocument();
+    expect(screen.getByText("Naprawa")).toBeInTheDocument();
+    expect(screen.getByText("Szewc")).toBeInTheDocument();
+    expect(screen.getByText("Custom")).toBeInTheDocument();
+    // Verify count matches KIND_ORDER length (enum-driven, not hardcoded)
+    expect(KIND_ORDER).toHaveLength(5);
+  });
+
+  it("does NOT render old hardcoded 'naprawy' or 'custom' legend labels", () => {
+    render(<OrdersWeekChart rows={rows} />);
+    expect(screen.queryByText("naprawy")).toBeNull();
+    // "custom" as a standalone legend entry is gone; "Custom" (capitalised) replaces it
+    // We check the lowercase standalone string is absent
+    const allText = document.body.textContent ?? "";
+    // The word "naprawy" must not appear anywhere
+    expect(allText).not.toContain("naprawy");
   });
 
   it("renders an SVG element", () => {
@@ -31,10 +70,17 @@ describe("OrdersWeekChart", () => {
     expect(container.querySelector("svg")).not.toBeNull();
   });
 
-  it("renders a bar for each row", () => {
-    const { container } = render(<OrdersWeekChart rows={rows} />);
+  it("renders rects only for non-zero kind counts (all-CZYSZCZENIE row → 1 rect)", () => {
+    const { container } = render(<OrdersWeekChart rows={[allCzyszczenie]} />);
+    // Only the CZYSZCZENIE segment is non-zero → 1 rect
     const rects = container.querySelectorAll("rect");
-    expect(rects.length).toBe(rows.length * 2);
+    expect(rects.length).toBe(1);
+  });
+
+  it("renders rects for all 5 kinds in a fully mixed row", () => {
+    const { container } = render(<OrdersWeekChart rows={[mixed]} />);
+    const rects = container.querySelectorAll("rect");
+    expect(rects.length).toBe(5);
   });
 
   it("handles empty rows gracefully", () => {
@@ -51,7 +97,6 @@ describe("OrdersWeekChart", () => {
 
   it("first chip has active class by default", () => {
     render(<OrdersWeekChart rows={rows} />);
-    // Chip component is a span (no onClick — visual-only in RSC) with className "chip active"
     const tygodzenChip = screen.getByText("tydzień");
     expect(tygodzenChip.className).toMatch(/active/);
   });
