@@ -7,6 +7,7 @@
  * ~75 LOC.
  */
 import Link from "next/link";
+import type { Route } from "next";
 import { Tape, AdminCard } from "@drshoes/ui";
 import { listOrdersServer } from "@/lib/orders/api-server";
 import { EmptyState } from "@/components/state/EmptyState";
@@ -60,7 +61,7 @@ export async function PilnePanel() {
             return (
               <Link
                 key={o.id}
-                href={`/admin/orders/${o.id}`}
+                href={`/admin/orders/${o.id}` as Route}
                 className="flex items-center gap-3 p-[10px] border border-[var(--line)] hover:bg-[var(--paper-2)] transition-colors"
               >
                 {/* Short code */}
