@@ -201,6 +201,42 @@ class DashboardChartsControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ----------------------------------------------------------
+    // Mix donut — terminal/ready statuses excluded (active-only filter)
+    // ----------------------------------------------------------
+
+    @Test
+    void mixByTypeExcludesTerminalAndReadyStatuses() throws Exception {
+        loginAsOwner();
+
+        // Active order (PRZYJETE) — should appear in mix
+        UUID activeId = seedOrder("C-010", OrderStatus.PRZYJETE, Instant.now());
+        seedItem(activeId, OrderItemKind.NAPRAWA, 0);
+
+        // Terminal orders — items must NOT appear in mix
+        UUID wydaneId = seedOrder("C-011", OrderStatus.WYDANE, Instant.now());
+        seedItem(wydaneId, OrderItemKind.CZYSZCZENIE, 0);
+
+        UUID anulowaneId = seedOrder("C-012", OrderStatus.ANULOWANE, Instant.now());
+        seedItem(anulowaneId, OrderItemKind.RENOWACJA, 0);
+
+        UUID gotowId = seedOrder("C-013", OrderStatus.GOTOWE_DO_ODBIORU, Instant.now());
+        seedItem(gotowId, OrderItemKind.SZEWC, 0);
+
+        mockMvc().perform(get("/api/admin/dashboard/charts"))
+            .andExpect(status().isOk())
+            // NAPRAWA from the active order must be counted
+            .andExpect(jsonPath("$.mixByType[?(@.kind == 'NAPRAWA')].count",
+                hasItem(greaterThanOrEqualTo(1))))
+            // CZYSZCZENIE/RENOWACJA/SZEWC belong to terminal orders — must be zero
+            .andExpect(jsonPath("$.mixByType[?(@.kind == 'CZYSZCZENIE')].count",
+                hasItem(0)))
+            .andExpect(jsonPath("$.mixByType[?(@.kind == 'RENOWACJA')].count",
+                hasItem(0)))
+            .andExpect(jsonPath("$.mixByType[?(@.kind == 'SZEWC')].count",
+                hasItem(0)));
+    }
+
+    // ----------------------------------------------------------
     // 401 for unauthenticated
     // ----------------------------------------------------------
 

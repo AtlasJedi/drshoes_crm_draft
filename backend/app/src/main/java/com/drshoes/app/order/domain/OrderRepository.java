@@ -141,9 +141,11 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     List<Object[]> countPerIsoQuarter(@Param("windowStart") Instant windowStart);
 
     /**
-     * Returns per-kind order item counts for the mix donut.
+     * Returns per-kind item counts for the Mix donut — "work still to do".
      * V033: 5 kinds — CZYSZCZENIE, RENOWACJA, NAPRAWA, SZEWC, CUSTOM.
-     * Counts items (not orders) per kind; orders without items are excluded.
+     * Counts items (not orders) per kind from actively-in-progress orders only.
+     * Orders in terminal/ready statuses (WYDANE, ANULOWANE, GOTOWE_DO_ODBIORU)
+     * are excluded — those pieces of work are done or gone.
      * Returns rows: [kind TEXT, cnt BIGINT], one row per kind present in data.
      * Caller (DashboardChartsController) zero-fills missing kinds.
      */
@@ -152,6 +154,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
         FROM order_item oi
         JOIN order_ o ON o.id = oi.order_id
         WHERE o.deleted_at IS NULL
+          AND o.status NOT IN ('WYDANE','ANULOWANE','GOTOWE_DO_ODBIORU')
         GROUP BY oi.kind
         """, nativeQuery = true)
     List<Object[]> countByItemKind();
