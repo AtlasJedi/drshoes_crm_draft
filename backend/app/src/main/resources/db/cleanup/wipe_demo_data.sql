@@ -16,8 +16,7 @@
 --     order_item         → line items on orders
 --     order_             → orders themselves
 --     audit_log          → audit trail entries
---     client_phone       → phone numbers belonging to clients
---     client             → client records
+--     client             → client records (phone stored inline, no client_phone)
 --
 --   Sequence side-table (ALSO reset so codes start from DR-YYYY-0001 again):
 --     order_code_counter → stores last_number per year; TRUNCATE resets to 0.
@@ -45,7 +44,6 @@ TRUNCATE TABLE photo                RESTART IDENTITY CASCADE;
 TRUNCATE TABLE order_item           RESTART IDENTITY CASCADE;
 TRUNCATE TABLE order_               RESTART IDENTITY CASCADE;
 TRUNCATE TABLE audit_log            RESTART IDENTITY CASCADE;
-TRUNCATE TABLE client_phone         RESTART IDENTITY CASCADE;
 TRUNCATE TABLE client               RESTART IDENTITY CASCADE;
 
 -- Reset the order code counter so the next seed starts from DR-YYYY-0001.
