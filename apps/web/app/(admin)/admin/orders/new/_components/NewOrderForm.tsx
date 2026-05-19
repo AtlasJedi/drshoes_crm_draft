@@ -35,7 +35,7 @@ function toDateStr(daysFromNow: number): string {
 const QUICK_PICKS = [
   { label: "+1 tydz.", days: 7 },
   { label: "+2 tyg.", days: 14 },
-  { label: "+4 tyg.", days: 28 },
+  { label: "+3 tyg.", days: 21 },
 ];
 
 // ── Main component ────────────────────────────────────────────────────────────

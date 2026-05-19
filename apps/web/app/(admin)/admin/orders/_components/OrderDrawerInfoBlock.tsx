@@ -59,14 +59,14 @@ export function OrderDrawerInfoBlock({ order }: Props) {
       {/* Stats grid: czas / wycena / zaliczka / do zapłaty */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }}>
         {[
-          { label: "Czas", value: daysLabel, accent: false },
-          { label: "Wycena", value: `${pricePLN(order.quotedPriceCents)} zł`, accent: false },
-          { label: "Zaliczka", value: order.advancePaidCents > 0 ? pricePLN(order.advancePaidCents) : "0,00", accent: false },
-          { label: "Do zapłaty", value: `${pricePLN(balance)} zł`, accent: true },
+          { label: "Czas", value: daysLabel, color: undefined as string | undefined },
+          { label: "Wycena", value: `${pricePLN(order.quotedPriceCents)} zł`, color: undefined },
+          { label: "Zaliczka", value: order.advancePaidCents > 0 ? pricePLN(order.advancePaidCents) : "0,00", color: "var(--green-dark)" },
+          { label: "Do zapłaty", value: `${pricePLN(balance)} zł`, color: "var(--magenta)" },
         ].map((stat, i, arr) => (
           <div
             key={stat.label}
-            data-testid={i === 3 ? "stat-do-zaplaty" : undefined}
+            data-testid={i === 3 ? "stat-do-zaplaty" : i === 2 ? "stat-zaliczka" : undefined}
             style={{
               padding: "10px 12px 12px",
               borderRight: i < arr.length - 1 ? "1.5px solid var(--ink)" : undefined,
@@ -76,8 +76,8 @@ export function OrderDrawerInfoBlock({ order }: Props) {
               {stat.label}
             </span>
             <span
-              className={`t-stencil${stat.accent ? " text-magenta" : ""}`}
-              style={{ fontWeight: 800, fontSize: 18, letterSpacing: ".01em", lineHeight: 1.1 }}
+              className="t-stencil"
+              style={{ fontWeight: 800, fontSize: 18, letterSpacing: ".01em", lineHeight: 1.1, color: stat.color }}
             >
               {stat.value}
             </span>
