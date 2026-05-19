@@ -171,7 +171,7 @@ export function CalendarMonthGrid({ date, scheduled }: CalendarMonthGridProps) {
                     data-testid={`chip-${order.id}-${markerType}`}
                     className={`text-left px-1.5 py-px font-mono text-[10px] font-semibold overflow-hidden text-ellipsis whitespace-nowrap w-full ${chipClasses(markerType)}`}
                   >
-                    {order.code} · {order.clientName.split(" ")[0]}
+                    {order.urgent ? <span className="t-pilne-marker">!</span> : null}{order.code} · {order.clientName.split(" ")[0]}
                   </button>
                 ))}
                 {overflow > 0 && (

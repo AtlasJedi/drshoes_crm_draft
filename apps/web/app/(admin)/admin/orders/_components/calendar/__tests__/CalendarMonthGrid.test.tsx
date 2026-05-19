@@ -14,6 +14,7 @@ function makeOrder(
   receivedDayOfMonth: number,
   pickupDayOfMonth: number,
   pickupAtDefaulted = false,
+  urgent = false,
 ): CalendarOrderDto {
   return {
     id,
@@ -27,7 +28,7 @@ function makeOrder(
     effectivePickupAt: `2026-05-${String(pickupDayOfMonth).padStart(2, "0")}T12:00:00Z`,
     pickupAtDefaulted,
     itemSummary: "Test item",
-    urgent: false,
+    urgent,
   };
 }
 
@@ -98,5 +99,23 @@ describe("CalendarMonthGrid", () => {
     if (now.getMonth() === thisMonth.getMonth()) {
       expect(todayCell).toBeInTheDocument();
     }
+  });
+
+  it("urgent chip contains '!' marker", () => {
+    const orders = [makeOrder("9", 9, 20, false, true)];
+    render(<CalendarMonthGrid date={MAY_2026} scheduled={orders} />);
+    // Both chips (received on day 9, due on day 20) should show "!"
+    const cell9 = screen.getByTestId("cell-9");
+    const marker = cell9.querySelector(".t-pilne-marker");
+    expect(marker).toBeTruthy();
+    expect(marker?.textContent).toBe("!");
+  });
+
+  it("non-urgent chip has no '!' marker", () => {
+    const orders = [makeOrder("8", 8, 22, false, false)];
+    render(<CalendarMonthGrid date={MAY_2026} scheduled={orders} />);
+    const cell8 = screen.getByTestId("cell-8");
+    const marker = cell8.querySelector(".t-pilne-marker");
+    expect(marker).toBeNull();
   });
 });

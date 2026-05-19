@@ -173,6 +173,43 @@ class KanbanControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ----------------------------------------------------------
+    // urgent flag: PRZYJETE + receivedAt >= 4d → urgent=true
+    // ----------------------------------------------------------
+
+    @Test
+    void urgentTrueWhenPrzyjeteFourDaysOld() throws Exception {
+        loginAsOwner();
+        var o = new Order();
+        o.setCode("KB-URG-1");
+        o.setClientId(clientId);
+        o.setStatus(OrderStatus.PRZYJETE);
+        o.setReceivedAt(Instant.now().minus(5, java.time.temporal.ChronoUnit.DAYS));
+        orderRepo.save(o);
+
+        mockMvc().perform(get("/api/admin/orders/kanban"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.columns[0].cards[?(@.code=='KB-URG-1')].urgent")
+                .value(hasItem(true)));
+    }
+
+    @Test
+    void urgentFalseWhenNotPrzyjete() throws Exception {
+        loginAsOwner();
+        var o = new Order();
+        o.setCode("KB-URG-2");
+        o.setClientId(clientId);
+        o.setStatus(OrderStatus.W_REALIZACJI);
+        o.setReceivedAt(Instant.now().minus(5, java.time.temporal.ChronoUnit.DAYS));
+        orderRepo.save(o);
+
+        mockMvc().perform(get("/api/admin/orders/kanban"))
+            .andExpect(status().isOk())
+            // W_REALIZACJI column is index 1
+            .andExpect(jsonPath("$.columns[1].cards[?(@.code=='KB-URG-2')].urgent")
+                .value(hasItem(false)));
+    }
+
+    // ----------------------------------------------------------
     // Helpers
     // ----------------------------------------------------------
 

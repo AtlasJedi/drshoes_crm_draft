@@ -228,6 +228,42 @@ class CalendarControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ----------------------------------------------------------
+    // urgent flag: PRZYJETE + receivedAt >= 4d → urgent=true
+    // ----------------------------------------------------------
+
+    @Test
+    void urgentTrueWhenPrzyjeteFourDaysOld() throws Exception {
+        loginAsOwner();
+        ZoneId warsaw = ZoneId.of("Europe/Warsaw");
+        // plannedPickupAt = tomorrow (in window); receivedAt = 5 days ago (PRZYJETE → urgent)
+        Instant tomorrow = ZonedDateTime.now(warsaw).toLocalDate().plusDays(1)
+            .atStartOfDay(warsaw).toInstant();
+        Instant receivedAt = Instant.now().minus(5, ChronoUnit.DAYS);
+        seedOrder("K-URG-1", OrderStatus.PRZYJETE, tomorrow, receivedAt);
+
+        mockMvc().perform(get("/api/admin/orders/calendar?from=" + today + "&to=" + nextWeek))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-URG-1')].urgent")
+                .value(hasItem(true)));
+    }
+
+    @Test
+    void urgentFalseWhenNotPrzyjete() throws Exception {
+        loginAsOwner();
+        ZoneId warsaw = ZoneId.of("Europe/Warsaw");
+        // plannedPickupAt = tomorrow (in window); W_REALIZACJI → NOT urgent under new rule
+        Instant tomorrow = ZonedDateTime.now(warsaw).toLocalDate().plusDays(1)
+            .atStartOfDay(warsaw).toInstant();
+        Instant receivedAt = Instant.now().minus(5, ChronoUnit.DAYS);
+        seedOrder("K-URG-2", OrderStatus.W_REALIZACJI, tomorrow, receivedAt);
+
+        mockMvc().perform(get("/api/admin/orders/calendar?from=" + today + "&to=" + nextWeek))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.scheduled[?(@.code=='K-URG-2')].urgent")
+                .value(hasItem(false)));
+    }
+
+    // ----------------------------------------------------------
     // Helpers
     // ----------------------------------------------------------
 

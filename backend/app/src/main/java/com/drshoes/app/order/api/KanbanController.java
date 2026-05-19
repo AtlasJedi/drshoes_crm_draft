@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -119,14 +117,9 @@ public class KanbanController {
         return new KanbanResponseDto(columns);
     }
 
-    /** urgent = tag "pilne" present OR plannedPickupAt within 48 h. */
+    /** Delegates to OrderUrgency: status == PRZYJETE AND receivedAt + 4d <= now. */
     private static boolean isUrgent(Order o) {
-        String tags = o.getTags();
-        if (tags != null && tags.contains("\"pilne\"")) return true;
-        if (o.getPlannedPickupAt() != null) {
-            return o.getPlannedPickupAt().isBefore(Instant.now().plus(48, ChronoUnit.HOURS));
-        }
-        return false;
+        return OrderUrgency.isUrgent(o.getReceivedAt(), o.getStatus());
     }
 
     private Map<UUID, String> buildSummaries(Set<UUID> orderIds) {

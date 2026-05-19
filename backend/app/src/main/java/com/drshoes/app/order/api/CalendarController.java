@@ -6,6 +6,7 @@ import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderItem;
 import com.drshoes.app.order.domain.OrderItemRepository;
 import com.drshoes.app.order.domain.OrderRepository;
+import com.drshoes.app.order.domain.OrderUrgency;
 import com.drshoes.app.order.dto.CalendarResponseDto;
 import com.drshoes.app.order.dto.CalendarResponseDto.CalendarOrderDto;
 import org.slf4j.Logger;
@@ -115,14 +116,9 @@ public class CalendarController {
             summary, urgent);
     }
 
-    /** Replicates the M1 urgent derivation: tag "pilne" OR plannedPickupAt within 48h. */
+    /** Delegates to OrderUrgency: status == PRZYJETE AND receivedAt + 4d <= now. */
     private static boolean isUrgent(Order o) {
-        String tags = o.getTags();
-        if (tags != null && tags.contains("\"pilne\"")) return true;
-        if (o.getPlannedPickupAt() != null) {
-            return o.getPlannedPickupAt().isBefore(Instant.now().plus(48, ChronoUnit.HOURS));
-        }
-        return false;
+        return OrderUrgency.isUrgent(o.getReceivedAt(), o.getStatus());
     }
 
     private Map<UUID, String> buildSummaries(Set<UUID> orderIds) {

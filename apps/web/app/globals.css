@@ -60,6 +60,7 @@ body { margin: 0; }
 }
 .t-tag { font-family: var(--font-marker); font-weight: 400; }
 .t-mono { font-family: var(--font-mono); }
+.t-pilne-marker { color: var(--red); font-weight: 900; margin-right: 4px; }
 
 /* ---------- spray-paint noise ---------- */
 .noise::before {
