@@ -4,10 +4,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import type { OrderListRow } from "@/lib/orders/types";
-import { Pill, PhImg } from "@drshoes/ui";
+import { Pill } from "@drshoes/ui";
+import { shortCode } from "@/lib/orders/format";
 import { RowQuickActionsMenu } from "./RowQuickActionsMenu";
 import { SortableColumnHeader } from "./SortableColumnHeader";
-import { LocationChip } from "./LocationChip";
 
 const log = createLogger("orders-table");
 
@@ -61,15 +61,13 @@ export function OrdersTable({ rows, totalPages, currentPage, selectedIds, isAllS
                   <input type="checkbox" checked={isAllSelected ?? false} onChange={onToggleAll} className="accent-acid" aria-label="Zaznacz wszystkie" />
                 )}
               </th>
-              <th><SortableColumnHeader field="code" label="Kod" /></th>
-              <th><SortableColumnHeader field="status" label="Status" /></th>
-              <th>Klient</th>
-              <th>Pozycje</th>
-              <th><SortableColumnHeader field="receivedAt" label="Przyjęto" /></th>
-              <th>Termin odbioru</th>
-              <th>Miejsce</th>
-              <th style={{ width: 50 }}>Foto</th>
-              <th style={{ textAlign: "right" }}>Suma</th>
+              <th className="uppercase"><SortableColumnHeader field="code" label="NR ZAMÓWIENIA" /></th>
+              <th className="uppercase"><SortableColumnHeader field="status" label="STATUS" /></th>
+              <th className="uppercase">KLIENT</th>
+              <th className="uppercase">OPIS</th>
+              <th className="uppercase"><SortableColumnHeader field="receivedAt" label="PRZYJĘCIE" /></th>
+              <th className="uppercase">ODBIÓR</th>
+              <th className="uppercase" style={{ textAlign: "right" }}>SUMA</th>
               <th style={{ width: 40 }} />
             </tr>
           </thead>
@@ -87,14 +85,12 @@ export function OrdersTable({ rows, totalPages, currentPage, selectedIds, isAllS
                     <input type="checkbox" checked={selectedIds?.includes(row.id) ?? false} onChange={() => onToggleRow(row.id)} className="accent-acid h-4 w-4" aria-label={`Zaznacz zlecenie ${row.code}`} />
                   )}
                 </td>
-                <td className="font-mono text-[13px]">{row.code}</td>
+                <td className="font-mono text-[13px]">{shortCode(row.code)}</td>
                 <td><Pill status={row.status} /></td>
                 <td className="text-admin-mute">{row.clientName}</td>
                 <td className="text-admin-mute">{row.description ?? "—"}</td>
                 <td className="text-admin-mute font-mono text-[13px]">{fmtDate(row.receivedAt)}</td>
                 <td className="font-mono text-[13px]">{fmtDate(row.plannedPickupAt)}</td>
-                <td><LocationChip name={row.location} variant="sm" /></td>
-                <td><PhImg label="" style={{ width: 36, height: 36, border: "1.5px solid var(--ink, #0a0a0a)" }} /></td>
                 <td className="text-right font-mono">{pricePLN(Math.max(0, row.quotedPriceCents - row.advancePaidCents))}</td>
                 <td className="text-right" onClick={(e) => e.stopPropagation()}>
                   <RowQuickActionsMenu row={row} onOrderUpdated={() => router.refresh()} />
