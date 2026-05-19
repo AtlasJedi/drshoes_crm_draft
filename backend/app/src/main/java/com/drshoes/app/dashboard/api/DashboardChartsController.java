@@ -78,13 +78,21 @@ public class DashboardChartsController {
             }
         }
 
-        // Mix donut (unchanged)
+        // Mix donut — 5 kinds (V033). Zero-fill so all 5 buckets always appear.
+        List<String> KIND_ORDER = List.of("CZYSZCZENIE", "RENOWACJA", "NAPRAWA", "SZEWC", "CUSTOM");
         List<Object[]> rawMix = orderRepo.countByItemKind();
-        long total = rawMix.stream().mapToLong(r -> ((Number) r[1]).longValue()).sum();
-        List<MixByTypeRowDto> mixByType = new ArrayList<>();
+        Map<String, Long> kindCounts = new LinkedHashMap<>();
+        for (String k : KIND_ORDER) kindCounts.put(k, 0L);
         for (Object[] row : rawMix) {
             String kind = (String) row[0];
             long count  = ((Number) row[1]).longValue();
+            if (kindCounts.containsKey(kind)) kindCounts.put(kind, count);
+        }
+        long total = kindCounts.values().stream().mapToLong(Long::longValue).sum();
+        List<MixByTypeRowDto> mixByType = new ArrayList<>();
+        for (Map.Entry<String, Long> entry : kindCounts.entrySet()) {
+            String kind = entry.getKey();
+            long count  = entry.getValue();
             double pct  = (total == 0) ? 0.0 : Math.round((count * 1000.0 / total)) / 10.0;
             mixByType.add(new MixByTypeRowDto(kind, count, pct));
         }

@@ -1,6 +1,6 @@
 /**
  * Donut chart — current order type mix.
- * 4 segments: Usługa acid / Custom pink / Naprawa orange / Renowacje blue.
+ * 5 segments (V033): Czyszczenie acid / Renowacja blue / Naprawa orange / Szewc green / Custom pink.
  * Legend rows with 14px coloured square + label + percent.
  * Pure server component.
  * ~75 LOC.
@@ -9,10 +9,11 @@ import type { MixByTypeRowDto } from "@/lib/dashboard/types";
 import { KIND_LABELS_PL } from "@/lib/orders/status";
 
 const KIND_COLORS: Record<string, string> = {
-  USLUGA:    "var(--acid)",
-  NAPRAWA:   "var(--orange)",
-  RENOWACJA: "var(--blue)",
-  CUSTOM:    "var(--pink)",
+  CZYSZCZENIE: "var(--acid)",
+  RENOWACJA:   "var(--blue)",
+  NAPRAWA:     "var(--orange)",
+  SZEWC:       "var(--green)",
+  CUSTOM:      "var(--pink)",
 };
 
 const CIRC = 490;

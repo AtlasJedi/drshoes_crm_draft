@@ -81,17 +81,19 @@ class DashboardChartsControllerIntegrationTest extends AdminWebTestBase {
     // ----------------------------------------------------------
 
     @Test
-    void orderWithNaprawaItemCountsAsRepair() throws Exception {
+    void mixByTypeContainsAllFiveKinds() throws Exception {
         loginAsOwner();
         UUID orderId = seedOrder("C-002", OrderStatus.PRZYJETE, Instant.now());
         seedItem(orderId, OrderItemKind.NAPRAWA);
-
-        // Also add a CUSTOM item to the same order — should not affect repair bucket
-        seedItem(orderId, OrderItemKind.CUSTOM);
+        seedItem(orderId, OrderItemKind.CZYSZCZENIE);
 
         mockMvc().perform(get("/api/admin/dashboard/charts"))
             .andExpect(status().isOk())
+            // All 5 kinds must appear (zero-filled for missing ones)
+            .andExpect(jsonPath("$.mixByType", hasSize(5)))
             .andExpect(jsonPath("$.mixByType[?(@.kind == 'NAPRAWA')].count",
+                hasItem(greaterThanOrEqualTo(1))))
+            .andExpect(jsonPath("$.mixByType[?(@.kind == 'CZYSZCZENIE')].count",
                 hasItem(greaterThanOrEqualTo(1))));
     }
 
@@ -103,9 +105,9 @@ class DashboardChartsControllerIntegrationTest extends AdminWebTestBase {
     void mixByTypePercentSumsToHundredOrIsEmpty() throws Exception {
         loginAsOwner();
         UUID id1 = seedOrder("C-003", OrderStatus.PRZYJETE, Instant.now());
-        seedItem(id1, OrderItemKind.CUSTOM);
+        seedItem(id1, OrderItemKind.CZYSZCZENIE);
         UUID id2 = seedOrder("C-004", OrderStatus.PRZYJETE, Instant.now());
-        seedItem(id2, OrderItemKind.CUSTOM);
+        seedItem(id2, OrderItemKind.RENOWACJA);
 
         mockMvc().perform(get("/api/admin/dashboard/charts"))
             .andExpect(status().isOk())
@@ -123,7 +125,7 @@ class DashboardChartsControllerIntegrationTest extends AdminWebTestBase {
     void softDeletedOrdersExcluded() throws Exception {
         loginAsOwner();
         UUID orderId = seedOrder("C-005", OrderStatus.PRZYJETE, Instant.now());
-        seedItem(orderId, OrderItemKind.NAPRAWA);
+        seedItem(orderId, OrderItemKind.CZYSZCZENIE);
 
         // soft-delete it
         Order o = orderRepo.findById(orderId).orElseThrow();
@@ -132,8 +134,8 @@ class DashboardChartsControllerIntegrationTest extends AdminWebTestBase {
 
         mockMvc().perform(get("/api/admin/dashboard/charts"))
             .andExpect(status().isOk())
-            // NAPRAWA bucket should NOT contain our deleted order
-            .andExpect(jsonPath("$.mixByType[?(@.kind == 'NAPRAWA')].count",
+            // CZYSZCZENIE bucket should be 0 (zero-filled) after soft-delete
+            .andExpect(jsonPath("$.mixByType[?(@.kind == 'CZYSZCZENIE')].count",
                 not(hasItem(greaterThanOrEqualTo(1)))));
     }
 

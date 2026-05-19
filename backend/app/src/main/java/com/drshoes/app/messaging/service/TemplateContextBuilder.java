@@ -100,10 +100,11 @@ public class TemplateContextBuilder {
 
     private static String polishKindLabel(OrderItemKind kind) {
         return switch (kind) {
-            case USLUGA    -> "usługa";
-            case NAPRAWA   -> "naprawa";
-            case CUSTOM    -> "custom";
-            case RENOWACJA -> "renowacja";
+            case CZYSZCZENIE -> "czyszczenie";
+            case RENOWACJA   -> "renowacja";
+            case NAPRAWA     -> "naprawa";
+            case SZEWC       -> "szewc";
+            case CUSTOM      -> "custom";
         };
     }
 }

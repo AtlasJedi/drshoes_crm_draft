@@ -130,25 +130,18 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     List<Object[]> countPerIsoQuarter(@Param("windowStart") Instant windowStart);
 
     /**
-     * Returns per-kind order counts for the mix donut.
-     * NAPRAWA bucket = orders with ANY NAPRAWA item;
-     * remaining orders are CUSTOM (V025 merged CUSTOM_BUTY + CUSTOM_KURTKA).
-     * Orders with no items go to a synthetic "NONE" bucket.
-     * Returns rows: [kind TEXT, cnt BIGINT].
+     * Returns per-kind order item counts for the mix donut.
+     * V033: 5 kinds — CZYSZCZENIE, RENOWACJA, NAPRAWA, SZEWC, CUSTOM.
+     * Counts items (not orders) per kind; orders without items are excluded.
+     * Returns rows: [kind TEXT, cnt BIGINT], one row per kind present in data.
+     * Caller (DashboardChartsController) zero-fills missing kinds.
      */
     @Query(value = """
-        SELECT
-            CASE
-                WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'NAPRAWA')
-                     THEN 'NAPRAWA'
-                WHEN EXISTS (SELECT 1 FROM order_item oi WHERE oi.order_id = o.id AND oi.kind = 'CUSTOM')
-                     THEN 'CUSTOM'
-                ELSE 'NONE'
-            END AS kind,
-            COUNT(*) AS cnt
-        FROM order_ o
+        SELECT oi.kind AS kind, COUNT(*) AS cnt
+        FROM order_item oi
+        JOIN order_ o ON o.id = oi.order_id
         WHERE o.deleted_at IS NULL
-        GROUP BY kind
+        GROUP BY oi.kind
         """, nativeQuery = true)
     List<Object[]> countByItemKind();
 

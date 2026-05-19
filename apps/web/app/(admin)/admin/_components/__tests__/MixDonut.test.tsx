@@ -4,8 +4,8 @@ import { MixDonut } from "../MixDonut";
 import type { MixByTypeRowDto } from "@/lib/dashboard/types";
 
 const mix: MixByTypeRowDto[] = [
-  { kind: "NAPRAWA", count: 19, percent: 55 },
-  { kind: "CUSTOM",  count: 23, percent: 45 },
+  { kind: "CZYSZCZENIE", count: 19, percent: 55 },
+  { kind: "CUSTOM",      count: 23, percent: 45 },
 ];
 
 describe("MixDonut", () => {
@@ -16,7 +16,7 @@ describe("MixDonut", () => {
 
   it("renders legend labels in Polish", () => {
     render(<MixDonut mix={mix} totalActive={42} />);
-    expect(screen.getByText("Usługa")).toBeInTheDocument();
+    expect(screen.getByText("Czyszczenie")).toBeInTheDocument();
     expect(screen.getByText("Custom")).toBeInTheDocument();
   });
 

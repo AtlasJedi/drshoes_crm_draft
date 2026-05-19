@@ -24,8 +24,8 @@ export type OrderStatus =
   | "WYDANE"
   | "ANULOWANE";
 
-/** 4 item kinds. Matches V029 DB CHECK and OrderItemKind.java. */
-export type OrderItemKind = "USLUGA" | "CUSTOM" | "NAPRAWA" | "RENOWACJA";
+/** 5 item kinds. Matches V033 DB CHECK and OrderItemKind.java. Declaration order = dropdown order. */
+export type OrderItemKind = "CZYSZCZENIE" | "RENOWACJA" | "NAPRAWA" | "SZEWC" | "CUSTOM";
 
 /** Order source channel. Matches OrderSource.java. */
 export type OrderSource = "ADMIN" | "PUBLIC_INTAKE" | "IMPORT";

@@ -82,8 +82,8 @@ describe("getDashboardChartsServer", () => {
         { weekIso: "2026-W11", repairs: 14, custom: 6 },
       ],
       mixByType: [
-        { kind: "NAPRAWA", count: 19, percent: 55 },
-        { kind: "CUSTOM",  count: 23, percent: 45 },
+        { kind: "CZYSZCZENIE", count: 19, percent: 55 },
+        { kind: "CUSTOM",      count: 23, percent: 45 },
       ],
     };
     vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(makeResp(payload)));
@@ -93,7 +93,7 @@ describe("getDashboardChartsServer", () => {
 
     expect(result.ordersPerWeek).toHaveLength(2);
     expect(result.ordersPerWeek[0]!.weekIso).toBe("2026-W10");
-    expect(result.mixByType[0]!.kind).toBe("NAPRAWA");
+    expect(result.mixByType[0]!.kind).toBe("CZYSZCZENIE");
   });
 
   it("throws on 4xx", async () => {

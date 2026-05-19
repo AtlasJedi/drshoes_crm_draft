@@ -23,7 +23,7 @@ interface Props {
 }
 
 function makeFreshItem(): ItemRowState {
-  return { kind: "USLUGA", description: "", pricePln: "" };
+  return { kind: "CZYSZCZENIE", description: "", pricePln: "" };
 }
 
 function toDateStr(daysFromNow: number): string {

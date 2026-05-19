@@ -32,7 +32,7 @@ export interface OrdersPerWeekRowDto {
 
 /** One slice in the mix donut. Mirrors DashboardChartsDto.MixByTypeRowDto */
 export interface MixByTypeRowDto {
-  kind: "USLUGA" | "CUSTOM" | "NAPRAWA" | "RENOWACJA";
+  kind: "CZYSZCZENIE" | "RENOWACJA" | "NAPRAWA" | "SZEWC" | "CUSTOM";
   count: number;
   /** Integer percentage 0-100, backend-computed. */
   percent: number;
