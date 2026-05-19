@@ -61,7 +61,7 @@ export async function PilnePanel() {
             return (
               <Link
                 key={o.id}
-                href={`/admin/orders/${o.id}` as Route}
+                href={`/admin/orders?orderId=${o.id}` as Route}
                 className="flex items-center gap-3 p-[10px] border border-[var(--line)] hover:bg-[var(--paper-2)] transition-colors"
               >
                 {/* Short code */}
