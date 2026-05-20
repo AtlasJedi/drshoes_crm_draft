@@ -2057,9 +2057,9 @@
     {
       "id": "ci-3",
       "title": "LocalFsBlobStorage + tests (TDD)",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "stage_1_complete",
+      "commit_sha": "cec24d3",
+      "dispatch_log": "docs/dispatch-log/ci-3-stage1-20260520T170058Z.md"
     },
     {
       "id": "ci-4",
