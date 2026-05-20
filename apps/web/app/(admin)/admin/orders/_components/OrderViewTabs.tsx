@@ -10,12 +10,13 @@
 import Link from "next/link";
 import type { Route } from "next";
 
-export type OrderView = "list" | "calendar" | "kanban";
+export type OrderView = "list" | "calendar" | "kanban" | "archive";
 
 const TABS: { view: OrderView; label: string; href: Route }[] = [
   { view: "list",     label: "Lista",     href: "/admin/orders" as Route },
   { view: "calendar", label: "Kalendarz", href: "/admin/orders/calendar" as Route },
   { view: "kanban",   label: "Kanban",    href: "/admin/orders/kanban" as Route },
+  { view: "archive",  label: "Archiwum",  href: "/admin/orders/archive" as Route },
 ];
 
 interface OrderViewTabsProps {

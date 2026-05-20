@@ -185,4 +185,6 @@ export interface OrderListFilters {
   plannedPickupAtTo?: string;
   /** When true, filters to urgent orders only (receivedAt ≥ 14 days, active statuses). */
   urgent?: boolean;
+  /** When true, fetches only WYDANE+ANULOWANE (archive mode). */
+  archived?: boolean;
 }

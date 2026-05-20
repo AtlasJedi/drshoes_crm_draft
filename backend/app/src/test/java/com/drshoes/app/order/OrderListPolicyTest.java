@@ -4,15 +4,13 @@ import com.drshoes.app.order.OrderListPolicy.EffectiveFilter;
 import com.drshoes.app.order.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Pure-unit tests for OrderListPolicy.resolve().
+ * Pure-unit tests for OrderListPolicy.resolve() and resolveArchive().
  * No Spring context — policy is a static utility.
  *
  * Verifies the contract documented in
@@ -21,39 +19,48 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OrderListPolicyTest {
 
     @Test
-    void nullStatuses_returnsActiveStatusesPlusCutoff() {
-        Instant before = Instant.now();
-
+    void defaultResolve_excludesWydane() {
         EffectiveFilter f = OrderListPolicy.resolve(null);
+        assertThat(f.statuses()).doesNotContain(OrderStatus.WYDANE);
+    }
 
-        Instant after = Instant.now();
+    @Test
+    void defaultResolve_excludesAnulowane() {
+        EffectiveFilter f = OrderListPolicy.resolve(null);
+        assertThat(f.statuses()).doesNotContain(OrderStatus.ANULOWANE);
+    }
+
+    @Test
+    void defaultResolve_noWydaneCutoff() {
+        EffectiveFilter f = OrderListPolicy.resolve(null);
+        assertThat(f.wydaneCutoff()).isNull();
+    }
+
+    @Test
+    void defaultResolve_containsAllActiveStatuses() {
+        EffectiveFilter f = OrderListPolicy.resolve(null);
         assertThat(f.statuses()).containsExactlyInAnyOrder(
             OrderStatus.WSTEPNIE_PRZYJETE,
             OrderStatus.PRZYJETE,
             OrderStatus.W_REALIZACJI,
             OrderStatus.CZEKA_NA_KLIENTA,
             OrderStatus.GOTOWE_DO_ODBIORU);
-        assertThat(f.wydaneCutoff()).isNotNull();
-        // Cutoff should be ~30 days before now.
-        Instant expectedCutoff = before.minus(Duration.ofDays(30));
-        assertThat(f.wydaneCutoff()).isBetween(expectedCutoff, after.minus(Duration.ofDays(30)));
     }
 
     @Test
-    void emptyStatuses_returnsActiveStatusesPlusCutoff() {
+    void emptyStatuses_behavesLikeDefault() {
         EffectiveFilter f = OrderListPolicy.resolve(List.of());
-
         assertThat(f.statuses()).containsExactlyInAnyOrder(
             OrderStatus.WSTEPNIE_PRZYJETE,
             OrderStatus.PRZYJETE,
             OrderStatus.W_REALIZACJI,
             OrderStatus.CZEKA_NA_KLIENTA,
             OrderStatus.GOTOWE_DO_ODBIORU);
-        assertThat(f.wydaneCutoff()).isNotNull();
+        assertThat(f.wydaneCutoff()).isNull();
     }
 
     @Test
-    void anulowaneExplicitlyRequested_throws() {
+    void resolve_throwsOnAnulowane() {
         assertThatThrownBy(() -> OrderListPolicy.resolve(List.of(OrderStatus.ANULOWANE)))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("status.anulowane.disallowed");
@@ -68,9 +75,16 @@ class OrderListPolicyTest {
     }
 
     @Test
+    void resolveArchive_containsWydaneAndAnulowane() {
+        EffectiveFilter f = OrderListPolicy.resolveArchive();
+        assertThat(f.statuses()).containsExactlyInAnyOrder(
+            OrderStatus.WYDANE, OrderStatus.ANULOWANE);
+        assertThat(f.wydaneCutoff()).isNull();
+    }
+
+    @Test
     void singleWydane_escapeHatch_returnsWydaneOnlyNoCutoff() {
         EffectiveFilter f = OrderListPolicy.resolve(List.of(OrderStatus.WYDANE));
-
         assertThat(f.statuses()).containsExactly(OrderStatus.WYDANE);
         assertThat(f.wydaneCutoff()).isNull();
     }
@@ -79,19 +93,8 @@ class OrderListPolicyTest {
     void explicitListWithoutAnulowane_returnsAsIsNoCutoff() {
         EffectiveFilter f = OrderListPolicy.resolve(
             List.of(OrderStatus.PRZYJETE, OrderStatus.W_REALIZACJI));
-
         assertThat(f.statuses()).containsExactly(
             OrderStatus.PRZYJETE, OrderStatus.W_REALIZACJI);
-        assertThat(f.wydaneCutoff()).isNull();
-    }
-
-    @Test
-    void explicitListIncludingWydane_returnsAsIsNoCutoff() {
-        EffectiveFilter f = OrderListPolicy.resolve(
-            List.of(OrderStatus.WYDANE, OrderStatus.PRZYJETE));
-
-        assertThat(f.statuses()).containsExactlyInAnyOrder(
-            OrderStatus.WYDANE, OrderStatus.PRZYJETE);
         assertThat(f.wydaneCutoff()).isNull();
     }
 }

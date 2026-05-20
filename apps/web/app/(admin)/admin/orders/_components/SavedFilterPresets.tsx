@@ -31,8 +31,6 @@ const STATUS_ORDER: OrderStatus[] = [
   "W_REALIZACJI",
   "CZEKA_NA_KLIENTA",
   "GOTOWE_DO_ODBIORU",
-  "WYDANE",
-  "ANULOWANE",
 ];
 
 function buildPresets(): Preset[] {

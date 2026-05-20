@@ -72,6 +72,25 @@ public class OrderService {
                                    Boolean urgent,
                                    Pageable pageable) {
         OrderListPolicy.EffectiveFilter effective = OrderListPolicy.resolve(statuses);
+        return queryWithFilter(effective, assigneeId, kinds, q, tag,
+            plannedPickupAtFrom, plannedPickupAtTo, clientId, urgent, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderListRow> listArchive(UUID assigneeId, List<OrderItemKind> kinds, String q,
+                                          String tag, Instant plannedPickupAtFrom,
+                                          Instant plannedPickupAtTo, UUID clientId,
+                                          Pageable pageable) {
+        OrderListPolicy.EffectiveFilter effective = OrderListPolicy.resolveArchive();
+        return queryWithFilter(effective, assigneeId, kinds, q, tag,
+            plannedPickupAtFrom, plannedPickupAtTo, clientId, null, pageable);
+    }
+
+    private Page<OrderListRow> queryWithFilter(OrderListPolicy.EffectiveFilter effective,
+                                               UUID assigneeId, List<OrderItemKind> kinds,
+                                               String q, String tag, Instant plannedPickupAtFrom,
+                                               Instant plannedPickupAtTo, UUID clientId,
+                                               Boolean urgent, Pageable pageable) {
         var page = orderRepo.findAll(
             OrderSpecifications.forList(effective.statuses(), assigneeId, kinds, q, tag,
                                         plannedPickupAtFrom, plannedPickupAtTo, clientId,

@@ -81,26 +81,32 @@ public class OrderController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtFrom,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plannedPickupAtTo,
             @RequestParam(required = false) Boolean urgent,
+            @RequestParam(required = false) Boolean archived,
             @PageableDefault(size = 25, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             Authentication auth) {
-        // Defense in depth — ANULOWANE is never offered by the filter UI and must
-        // not appear via a hand-crafted URL. Spec: 2026-05-20-order-list-scale-1k-design.md.
-        if (status != null && status.contains(OrderStatus.ANULOWANE)) {
-            log.warn("op=listOrders actor={} outcome=blocked reason=status.anulowane.disallowed",
-                actor(auth));
-            return ResponseEntity.badRequest()
-                .body(java.util.Map.of("error", "status.anulowane.disallowed"));
-        }
         OrderSortValidator.validate(pageable);
         Instant from = plannedPickupAtFrom != null
             ? plannedPickupAtFrom.atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
         Instant to = plannedPickupAtTo != null
             ? plannedPickupAtTo.plusDays(1).atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
-        var page = svc.list(status, craftsmanId, kinds, q, tag, from, to, clientId, urgent, pageable);
-        log.info("op=listOrders actor={} clientId={} tag={} from={} to={} urgent={} rawStatus={} sort={} count={} outcome=ok",
-            actor(auth), clientId, tag, from, to, urgent,
-            status, pageable.getSort(), page.getNumberOfElements());
-        return ResponseEntity.ok(page);
+
+        if (Boolean.TRUE.equals(archived)) {
+            var page = svc.listArchive(craftsmanId, kinds, q, tag, from, to, clientId, pageable);
+            log.info("op=listOrdersArchive actor={} q={} count={} outcome=ok",
+                actor(auth), q, page.getNumberOfElements());
+            return ResponseEntity.ok(page);
+        }
+
+        try {
+            var page = svc.list(status, craftsmanId, kinds, q, tag, from, to, clientId, urgent, pageable);
+            log.info("op=listOrders actor={} clientId={} tag={} from={} to={} urgent={} rawStatus={} sort={} count={} outcome=ok",
+                actor(auth), clientId, tag, from, to, urgent,
+                status, pageable.getSort(), page.getNumberOfElements());
+            return ResponseEntity.ok(page);
+        } catch (IllegalArgumentException ex) {
+            log.warn("op=listOrders actor={} outcome=blocked reason={}", actor(auth), ex.getMessage());
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", ex.getMessage()));
+        }
     }
 
     @GetMapping("/{id}")
