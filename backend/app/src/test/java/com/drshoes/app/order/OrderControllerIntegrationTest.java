@@ -5,8 +5,10 @@ import com.drshoes.app.audit.AuditLogRepository;
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
 import com.drshoes.app.messaging.repository.MessageRepository;
+import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderItemRepository;
 import com.drshoes.app.order.domain.OrderRepository;
+import com.drshoes.app.order.domain.OrderStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import java.util.UUID;
 
@@ -533,6 +538,75 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // V034 / list policy: default hides ANULOWANE + caps WYDANE @ 30 days
+    // Spec: docs/superpowers/specs/2026-05-20-order-list-scale-1k-design.md
+    // -------------------------------------------------------------------------
+
+    @Test
+    void listDefaultHidesAnulowaneEntirely() throws Exception {
+        loginAsOwner();
+        UUID activeId = createOrderAndReturnId("Active order");
+        UUID anulId = createOrderAndReturnId("Cancelled order");
+        // Force one order into ANULOWANE directly via repository to bypass workflow rules.
+        Order anul = orderRepository.findById(anulId).orElseThrow();
+        anul.setStatus(OrderStatus.ANULOWANE);
+        orderRepository.saveAndFlush(anul);
+
+        mockMvc().perform(get("/api/admin/orders"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content[?(@.id == '" + activeId + "')]").exists())
+            .andExpect(jsonPath("$.content[?(@.id == '" + anulId + "')]").doesNotExist());
+    }
+
+    @Test
+    void listDefaultIncludesRecentWydaneButExcludesOldOnes() throws Exception {
+        loginAsOwner();
+        UUID recentId = createOrderAndReturnId("Recent pickup");
+        UUID oldId = createOrderAndReturnId("Old pickup");
+
+        // Recent WYDANE: picked up 5 days ago — should appear in default list.
+        Order recent = orderRepository.findById(recentId).orElseThrow();
+        recent.setStatus(OrderStatus.WYDANE);
+        recent.setPickedUpAt(Instant.now().minus(5, ChronoUnit.DAYS));
+        orderRepository.saveAndFlush(recent);
+
+        // Old WYDANE: picked up 60 days ago — must NOT appear in default list.
+        Order old = orderRepository.findById(oldId).orElseThrow();
+        old.setStatus(OrderStatus.WYDANE);
+        old.setPickedUpAt(Instant.now().minus(60, ChronoUnit.DAYS));
+        orderRepository.saveAndFlush(old);
+
+        mockMvc().perform(get("/api/admin/orders"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content[?(@.id == '" + recentId + "')]").exists())
+            .andExpect(jsonPath("$.content[?(@.id == '" + oldId + "')]").doesNotExist());
+    }
+
+    @Test
+    void listExplicitAnulowaneReturns400() throws Exception {
+        loginAsOwner();
+
+        mockMvc().perform(get("/api/admin/orders?status=ANULOWANE"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("status.anulowane.disallowed"));
+    }
+
+    @Test
+    void listExplicitWydaneReturnsAllRegardlessOfAge() throws Exception {
+        loginAsOwner();
+        UUID oldId = createOrderAndReturnId("Old pickup escape hatch");
+
+        Order old = orderRepository.findById(oldId).orElseThrow();
+        old.setStatus(OrderStatus.WYDANE);
+        old.setPickedUpAt(Instant.now().minus(180, ChronoUnit.DAYS));
+        orderRepository.saveAndFlush(old);
+
+        mockMvc().perform(get("/api/admin/orders?status=WYDANE"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content[?(@.id == '" + oldId + "')]").exists());
+    }
 
     private UUID insertOrder(java.time.Instant receivedAt, String status) {
         UUID id = UUID.randomUUID();

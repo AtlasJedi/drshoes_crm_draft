@@ -71,7 +71,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public Page<OrderListRow> list(
+    public ResponseEntity<?> list(
             @RequestParam(required = false) List<OrderStatus> status,
             @RequestParam(required = false, name = "type") List<OrderItemKind> kinds,
             @RequestParam(required = false) UUID craftsmanId,
@@ -83,14 +83,24 @@ public class OrderController {
             @RequestParam(required = false) Boolean urgent,
             @PageableDefault(size = 25, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             Authentication auth) {
+        // Defense in depth — ANULOWANE is never offered by the filter UI and must
+        // not appear via a hand-crafted URL. Spec: 2026-05-20-order-list-scale-1k-design.md.
+        if (status != null && status.contains(OrderStatus.ANULOWANE)) {
+            log.warn("op=listOrders actor={} outcome=blocked reason=status.anulowane.disallowed",
+                actor(auth));
+            return ResponseEntity.badRequest()
+                .body(java.util.Map.of("error", "status.anulowane.disallowed"));
+        }
         OrderSortValidator.validate(pageable);
         Instant from = plannedPickupAtFrom != null
             ? plannedPickupAtFrom.atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
         Instant to = plannedPickupAtTo != null
             ? plannedPickupAtTo.plusDays(1).atStartOfDay(ZoneId.of("Europe/Warsaw")).toInstant() : null;
-        log.info("op=listOrders actor={} clientId={} tag={} from={} to={} urgent={} sort={} outcome=ok",
-            actor(auth), clientId, tag, from, to, urgent, pageable.getSort());
-        return svc.list(status, craftsmanId, kinds, q, tag, from, to, clientId, urgent, pageable);
+        var page = svc.list(status, craftsmanId, kinds, q, tag, from, to, clientId, urgent, pageable);
+        log.info("op=listOrders actor={} clientId={} tag={} from={} to={} urgent={} rawStatus={} sort={} count={} outcome=ok",
+            actor(auth), clientId, tag, from, to, urgent,
+            status, pageable.getSort(), page.getNumberOfElements());
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")
