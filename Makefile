@@ -1,4 +1,4 @@
-.PHONY: up up-deps down test test-backend test-web build clean logs psql demo demo-banner where-is
+.PHONY: up up-deps down test test-backend test-web build clean logs psql demo demo-banner where-is set-password rename-user list-users
 
 up-deps:
 	docker compose up -d postgres minio minio-init
@@ -50,3 +50,28 @@ demo-banner: ## Print the demo access banner
 ## Usage: make where-is feat="order drawer"
 where-is:
 	@tools/where-is $(feat)
+
+## list-users: print all admin/worker accounts in the database
+list-users:
+	@docker compose exec -T postgres psql -U $${POSTGRES_USER:-drshoes} -d $${POSTGRES_DB:-drshoes} -c \
+		"SELECT email, full_name, role, active FROM user_ ORDER BY role DESC, email;"
+
+## set-password: change password for an existing user.
+## Usage: make set-password EMAIL=admin@example.com PASSWORD='NoweHaslo123!'
+set-password:
+	@test -n "$(EMAIL)" || (echo "ERROR: pass EMAIL=foo@bar.pl"; exit 1)
+	@test -n "$(PASSWORD)" || (echo "ERROR: pass PASSWORD='...'"; exit 1)
+	@docker compose exec -T postgres psql -U $${POSTGRES_USER:-drshoes} -d $${POSTGRES_DB:-drshoes} -v ON_ERROR_STOP=1 \
+		-c "CREATE EXTENSION IF NOT EXISTS pgcrypto;" \
+		-c "UPDATE user_ SET password_hash = crypt('$(PASSWORD)', gen_salt('bf', 12)), updated_at = now() WHERE email = '$(EMAIL)';" \
+		-c "SELECT email, full_name, role, updated_at FROM user_ WHERE email = '$(EMAIL)';"
+
+## rename-user: change full_name (and optionally email) for an existing user.
+## Usage: make rename-user EMAIL=misza@drshoes.pl NAME='Jan Kowalski'
+##        make rename-user EMAIL=misza@drshoes.pl NAME='Jan Kowalski' NEW_EMAIL=jan@firma.pl
+rename-user:
+	@test -n "$(EMAIL)" || (echo "ERROR: pass EMAIL=foo@bar.pl"; exit 1)
+	@test -n "$(NAME)" || (echo "ERROR: pass NAME='Imię Nazwisko'"; exit 1)
+	@docker compose exec -T postgres psql -U $${POSTGRES_USER:-drshoes} -d $${POSTGRES_DB:-drshoes} -v ON_ERROR_STOP=1 \
+		-c "UPDATE user_ SET full_name = '$(NAME)', email = COALESCE(NULLIF('$(NEW_EMAIL)', ''), email), updated_at = now() WHERE email = '$(EMAIL)';" \
+		-c "SELECT email, full_name, role FROM user_ WHERE email = COALESCE(NULLIF('$(NEW_EMAIL)', ''), '$(EMAIL)');"

@@ -2,6 +2,8 @@
 
 Two-layer web CRM for a shoe repair and custom painting workshop in Poland. Consists of a public-facing landing page and a full admin panel for managing orders, clients, messaging, triggers, and photos — all UI copy in Polish, code and comments in English.
 
+> **Klient warsztatu instalujący aplikację u siebie?** → Otwórz **[HANDOFF.md](HANDOFF.md)** — pełna instrukcja krok po kroku po polsku.
+
 ## Prerequisites
 
 | Requirement | Version | Notes |
