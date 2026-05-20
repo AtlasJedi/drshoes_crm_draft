@@ -23,6 +23,17 @@ export const colors = {
   red:           "#e1342b",
   line:          "rgba(10,10,10,0.18)",
   line2:         "rgba(10,10,10,0.08)",
+  // Chart segment colors — muted professional palette replacing neon vars
+  chartTeal:       "#6FA89C",
+  chartSlate:      "#5578A0",
+  chartTerracotta: "#C4784E",
+  chartForest:     "#5E8C5E",
+  chartMauve:      "#7B5D96",
+  // KPI tile accent blobs
+  kpiSage:  "#B8D4C8",
+  kpiAmber: "#F0C896",
+  kpiSteel: "#C8D4E8",
+  kpiStone: "#D4C8B4",
 } as const;
 
 // BREAKING vs M7: GOTOWE_DO_ODBIORU was magenta — design spec says green.

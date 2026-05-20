@@ -27,6 +27,15 @@
   --red: #e1342b;
   --line: rgba(10, 10, 10, 0.18);
   --line-2: rgba(10, 10, 10, 0.08);
+  --chart-teal:       #6FA89C;
+  --chart-slate:      #5578A0;
+  --chart-terracotta: #C4784E;
+  --chart-forest:     #5E8C5E;
+  --chart-mauve:      #7B5D96;
+  --kpi-sage:  #B8D4C8;
+  --kpi-amber: #F0C896;
+  --kpi-steel: #C8D4E8;
+  --kpi-stone: #D4C8B4;
 }
 
 html, body {
