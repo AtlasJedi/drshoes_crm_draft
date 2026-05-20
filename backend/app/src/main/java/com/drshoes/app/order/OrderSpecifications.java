@@ -35,12 +35,22 @@ public final class OrderSpecifications {
                                                List<OrderItemKind> kinds, String q,
                                                String tag, Instant plannedPickupAtFrom,
                                                Instant plannedPickupAtTo, UUID clientId,
-                                               Boolean urgent) {
+                                               Boolean urgent, Instant wydaneCutoff) {
         return (root, query, cb) -> {
             List<Predicate> preds = new ArrayList<>();
             preds.add(cb.isNull(root.get("deletedAt")));
-            if (statuses != null && !statuses.isEmpty())
-                preds.add(root.get("status").in(statuses));
+            if (statuses != null && !statuses.isEmpty()) {
+                if (wydaneCutoff != null) {
+                    // Default mode: active statuses OR (WYDANE picked up within window).
+                    preds.add(cb.or(
+                        root.get("status").in(statuses),
+                        cb.and(
+                            cb.equal(root.get("status"), OrderStatus.WYDANE),
+                            cb.greaterThanOrEqualTo(root.get("pickedUpAt"), wydaneCutoff))));
+                } else {
+                    preds.add(root.get("status").in(statuses));
+                }
+            }
             if (assigneeId != null)
                 preds.add(cb.equal(root.get("assignedCraftsmanId"), assigneeId));
             if (kinds != null && !kinds.isEmpty()) {

@@ -71,9 +71,11 @@ public class OrderService {
                                    Instant plannedPickupAtTo, UUID clientId,
                                    Boolean urgent,
                                    Pageable pageable) {
+        OrderListPolicy.EffectiveFilter effective = OrderListPolicy.resolve(statuses);
         var page = orderRepo.findAll(
-            OrderSpecifications.forList(statuses, assigneeId, kinds, q, tag,
-                                        plannedPickupAtFrom, plannedPickupAtTo, clientId, urgent),
+            OrderSpecifications.forList(effective.statuses(), assigneeId, kinds, q, tag,
+                                        plannedPickupAtFrom, plannedPickupAtTo, clientId,
+                                        urgent, effective.wydaneCutoff()),
             pageable);
         Set<UUID> cids = page.map(Order::getClientId).toSet();
         Map<UUID, String> names = clientRepo.findAllById(cids).stream()
