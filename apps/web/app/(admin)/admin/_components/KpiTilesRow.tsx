@@ -24,28 +24,28 @@ export function KpiTilesRow({ kpis }: Props) {
         label="W realizacji"
         value={String(kpis.inProgressCount)}
         sub="zlecenia aktywne"
-        accent="acid"
+        accent="#B8D4C8"
       />
       <StatTile
         data-testid="kpi-tile-ready"
         label="Gotowe do odbioru"
         value={String(kpis.readyForPickupCount)}
         sub="czekają na klienta"
-        accent="pink"
+        accent="#F0C896"
       />
       <StatTile
         data-testid="kpi-tile-in-progress-money"
         label="Pieniądze w realizacji"
         value={kpis.inProgressMoneyFormatted}
         sub="otwarte zlecenia"
-        accent="blue"
+        accent="#C8D4E8"
       />
       <StatTile
         data-testid="kpi-tile-picked-up-money"
         label={`Wydane · ${monthLabel}`}
         value={kpis.pickedUpMoneyMonthFormatted}
         sub="ten miesiąc"
-        accent="acid"
+        accent="#D4C8B4"
       />
     </div>
   );

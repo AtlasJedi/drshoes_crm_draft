@@ -71,11 +71,11 @@ export const KIND_LABELS_PL: Record<OrderItemKind, string> = {
  * Promoted from MixDonut.tsx to be shared with OrdersWeekChart.tsx.
  */
 export const KIND_COLORS: Record<OrderItemKind, string> = {
-  CZYSZCZENIE: "var(--acid)",
-  RENOWACJA:   "var(--blue)",
-  NAPRAWA:     "var(--orange)",
-  SZEWC:       "var(--green)",
-  CUSTOM:      "var(--pink)",
+  CZYSZCZENIE: "#6FA89C",
+  RENOWACJA:   "#5578A0",
+  NAPRAWA:     "#C4784E",
+  SZEWC:       "#5E8C5E",
+  CUSTOM:      "#7B5D96",
 };
 
 /**

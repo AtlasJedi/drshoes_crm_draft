@@ -76,7 +76,7 @@ export async function PilnePanel() {
                 {days !== null && (
                   <span
                     className="t-mono text-[10px] shrink-0 px-[6px] py-[2px] border border-[var(--ink)]"
-                    style={{ background: "var(--pink)", color: "var(--ink)" }}
+                    style={{ background: "#F0C896", color: "var(--ink)" }}
                   >
                     {days} dni
                   </span>
