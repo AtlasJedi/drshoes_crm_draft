@@ -1,7 +1,7 @@
 # Spec — Dr Shoes Local Bundle Installer (Catalina-compatible)
 
 **Date:** 2026-05-20
-**Owner directive:** Build a self-contained installer that runs Dr Shoes admin on macOS 10.15 Catalina (Intel) with one double-click. Deliverable lands on Google Drive. **Isolation: this work is for the client. Everything pipeline-related lives in a new top-level `client-installer/` directory. Backend/frontend changes are profile-gated and inactive outside `profile=bundle`. Future shipping is iterative — each version is a fresh full zip.**
+**Owner directive:** Build a self-contained installer that runs Dr Shoes admin on macOS 10.15 Catalina (Intel) with one double-click. Deliverable lands on Google Drive.
 
 ---
 
@@ -32,58 +32,6 @@ The project already targets non-technical users (commits `617a763`, `03b3c0c`, `
 | Web | **Next.js standalone build** (`output: 'standalone'`) | Self-contained `server.js` + minimal node_modules. Run via bundled Node. |
 
 All bundled runtimes live **inside the zip** — `./jre/`, `./node/`. No PATH pollution, no system installs.
-
----
-
-## Isolation & directory layout
-
-All bundle pipeline lives under a new top-level **`client-installer/`** directory. The main repo (`backend/`, `apps/web/`) only sees additive, profile-gated code.
-
-```
-misza_madafaka/                     ← project root
-├── backend/                        (existing — adds profile=bundle code, inactive elsewhere)
-├── apps/web/                       (existing — adds output:standalone to next.config.mjs)
-├── client-installer/               ← ALL new pipeline artifacts live here
-│   ├── README.md                   (developer-facing: how to build + ship a release)
-│   ├── CHANGELOG.md                (versions shipped to client, dates, notes)
-│   ├── VERSION                     (current bundle version, e.g. "1.0.0")
-│   ├── build-bundle.sh             (the one-shot build script)
-│   ├── fetch-cached.sh             (download helper with checksum cache)
-│   ├── templates/                  ← copied INTO each zip
-│   │   ├── DrShoes.command
-│   │   ├── Stop-DrShoes.command
-│   │   └── README.txt              (Polish, non-technical — for the client)
-│   ├── verify.sh                   (static otool/file checks on the assembled bundle)
-│   ├── cache/                      (git-ignored — JDK + Node tarballs cached here)
-│   └── dist/                       (git-ignored — built zips land here)
-└── (the rest of the repo, unchanged in shape)
-```
-
-**Why a new top-level dir vs. nesting under `tools/`:**
-- The pipeline is a separate product cycle ("shipping a desktop installer to a client") with its own version, changelog, and release runbook. It deserves its own root namespace so it's discoverable and grep-able.
-- `client-installer/` can be selectively excluded from CI (it doesn't need to run on every PR) and can later be split into its own repo if needed.
-- A future v2 (Apple Silicon native bundle, signed builds) lands in the same dir without polluting `backend/` or `apps/`.
-
-**What the main repo gains:**
-- `application-bundle.yaml` in `backend/app/src/main/resources/`
-- `BundleEmbeddedPostgresAutoConfig` + `LocalFsBlobStorage` + `LocalBlobController` + 3 noop messaging providers — all `@Profile("bundle")` or `@ConditionalOnProperty(prefix="drshoes.storage", name="type", havingValue="local-fs")`. Zero runtime impact in dev/prod.
-- A `bundle` Maven profile in `backend/pom.xml` that's opt-in via `mvn -Pbundle …`.
-- `output: 'standalone'` in `apps/web/next.config.mjs` (no runtime change in dev — only affects `next build` output).
-
----
-
-## Versioning & shipping updates
-
-- **Bundle version is independent of git tags.** `client-installer/VERSION` is the source of truth. The build script reads it and stamps `.version` into the zip + names the file `DrShoes-Local-${VERSION}.zip`.
-- **Each release is a full fresh zip.** No diff/patch mechanism. ~400 MB per ship; recipient replaces the folder, keeping their `data/` (the launcher reuses `data/` whether it's in the new or old folder — the README will direct: "skopiuj data/ ze starego folderu do nowego przed pierwszym uruchomieniem").
-- **Release flow** (documented in `client-installer/README.md`):
-  1. Bump `client-installer/VERSION` (semver).
-  2. Add a `CHANGELOG.md` entry: date, version, what's new for the client.
-  3. Run `./client-installer/build-bundle.sh`.
-  4. Run `./client-installer/verify.sh` — static checks + dev-Mac smoke.
-  5. Upload `client-installer/dist/DrShoes-Local-${VERSION}.zip` to Google Drive (manual).
-  6. Tag git `bundle-v${VERSION}` so we can rebuild the exact ship later.
-- **Future automation hook:** an opt-in `upload-bundle.sh` (out of scope for v1) wraps `rclone copy`. Designed to slot into the flow without touching `build-bundle.sh`.
 
 ---
 
@@ -275,57 +223,52 @@ osascript -e 'display notification "Otwórz przeglądarkę: http://localhost:300
 
 ---
 
-## Build pipeline — `client-installer/build-bundle.sh`
-
-Runs from repo root. All inputs and outputs live under `client-installer/`; the script only reads from `backend/` and `apps/web/`.
+## Build pipeline — `tools/build-bundle.sh`
 
 ```bash
 #!/bin/bash
 set -euo pipefail
-HERE="$(cd "$(dirname "$0")" && pwd)"           # client-installer/
-REPO="$(cd "$HERE/.." && pwd)"                  # repo root
-VERSION="$(cat "$HERE/VERSION")"
-DIST="$HERE/dist"
-CACHE="$HERE/cache"
+VERSION="${VERSION:-1.0.0}"
+DIST="dist"
 WORK="$DIST/DrShoes-Local"
 
-rm -rf "$DIST" && mkdir -p "$WORK"/{backend,web,config,jre,node} "$CACHE"
+rm -rf "$DIST" && mkdir -p "$WORK"/{backend,web,config,jre,node}
 
 # 1. Build backend JAR with embedded-postgres + bundle profile
-( cd "$REPO/backend" && mvn -B -pl app -am -DskipTests -Pbundle clean package )
-cp "$REPO/backend/app/target/app-"*"-SNAPSHOT.jar" "$WORK/backend/drshoes-app.jar"
+cd backend && mvn -B -pl app -am -DskipTests -Pbundle clean package && cd ..
+cp backend/app/target/app-*-SNAPSHOT.jar "$WORK/backend/drshoes-app.jar"
 
 # 2. Build Next standalone
-( cd "$REPO/apps/web" && pnpm install --frozen-lockfile && pnpm build )
-cp -R "$REPO/apps/web/.next/standalone/." "$WORK/web/"
-mkdir -p "$WORK/web/.next" && cp -R "$REPO/apps/web/.next/static" "$WORK/web/.next/"
-[ -d "$REPO/apps/web/public" ] && cp -R "$REPO/apps/web/public" "$WORK/web/"
+cd apps/web && pnpm install --frozen-lockfile && pnpm build && cd ../..
+cp -R apps/web/.next/standalone/* "$WORK/web/"
+cp -R apps/web/.next/static "$WORK/web/.next/"
+cp -R apps/web/public "$WORK/web/" 2>/dev/null || true
 
-# 3. Download Liberica JDK 21 (cached)
+# 3. Download Liberica JDK 21 (cached in tools/cache/)
 LIBERICA_URL="https://download.bell-sw.com/java/21.0.5+11/bellsoft-jdk21.0.5+11-macos-amd64.tar.gz"
-"$HERE/fetch-cached.sh" "$LIBERICA_URL" "$CACHE/liberica.tar.gz"
-tar -xzf "$CACHE/liberica.tar.gz" -C "$WORK/jre" --strip-components=1
+tools/fetch-cached.sh "$LIBERICA_URL" tools/cache/liberica.tar.gz
+tar -xzf tools/cache/liberica.tar.gz -C "$WORK/jre" --strip-components=1
 
 # 4. Download Node 18 LTS
 NODE_URL="https://nodejs.org/dist/v18.20.5/node-v18.20.5-darwin-x64.tar.gz"
-"$HERE/fetch-cached.sh" "$NODE_URL" "$CACHE/node.tar.gz"
-tar -xzf "$CACHE/node.tar.gz" -C "$WORK/node" --strip-components=1
+tools/fetch-cached.sh "$NODE_URL" tools/cache/node.tar.gz
+tar -xzf tools/cache/node.tar.gz -C "$WORK/node" --strip-components=1
 
-# 5. Copy launchers + config + README from templates
-cp "$HERE/templates/DrShoes.command" "$WORK/"
-cp "$HERE/templates/Stop-DrShoes.command" "$WORK/"
-cp "$HERE/templates/README.txt" "$WORK/"
-cp "$REPO/backend/app/src/main/resources/application-bundle.yaml" "$WORK/config/"
+# 5. Copy launchers + config + README
+cp tools/bundle/DrShoes.command "$WORK/"
+cp tools/bundle/Stop-DrShoes.command "$WORK/"
+cp tools/bundle/README.txt "$WORK/"
+cp backend/app/src/main/resources/application-bundle.yaml "$WORK/config/"
 chmod +x "$WORK"/*.command
 
 echo "$VERSION" > "$WORK/.version"
 
 # 6. Zip
-( cd "$DIST" && zip -ry "DrShoes-Local-$VERSION.zip" "DrShoes-Local" )
+cd "$DIST" && zip -ry "DrShoes-Local-$VERSION.zip" "DrShoes-Local" && cd ..
 echo "Built: $DIST/DrShoes-Local-$VERSION.zip ($(du -h "$DIST/DrShoes-Local-$VERSION.zip" | cut -f1))"
 ```
 
-Cached downloads in `client-installer/cache/` (git-ignored) so re-builds don't re-download ~260 MB of JDK + Node.
+Cached downloads in `tools/cache/` (git-ignored) so re-builds don't re-download ~260 MB of JDK + Node.
 
 **New Maven profile `bundle`** on `backend/pom.xml`:
 - Adds `io.zonky.test:embedded-postgres:2.0.7` + `embedded-postgres-binaries-darwin-amd64:16.4.0` as runtime deps (not in default jar to keep dev jar slim).
@@ -383,8 +326,8 @@ PROBLEMY:
 
 `rclone` / `gdrive` CLI / mounted Drive folder are **not** configured on the dev machine. Two paths:
 
-1. **Manual (default).** Build outputs `client-installer/dist/DrShoes-Local-1.0.0.zip`. Owner drags into Google Drive web UI. Plan task captures this step explicitly.
-2. **Automated (optional follow-up, not blocking).** Owner installs `rclone` + configures Google Drive remote once → `client-installer/upload-bundle.sh` does `rclone copy client-installer/dist/DrShoes-Local-*.zip gdrive:DrShoes/`. Defer until after first manual upload proves the bundle works.
+1. **Manual (default).** Build outputs `dist/DrShoes-Local-1.0.0.zip`. Owner drags into Google Drive web UI. Plan task captures this step explicitly.
+2. **Automated (optional follow-up, not blocking).** Owner installs `rclone` + configures Google Drive remote once → `tools/upload-bundle.sh` does `rclone copy dist/DrShoes-Local-*.zip gdrive:DrShoes/`. Defer until after first manual upload proves the bundle works.
 
 ---
 
@@ -431,7 +374,7 @@ Existing backend test suite (390+ tests) MUST stay green with the new `bundle` p
 
 ## Acceptance criteria
 
-1. `client-installer/build-bundle.sh` produces `client-installer/dist/DrShoes-Local-1.0.0.zip` ≤ 450 MB on a clean checkout.
+1. `tools/build-bundle.sh` produces `dist/DrShoes-Local-1.0.0.zip` ≤ 450 MB on a clean checkout.
 2. On the dev Mac, unzipping + double-clicking `DrShoes.command` brings up `/admin/login` in < 60 s.
 3. Login with seeded credentials succeeds, order list renders, photo upload succeeds (blob lands under `data/blobs/`), email send emits a `messages.log` line with `outcome=NOOP_BUNDLE`.
 4. `Stop-DrShoes.command` cleanly kills both processes; second double-click on `DrShoes.command` reboots reusing `data/pg`.
@@ -457,7 +400,7 @@ Existing backend test suite (390+ tests) MUST stay green with the new `bundle` p
 ~8–14 Sonnet-hours across 4 waves:
 1. **Wave 1 — backend bundle profile (3 tasks):** new Maven profile, embedded-postgres autoconfig, `LocalFsBlobStorage`, noop messaging providers, `application-bundle.yaml`, integration test.
 2. **Wave 2 — frontend standalone build (1 task):** `next.config.mjs` adjustments, verify `output: 'standalone'` produces a usable tree, handle `sharp`.
-3. **Wave 3 — bundle pipeline in `client-installer/` (3 tasks):** dir scaffolding (VERSION/CHANGELOG/README), `build-bundle.sh`, `fetch-cached.sh`, `templates/DrShoes.command`, `templates/Stop-DrShoes.command`, `templates/README.txt`, `verify.sh`.
+3. **Wave 3 — bundle pipeline (3 tasks):** `tools/build-bundle.sh`, `tools/fetch-cached.sh`, `.command` launchers, README.txt.
 4. **Wave 4 — verification (1 task):** static otool/file checks scripted, end-to-end smoke on dev Mac, document Gatekeeper dance.
 
 Plan will live at `docs/superpowers/plans/2026-05-20-bundle-installer.md`.
