@@ -16,7 +16,9 @@ export async function POST(request: Request) {
     // best-effort — log out of frontend regardless of backend error
   }
 
-  const loginUrl = new URL("/admin/login", request.url);
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? "localhost:3000";
+  const proto = request.headers.get("x-forwarded-proto") ?? "http";
+  const loginUrl = new URL("/admin/login", `${proto}://${host}`);
   const response = NextResponse.redirect(loginUrl);
   response.cookies.delete("dr_session");
   return response;
