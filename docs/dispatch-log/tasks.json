@@ -2050,9 +2050,9 @@
     {
       "id": "ci-2",
       "title": "BundleEmbeddedPostgresProperties + AutoConfig",
-      "status": "pending",
-      "commit_sha": null,
-      "dispatch_log": null
+      "status": "completed",
+      "commit_sha": "e92b124",
+      "dispatch_log": "docs/dispatch-log/ci-2-20260520T185712Z.md"
     },
     {
       "id": "ci-3",
