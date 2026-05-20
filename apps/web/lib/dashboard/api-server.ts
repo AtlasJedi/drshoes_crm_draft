@@ -21,7 +21,7 @@ function base(): string {
 async function serverGet<T>(path: string, label: string): Promise<T> {
   const resp = await fetch(`${base()}${path}`, {
     headers: { cookie: await cookieHeader() },
-    cache: "no-store",
+    next: { revalidate: 300 },
   });
   if (!resp.ok) {
     log.error(`op=${label} outcome=error`, { status: resp.status });

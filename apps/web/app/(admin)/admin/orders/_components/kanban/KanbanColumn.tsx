@@ -13,7 +13,6 @@ const COLUMN_BG: Record<string, string> = {
   W_REALIZACJI:      "var(--orange)",
   CZEKA_NA_KLIENTA:  "#c89c00",
   GOTOWE_DO_ODBIORU: "var(--green)",
-  WYDANE:            "rgba(0,0,0,0.35)",
 };
 
 interface Props {
@@ -39,7 +38,6 @@ export function KanbanColumn({ column }: Props) {
       >
         <span
           className="font-stencil text-[12px] tracking-[.1em] uppercase text-paper"
-          style={{ color: column.status === "WYDANE" ? "var(--ink)" : "var(--paper)" }}
         >
           {STATUS_LABELS_PL[column.status]}
         </span>
