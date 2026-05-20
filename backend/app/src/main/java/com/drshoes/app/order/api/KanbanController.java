@@ -16,12 +16,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Kanban board endpoint — returns all 5 active columns in one round-trip.
+ * Kanban board endpoint — returns all 4 active columns in one round-trip.
  *
  * GET /api/admin/orders/kanban?limitPerColumn=N
- *   - columns: PRZYJETE → W_REALIZACJI → CZEKA_NA_KLIENTA → GOTOWE_DO_ODBIORU → WYDANE
- *   - WYDANE always capped at WYDANE_CAP=10 ordered by picked_up_at DESC NULLS LAST
- *   - other columns capped at limitPerColumn (1–200); 400 if out of range
+ *   - columns: PRZYJETE → W_REALIZACJI → CZEKA_NA_KLIENTA → GOTOWE_DO_ODBIORU
+ *   - all columns capped at limitPerColumn (1–200); 400 if out of range
  *   - total = unfiltered badge count; hasMore = total > effective cap
  *   - soft-deleted excluded
  *
@@ -32,13 +31,11 @@ import java.util.stream.Collectors;
 public class KanbanController {
 
     private static final Logger log = LoggerFactory.getLogger(KanbanController.class);
-    private static final int WYDANE_CAP = 10;
     private static final List<OrderStatus> COLUMN_ORDER = List.of(
         OrderStatus.PRZYJETE,
         OrderStatus.W_REALIZACJI,
         OrderStatus.CZEKA_NA_KLIENTA,
-        OrderStatus.GOTOWE_DO_ODBIORU,
-        OrderStatus.WYDANE
+        OrderStatus.GOTOWE_DO_ODBIORU
     );
 
     private final OrderRepository orderRepo;
@@ -71,12 +68,7 @@ public class KanbanController {
             long total = orderRepo.countByStatusNotDeleted(status);
             columnTotals.put(status, total);
 
-            List<Order> cards;
-            if (status == OrderStatus.WYDANE) {
-                cards = orderRepo.findTopWydaneOrderByPickedUpAtDesc(WYDANE_CAP);
-            } else {
-                cards = orderRepo.findTopByStatusOrderByReceivedAtDesc(status.name(), limitPerColumn);
-            }
+            List<Order> cards = orderRepo.findTopByStatusOrderByReceivedAtDesc(status.name(), limitPerColumn);
             columnOrders.put(status, cards);
             cards.forEach(o -> allOrders.put(o.getId(), o));
         }
@@ -95,9 +87,8 @@ public class KanbanController {
         List<KanbanColumnDto> columns = new ArrayList<>();
         for (OrderStatus status : COLUMN_ORDER) {
             long total  = columnTotals.get(status);
-            int cap     = (status == OrderStatus.WYDANE) ? WYDANE_CAP : limitPerColumn;
             List<Order> orders = columnOrders.get(status);
-            boolean hasMore = total > cap;
+            boolean hasMore = total > limitPerColumn;
 
             List<KanbanCardDto> cards = orders.stream().map(o -> new KanbanCardDto(
                 o.getId(),

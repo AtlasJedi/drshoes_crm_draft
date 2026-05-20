@@ -3,8 +3,8 @@
  * Source of truth: backend/app/src/main/java/com/drshoes/app/order/dto/KanbanResponseDto.java
  *                  controller: com.drshoes.app.order.api.KanbanController
  *
- * Five canonical Kanban statuses — matches OrderStatus values used for grouping.
- * ANULOWANE is excluded from Kanban per spec §6-8.
+ * Four canonical Kanban statuses — matches OrderStatus values used for grouping.
+ * WYDANE and ANULOWANE are excluded from Kanban per spec §6-8.
  */
 
 import type { OrderStatus } from "@/lib/orders/types";
@@ -12,7 +12,7 @@ import type { OrderStatus } from "@/lib/orders/types";
 /** Kanban statuses that appear as columns. */
 export type KanbanStatus = Extract<
   OrderStatus,
-  "PRZYJETE" | "W_REALIZACJI" | "CZEKA_NA_KLIENTA" | "GOTOWE_DO_ODBIORU" | "WYDANE"
+  "PRZYJETE" | "W_REALIZACJI" | "CZEKA_NA_KLIENTA" | "GOTOWE_DO_ODBIORU"
 >;
 
 /** One card within a column. Mirrors KanbanCardDto.java (record). */
@@ -43,7 +43,7 @@ export interface KanbanColumnDto {
   status: KanbanStatus;
   /** Unfiltered count for the column header badge */
   total: number;
-  /** Cards up to limitPerColumn (WYDANE: max 10 regardless of param) */
+  /** Cards up to limitPerColumn */
   cards: KanbanCardDto[];
   /** true when total > cards.length */
   hasMore: boolean;
@@ -56,6 +56,6 @@ export interface KanbanResponseDto {
 
 /** Request params for GET /api/admin/orders/kanban */
 export interface KanbanFetchParams {
-  /** Default 50; must be 1–200. WYDANE always capped at 10 backend-side. */
+  /** Default 50; must be 1–200. */
   limitPerColumn?: number;
 }

@@ -32,7 +32,6 @@ function makeColumns(): KanbanColumnDto[] {
     { status: "W_REALIZACJI",      total: 1, cards: [card2], hasMore: false },
     { status: "CZEKA_NA_KLIENTA",  total: 0, cards: [],      hasMore: false },
     { status: "GOTOWE_DO_ODBIORU", total: 0, cards: [],      hasMore: false },
-    { status: "WYDANE",            total: 0, cards: [],      hasMore: false },
   ];
 }
 
