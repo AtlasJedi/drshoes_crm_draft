@@ -1,4 +1,4 @@
-.PHONY: up up-deps down test test-backend test-web build clean logs psql demo demo-banner where-is set-password rename-user list-users
+.PHONY: up up-deps down test test-backend test-web build clean logs psql demo demo-banner where-is set-password rename-user list-users backup update
 
 up-deps:
 	docker compose up -d postgres minio minio-init
@@ -65,6 +65,25 @@ set-password:
 		-c "CREATE EXTENSION IF NOT EXISTS pgcrypto;" \
 		-c "UPDATE user_ SET password_hash = crypt('$(PASSWORD)', gen_salt('bf', 12)), updated_at = now() WHERE email = '$(EMAIL)';" \
 		-c "SELECT email, full_name, role, updated_at FROM user_ WHERE email = '$(EMAIL)';"
+
+## backup: create a gzipped pg_dump snapshot under ./backups/.
+## Usage: make backup
+backup:
+	@mkdir -p backups
+	@FILE="backups/backup-$$(date +%Y-%m-%d-%H%M%S).sql.gz" && \
+		docker compose exec -T postgres pg_dump -U $${POSTGRES_USER:-drshoes} $${POSTGRES_DB:-drshoes} | gzip > "$$FILE" && \
+		echo "Backup: $$FILE ($$(du -h "$$FILE" | cut -f1))"
+
+## update: safe upgrade — backup DB, git pull, rebuild, restart.
+## Usage: make update
+update:
+	@$(MAKE) backup
+	@echo "Pulling latest code..."
+	@git pull --ff-only origin main
+	@echo "Rebuilding backend + web..."
+	@docker compose build backend web
+	@$(MAKE) up
+	@echo "✅ Aplikacja zaktualizowana. Sprawdź http://localhost:3000/admin/login"
 
 ## rename-user: change full_name (and optionally email) for an existing user.
 ## Usage: make rename-user EMAIL=misza@drshoes.pl NAME='Jan Kowalski'

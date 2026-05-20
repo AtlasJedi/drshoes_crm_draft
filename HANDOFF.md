@@ -202,15 +202,38 @@ W razie problemu: prześlij wynik `make logs` (ostatnie ~100 linii) na maila —
 
 ## 9. Aktualizacje
 
-Gdy wypchnę nową wersję na GitHuba:
+Gdy wypchnę nową wersję na GitHuba — **jedna komenda załatwia wszystko**:
 
 ```bash
-git pull origin main
-docker compose build backend web
-make up
+make update
 ```
 
-Migracje bazy zaaplikują się automatycznie. **Twoje dane (klienci, zlecenia, zdjęcia) zostaną nietknięte.**
+`make update` robi w kolejności:
+1. `make backup` — snapshot bazy do `backups/backup-YYYY-MM-DD-HHMMSS.sql.gz` (na wypadek gdyby coś się rąbnęło)
+2. `git pull --ff-only origin main` — pobiera nowy kod
+3. `docker compose build backend web` — przebudowuje obrazy
+4. `make up` — restart kontenerów
+
+Migracje bazy zaaplikują się automatycznie przy starcie. **Twoje dane (klienci, zlecenia, zdjęcia, ustawienia) zostają nietknięte.**
+
+### Sam backup (bez updatu)
+
+```bash
+make backup        # snapshot do backups/backup-...sql.gz
+ls -lh backups/    # zobacz wszystkie kopie
+```
+
+### Restore z backupu (w razie awarii)
+
+```bash
+gunzip < backups/backup-2026-05-20-150000.sql.gz | docker compose exec -T postgres psql -U drshoes -d drshoes
+```
+
+### ⚠️ Ograniczenia automatycznego update'u
+
+- **Nie edytuj plików w repo** poza `.env` — `git pull` zrobi merge conflict. `.env` jest gitignored i bezpieczny.
+- **Nowe pole w `.env.example`** — jeśli nowa wersja wymaga nowej zmiennej, dodam komentarz w mailu/changelogu. Po `make update` porównaj `.env.example` ↔ twój `.env`.
+- **`make update` wymaga że jesteś na branchu `main`** — domyślnie tak jest po `git clone`.
 
 ---
 
