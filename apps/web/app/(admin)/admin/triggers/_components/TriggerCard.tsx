@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { createLogger } from "@/lib/log";
 import { Toggle, Chip, I } from "@drshoes/ui";
 import { toggleTrigger } from "@/lib/messaging/api";
@@ -18,9 +19,11 @@ const EVENT_LABELS: Record<string, string> = {
 interface Props {
   trigger: TriggerDto;
   onEdit: (t: TriggerDto) => void;
+  onToggled?: () => void;
 }
 
-export function TriggerCard({ trigger: t, onEdit }: Props) {
+export function TriggerCard({ trigger: t, onEdit, onToggled }: Props) {
+  const [enabled, setEnabled] = useState(t.enabled);
   const channels = (() => {
     try { return (JSON.parse(t.channels) as string[]).join(" + "); }
     catch { return t.channels; }
@@ -31,10 +34,14 @@ export function TriggerCard({ trigger: t, onEdit }: Props) {
     `+${t.delayMinutes / 60}h`;
 
   async function handleToggle() {
+    const next = !enabled;
+    setEnabled(next);
     try {
-      await toggleTrigger(t.id, !t.enabled);
-      log.info("op=toggleTrigger", { id: t.id, enabled: !t.enabled });
+      await toggleTrigger(t.id, next);
+      log.info("op=toggleTrigger outcome=success", { id: t.id, enabled: next });
+      onToggled?.();
     } catch (err) {
+      setEnabled(!next);
       log.error("op=toggleTrigger outcome=error", { id: t.id, err: String(err) });
     }
   }
@@ -45,7 +52,7 @@ export function TriggerCard({ trigger: t, onEdit }: Props) {
       className="admin-card flex gap-3.5 items-start"
       style={{
         padding: 16,
-        opacity: t.enabled ? 1 : 0.55,
+        opacity: enabled ? 1 : 0.55,
         borderLeftWidth: 5,
         borderLeftStyle: "solid",
         borderLeftColor: t.requiresManualConfirmation ? "var(--pink)" : "var(--blue)",
@@ -78,7 +85,7 @@ export function TriggerCard({ trigger: t, onEdit }: Props) {
         </div>
       </div>
       <div className="flex flex-col items-end gap-1.5 shrink-0">
-        <Toggle on={t.enabled} onChange={handleToggle} />
+        <Toggle on={enabled} onChange={handleToggle} />
         <button
           className="btn-clean"
           style={{ fontSize: 11, padding: "3px 8px" }}

@@ -36,9 +36,9 @@ describe("AdminSidebar", () => {
     expect(screen.getByText(/owner/i)).toBeInTheDocument();
   });
 
-  it("logout form posts to /logout", () => {
+  it("logout form posts to /auth/logout", () => {
     render(<AdminSidebar me={me} />);
-    const form = document.querySelector("form[action='/logout']");
+    const form = document.querySelector("form[action='/auth/logout']");
     expect(form).not.toBeNull();
     expect(form?.getAttribute("method")?.toLowerCase()).toBe("post");
   });

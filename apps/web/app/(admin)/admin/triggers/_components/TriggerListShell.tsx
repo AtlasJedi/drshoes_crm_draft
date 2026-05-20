@@ -5,18 +5,15 @@ import Link from "next/link";
 import type { Route } from "next";
 import { createLogger } from "@/lib/log";
 import { usePageHeader } from "@/app/(admin)/admin/_components/PageHeaderContext";
-import { Button, Chip } from "@drshoes/ui";
+import { Button } from "@drshoes/ui";
 import { getTriggers } from "@/lib/messaging/api";
 import type { TriggerDto } from "@/lib/messaging/types";
 import { TriggerCard } from "./TriggerCard";
 import { TriggerEditPanel } from "./TriggerEditPanel";
 
 const log = createLogger("triggers.listshell");
-type Filter = "active" | "disabled" | "manual";
-
 export function TriggerListShell() {
   const [triggers, setTriggers] = useState<TriggerDto[]>([]);
-  const [filter, setFilter] = useState<Filter>("active");
   const [editing, setEditing] = useState<TriggerDto | null>(null);
 
   usePageHeader({
@@ -34,36 +31,20 @@ export function TriggerListShell() {
       .catch(err => log.error("op=getTriggers outcome=error", { err: String(err) }));
   }, []);
 
-  const filtered = triggers.filter(t =>
-    filter === "active"   ? t.enabled && !t.requiresManualConfirmation :
-    filter === "disabled" ? !t.enabled :
-    t.requiresManualConfirmation,
-  );
-  const activeCt  = triggers.filter(t => t.enabled && !t.requiresManualConfirmation).length;
-  const disabledCt = triggers.filter(t => !t.enabled).length;
-  const manualCt  = triggers.filter(t => t.requiresManualConfirmation).length;
+  function reloadTriggers() {
+    getTriggers().then(setTriggers).catch(() => {});
+  }
 
   function handleSaved() {
     setEditing(null);
-    getTriggers().then(setTriggers).catch(() => {});
+    reloadTriggers();
   }
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 20, padding: 24 }}>
       {/* LEFT */}
       <div className="flex flex-col gap-3">
-        <div className="flex justify-between items-center flex-wrap gap-2">
-          <div className="flex gap-2 flex-wrap">
-            <Chip active={filter === "active"} onClick={() => setFilter("active")}>
-              aktywne ({activeCt})
-            </Chip>
-            <Chip active={filter === "disabled"} onClick={() => setFilter("disabled")}>
-              wyłączone ({disabledCt})
-            </Chip>
-            <Chip active={filter === "manual"} onClick={() => setFilter("manual")}>
-              do potwierdzenia ({manualCt})
-            </Chip>
-          </div>
+        <div className="flex justify-between items-center">
           <Link
             href={"/admin/templates" as Route}
             className="btn-clean"
@@ -72,13 +53,13 @@ export function TriggerListShell() {
             biblioteka szablonów →
           </Link>
         </div>
-        {filtered.length === 0 && (
+        {triggers.length === 0 && (
           <div className="t-mono text-[12px] text-admin-mute py-8 text-center">
-            Brak triggerów w tym filtrze
+            Brak triggerów
           </div>
         )}
-        {filtered.map(t => (
-          <TriggerCard key={t.id} trigger={t} onEdit={setEditing} />
+        {triggers.map(t => (
+          <TriggerCard key={t.id} trigger={t} onEdit={setEditing} onToggled={reloadTriggers} />
         ))}
       </div>
       {/* RIGHT */}
