@@ -1,0 +1,96 @@
+# Production compose for Dr Shoes CRM on Hetzner.
+# Usage:
+#   docker compose -f infra/docker-compose.prod.yml --env-file .env.prod up -d
+#
+# Differences from dev compose:
+# - No MinIO (uses Cloudflare R2 via DRSHOES_STORAGE_* envs)
+# - No Jaeger (tracing disabled)
+# - All services bind to 127.0.0.1 only — host-level Caddy is the public entry point
+# - restart=always on every service
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: app/Dockerfile
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+
+      # Object storage — Cloudflare R2 (S3-compatible)
+      DRSHOES_STORAGE_ENDPOINT: ${R2_ENDPOINT}
+      DRSHOES_STORAGE_BUCKET: ${R2_BUCKET}
+      DRSHOES_STORAGE_ACCESS_KEY: ${R2_ACCESS_KEY}
+      DRSHOES_STORAGE_SECRET_KEY: ${R2_SECRET_KEY}
+
+      # Real outbound mail via Gmail SMTP (Misza's App Password)
+      MESSAGING_EMAIL_PROVIDER: smtp
+      MESSAGING_EMAIL_SMTP_FROM: ${SMTP_FROM}
+      MESSAGING_EMAIL_SMTP_FROM_NAME: ${SMTP_FROM_NAME}
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 465
+      SPRING_MAIL_USERNAME: ${SMTP_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SMTP_PASSWORD}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_SSL_ENABLE: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_CONNECTIONTIMEOUT: "10000"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_TIMEOUT: "15000"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_WRITETIMEOUT: "15000"
+
+      # Workshop identity (rendered into email templates)
+      DRSHOES_WORKSHOP_NAME: ${WORKSHOP_NAME}
+      DRSHOES_WORKSHOP_ADDRESS: ${WORKSHOP_ADDRESS}
+      DRSHOES_WORKSHOP_OPENING_HOURS: ${WORKSHOP_OPENING_HOURS}
+      DRSHOES_WORKSHOP_URL: ${WORKSHOP_URL}
+
+      DRSHOES_DEMO_SEED_ENABLED: "false"
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      NEXT_PUBLIC_API_BASE: /api
+      INTERNAL_API_BASE: http://backend:8080
+      NEXT_PUBLIC_APP_URL: https://${APP_HOST}
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  db_data:

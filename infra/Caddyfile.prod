@@ -1,0 +1,32 @@
+{
+	email putiatycki.p@gmail.com
+}
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}
+
+(app_routes) {
+	encode zstd gzip
+	reverse_proxy /api/* 127.0.0.1:8080
+	reverse_proxy 127.0.0.1:3000
+}
+
+# Temporary public host. noindex so search engines don't pick this up
+# before the real launch on crm.drshoes.pl.
+drshoes.forcepush.club {
+	import security_headers
+	header X-Robots-Tag "noindex, nofollow"
+	import app_routes
+}
+
+# Permanent host. Uncomment + add DNS A record when migrating off the temp URL.
+# crm.drshoes.pl {
+# 	import security_headers
+# 	import app_routes
+# }
