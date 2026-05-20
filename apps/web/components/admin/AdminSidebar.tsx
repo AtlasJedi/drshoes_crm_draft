@@ -73,7 +73,7 @@ export function AdminSidebar({ me }: Props) {
             {me.role.toLowerCase()} · pracownia
           </div>
         </div>
-        <form action="/logout" method="post">
+        <form action="/auth/logout" method="post">
           <button
             type="submit"
             aria-label="Wyloguj"

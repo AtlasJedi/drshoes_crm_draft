@@ -65,7 +65,8 @@ public class SecurityConfig {
         "/api/public/**",
         "/api/webhooks/**",
         "/actuator/**",
-        "/api/admin/auth/login"  // bootstrap: no session = no CSRF cookie; anti-CSRF still meaningless here
+        "/api/admin/auth/login",   // bootstrap: no session = no CSRF cookie; anti-CSRF still meaningless here
+        "/api/admin/auth/logout"   // Next.js server-side proxy cannot carry XSRF-TOKEN; worst-case attacker logs you out — not dangerous
     };
 
     /**
