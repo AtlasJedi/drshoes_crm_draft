@@ -11,8 +11,6 @@ import com.drshoes.app.photo.service.PhotoNotFoundException;
 import com.drshoes.app.photo.service.PhotoService;
 import com.drshoes.app.photo.service.PhotoTooLargeException;
 import com.drshoes.app.photo.service.UnsupportedPhotoMimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST endpoints for the admin photo gallery.
@@ -53,17 +53,12 @@ import java.util.UUID;
  */
 @RestController
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class PhotoController {
-
-    private static final Logger log = LoggerFactory.getLogger(PhotoController.class);
 
     private final PhotoService photos;
     private final PhotoRepository photoRepository;
-
-    public PhotoController(PhotoService photos, PhotoRepository photoRepository) {
-        this.photos = photos;
-        this.photoRepository = photoRepository;
-    }
 
     // ── POST /api/admin/orders/{orderId}/photos ───────────────────────────────
 

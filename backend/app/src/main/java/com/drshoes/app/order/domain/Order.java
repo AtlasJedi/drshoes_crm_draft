@@ -6,6 +6,8 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JPA entity for the order_ table (aggregate root).
@@ -18,6 +20,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "order_")
+@Getter
+@Setter
 public class Order {
 
     @Id
@@ -96,67 +100,14 @@ public class Order {
     void onUpdate() { this.updatedAt = Instant.now(); }
 
     // ---- accessors ----
-
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
-
-    public UUID getClientId() { return clientId; }
-    public void setClientId(UUID clientId) { this.clientId = clientId; }
-
-    public OrderStatus getStatus() { return status; }
     public void setStatus(OrderStatus status) { this.status = status; }
-
-    public OrderSource getSource() { return source; }
-    public void setSource(OrderSource source) { this.source = source; }
-
-    public Instant getReceivedAt() { return receivedAt; }
     public void setReceivedAt(Instant receivedAt) { this.receivedAt = receivedAt; }
-
-    public Instant getPlannedPickupAt() { return plannedPickupAt; }
-    public void setPlannedPickupAt(Instant plannedPickupAt) { this.plannedPickupAt = plannedPickupAt; }
-
-    public Instant getPickedUpAt() { return pickedUpAt; }
     public void setPickedUpAt(Instant pickedUpAt) { this.pickedUpAt = pickedUpAt; }
-
-    public UUID getAssignedCraftsmanId() { return assignedCraftsmanId; }
-    public void setAssignedCraftsmanId(UUID assignedCraftsmanId) { this.assignedCraftsmanId = assignedCraftsmanId; }
-
-    public UUID getCurrentStorageLocationId() { return currentStorageLocationId; }
     public void setCurrentStorageLocationId(UUID currentStorageLocationId) { this.currentStorageLocationId = currentStorageLocationId; }
-
-    public String getTags() { return tags; }
-    public void setTags(String tags) { this.tags = tags; }
-
-    public int getTotalPriceCents() { return totalPriceCents; }
     public void setTotalPriceCents(int totalPriceCents) { this.totalPriceCents = totalPriceCents; }
-
-    public int getQuotedPriceCents() { return quotedPriceCents; }
-    public void setQuotedPriceCents(int quotedPriceCents) { this.quotedPriceCents = quotedPriceCents; }
-
-    public int getAdvancePaidCents() { return advancePaidCents; }
     public void setAdvancePaidCents(int advancePaidCents) { this.advancePaidCents = advancePaidCents; }
-
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
-
-    public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public String getCancelledReason() { return cancelledReason; }
     public void setCancelledReason(String cancelledReason) { this.cancelledReason = cancelledReason; }
 
-    public Instant getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(Instant deletedAt) { this.deletedAt = deletedAt; }
-
-    public Instant getCreatedAt() { return createdAt; }
-
-    public Instant getUpdatedAt() { return updatedAt; }
-
-    public int getVersion() { return version; }
 }

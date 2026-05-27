@@ -5,6 +5,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JPA entity for the trigger_ table (messaging-automation triggers, not DB triggers).
@@ -18,6 +20,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "trigger_")
+@Getter
+@Setter
 public class TriggerEntity {
 
     @Id
@@ -63,35 +67,8 @@ public class TriggerEntity {
     protected TriggerEntity() {}
 
     // ---- accessors ----
-
-    public UUID getId() { return id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public Boolean getEnabled() { return enabled; }
     public void setEnabled(Boolean enabled) { this.enabled = enabled; }
-
-    public TriggerEvent getEvent() { return event; }
-    public void setEvent(TriggerEvent event) { this.event = event; }
-
-    public String getEventParams() { return eventParams; }
     public void setEventParams(String eventParams) { this.eventParams = eventParams; }
-
-    public String getChannels() { return channels; }
-    public void setChannels(String channels) { this.channels = channels; }
-
-    public UUID getTemplateId() { return templateId; }
     public void setTemplateId(UUID templateId) { this.templateId = templateId; }
-
-    public int getDelayMinutes() { return delayMinutes; }
-    public void setDelayMinutes(int delayMinutes) { this.delayMinutes = delayMinutes; }
-
-    public boolean isRequiresManualConfirmation() { return requiresManualConfirmation; }
-    public void setRequiresManualConfirmation(boolean requiresManualConfirmation) {
-        this.requiresManualConfirmation = requiresManualConfirmation;
-    }
-
-    public OffsetDateTime getCreatedAt() { return createdAt; }
     public OffsetDateTime getUpdatedAt() { return updatedAt; }
 }

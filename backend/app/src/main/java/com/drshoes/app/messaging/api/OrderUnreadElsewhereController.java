@@ -5,8 +5,6 @@ import com.drshoes.app.messaging.dto.UnreadElsewhereDto;
 import com.drshoes.app.messaging.repository.MessageThreadRepository;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * GET /api/admin/orders/{orderId}/unread-elsewhere
@@ -26,18 +26,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/admin/orders")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class OrderUnreadElsewhereController {
-
-    private static final Logger log = LoggerFactory.getLogger(OrderUnreadElsewhereController.class);
 
     private final OrderRepository orders;
     private final MessageThreadRepository threads;
-
-    public OrderUnreadElsewhereController(OrderRepository orders,
-                                          MessageThreadRepository threads) {
-        this.orders  = orders;
-        this.threads = threads;
-    }
 
     @GetMapping("/{orderId}/unread-elsewhere")
     public UnreadElsewhereDto unreadElsewhere(

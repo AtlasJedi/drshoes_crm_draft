@@ -2,8 +2,6 @@ package com.drshoes.app.webhooks;
 
 import com.drshoes.app.messaging.service.WebhookStatusReconciler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Base64;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Receives Postmark delivery webhook callbacks.
@@ -39,9 +38,8 @@ import java.util.Base64;
  * Raw payload is NOT logged at INFO (PII risk — recipient emails may appear).
  */
 @RestController
+@Slf4j
 public class PostmarkWebhookController {
-
-    private static final Logger log = LoggerFactory.getLogger(PostmarkWebhookController.class);
 
     private final WebhookStatusReconciler reconciler;
     private final WebhookEventMapper      mapper;

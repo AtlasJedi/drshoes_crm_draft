@@ -12,6 +12,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 /**
  * AOP aspect with two responsibilities:
@@ -33,16 +34,11 @@ import java.util.UUID;
  */
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class AuditLogAspect {
 
     private final AuditedParentResolver parentResolver;
     private final AuditWriteCoordinator coordinator;
-
-    public AuditLogAspect(AuditedParentResolver parentResolver,
-                          AuditWriteCoordinator coordinator) {
-        this.parentResolver = parentResolver;
-        this.coordinator = coordinator;
-    }
 
     // Exclude @ExceptionHandler methods: when the primary handler throws, the aspect
     // already logs status=500 and rethrows; Spring MVC then dispatches to the

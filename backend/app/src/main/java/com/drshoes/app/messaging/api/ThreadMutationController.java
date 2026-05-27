@@ -7,13 +7,13 @@ import com.drshoes.app.messaging.domain.MessageThreadEntity;
 import com.drshoes.app.messaging.dto.AssignThreadRequest;
 import com.drshoes.app.messaging.dto.MessageThreadDto;
 import com.drshoes.app.messaging.service.MessageThreadMutationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Write-side thread endpoints: mark-read, assign, discard.
@@ -24,18 +24,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/admin/threads")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class ThreadMutationController {
-
-    private static final Logger log = LoggerFactory.getLogger(ThreadMutationController.class);
 
     private final MessageThreadMutationService mutationService;
     private final ClientRepository clients;
-
-    public ThreadMutationController(MessageThreadMutationService mutationService,
-                                    ClientRepository clients) {
-        this.mutationService = mutationService;
-        this.clients         = clients;
-    }
 
     @PostMapping("/{id}/mark-read")
     public MessageThreadDto markRead(@PathVariable UUID id,

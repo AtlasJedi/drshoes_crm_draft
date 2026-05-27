@@ -8,8 +8,6 @@ import com.drshoes.lib.messaging.Provider;
 import com.drshoes.lib.messaging.WebhookEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +15,8 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Applies inbound webhook delivery events to the message table.
@@ -41,6 +41,8 @@ import java.util.UUID;
  * Structured logging per CLAUDE.md §7: every outcome logs key=value at INFO.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class WebhookStatusReconciler {
 
     /** Shared prefix — both suffix constants start with this string. */
@@ -50,22 +52,10 @@ public class WebhookStatusReconciler {
     /** Audit path written on APPLIED + FAILED outcome. */
     public static final String AUDIT_PATH_FAILED    = "WebhookStatusReconciler#applyFailed";
 
-    private static final Logger log = LoggerFactory.getLogger(WebhookStatusReconciler.class);
-
     private final MessageRepository      messages;
     private final WebhookEventRepository webhookEvents;
     private final ObjectMapper           objectMapper;
     private final AuditLogWriter         auditWriter;
-
-    public WebhookStatusReconciler(MessageRepository messages,
-                                   WebhookEventRepository webhookEvents,
-                                   ObjectMapper objectMapper,
-                                   AuditLogWriter auditWriter) {
-        this.messages      = messages;
-        this.webhookEvents = webhookEvents;
-        this.objectMapper  = objectMapper;
-        this.auditWriter   = auditWriter;
-    }
 
     /**
      * Applies the webhook event and returns a {@link ReconcileResult}.

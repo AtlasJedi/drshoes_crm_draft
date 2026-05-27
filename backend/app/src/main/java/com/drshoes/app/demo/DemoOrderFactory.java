@@ -9,8 +9,6 @@ import com.drshoes.app.order.domain.OrderStatus;
 import com.drshoes.app.order.dto.ChangeStatusRequest;
 import com.drshoes.app.order.dto.CreateOrderItemRequest;
 import com.drshoes.app.order.dto.CreateOrderRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +17,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Creates 18 sample orders spread across all OrderStatus values and OrderItemKind types.
@@ -44,17 +44,12 @@ import java.util.UUID;
  */
 @Component
 @Profile("local")
+@Slf4j
+@RequiredArgsConstructor
 public class DemoOrderFactory {
-
-    private static final Logger log = LoggerFactory.getLogger(DemoOrderFactory.class);
 
     private final OrderService orderService;
     private final OrderRepository orderRepository;
-
-    public DemoOrderFactory(OrderService orderService, OrderRepository orderRepository) {
-        this.orderService = orderService;
-        this.orderRepository = orderRepository;
-    }
 
     public List<Order> createAll(List<Client> clients) {
         var now = Instant.now();

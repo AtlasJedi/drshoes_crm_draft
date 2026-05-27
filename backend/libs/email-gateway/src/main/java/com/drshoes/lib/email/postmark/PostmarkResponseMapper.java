@@ -3,10 +3,9 @@ package com.drshoes.lib.email.postmark;
 import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Pure mapping utility: HTTP status + response body → DeliveryReceipt.
@@ -18,9 +17,8 @@ import java.util.Map;
  *
  * JSON parse failure returns DeliveryReceipt.failed("PARSE_ERROR", ...) — never swallowed.
  */
+@Slf4j
 public final class PostmarkResponseMapper {
-
-    private static final Logger log = LoggerFactory.getLogger(PostmarkResponseMapper.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
 

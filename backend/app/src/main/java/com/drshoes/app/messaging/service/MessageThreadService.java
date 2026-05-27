@@ -2,12 +2,12 @@ package com.drshoes.app.messaging.service;
 
 import com.drshoes.app.messaging.domain.MessageThreadEntity;
 import com.drshoes.app.messaging.repository.MessageThreadRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Read-side service: find-or-create operations for message threads.
@@ -15,15 +15,11 @@ import java.util.UUID;
  * {@link MessageThreadMutationService} to stay within the 120-LOC cap.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class MessageThreadService {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageThreadService.class);
-
     private final MessageThreadRepository threads;
-
-    public MessageThreadService(MessageThreadRepository threads) {
-        this.threads = threads;
-    }
 
     /** Retained for M2/M4 callers that pass clientId only (EMAIL assumed). */
     @Transactional

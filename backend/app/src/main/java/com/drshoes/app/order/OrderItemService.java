@@ -6,13 +6,13 @@ import com.drshoes.app.order.domain.OrderRepository;
 import com.drshoes.app.order.dto.CreateOrderItemRequest;
 import com.drshoes.app.order.dto.OrderItemDto;
 import com.drshoes.app.order.dto.UpdateOrderItemRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Manages OrderItem mutations and keeps totalPriceCents in sync on the parent Order.
@@ -20,17 +20,12 @@ import java.util.UUID;
  * Structured logging: op={} orderId={} itemId={} outcome=ok|not-found
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class OrderItemService {
-
-    private static final Logger log = LoggerFactory.getLogger(OrderItemService.class);
 
     private final OrderItemRepository itemRepo;
     private final OrderRepository orderRepo;
-
-    public OrderItemService(OrderItemRepository itemRepo, OrderRepository orderRepo) {
-        this.itemRepo = itemRepo;
-        this.orderRepo = orderRepo;
-    }
 
     @Transactional
     public OrderItemDto addItem(UUID orderId, CreateOrderItemRequest req) {

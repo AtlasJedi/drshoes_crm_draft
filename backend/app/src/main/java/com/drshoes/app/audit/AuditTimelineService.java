@@ -5,8 +5,6 @@ import com.drshoes.app.audit.dto.TimelineEventKind;
 import com.drshoes.app.auth.domain.UserRepository;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +16,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Composes the admin order timeline from audit_log rows.
@@ -38,24 +38,14 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional(readOnly = true)
+@Slf4j
+@RequiredArgsConstructor
 public class AuditTimelineService {
-
-    private static final Logger log = LoggerFactory.getLogger(AuditTimelineService.class);
 
     private final AuditLogRepository auditLogRepo;
     private final OrderRepository orderRepo;
     private final UserRepository userRepo;
     private final TimelineEventCurator curator;
-
-    public AuditTimelineService(AuditLogRepository auditLogRepo,
-                                OrderRepository orderRepo,
-                                UserRepository userRepo,
-                                TimelineEventCurator curator) {
-        this.auditLogRepo = auditLogRepo;
-        this.orderRepo    = orderRepo;
-        this.userRepo     = userRepo;
-        this.curator      = curator;
-    }
 
     /**
      * Returns the chronological timeline for the given orderId.

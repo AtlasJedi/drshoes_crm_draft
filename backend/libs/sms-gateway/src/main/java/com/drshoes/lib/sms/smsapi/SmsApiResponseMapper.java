@@ -3,11 +3,10 @@ package com.drshoes.lib.sms.smsapi;
 import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Pure mapping utility: SMSAPI HTTP response → DeliveryReceipt.
@@ -24,9 +23,8 @@ import java.util.Map;
  *   list[0].id is the stable SMSAPI message identifier. Error envelope fields "error" (int)
  *   and "message" (string) confirmed. Shape matches plan.
  */
+@Slf4j
 public final class SmsApiResponseMapper {
-
-    private static final Logger log = LoggerFactory.getLogger(SmsApiResponseMapper.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
 

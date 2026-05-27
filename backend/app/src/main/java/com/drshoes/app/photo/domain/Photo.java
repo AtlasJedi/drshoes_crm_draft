@@ -7,6 +7,8 @@ import org.springframework.data.domain.Persistable;
 
 import java.time.Instant;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JPA entity for the photo table (created by V009).
@@ -24,6 +26,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "photo")
+@Getter
+@Setter
 public class Photo implements Persistable<UUID> {
 
     @Id
@@ -69,36 +73,12 @@ public class Photo implements Persistable<UUID> {
     }
 
     @Override
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public UUID getId() {
+        return id;
+    }
 
     @Override
-    public boolean isNew() { return isNew; }
-
-    public UUID getOrderId() { return orderId; }
-    public void setOrderId(UUID orderId) { this.orderId = orderId; }
-
-    public UUID getOrderItemId() { return orderItemId; }
-    public void setOrderItemId(UUID orderItemId) { this.orderItemId = orderItemId; }
-
-    public UUID getUploadedBy() { return uploadedBy; }
-    public void setUploadedBy(UUID uploadedBy) { this.uploadedBy = uploadedBy; }
-
-    public Instant getUploadedAt() { return uploadedAt; }
-    public void setUploadedAt(Instant uploadedAt) { this.uploadedAt = uploadedAt; }
-
-    public String getS3Key() { return s3Key; }
-    public void setS3Key(String s3Key) { this.s3Key = s3Key; }
-
-    public String getMime() { return mime; }
-    public void setMime(String mime) { this.mime = mime; }
-
-    public long getSizeBytes() { return sizeBytes; }
-    public void setSizeBytes(long sizeBytes) { this.sizeBytes = sizeBytes; }
-
-    public PhotoLabel getLabel() { return label; }
-    public void setLabel(PhotoLabel label) { this.label = label; }
-
-    public String getOriginalFilename() { return originalFilename; }
-    public void setOriginalFilename(String originalFilename) { this.originalFilename = originalFilename; }
+    public boolean isNew() {
+        return isNew;
+    }
 }

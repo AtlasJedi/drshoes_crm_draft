@@ -3,6 +3,8 @@ package com.drshoes.app.order.domain;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JPA entity for the order_item table.
@@ -14,6 +16,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "order_item")
+@Getter
+@Setter
 public class OrderItem {
 
     @Id
@@ -50,29 +54,8 @@ public class OrderItem {
     void onUpdate() { this.updatedAt = Instant.now(); }
 
     // ---- accessors ----
-
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public UUID getOrderId() { return orderId; }
     public void setOrderId(UUID orderId) { this.orderId = orderId; }
-
-    public int getPosition() { return position; }
-    public void setPosition(int position) { this.position = position; }
-
-    public OrderItemKind getKind() { return kind; }
     public void setKind(OrderItemKind kind) { this.kind = kind; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public String getCraftsmanNotes() { return craftsmanNotes; }
     public void setCraftsmanNotes(String craftsmanNotes) { this.craftsmanNotes = craftsmanNotes; }
 
-    public int getPriceCents() { return priceCents; }
-    public void setPriceCents(int priceCents) { this.priceCents = priceCents; }
-
-    public Instant getCreatedAt() { return createdAt; }
-
-    public Instant getUpdatedAt() { return updatedAt; }
 }

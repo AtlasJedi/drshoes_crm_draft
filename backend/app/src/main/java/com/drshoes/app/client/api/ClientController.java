@@ -6,8 +6,6 @@ import com.drshoes.app.client.dto.ClientSearchResult;
 import com.drshoes.app.client.dto.CreateClientRequest;
 import com.drshoes.app.client.dto.UpdateClientRequest;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST controller for the Client aggregate.
@@ -38,15 +38,11 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/admin/clients")
+@Slf4j
+@RequiredArgsConstructor
 public class ClientController {
 
-    private static final Logger log = LoggerFactory.getLogger(ClientController.class);
-
     private final ClientService svc;
-
-    public ClientController(ClientService svc) {
-        this.svc = svc;
-    }
 
     @GetMapping
     public Page<ClientDto> list(Pageable pageable, Authentication auth) {

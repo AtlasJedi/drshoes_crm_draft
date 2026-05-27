@@ -5,14 +5,14 @@ import com.drshoes.app.client.dto.ClientSummaryDto;
 import com.drshoes.app.messaging.repository.MessageThreadRepository;
 import com.drshoes.app.order.domain.OrderRepository;
 import com.drshoes.app.order.domain.OrderStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Computes aggregate summary KPIs for a single client.
@@ -23,9 +23,9 @@ import java.util.UUID;
  * unreadThreadCount excludes discarded threads.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ClientSummaryService {
-
-    private static final Logger log = LoggerFactory.getLogger(ClientSummaryService.class);
 
     /** Statuses that represent a "closed" order — excluded from openOrderCount. */
     private static final List<OrderStatus> CLOSED_STATUSES =
@@ -34,14 +34,6 @@ public class ClientSummaryService {
     private final ClientRepository    clientRepo;
     private final OrderRepository     orderRepo;
     private final MessageThreadRepository threadRepo;
-
-    public ClientSummaryService(ClientRepository clientRepo,
-                                OrderRepository orderRepo,
-                                MessageThreadRepository threadRepo) {
-        this.clientRepo = clientRepo;
-        this.orderRepo  = orderRepo;
-        this.threadRepo = threadRepo;
-    }
 
     @Transactional(readOnly = true)
     public ClientSummaryDto getSummary(UUID clientId) {

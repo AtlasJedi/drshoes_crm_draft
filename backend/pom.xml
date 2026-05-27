@@ -30,6 +30,7 @@
     <testcontainers.version>1.20.4</testcontainers.version>
     <aws-sdk.version>2.29.20</aws-sdk.version>
     <otel.instrumentation.version>2.10.0</otel.instrumentation.version>
+    <lombok.version>1.18.34</lombok.version>
   </properties>
 
   <dependencyManagement>
@@ -55,6 +56,12 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+        <scope>provided</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -72,6 +79,13 @@
           <configuration>
             <release>${java.version}</release>
             <parameters>true</parameters>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+              </path>
+            </annotationProcessorPaths>
           </configuration>
         </plugin>
         <plugin>

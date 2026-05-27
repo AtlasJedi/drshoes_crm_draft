@@ -10,8 +10,6 @@ import com.drshoes.app.messaging.dto.MessageThreadDto;
 import com.drshoes.app.messaging.dto.ThreadDetailDto;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageThreadRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +21,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Read-only thread endpoints (list + get-by-id).
@@ -32,21 +32,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/admin/threads")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class ThreadController {
-
-    private static final Logger log = LoggerFactory.getLogger(ThreadController.class);
 
     private final MessageThreadRepository threads;
     private final MessageRepository messages;
     private final ClientRepository clients;
-
-    public ThreadController(MessageThreadRepository threads,
-                            MessageRepository messages,
-                            ClientRepository clients) {
-        this.threads  = threads;
-        this.messages = messages;
-        this.clients  = clients;
-    }
 
     @GetMapping
     public List<MessageThreadDto> list(

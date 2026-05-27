@@ -3,12 +3,12 @@ package com.drshoes.app.order.service;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderRepository;
 import com.drshoes.app.storage.domain.StorageLocationRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Handles POST /api/admin/orders/{orderId}/notes.
@@ -23,17 +23,12 @@ import java.util.UUID;
  *     so it rolls back too.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class OrderNotesService {
-
-    private static final Logger log = LoggerFactory.getLogger(OrderNotesService.class);
 
     private final OrderRepository orders;
     private final StorageLocationRepository locations;
-
-    public OrderNotesService(OrderRepository orders, StorageLocationRepository locations) {
-        this.orders = orders;
-        this.locations = locations;
-    }
 
     public record Result(String oldLocation, String newLocation, String note) {}
 

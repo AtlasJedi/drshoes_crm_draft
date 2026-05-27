@@ -4,8 +4,6 @@ import com.drshoes.app.order.OrderAlreadyDeletedException;
 import com.drshoes.app.order.OrderItemNotFoundException;
 import com.drshoes.app.order.OrderNotFoundException;
 import com.drshoes.app.order.OrderVersionConflictException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Maps order-domain exceptions to HTTP responses.
@@ -25,9 +24,8 @@ import java.util.Map;
  *   OrderItemNotFoundException      → 404 NOT_FOUND        {code:"ORDER_ITEM_NOT_FOUND"}
  */
 @RestControllerAdvice(assignableTypes = OrderController.class)
+@Slf4j
 public class OrderExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(OrderExceptionHandler.class);
 
     @ExceptionHandler(OrderNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(OrderNotFoundException e) {

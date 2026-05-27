@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Builds a {@link TemplateContext} from order + client data.
@@ -23,22 +24,13 @@ import java.util.UUID;
  * data loaded when the compose action is not associated with a specific order).
  */
 @Component
+@RequiredArgsConstructor
 public class TemplateContextBuilder {
 
     private final OrderRepository orders;
     private final OrderItemRepository orderItems;
     private final ClientRepository clients;
     private final WorkshopProperties workshop;
-
-    public TemplateContextBuilder(OrderRepository orders,
-                                  OrderItemRepository orderItems,
-                                  ClientRepository clients,
-                                  WorkshopProperties workshop) {
-        this.orders = orders;
-        this.orderItems = orderItems;
-        this.clients = clients;
-        this.workshop = workshop;
-    }
 
     /**
      * Loads order + client rows and assembles a template context for rendering.

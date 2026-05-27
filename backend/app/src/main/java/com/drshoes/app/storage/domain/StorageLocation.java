@@ -2,6 +2,8 @@ package com.drshoes.app.storage.domain;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Storage location administered as a simple string set.
@@ -11,6 +13,8 @@ import java.time.Instant;
  */
 @Entity
 @Table(name = "storage_location")
+@Getter
+@Setter
 public class StorageLocation {
 
     @Id
@@ -34,14 +38,7 @@ public class StorageLocation {
 
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
-
-    public Long getId() { return id; }
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public int getPosition() { return position; }
     public void setPosition(int position) { this.position = position; }
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
-    public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 }

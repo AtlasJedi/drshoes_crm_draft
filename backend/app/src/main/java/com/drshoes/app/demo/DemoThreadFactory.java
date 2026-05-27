@@ -5,13 +5,13 @@ import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.service.MessageThreadService;
 import com.drshoes.app.order.domain.Order;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Seeds one demo MessageThread with 4 alternating-direction messages so the
@@ -27,18 +27,12 @@ import java.util.UUID;
  */
 @Component
 @Profile("local")
+@Slf4j
+@RequiredArgsConstructor
 public class DemoThreadFactory {
-
-    private static final Logger log = LoggerFactory.getLogger(DemoThreadFactory.class);
 
     private final MessageThreadService threadService;
     private final MessageRepository messageRepository;
-
-    public DemoThreadFactory(MessageThreadService threadService,
-                              MessageRepository messageRepository) {
-        this.threadService = threadService;
-        this.messageRepository = messageRepository;
-    }
 
     public void createSampleThread(Client client, Order order) {
         var thread = threadService.findOrCreateForClient(client.getId(), "EMAIL");

@@ -3,12 +3,11 @@ package com.drshoes.app.auth.service;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.TimeMeter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Per-IP login throttle backed by Bucket4j in-memory (ConcurrentHashMap).
@@ -20,9 +19,8 @@ import java.util.concurrent.ConcurrentMap;
  *   - DEBUG: op=loginThrottleCheck key={ip} bucket={remaining} outcome=allowed
  *   - INFO:  op=loginThrottleCheck key={ip} bucket=0 outcome=throttled
  */
+@Slf4j
 public class LoginThrottle {
-
-    private static final Logger log = LoggerFactory.getLogger(LoginThrottle.class);
 
     private final long capacity;
     private final Duration window;

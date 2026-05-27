@@ -2,8 +2,6 @@ package com.drshoes.app.audit.api;
 
 import com.drshoes.app.audit.AuditTimelineService;
 import com.drshoes.app.audit.dto.TimelineEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST controller for the order timeline endpoint.
@@ -34,15 +34,11 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/admin/orders/{orderId}/timeline")
+@Slf4j
+@RequiredArgsConstructor
 public class AuditTimelineController {
 
-    private static final Logger log = LoggerFactory.getLogger(AuditTimelineController.class);
-
     private final AuditTimelineService svc;
-
-    public AuditTimelineController(AuditTimelineService svc) {
-        this.svc = svc;
-    }
 
     @GetMapping
     public List<TimelineEvent> getTimeline(@PathVariable UUID orderId,

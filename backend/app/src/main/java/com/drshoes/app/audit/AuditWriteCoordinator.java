@@ -2,13 +2,13 @@ package com.drshoes.app.audit;
 
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Coordinates the actual persistence of audit rows by combining:
@@ -23,17 +23,12 @@ import java.util.UUID;
  * (never lets audit failure crash the caller).
  */
 @Component
+@Slf4j
+@RequiredArgsConstructor
 public class AuditWriteCoordinator {
-
-    private static final Logger log = LoggerFactory.getLogger(AuditWriteCoordinator.class);
 
     private final AuditLogWriter writer;
     private final AuditSpanHelper spanHelper;
-
-    public AuditWriteCoordinator(AuditLogWriter writer, AuditSpanHelper spanHelper) {
-        this.writer = writer;
-        this.spanHelper = spanHelper;
-    }
 
     /** Persists an HTTP audit row, capturing the active OTel trace ID. */
     public void persistHttp(HttpServletRequest r, int status) {

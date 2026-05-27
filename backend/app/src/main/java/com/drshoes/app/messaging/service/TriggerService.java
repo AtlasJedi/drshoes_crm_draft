@@ -5,8 +5,6 @@ import com.drshoes.app.messaging.domain.TriggerEntity;
 import com.drshoes.app.messaging.dto.TriggerDto;
 import com.drshoes.app.messaging.repository.MessageTemplateRepository;
 import com.drshoes.app.messaging.repository.TriggerRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Service for automation trigger management.
@@ -22,17 +22,12 @@ import java.util.UUID;
  * Structured logging: op=trigger.toggle outcome=ok id={} enabled={}
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class TriggerService {
-
-    private static final Logger log = LoggerFactory.getLogger(TriggerService.class);
 
     private final TriggerRepository triggers;
     private final MessageTemplateRepository templates;
-
-    public TriggerService(TriggerRepository triggers, MessageTemplateRepository templates) {
-        this.triggers = triggers;
-        this.templates = templates;
-    }
 
     public List<TriggerDto> list() {
         return triggers.findAllByOrderByNameAsc().stream().map(this::toDto).toList();

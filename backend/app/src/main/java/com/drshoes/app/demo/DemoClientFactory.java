@@ -5,13 +5,13 @@ import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
 import com.drshoes.app.client.dto.CreateClientRequest;
 import com.drshoes.app.client.dto.UpdateClientRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Creates 6 sample Polish clients for the demo environment.
@@ -23,17 +23,12 @@ import java.util.UUID;
  */
 @Component
 @Profile("local")
+@Slf4j
+@RequiredArgsConstructor
 public class DemoClientFactory {
-
-    private static final Logger log = LoggerFactory.getLogger(DemoClientFactory.class);
 
     private final ClientService clientService;
     private final ClientRepository clientRepository;
-
-    public DemoClientFactory(ClientService clientService, ClientRepository clientRepository) {
-        this.clientService = clientService;
-        this.clientRepository = clientRepository;
-    }
 
     public List<Client> createAll() {
         var ids = List.of(

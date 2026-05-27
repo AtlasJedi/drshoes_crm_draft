@@ -3,6 +3,8 @@ package com.drshoes.app.messaging.domain;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JPA entity for the message_thread table.
@@ -14,6 +16,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "message_thread")
+@Getter
+@Setter
 public class MessageThreadEntity {
 
     @Id
@@ -56,31 +60,8 @@ public class MessageThreadEntity {
     public MessageThreadEntity() {}
 
     // ---- accessors ----
-
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public UUID getClientId() { return clientId; }
     public void setClientId(UUID clientId) { this.clientId = clientId; }
-
-    public String getSubject() { return subject; }
-    public void setSubject(String subject) { this.subject = subject; }
-
-    public OffsetDateTime getLastMessageAt() { return lastMessageAt; }
     public void setLastMessageAt(OffsetDateTime lastMessageAt) { this.lastMessageAt = lastMessageAt; }
-
-    public int getUnreadCount() { return unreadCount; }
-    public void setUnreadCount(int unreadCount) { this.unreadCount = unreadCount; }
-
-    public OffsetDateTime getCreatedAt() { return createdAt; }
     public OffsetDateTime getUpdatedAt() { return updatedAt; }
-
-    public String getChannel() { return channel; }
-    public void setChannel(String channel) { this.channel = channel; }
-
-    public String getRawSender() { return rawSender; }
     public void setRawSender(String rawSender) { this.rawSender = rawSender; }
-
-    public OffsetDateTime getDiscardedAt() { return discardedAt; }
-    public void setDiscardedAt(OffsetDateTime discardedAt) { this.discardedAt = discardedAt; }
 }

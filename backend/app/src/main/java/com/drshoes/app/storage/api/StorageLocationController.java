@@ -3,14 +3,14 @@ package com.drshoes.app.storage.api;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.storage.service.StorageLocationService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * CRUD endpoints for the storage_location string set.
@@ -18,15 +18,11 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/admin/storage-locations")
+@Slf4j
+@RequiredArgsConstructor
 public class StorageLocationController {
 
-    private static final Logger log = LoggerFactory.getLogger(StorageLocationController.class);
-
     private final StorageLocationService svc;
-
-    public StorageLocationController(StorageLocationService svc) {
-        this.svc = svc;
-    }
 
     @GetMapping
     public List<StorageLocationDto> list(

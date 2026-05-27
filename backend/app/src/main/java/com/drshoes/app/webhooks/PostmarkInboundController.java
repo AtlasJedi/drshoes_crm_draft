@@ -2,8 +2,6 @@ package com.drshoes.app.webhooks;
 
 import com.drshoes.app.messaging.dto.PostmarkInboundPayload;
 import com.drshoes.app.messaging.service.InboundMessageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +15,7 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Receives Postmark inbound stream callbacks.
@@ -44,9 +43,8 @@ import java.util.UUID;
  * From/FromName NOT logged at INFO (PII risk).
  */
 @RestController
+@Slf4j
 public class PostmarkInboundController {
-
-    private static final Logger log = LoggerFactory.getLogger(PostmarkInboundController.class);
 
     private final InboundMessageService inboundService;
     private final byte[] expectedUsername;

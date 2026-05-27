@@ -5,8 +5,6 @@ import com.drshoes.app.dashboard.dto.DashboardChartsDto.MixByTypeRowDto;
 import com.drshoes.app.dashboard.dto.DashboardChartsDto.OrdersPerWeekRowDto;
 import com.drshoes.app.order.domain.OrderItemKind;
 import com.drshoes.app.order.domain.OrderRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +16,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.IsoFields;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Dashboard chart aggregations: stacked bar (week/month/quarter) + mix donut.
@@ -26,16 +26,12 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api/admin/dashboard")
+@Slf4j
+@RequiredArgsConstructor
 public class DashboardChartsController {
-
-    private static final Logger log = LoggerFactory.getLogger(DashboardChartsController.class);
     private static final ZoneId WARSAW = ZoneId.of("Europe/Warsaw");
 
     private final OrderRepository orderRepo;
-
-    public DashboardChartsController(OrderRepository orderRepo) {
-        this.orderRepo = orderRepo;
-    }
 
     @GetMapping("/charts")
     public DashboardChartsDto charts(

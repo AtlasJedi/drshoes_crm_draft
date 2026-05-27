@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Translates a MessageRouter service audit row into a {@link TimelineEvent} of kind
@@ -43,6 +44,7 @@ import java.util.UUID;
  * message that could have been produced by this service call).
  */
 @Component
+@RequiredArgsConstructor
 public class MessageSentTimelineHandler {
 
     private static final String SEND_MANUAL   = "MessageRouter#sendManual";
@@ -53,12 +55,6 @@ public class MessageSentTimelineHandler {
 
     private final MessageRepository messages;
     private final MessageTemplateRepository templates;
-
-    public MessageSentTimelineHandler(MessageRepository messages,
-                                      MessageTemplateRepository templates) {
-        this.messages  = messages;
-        this.templates = templates;
-    }
 
     /**
      * Returns a {@link TimelineEvent} if the audit row is a MessageRouter service row;

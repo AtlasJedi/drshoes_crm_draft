@@ -3,6 +3,8 @@ package com.drshoes.app.order.domain;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Computes the "pilne" (urgent) flag.
@@ -12,6 +14,8 @@ import java.time.Instant;
  * Any status transition away from PRZYJETE clears the flag automatically because
  * the flag is computed — not stored.
  */
+@Setter
+@Getter
 public final class OrderUrgency {
 
     public static final int THRESHOLD_DAYS = 4;

@@ -1,23 +1,19 @@
 package com.drshoes.app.messaging.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@Slf4j
+@RequiredArgsConstructor
 public class TemplateRenderer {
-
-  private static final Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
   private static final Pattern PLACEHOLDER = Pattern.compile("\\{([a-zA-Z_]+)\\}");
 
   private final PlaceholderResolver resolver;
-
-  public TemplateRenderer(PlaceholderResolver resolver) {
-    this.resolver = resolver;
-  }
 
   public String render(String body, TemplateContext ctx) {
     if (body == null) return "";

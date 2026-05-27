@@ -4,8 +4,6 @@ import com.drshoes.app.auth.domain.User;
 import com.drshoes.app.auth.domain.UserRepository;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Core authentication service: throttle-check → load user → BCrypt-verify →
@@ -25,19 +25,13 @@ import java.util.List;
  * Password / hash are NEVER logged.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class AuthService {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository users;
     private final PasswordEncoder enc;
     private final LoginThrottle throttle;
-
-    public AuthService(UserRepository users, PasswordEncoder enc, LoginThrottle throttle) {
-        this.users = users;
-        this.enc = enc;
-        this.throttle = throttle;
-    }
 
     /**
      * Authenticates a user by email and password.

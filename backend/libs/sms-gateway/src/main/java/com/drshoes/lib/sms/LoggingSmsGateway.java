@@ -3,12 +3,11 @@ package com.drshoes.lib.sms;
 import com.drshoes.lib.messaging.Channel;
 import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.drshoes.lib.messaging.OutboundMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class LoggingSmsGateway implements SmsGateway {
-    private static final Logger log = LoggerFactory.getLogger(LoggingSmsGateway.class);
 
     @Override public Channel channel() { return Channel.SMS; }
 
