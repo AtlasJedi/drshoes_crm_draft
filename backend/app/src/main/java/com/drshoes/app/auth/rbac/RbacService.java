@@ -1,8 +1,6 @@
 package com.drshoes.app.auth.rbac;
 
 import com.drshoes.app.auth.domain.UserRole;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Central RBAC decision service.
@@ -20,9 +19,8 @@ import java.util.stream.Collectors;
  * Anonymous / null Authentication returns false for every capability.
  */
 @Component("rbac")
+@Slf4j
 public class RbacService {
-
-    private static final Logger log = LoggerFactory.getLogger(RbacService.class);
 
     public boolean canEditOrder(Authentication auth) {
         return check(auth, "canEditOrder", UserRole.OWNER, UserRole.EMPLOYEE);

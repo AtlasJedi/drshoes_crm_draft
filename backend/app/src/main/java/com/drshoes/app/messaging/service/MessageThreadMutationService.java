@@ -5,8 +5,6 @@ import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.messaging.domain.MessageThreadEntity;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageThreadRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Write-side service: mutations on message threads.
@@ -25,18 +25,12 @@ import java.util.UUID;
  * compiles with {@code -parameters} (set in parent pom.xml maven-compiler-plugin).
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class MessageThreadMutationService {
-
-    private static final Logger log = LoggerFactory.getLogger(MessageThreadMutationService.class);
 
     private final MessageThreadRepository threads;
     private final MessageRepository messages;
-
-    public MessageThreadMutationService(MessageThreadRepository threads,
-                                        MessageRepository messages) {
-        this.threads  = threads;
-        this.messages = messages;
-    }
 
     @Transactional
     @Audited(parent = "#threadId")

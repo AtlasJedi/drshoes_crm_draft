@@ -3,8 +3,6 @@ package com.drshoes.app.webhooks;
 import com.drshoes.app.messaging.dto.SmsApiInboundPayload;
 import com.drshoes.app.messaging.service.InboundMessageService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Receives SMSAPI MO (mobile-originated / inbound) callbacks.
@@ -41,9 +40,8 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/webhooks/smsapi/inbound")
+@Slf4j
 public class SmsApiInboundController {
-
-    private static final Logger log = LoggerFactory.getLogger(SmsApiInboundController.class);
 
     private final InboundMessageService inboundService;
     private final Set<String>           allowlist;

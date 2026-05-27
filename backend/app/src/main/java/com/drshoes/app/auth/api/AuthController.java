@@ -12,8 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +26,8 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST controller for admin authentication: login, logout, me.
@@ -42,17 +42,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/admin/auth")
+@Slf4j
+@RequiredArgsConstructor
 public class AuthController {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthService authService;
     private final UserRepository users;
-
-    public AuthController(AuthService authService, UserRepository users) {
-        this.authService = authService;
-        this.users = users;
-    }
 
     private static final HttpSessionSecurityContextRepository CONTEXT_REPO =
         new HttpSessionSecurityContextRepository();

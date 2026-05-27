@@ -7,8 +7,6 @@ import com.drshoes.lib.messaging.DeliveryStatus;
 import com.drshoes.lib.messaging.OutboundMessage;
 import com.drshoes.lib.storage.BlobKey;
 import com.drshoes.lib.storage.BlobStorage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -18,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Postmark email gateway implementation.
@@ -31,21 +31,13 @@ import java.util.Map;
  * as RestClientException rather than ResourceAccessException during header-read phase.
  * isNetworkError() covers both cases.
  */
+@Slf4j
+@RequiredArgsConstructor
 public class PostmarkEmailGateway implements EmailGateway {
-
-    private static final Logger log = LoggerFactory.getLogger(PostmarkEmailGateway.class);
 
     private final RestClient restClient;
     private final PostmarkProperties props;
     private final BlobStorage blobStorage;
-
-    public PostmarkEmailGateway(RestClient restClient,
-                                PostmarkProperties props,
-                                BlobStorage blobStorage) {
-        this.restClient  = restClient;
-        this.props       = props;
-        this.blobStorage = blobStorage;
-    }
 
     @Override
     public Channel channel() { return Channel.EMAIL; }

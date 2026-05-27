@@ -24,7 +24,7 @@ public class AuditSpanHelper {
     private final Tracer tracer;
 
     public AuditSpanHelper(OpenTelemetry otel) {
-        this.tracer = otel.getTracer(AuditSpanHelper.class.getName(), "1.0");
+        this.tracer = otel.getTracer("drshoes-audit");
     }
 
     /**

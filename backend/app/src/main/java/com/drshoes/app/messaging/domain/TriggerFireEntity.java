@@ -3,6 +3,8 @@ package com.drshoes.app.messaging.domain;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JPA entity for the trigger_fire dedup table (composite PK).
@@ -15,6 +17,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "trigger_fire")
 @IdClass(TriggerFireId.class)
+@Getter
+@Setter
 public class TriggerFireEntity {
 
     @Id
@@ -41,9 +45,6 @@ public class TriggerFireEntity {
     }
 
     // ---- accessors ----
-
-    public UUID getTriggerId() { return triggerId; }
     public UUID getOrderId() { return orderId; }
-    public String getDiscriminator() { return discriminator; }
     public OffsetDateTime getFiredAt() { return firedAt; }
 }

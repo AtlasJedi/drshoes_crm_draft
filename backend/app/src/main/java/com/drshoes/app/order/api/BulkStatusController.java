@@ -13,8 +13,6 @@ import com.drshoes.app.order.dto.BulkStatusResponseDto.SucceededItem;
 import com.drshoes.app.order.dto.ChangeStatusRequest;
 import com.drshoes.app.order.dto.ChangeStatusResponse;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Bulk status-change endpoint.
@@ -48,18 +48,13 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/admin/orders")
+@Slf4j
+@RequiredArgsConstructor
 public class BulkStatusController {
-
-    private static final Logger log = LoggerFactory.getLogger(BulkStatusController.class);
     private static final int MAX_IDS = 100;
 
     private final OrderService orderService;
     private final OrderRepository orderRepo;
-
-    public BulkStatusController(OrderService orderService, OrderRepository orderRepo) {
-        this.orderService = orderService;
-        this.orderRepo = orderRepo;
-    }
 
     @PostMapping("/bulk/status")
     public BulkStatusResponseDto bulkStatus(@Valid @RequestBody BulkStatusRequestDto req,

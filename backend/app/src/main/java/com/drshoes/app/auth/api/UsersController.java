@@ -2,14 +2,14 @@ package com.drshoes.app.auth.api;
 
 import com.drshoes.app.auth.api.dto.UserStubDto;
 import com.drshoes.app.auth.domain.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST controller exposing the active-user list for the assignee dropdown.
@@ -22,15 +22,11 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/admin/users")
+@Slf4j
+@RequiredArgsConstructor
 public class UsersController {
 
-    private static final Logger log = LoggerFactory.getLogger(UsersController.class);
-
     private final UserRepository users;
-
-    public UsersController(UserRepository users) {
-        this.users = users;
-    }
 
     @GetMapping
     public List<UserStubDto> listUsers(Authentication auth) {

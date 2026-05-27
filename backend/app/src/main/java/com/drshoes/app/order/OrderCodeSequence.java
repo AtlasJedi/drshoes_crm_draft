@@ -1,13 +1,13 @@
 package com.drshoes.app.order;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Allocates the next human-readable order code in the form {@code DR-YYYY-NNNN}.
@@ -24,15 +24,11 @@ import java.time.Year;
  *   {@code op=allocateOrderCode year={} code={} outcome=ok}
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class OrderCodeSequence {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderCodeSequence.class);
-
     private final JdbcTemplate jdbc;
-
-    public OrderCodeSequence(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
-    }
 
     /**
      * Allocates the next code for the given calendar year.

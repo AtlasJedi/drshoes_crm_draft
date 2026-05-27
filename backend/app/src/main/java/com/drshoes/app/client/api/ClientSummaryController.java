@@ -2,13 +2,13 @@ package com.drshoes.app.client.api;
 
 import com.drshoes.app.client.ClientSummaryService;
 import com.drshoes.app.client.dto.ClientSummaryDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Provides the aggregate summary KPI tile data for a single client dossier.
@@ -25,15 +25,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/admin/clients")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class ClientSummaryController {
 
-    private static final Logger log = LoggerFactory.getLogger(ClientSummaryController.class);
-
     private final ClientSummaryService svc;
-
-    public ClientSummaryController(ClientSummaryService svc) {
-        this.svc = svc;
-    }
 
     @GetMapping("/{id}/summary")
     public ClientSummaryDto getSummary(@PathVariable UUID id, Authentication auth) {

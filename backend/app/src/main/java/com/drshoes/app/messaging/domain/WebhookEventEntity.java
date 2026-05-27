@@ -8,6 +8,8 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Forensic log of every inbound webhook callback from Postmark / SMSAPI.
@@ -20,6 +22,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "webhook_event")
+@Getter
+@Setter
 public class WebhookEventEntity {
 
     /** Mirrors the CHECK constraint in V010. */
@@ -77,42 +81,10 @@ public class WebhookEventEntity {
     private Instant appliedAt;
 
     // ---- getters / setters ----
-
-    public UUID getId() { return id; }
-
-    public Provider getProvider() { return provider; }
-    public void setProvider(Provider provider) { this.provider = provider; }
-
-    public String getProviderEventId() { return providerEventId; }
     public void setProviderEventId(String providerEventId) { this.providerEventId = providerEventId; }
-
-    public String getProviderMessageId() { return providerMessageId; }
-    public void setProviderMessageId(String providerMessageId) { this.providerMessageId = providerMessageId; }
-
-    public UUID getMessageId() { return messageId; }
     public void setMessageId(UUID messageId) { this.messageId = messageId; }
-
-    public String getEventType() { return eventType; }
-    public void setEventType(String eventType) { this.eventType = eventType; }
-
-    public AppliedStatus getAppliedStatus() { return appliedStatus; }
     public void setAppliedStatus(AppliedStatus appliedStatus) { this.appliedStatus = appliedStatus; }
-
-    public AppliedOutcome getAppliedOutcome() { return appliedOutcome; }
-    public void setAppliedOutcome(AppliedOutcome appliedOutcome) { this.appliedOutcome = appliedOutcome; }
-
-    public JsonNode getRawPayload() { return rawPayload; }
     public void setRawPayload(JsonNode rawPayload) { this.rawPayload = rawPayload; }
-
-    public String getErrorCode() { return errorCode; }
-    public void setErrorCode(String errorCode) { this.errorCode = errorCode; }
-
-    public String getErrorMessage() { return errorMessage; }
     public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
-
-    public Instant getReceivedAt() { return receivedAt; }
-    public void setReceivedAt(Instant receivedAt) { this.receivedAt = receivedAt; }
-
-    public Instant getAppliedAt() { return appliedAt; }
     public void setAppliedAt(Instant appliedAt) { this.appliedAt = appliedAt; }
 }

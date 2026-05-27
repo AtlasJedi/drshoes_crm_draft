@@ -5,6 +5,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JPA entity for the message table.
@@ -21,6 +23,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "message")
+@Getter
+@Setter
 public class MessageEntity {
 
     @Id
@@ -120,75 +124,15 @@ public class MessageEntity {
     }
 
     // ---- accessors ----
-
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public UUID getThreadId() { return threadId; }
     public void setThreadId(UUID threadId) { this.threadId = threadId; }
-
-    public UUID getOrderId() { return orderId; }
-    public void setOrderId(UUID orderId) { this.orderId = orderId; }
-
-    public UUID getClientId() { return clientId; }
     public void setClientId(UUID clientId) { this.clientId = clientId; }
-
-    public String getRawSender() { return rawSender; }
-    public void setRawSender(String rawSender) { this.rawSender = rawSender; }
-
-    public String getDirection() { return direction; }
     public void setDirection(String direction) { this.direction = direction; }
-
-    public String getChannel() { return channel; }
-    public void setChannel(String channel) { this.channel = channel; }
-
-    public UUID getTemplateId() { return templateId; }
     public void setTemplateId(UUID templateId) { this.templateId = templateId; }
-
-    public UUID getTriggerId() { return triggerId; }
-    public void setTriggerId(UUID triggerId) { this.triggerId = triggerId; }
-
-    public String getSubject() { return subject; }
     public void setSubject(String subject) { this.subject = subject; }
-
-    public String getBody() { return body; }
-    public void setBody(String body) { this.body = body; }
-
-    public String getBodyHtml() { return bodyHtml; }
     public void setBodyHtml(String bodyHtml) { this.bodyHtml = bodyHtml; }
-
-    public String getAttachments() { return attachments; }
-    public void setAttachments(String attachments) { this.attachments = attachments; }
-
-    public String getDeliveryStatus() { return deliveryStatus; }
     public void setDeliveryStatus(String deliveryStatus) { this.deliveryStatus = deliveryStatus; }
-
-    public String getProviderMessageId() { return providerMessageId; }
-    public void setProviderMessageId(String providerMessageId) { this.providerMessageId = providerMessageId; }
-
-    public String getErrorCode() { return errorCode; }
     public void setErrorCode(String errorCode) { this.errorCode = errorCode; }
-
-    public String getErrorMessage() { return errorMessage; }
-    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
-
-    public OffsetDateTime getSentAt() { return sentAt; }
     public void setSentAt(OffsetDateTime sentAt) { this.sentAt = sentAt; }
-
-    public OffsetDateTime getDeliveredAt() { return deliveredAt; }
-    public void setDeliveredAt(OffsetDateTime deliveredAt) { this.deliveredAt = deliveredAt; }
-
-    public OffsetDateTime getReadAt() { return readAt; }
     public void setReadAt(OffsetDateTime readAt) { this.readAt = readAt; }
-
-    public UUID getSentBy() { return sentBy; }
-    public void setSentBy(UUID sentBy) { this.sentBy = sentBy; }
-
-    public UUID getRetryOfMessageId() { return retryOfMessageId; }
     public void setRetryOfMessageId(UUID retryOfMessageId) { this.retryOfMessageId = retryOfMessageId; }
-
-    public Integer getRetryAttempt() { return retryAttempt; }
-    public void setRetryAttempt(Integer retryAttempt) { this.retryAttempt = retryAttempt; }
-
-    public OffsetDateTime getCreatedAt() { return createdAt; }
 }

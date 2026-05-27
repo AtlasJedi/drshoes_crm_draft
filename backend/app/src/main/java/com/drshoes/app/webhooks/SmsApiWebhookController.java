@@ -3,8 +3,6 @@ package com.drshoes.app.webhooks;
 import com.drshoes.app.messaging.service.WebhookStatusReconciler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Receives SMSAPI delivery callbacks.
@@ -42,9 +41,8 @@ import java.util.List;
  * INFO with key=value fields per CLAUDE.md §7. Raw query params are NOT logged at INFO (PII risk).
  */
 @RestController
+@Slf4j
 public class SmsApiWebhookController {
-
-    private static final Logger log = LoggerFactory.getLogger(SmsApiWebhookController.class);
 
     private final WebhookStatusReconciler reconciler;
     private final WebhookEventMapper      mapper;

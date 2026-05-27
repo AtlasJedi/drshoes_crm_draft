@@ -3,12 +3,11 @@ package com.drshoes.lib.email;
 import com.drshoes.lib.messaging.Channel;
 import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.drshoes.lib.messaging.OutboundMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class LoggingEmailGateway implements EmailGateway {
-    private static final Logger log = LoggerFactory.getLogger(LoggingEmailGateway.class);
 
     @Override public Channel channel() { return Channel.EMAIL; }
 

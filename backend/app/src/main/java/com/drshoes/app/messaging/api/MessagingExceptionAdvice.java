@@ -1,7 +1,5 @@
 package com.drshoes.app.messaging.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Exception advice scoped to the messaging.api package.
@@ -19,9 +18,8 @@ import java.util.Map;
  *   IllegalArgumentException → 400 BAD_REQUEST
  */
 @RestControllerAdvice(basePackages = "com.drshoes.app.messaging.api")
+@Slf4j
 public class MessagingExceptionAdvice {
-
-    private static final Logger log = LoggerFactory.getLogger(MessagingExceptionAdvice.class);
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleStatus(ResponseStatusException e) {

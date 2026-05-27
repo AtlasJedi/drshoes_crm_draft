@@ -6,8 +6,6 @@ import com.drshoes.app.messaging.repository.TriggerRepository;
 import com.drshoes.app.order.domain.OrderRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -16,6 +14,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Evaluates and fires messaging triggers.
@@ -35,9 +34,8 @@ import java.util.UUID;
  *   - trigger.fire outcome=error (ERROR): gateway or parse failure during fire.
  */
 @Service
+@Slf4j
 public class TriggerEngine {
-
-    private static final Logger log = LoggerFactory.getLogger(TriggerEngine.class);
 
     private final TriggerRepository triggers;
     private final OrderRepository orders;

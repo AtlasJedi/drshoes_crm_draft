@@ -3,14 +3,14 @@ package com.drshoes.app.messaging.api;
 import com.drshoes.app.messaging.dto.ToggleTriggerRequest;
 import com.drshoes.app.messaging.dto.TriggerDto;
 import com.drshoes.app.messaging.service.TriggerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST controller for automation trigger read + toggle.
@@ -26,13 +26,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/admin/triggers")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class TriggersController {
 
-    private static final Logger log = LoggerFactory.getLogger(TriggersController.class);
-
     private final TriggerService svc;
-
-    public TriggersController(TriggerService svc) { this.svc = svc; }
 
     @GetMapping
     public List<TriggerDto> list(Authentication auth) {

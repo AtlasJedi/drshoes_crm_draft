@@ -9,8 +9,6 @@ import com.drshoes.app.order.domain.OrderRepository;
 import com.drshoes.app.order.domain.OrderUrgency;
 import com.drshoes.app.order.dto.CalendarResponseDto;
 import com.drshoes.app.order.dto.CalendarResponseDto.CalendarOrderDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +18,8 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Calendar view endpoint: orders windowed by planned_pickup_at + unscheduled list.
@@ -33,22 +33,14 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/admin/orders")
+@Slf4j
+@RequiredArgsConstructor
 public class CalendarController {
-
-    private static final Logger log = LoggerFactory.getLogger(CalendarController.class);
     private static final ZoneId WARSAW = ZoneId.of("Europe/Warsaw");
 
     private final OrderRepository orderRepo;
     private final OrderItemRepository itemRepo;
     private final ClientRepository clientRepo;
-
-    public CalendarController(OrderRepository orderRepo,
-                              OrderItemRepository itemRepo,
-                              ClientRepository clientRepo) {
-        this.orderRepo = orderRepo;
-        this.itemRepo = itemRepo;
-        this.clientRepo = clientRepo;
-    }
 
     @GetMapping("/calendar")
     public CalendarResponseDto calendar(

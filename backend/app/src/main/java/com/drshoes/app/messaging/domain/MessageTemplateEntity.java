@@ -3,6 +3,8 @@ package com.drshoes.app.messaging.domain;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JPA entity for the message_template table.
@@ -14,6 +16,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "message_template")
+@Getter
+@Setter
 public class MessageTemplateEntity {
 
     @Id
@@ -51,26 +55,7 @@ public class MessageTemplateEntity {
     public MessageTemplateEntity() {}
 
     // ---- accessors ----
-
-    public UUID getId() { return id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getChannel() { return channel; }
     public void setChannel(String channel) { this.channel = channel; }
-
-    public String getSubject() { return subject; }
-    public void setSubject(String subject) { this.subject = subject; }
-
-    public String getBody() { return body; }
     public void setBody(String body) { this.body = body; }
-
-    public String getBodyHtml() { return bodyHtml; }
-
-    public Boolean getActive() { return active; }
-    public void setActive(Boolean active) { this.active = active; }
-
-    public OffsetDateTime getCreatedAt() { return createdAt; }
     public OffsetDateTime getUpdatedAt() { return updatedAt; }
 }

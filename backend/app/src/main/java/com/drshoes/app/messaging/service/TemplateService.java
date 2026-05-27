@@ -6,8 +6,6 @@ import com.drshoes.app.messaging.dto.CreateTemplateRequest;
 import com.drshoes.app.messaging.dto.TemplateDto;
 import com.drshoes.app.messaging.dto.UpdateTemplateRequest;
 import com.drshoes.app.messaging.repository.MessageTemplateRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * CRUD service for message_template.
@@ -25,15 +25,11 @@ import java.util.UUID;
  * Structured logging: op=template.{create,update,delete} outcome=ok name={}
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class TemplateService {
 
-    private static final Logger log = LoggerFactory.getLogger(TemplateService.class);
-
     private final MessageTemplateRepository repo;
-
-    public TemplateService(MessageTemplateRepository repo) {
-        this.repo = repo;
-    }
 
     public List<TemplateDto> list() {
         return repo.findAll().stream().map(this::toDto).toList();

@@ -7,8 +7,6 @@ import com.drshoes.app.client.domain.ClientRepository;
 import com.drshoes.app.messaging.service.TriggerEngine;
 import com.drshoes.app.order.domain.*;
 import com.drshoes.app.order.dto.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Command + query facade for the Order aggregate root.
@@ -32,9 +32,9 @@ import java.util.stream.Collectors;
  * Structured logging: op={} orderId={} outcome=ok|not-found|already-deleted|version-conflict
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class OrderService {
-
-    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     private final OrderRepository orderRepo;
     private final OrderItemRepository itemRepo;
@@ -43,16 +43,6 @@ public class OrderService {
     private final OrderItemService itemService;
     private final TriggerEngine triggerEngine;
     private final UserRepository userRepo;
-
-    public OrderService(OrderRepository orderRepo, OrderItemRepository itemRepo,
-                        ClientRepository clientRepo, OrderCodeSequence codeSeq,
-                        OrderItemService itemService, TriggerEngine triggerEngine,
-                        UserRepository userRepo) {
-        this.orderRepo = orderRepo; this.itemRepo = itemRepo;
-        this.clientRepo = clientRepo; this.codeSeq = codeSeq;
-        this.itemService = itemService; this.triggerEngine = triggerEngine;
-        this.userRepo = userRepo;
-    }
 
     // ---- queries ----
 

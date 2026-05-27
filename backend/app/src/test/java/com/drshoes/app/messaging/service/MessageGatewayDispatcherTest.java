@@ -47,9 +47,10 @@ class MessageGatewayDispatcherTest {
 
     @BeforeEach
     void setUp() {
+        var spanHelper = new MessagingSpanHelper(otelTesting.getOpenTelemetry());
         dispatcher = new MessageGatewayDispatcher(
                 emailGateway, smsGateway, whatsAppGateway,
-                otelTesting.getOpenTelemetry(),
+                spanHelper,
                 messages, threads);
     }
 

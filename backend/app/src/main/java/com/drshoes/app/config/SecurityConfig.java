@@ -1,7 +1,5 @@
 package com.drshoes.app.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +12,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Central Spring Security configuration.
@@ -33,9 +32,8 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
  * (external callers / read-only probes — no state-changing ops there).
  */
 @Configuration
+@Slf4j
 public class SecurityConfig {
-
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     /**
      * When false, CSRF protection is disabled entirely.

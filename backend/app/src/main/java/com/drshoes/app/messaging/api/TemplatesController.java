@@ -4,8 +4,6 @@ import com.drshoes.app.messaging.dto.CreateTemplateRequest;
 import com.drshoes.app.messaging.dto.TemplateDto;
 import com.drshoes.app.messaging.dto.UpdateTemplateRequest;
 import com.drshoes.app.messaging.service.TemplateService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST controller for message template CRUD.
@@ -30,15 +30,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/admin/templates")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class TemplatesController {
 
-    private static final Logger log = LoggerFactory.getLogger(TemplatesController.class);
-
     private final TemplateService svc;
-
-    public TemplatesController(TemplateService svc) {
-        this.svc = svc;
-    }
 
     @GetMapping
     public List<TemplateDto> list(Authentication auth) {

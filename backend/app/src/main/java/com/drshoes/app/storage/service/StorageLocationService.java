@@ -2,12 +2,12 @@ package com.drshoes.app.storage.service;
 
 import com.drshoes.app.storage.domain.StorageLocation;
 import com.drshoes.app.storage.domain.StorageLocationRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * CRUD for the simple string-set of storage locations.
@@ -18,15 +18,11 @@ import java.util.List;
  *   - deactivate is soft-delete (active=false). Historical orders.location strings unaffected.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class StorageLocationService {
 
-    private static final Logger log = LoggerFactory.getLogger(StorageLocationService.class);
-
     private final StorageLocationRepository repo;
-
-    public StorageLocationService(StorageLocationRepository repo) {
-        this.repo = repo;
-    }
 
     public List<StorageLocation> listActive() {
         return repo.findAllActive();

@@ -7,12 +7,12 @@ import com.drshoes.app.messaging.domain.MessageDirection;
 import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageTemplateRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Single outbound send pipeline. Five public entry points:
@@ -30,9 +30,9 @@ import java.util.UUID;
  * Logging contract: exactly ONE INFO log per public call with outcome=SENT|FAILED.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class MessageRouter {
-
-    private static final Logger log = LoggerFactory.getLogger(MessageRouter.class);
 
     private final MessageRepository messages;
     private final MessageTemplateRepository templates;
@@ -41,23 +41,6 @@ public class MessageRouter {
     private final TemplateContextBuilder contextBuilder;
     private final MessageRecipientResolver recipientResolver;
     private final MessageGatewayDispatcher dispatcher;
-
-    public MessageRouter(
-            MessageRepository messages,
-            MessageTemplateRepository templates,
-            MessageThreadService threadService,
-            TemplateRenderer renderer,
-            TemplateContextBuilder contextBuilder,
-            MessageRecipientResolver recipientResolver,
-            MessageGatewayDispatcher dispatcher) {
-        this.messages = messages;
-        this.templates = templates;
-        this.threadService = threadService;
-        this.renderer = renderer;
-        this.contextBuilder = contextBuilder;
-        this.recipientResolver = recipientResolver;
-        this.dispatcher = dispatcher;
-    }
 
     /**
      * Manual composer entry point. Returns persisted message id.

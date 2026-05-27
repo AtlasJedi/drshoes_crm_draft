@@ -6,6 +6,7 @@ import com.drshoes.lib.messaging.Channel;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Resolves the send-to address for a known client + channel.
@@ -15,13 +16,10 @@ import java.util.UUID;
  * Throws {@link IllegalArgumentException} for unsupported channels.
  */
 @Component
+@RequiredArgsConstructor
 public class MessageRecipientResolver {
 
     private final ClientRepository clients;
-
-    public MessageRecipientResolver(ClientRepository clients) {
-        this.clients = clients;
-    }
 
     /**
      * @param clientId the client whose address to look up

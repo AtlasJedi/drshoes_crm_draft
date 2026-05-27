@@ -1,13 +1,13 @@
 package com.drshoes.app.demo;
 
 import com.drshoes.app.client.domain.ClientRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Idempotent dev-data seeder. Active only under the "local" profile with
@@ -24,25 +24,15 @@ import org.springframework.stereotype.Component;
 @Profile("local")
 @ConditionalOnProperty(prefix = "drshoes.demo.seed", name = "enabled",
     havingValue = "true", matchIfMissing = false)
+@Slf4j
+@RequiredArgsConstructor
 public class DemoSeedRunner implements ApplicationRunner {
-
-    private static final Logger log = LoggerFactory.getLogger(DemoSeedRunner.class);
     private static final int SEED_THRESHOLD = 6;
 
     private final ClientRepository clientRepository;
     private final DemoClientFactory clientFactory;
     private final DemoOrderFactory orderFactory;
     private final DemoThreadFactory threadFactory;
-
-    public DemoSeedRunner(ClientRepository clientRepository,
-                           DemoClientFactory clientFactory,
-                           DemoOrderFactory orderFactory,
-                           DemoThreadFactory threadFactory) {
-        this.clientRepository = clientRepository;
-        this.clientFactory = clientFactory;
-        this.orderFactory = orderFactory;
-        this.threadFactory = threadFactory;
-    }
 
     @Override
     public void run(ApplicationArguments args) {

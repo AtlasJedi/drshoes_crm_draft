@@ -6,8 +6,6 @@ import com.drshoes.app.messaging.dto.SendReplyRequest;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageThreadRepository;
 import com.drshoes.app.messaging.service.MessageRouter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * POST /api/admin/threads/{id}/messages — send a reply on an existing thread.
@@ -25,21 +25,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/admin/threads")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class ThreadReplyController {
-
-    private static final Logger log = LoggerFactory.getLogger(ThreadReplyController.class);
 
     private final MessageThreadRepository threads;
     private final MessageRepository messages;
     private final MessageRouter router;
-
-    public ThreadReplyController(MessageThreadRepository threads,
-                                 MessageRepository messages,
-                                 MessageRouter router) {
-        this.threads  = threads;
-        this.messages = messages;
-        this.router   = router;
-    }
 
     @PostMapping("/{id}/messages")
     public MessageDto sendReply(@PathVariable UUID id,

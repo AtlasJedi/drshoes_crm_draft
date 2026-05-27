@@ -6,8 +6,6 @@ import com.drshoes.app.order.domain.OrderStatus;
 import com.drshoes.app.order.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,6 +22,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST controller for the Order aggregate.
@@ -50,15 +50,11 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/admin/orders")
+@Slf4j
+@RequiredArgsConstructor
 public class OrderController {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
-
     private final OrderService svc;
-
-    public OrderController(OrderService svc) {
-        this.svc = svc;
-    }
 
     @PostMapping
     public ResponseEntity<OrderDto> create(@Valid @RequestBody CreateOrderRequest req,

@@ -5,8 +5,6 @@ import com.drshoes.lib.messaging.DeliveryReceipt;
 import com.drshoes.lib.messaging.DeliveryStatus;
 import com.drshoes.lib.messaging.OutboundMessage;
 import com.drshoes.lib.sms.SmsGateway;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
@@ -15,6 +13,8 @@ import org.springframework.web.client.RestClientException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * SMSAPI SMS gateway implementation.
@@ -28,17 +28,12 @@ import java.util.Map;
  *
  * No attachment support: SMS is body-only (no BlobStorage dependency).
  */
+@Slf4j
+@RequiredArgsConstructor
 public class SmsApiSmsGateway implements SmsGateway {
-
-    private static final Logger log = LoggerFactory.getLogger(SmsApiSmsGateway.class);
 
     private final RestClient restClient;
     private final SmsApiProperties props;
-
-    public SmsApiSmsGateway(RestClient restClient, SmsApiProperties props) {
-        this.restClient = restClient;
-        this.props      = props;
-    }
 
     @Override
     public Channel channel() { return Channel.SMS; }

@@ -3,11 +3,17 @@ package com.drshoes.app.messaging.domain;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Composite PK class for TriggerFireEntity.
  * Field names must match the @Id field names in TriggerFireEntity exactly.
  */
+@EqualsAndHashCode
+@Getter
+@Setter
 public class TriggerFireId implements Serializable {
 
     private UUID triggerId;
@@ -20,19 +26,5 @@ public class TriggerFireId implements Serializable {
         this.triggerId = triggerId;
         this.orderId = orderId;
         this.discriminator = discriminator;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TriggerFireId that)) return false;
-        return Objects.equals(triggerId, that.triggerId)
-                && Objects.equals(orderId, that.orderId)
-                && Objects.equals(discriminator, that.discriminator);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(triggerId, orderId, discriminator);
     }
 }

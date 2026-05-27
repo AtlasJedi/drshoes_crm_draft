@@ -1,7 +1,5 @@
 package com.drshoes.app.audit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Evaluates the SpEL expression declared in {@link Audited#parent()} against
@@ -29,9 +28,8 @@ import java.util.UUID;
  * follow SpEL convention: {@code #orderId}, {@code #itemId}, etc.
  */
 @Component
+@Slf4j
 public class AuditedParentResolver {
-
-    private static final Logger log = LoggerFactory.getLogger(AuditedParentResolver.class);
 
     private final ExpressionParser parser = new SpelExpressionParser();
 

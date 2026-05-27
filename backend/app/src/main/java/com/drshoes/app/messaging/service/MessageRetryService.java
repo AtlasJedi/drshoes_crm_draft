@@ -7,14 +7,14 @@ import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.dto.MessageDto;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.order.domain.OrderRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Operator-initiated retry for messages with delivery_status='FAILED'.
@@ -26,19 +26,13 @@ import java.util.UUID;
  * LOC: ~60.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class MessageRetryService {
-
-    private static final Logger log = LoggerFactory.getLogger(MessageRetryService.class);
 
     private final MessageRepository messages;
     private final MessageRouter      router;
     private final OrderRepository    orders;
-
-    public MessageRetryService(MessageRepository messages, MessageRouter router, OrderRepository orders) {
-        this.messages = messages;
-        this.router   = router;
-        this.orders   = orders;
-    }
 
     /**
      * Retries a failed message. @Audited writes an audit row with parent_entity_id=orderId

@@ -10,8 +10,6 @@ import com.drshoes.app.photo.domain.PhotoRepository;
 import com.drshoes.lib.storage.BlobKey;
 import com.drshoes.lib.storage.BlobMetadata;
 import com.drshoes.lib.storage.BlobStorage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +19,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Service layer for the admin photo gallery.
@@ -42,9 +42,9 @@ import java.util.UUID;
  * Structured logging: op=photo.* actor={} orderId={} photoId={} outcome={}
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class PhotoService {
-
-    private static final Logger log = LoggerFactory.getLogger(PhotoService.class);
 
     static final Set<String> ALLOWED_MIMES = Set.of(
         "image/jpeg", "image/png", "image/webp", "image/heic"
@@ -55,14 +55,6 @@ public class PhotoService {
     private final OrderRepository orders;
     private final OrderItemRepository orderItems;
     private final BlobStorage storage;
-
-    public PhotoService(PhotoRepository photos, OrderRepository orders,
-                        OrderItemRepository orderItems, BlobStorage storage) {
-        this.photos = photos;
-        this.orders = orders;
-        this.orderItems = orderItems;
-        this.storage = storage;
-    }
 
     /**
      * Upload a new photo for an order. Validates mime type and size, stores bytes,

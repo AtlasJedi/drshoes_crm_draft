@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Persists a single audit row in its own transaction (Propagation.REQUIRES_NEW).
@@ -23,13 +24,10 @@ import java.util.UUID;
  * is populated for every admin request once AdminPrincipal is in the SecurityContext.
  */
 @Component
+@RequiredArgsConstructor
 public class AuditLogWriter {
 
     private final EntityManager em;
-
-    public AuditLogWriter(EntityManager em) {
-        this.em = em;
-    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(String method, String path, int status, String ip, String userAgent) {

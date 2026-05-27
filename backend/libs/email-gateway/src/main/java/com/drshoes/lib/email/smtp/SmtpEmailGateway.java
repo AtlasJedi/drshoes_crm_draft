@@ -7,8 +7,6 @@ import com.drshoes.lib.messaging.OutboundMessage;
 import com.drshoes.lib.storage.BlobKey;
 import com.drshoes.lib.storage.BlobStorage;
 import jakarta.mail.internet.MimeMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,20 +15,16 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
+@Slf4j
+@RequiredArgsConstructor
 public class SmtpEmailGateway implements EmailGateway {
-
-    private static final Logger log = LoggerFactory.getLogger(SmtpEmailGateway.class);
 
     private final JavaMailSender sender;
     private final SmtpProperties props;
     private final BlobStorage blobStorage;
-
-    public SmtpEmailGateway(JavaMailSender sender, SmtpProperties props, BlobStorage blobStorage) {
-        this.sender = sender;
-        this.props = props;
-        this.blobStorage = blobStorage;
-    }
 
     @Override public Channel channel() { return Channel.EMAIL; }
 

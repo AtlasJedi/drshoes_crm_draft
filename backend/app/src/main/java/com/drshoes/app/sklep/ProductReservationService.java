@@ -1,14 +1,14 @@
 package com.drshoes.app.sklep;
 
 import com.drshoes.app.auth.principal.AdminPrincipal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Business logic for the Sklep product reservation queue.
@@ -21,15 +21,11 @@ import java.util.UUID;
  * Structured logging: op=<method> actor=<email> productId=<id> outcome=<ok|error>
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ProductReservationService {
 
-    private static final Logger log = LoggerFactory.getLogger(ProductReservationService.class);
-
     private final ProductReservationRepository repo;
-
-    public ProductReservationService(ProductReservationRepository repo) {
-        this.repo = repo;
-    }
 
     @Transactional(readOnly = true)
     public List<ProductReservationDto> list(UUID productId, AdminPrincipal actor) {

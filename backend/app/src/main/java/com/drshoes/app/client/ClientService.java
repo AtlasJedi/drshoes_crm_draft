@@ -6,8 +6,6 @@ import com.drshoes.app.client.dto.ClientDto;
 import com.drshoes.app.client.dto.ClientSearchResult;
 import com.drshoes.app.client.dto.CreateClientRequest;
 import com.drshoes.app.client.dto.UpdateClientRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Business logic for the Client aggregate.
@@ -28,18 +28,14 @@ import java.util.UUID;
  * DataIntegrityViolationException from the CHECK constraint.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ClientService {
-
-    private static final Logger log = LoggerFactory.getLogger(ClientService.class);
     private static final int SEARCH_MAX = 20;
     private static final java.util.Set<String> VALID_CHANNELS =
         java.util.Set.of("EMAIL", "SMS", "WHATSAPP");
 
     private final ClientRepository repo;
-
-    public ClientService(ClientRepository repo) {
-        this.repo = repo;
-    }
 
     @Transactional
     public ClientDto create(CreateClientRequest req) {

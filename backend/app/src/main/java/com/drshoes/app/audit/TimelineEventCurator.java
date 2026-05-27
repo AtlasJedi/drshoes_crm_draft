@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Translates raw {@link AuditLog} rows into curated {@link TimelineEvent} projections
@@ -39,6 +40,7 @@ import java.util.regex.Pattern;
  * load). Callers may log at DEBUG if needed.
  */
 @Component
+@RequiredArgsConstructor
 public class TimelineEventCurator {
 
     // Matches /api/admin/orders/{uuid} with an optional suffix (e.g. /status, /items)
@@ -94,12 +96,6 @@ public class TimelineEventCurator {
 
     private final MessageSentTimelineHandler     messagingHandler;
     private final MessageReconcileTimelineHandler reconcileHandler;
-
-    public TimelineEventCurator(MessageSentTimelineHandler messagingHandler,
-                                MessageReconcileTimelineHandler reconcileHandler) {
-        this.messagingHandler  = messagingHandler;
-        this.reconcileHandler  = reconcileHandler;
-    }
 
     /**
      * Curates a single audit log row into a timeline event.

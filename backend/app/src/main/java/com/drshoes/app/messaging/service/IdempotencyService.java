@@ -1,7 +1,5 @@
 package com.drshoes.app.messaging.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -9,6 +7,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Idempotency guard for trigger firings.
@@ -25,15 +25,11 @@ import java.util.UUID;
  * REQUIRES_NEW ensures a uniqueness conflict cannot poison the caller's transaction.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class IdempotencyService {
 
-    private static final Logger log = LoggerFactory.getLogger(IdempotencyService.class);
-
     private final JdbcTemplate jdbc;
-
-    public IdempotencyService(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
-    }
 
     /**
      * Claims a (triggerId, orderId, discriminator) tuple for one-time firing.

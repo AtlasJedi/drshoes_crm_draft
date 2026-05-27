@@ -10,8 +10,6 @@ import com.drshoes.app.messaging.service.MessageRouter;
 import com.drshoes.app.messaging.service.NotRetryableException;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * REST: GET + POST /api/admin/orders/{orderId}/messages
@@ -37,25 +37,15 @@ import java.util.UUID;
  */
 @RestController
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
+@Slf4j
+@RequiredArgsConstructor
 public class MessagesController {
-
-    private static final Logger log = LoggerFactory.getLogger(MessagesController.class);
     private static final Set<String> VALID_CHANNELS = Set.of("EMAIL", "SMS");
 
     private final MessageRepository messageRepository;
     private final MessageRouter router;
     private final OrderRepository orderRepository;
     private final MessageRetryService retryService;
-
-    public MessagesController(MessageRepository messageRepository,
-                               MessageRouter router,
-                               OrderRepository orderRepository,
-                               MessageRetryService retryService) {
-        this.messageRepository = messageRepository;
-        this.router            = router;
-        this.orderRepository   = orderRepository;
-        this.retryService      = retryService;
-    }
 
     @GetMapping("/api/admin/orders/{orderId}/messages")
     public List<MessageDto> list(@PathVariable UUID orderId,

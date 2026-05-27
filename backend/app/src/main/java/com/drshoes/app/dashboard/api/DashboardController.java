@@ -3,8 +3,6 @@ package com.drshoes.app.dashboard.api;
 import com.drshoes.app.dashboard.dto.DashboardKpiDto;
 import com.drshoes.app.order.domain.OrderRepository;
 import com.drshoes.app.order.domain.OrderStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +13,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Read-only dashboard aggregation endpoints.
@@ -23,17 +23,13 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/api/admin/dashboard")
+@Slf4j
+@RequiredArgsConstructor
 public class DashboardController {
-
-    private static final Logger log = LoggerFactory.getLogger(DashboardController.class);
     private static final ZoneId WARSAW = ZoneId.of("Europe/Warsaw");
     private static final Locale PL = Locale.forLanguageTag("pl-PL");
 
     private final OrderRepository orderRepo;
-
-    public DashboardController(OrderRepository orderRepo) {
-        this.orderRepo = orderRepo;
-    }
 
     @GetMapping("/kpis")
     public DashboardKpiDto kpis() {

@@ -4,8 +4,6 @@ import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.order.service.OrderNotesService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.time.Instant;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * POST /api/admin/orders/{orderId}/notes
@@ -24,15 +24,11 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/admin/orders/{orderId}/notes")
+@Slf4j
+@RequiredArgsConstructor
 public class OrderNotesController {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderNotesController.class);
-
     private final OrderNotesService svc;
-
-    public OrderNotesController(OrderNotesService svc) {
-        this.svc = svc;
-    }
 
     @PostMapping
     public ResponseEntity<AddOrderNoteResponse> add(

@@ -6,8 +6,6 @@ import com.drshoes.app.messaging.repository.TriggerRepository;
 import com.drshoes.app.order.domain.OrderRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +13,8 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Cron-based trigger executor for time-relative messaging triggers.
@@ -31,9 +31,9 @@ import java.util.List;
  *   op=scheduled_trigger.run kind=AFTER_HANDOVER date={} — INFO per run
  */
 @Component
+@Slf4j
+@RequiredArgsConstructor
 public class ScheduledTriggerJob {
-
-    private static final Logger log = LoggerFactory.getLogger(ScheduledTriggerJob.class);
     private static final ZoneId PL = ZoneId.of("Europe/Warsaw");
 
     private final TriggerRepository triggers;
@@ -41,14 +41,6 @@ public class ScheduledTriggerJob {
     private final TriggerEngine engine;
     private final Clock clock;
     private final ObjectMapper json = new ObjectMapper();
-
-    public ScheduledTriggerJob(TriggerRepository triggers, OrderRepository orders,
-                               TriggerEngine engine, Clock clock) {
-        this.triggers = triggers;
-        this.orders = orders;
-        this.engine = engine;
-        this.clock = clock;
-    }
 
     @Scheduled(cron = "0 0 9 * * *", zone = "Europe/Warsaw")
     public void runBeforePickup() {

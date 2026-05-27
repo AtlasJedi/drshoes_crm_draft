@@ -10,8 +10,6 @@ import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.repository.MessageThreadRepository;
 import com.drshoes.app.messaging.util.HtmlStripper;
 import com.drshoes.app.messaging.util.PhoneNormalizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,26 +19,18 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class InboundMessageService {
-
-    private static final Logger log = LoggerFactory.getLogger(InboundMessageService.class);
 
     private final MessageRepository messageRepo;
     private final MessageThreadRepository threadRepo;
     private final ClientRepository clientRepo;
     private final MessageThreadService threadService;
-
-    public InboundMessageService(MessageRepository messageRepo,
-                                 MessageThreadRepository threadRepo,
-                                 ClientRepository clientRepo,
-                                 MessageThreadService threadService) {
-        this.messageRepo   = messageRepo;
-        this.threadRepo    = threadRepo;
-        this.clientRepo    = clientRepo;
-        this.threadService = threadService;
-    }
 
     public record InboundResult(UUID messageId, UUID threadId, boolean duplicate, boolean unmatched) {}
 

@@ -2,8 +2,6 @@ package com.drshoes.app.client.api;
 
 import com.drshoes.app.client.ClientContactMissingException;
 import com.drshoes.app.client.ClientNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Maps client-domain exceptions to HTTP responses.
@@ -19,9 +18,8 @@ import java.util.Map;
  *   ClientContactMissingException  → 400 BAD_REQUEST
  */
 @RestControllerAdvice
+@Slf4j
 public class ClientExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(ClientExceptionHandler.class);
 
     @ExceptionHandler(ClientNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(ClientNotFoundException e) {

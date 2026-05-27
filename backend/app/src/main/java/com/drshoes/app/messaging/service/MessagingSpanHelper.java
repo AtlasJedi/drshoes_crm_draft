@@ -11,6 +11,7 @@ import io.opentelemetry.context.Scope;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import org.springframework.stereotype.Component;
 
 /**
  * OTel span factory helper for {@link MessageGatewayDispatcher}.
@@ -20,6 +21,7 @@ import java.util.function.Supplier;
  * <p>Recipient hashing: delegates to {@link RecipientHashUtil#hashFirst8Hex(String)}
  * (SHA-256 first-8-hex chars). Raw recipient is never emitted to telemetry.</p>
  */
+@Component
 public class MessagingSpanHelper {
 
     static final AttributeKey<String> CHANNEL        = AttributeKey.stringKey("messaging.channel");
@@ -29,7 +31,7 @@ public class MessagingSpanHelper {
     private final Tracer tracer;
 
     public MessagingSpanHelper(OpenTelemetry otel) {
-        this.tracer = otel.getTracer(MessagingSpanHelper.class.getName(), "1.0");
+        this.tracer = otel.getTracer("drshoes-messaging");
     }
 
     /**

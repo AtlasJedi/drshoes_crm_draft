@@ -10,12 +10,12 @@ import com.drshoes.lib.messaging.OutboundMessage;
 import com.drshoes.lib.sms.SmsGateway;
 import com.drshoes.lib.whatsapp.WhatsAppGateway;
 import io.opentelemetry.api.OpenTelemetry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Extracted gateway dispatch unit. Builds an {@link OutboundMessage}, dispatches it
@@ -29,9 +29,9 @@ import java.time.ZoneOffset;
  * <p>LOC target: ≤ 90. Flag if exceeded.</p>
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class MessageGatewayDispatcher {
-
-    private static final Logger log = LoggerFactory.getLogger(MessageGatewayDispatcher.class);
 
     private final EmailGateway emailGateway;
     private final SmsGateway smsGateway;
@@ -39,18 +39,6 @@ public class MessageGatewayDispatcher {
     private final MessagingSpanHelper spanHelper;
     private final MessageRepository messages;
     private final MessageThreadRepository threads;
-
-    public MessageGatewayDispatcher(EmailGateway emailGateway, SmsGateway smsGateway,
-                                    WhatsAppGateway whatsAppGateway,
-                                    OpenTelemetry otel,
-                                    MessageRepository messages, MessageThreadRepository threads) {
-        this.emailGateway = emailGateway;
-        this.smsGateway = smsGateway;
-        this.whatsAppGateway = whatsAppGateway;
-        this.spanHelper = new MessagingSpanHelper(otel);
-        this.messages = messages;
-        this.threads = threads;
-    }
 
     /**
      * Dispatch a SAVED {@link MessageEntity} through its channel gateway, update status
