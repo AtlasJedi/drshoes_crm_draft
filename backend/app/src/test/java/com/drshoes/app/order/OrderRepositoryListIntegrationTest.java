@@ -59,7 +59,7 @@ class OrderRepositoryListIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void defaultPolicy_returnsActiveAndRecentWydane_excludesOldWydaneAndAnulowane() {
+    void defaultPolicy_returnsActiveOnly_excludesAllWydaneAndAnulowane() {
         UUID active = createOrder(OrderStatus.PRZYJETE, null);
         UUID wydaneRecent = createOrder(OrderStatus.WYDANE,
             Instant.now().minus(5, ChronoUnit.DAYS));
@@ -75,9 +75,10 @@ class OrderRepositoryListIntegrationTest extends AbstractIntegrationTest {
                 effective.wydaneCutoff()),
             PageRequest.of(0, 50, Sort.by(Sort.Direction.DESC, "createdAt")));
 
+        // WYDANE now lives in the archive — default list returns active statuses only.
         assertThat(page.getContent()).extracting(Order::getId)
-            .contains(active, wydaneRecent)
-            .doesNotContain(wydaneOld, anul);
+            .contains(active)
+            .doesNotContain(wydaneRecent, wydaneOld, anul);
     }
 
     @Test

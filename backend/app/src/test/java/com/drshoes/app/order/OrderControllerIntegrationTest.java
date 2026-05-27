@@ -561,18 +561,17 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
     }
 
     @Test
-    void listDefaultIncludesRecentWydaneButExcludesOldOnes() throws Exception {
+    void listDefaultExcludesAllWydane() throws Exception {
         loginAsOwner();
         UUID recentId = createOrderAndReturnId("Recent pickup");
         UUID oldId = createOrderAndReturnId("Old pickup");
 
-        // Recent WYDANE: picked up 5 days ago — should appear in default list.
+        // WYDANE orders go to archive — neither should appear in the default active list.
         Order recent = orderRepository.findById(recentId).orElseThrow();
         recent.setStatus(OrderStatus.WYDANE);
         recent.setPickedUpAt(Instant.now().minus(5, ChronoUnit.DAYS));
         orderRepository.saveAndFlush(recent);
 
-        // Old WYDANE: picked up 60 days ago — must NOT appear in default list.
         Order old = orderRepository.findById(oldId).orElseThrow();
         old.setStatus(OrderStatus.WYDANE);
         old.setPickedUpAt(Instant.now().minus(60, ChronoUnit.DAYS));
@@ -580,7 +579,7 @@ class OrderControllerIntegrationTest extends AdminWebTestBase {
 
         mockMvc().perform(get("/api/admin/orders"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content[?(@.id == '" + recentId + "')]").exists())
+            .andExpect(jsonPath("$.content[?(@.id == '" + recentId + "')]").doesNotExist())
             .andExpect(jsonPath("$.content[?(@.id == '" + oldId + "')]").doesNotExist());
     }
 

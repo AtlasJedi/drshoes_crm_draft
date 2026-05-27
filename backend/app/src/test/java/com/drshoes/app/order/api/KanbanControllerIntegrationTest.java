@@ -41,24 +41,23 @@ class KanbanControllerIntegrationTest extends AdminWebTestBase {
     }
 
     // ----------------------------------------------------------
-    // Full board — 5 columns present
+    // Full board — 4 columns present (WYDANE moved to archive)
     // ----------------------------------------------------------
 
     @Test
-    void fullBoardReturnsFiveColumns() throws Exception {
+    void fullBoardReturnsFourColumns() throws Exception {
         loginAsOwner();
         seedOrder("KB-001", OrderStatus.PRZYJETE);
         seedOrder("KB-002", OrderStatus.W_REALIZACJI);
         seedOrder("KB-003", OrderStatus.CZEKA_NA_KLIENTA);
         seedOrder("KB-004", OrderStatus.GOTOWE_DO_ODBIORU);
-        seedOrder("KB-005", OrderStatus.WYDANE);
 
         mockMvc().perform(get("/api/admin/orders/kanban"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.columns").isArray())
-            .andExpect(jsonPath("$.columns", hasSize(5)))
+            .andExpect(jsonPath("$.columns", hasSize(4)))
             .andExpect(jsonPath("$.columns[0].status").value("PRZYJETE"))
-            .andExpect(jsonPath("$.columns[4].status").value("WYDANE"));
+            .andExpect(jsonPath("$.columns[3].status").value("GOTOWE_DO_ODBIORU"));
     }
 
     // ----------------------------------------------------------
@@ -66,12 +65,12 @@ class KanbanControllerIntegrationTest extends AdminWebTestBase {
     // ----------------------------------------------------------
 
     @Test
-    void emptyBoardStillReturnsFiveColumns() throws Exception {
+    void emptyBoardStillReturnsFourColumns() throws Exception {
         loginAsOwner();
 
         mockMvc().perform(get("/api/admin/orders/kanban"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.columns", hasSize(5)))
+            .andExpect(jsonPath("$.columns", hasSize(4)))
             .andExpect(jsonPath("$.columns[0].total").value(0))
             .andExpect(jsonPath("$.columns[0].cards").isEmpty());
     }
@@ -92,25 +91,6 @@ class KanbanControllerIntegrationTest extends AdminWebTestBase {
             .andExpect(jsonPath("$.columns[0].total").value(3))
             .andExpect(jsonPath("$.columns[0].cards", hasSize(2)))
             .andExpect(jsonPath("$.columns[0].hasMore").value(true));
-    }
-
-    // ----------------------------------------------------------
-    // WYDANE always capped at 10 even when limitPerColumn is higher
-    // ----------------------------------------------------------
-
-    @Test
-    void wydaneCappedAt10RegardlessOfLimit() throws Exception {
-        loginAsOwner();
-        for (int i = 0; i < 12; i++) {
-            seedOrder("KB-W" + i, OrderStatus.WYDANE);
-        }
-
-        mockMvc().perform(get("/api/admin/orders/kanban?limitPerColumn=50"))
-            .andExpect(status().isOk())
-            // WYDANE is last column (index 4)
-            .andExpect(jsonPath("$.columns[4].cards", hasSize(10)))
-            .andExpect(jsonPath("$.columns[4].total").value(12))
-            .andExpect(jsonPath("$.columns[4].hasMore").value(true));
     }
 
     // ----------------------------------------------------------
