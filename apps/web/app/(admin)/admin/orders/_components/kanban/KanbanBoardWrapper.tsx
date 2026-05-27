@@ -18,7 +18,7 @@ import { useKanbanDnd } from "./useKanbanDnd";
 import { KanbanBoard } from "./KanbanBoard";
 import { StatusChangeTriggerDialog } from "../StatusChangeTriggerDialog";
 import { listLocations } from "@/lib/locations";
-import type { KanbanColumnDto, KanbanCardDto } from "@/lib/kanban/types";
+import type { KanbanColumnDto } from "@/lib/kanban/types";
 import type { TriggerDto } from "@/lib/messaging/types";
 import type { StorageLocation } from "@/lib/types";
 

@@ -93,7 +93,7 @@ export function ReservationsQueue({ productId }: Props) {
               <div className="t-mono" style={{ fontSize: 11 }}>{r.clientPhone}</div>
             )}
             {r.note && (
-              <div style={{ fontSize: 11, fontStyle: "italic" }}>„{r.note}"</div>
+              <div style={{ fontSize: 11, fontStyle: "italic" }}>„{r.note}&rdquo;</div>
             )}
             <div className="flex gap-1.5 mt-1 flex-wrap">
               <button className="btn-clean" style={{ fontSize: 11, padding: "2px 8px" }} type="button">

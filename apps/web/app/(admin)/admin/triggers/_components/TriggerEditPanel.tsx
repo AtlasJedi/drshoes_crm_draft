@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { createLogger } from "@/lib/log";
 import { Tape, Toggle, Chip, I } from "@drshoes/ui";
 import { useTriggerEditForm } from "./useTriggerEditForm";
@@ -23,7 +24,13 @@ interface Props {
 }
 
 export function TriggerEditPanel({ trigger, onClose, onSaved }: Props) {
-  const f = useTriggerEditForm(trigger);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const {
+    name, event, delayMinutes, channels, body, requiresManualConfirmation,
+    saving, error,
+    setName, setEvent, setDelayMinutes, toggleChannel, setBody, setManualConfirm,
+    insertPlaceholder, save,
+  } = useTriggerEditForm(trigger, textareaRef);
   log.debug("op=TriggerEditPanel.render", { triggerId: trigger.id });
 
   return (
@@ -54,14 +61,14 @@ export function TriggerEditPanel({ trigger, onClose, onSaved }: Props) {
         {/* name */}
         <div className="field">
           <label>Nazwa</label>
-          <input value={f.name} onChange={e => f.setName(e.target.value)} />
+          <input value={name} onChange={e => setName(e.target.value)} />
         </div>
 
         {/* event + delay */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           <div className="field">
             <label>Zdarzenie</label>
-            <select value={f.event} onChange={e => f.setEvent(e.target.value)}>
+            <select value={event} onChange={e => setEvent(e.target.value)}>
               <option value="STATUS_CHANGE">zmiana statusu</option>
               <option value="ORDER_RECEIVED">zlecenie przyjęte</option>
               <option value="BEFORE_PICKUP_X_DAYS">X dni przed odbiorem</option>
@@ -71,8 +78,8 @@ export function TriggerEditPanel({ trigger, onClose, onSaved }: Props) {
           <div className="field">
             <label>Opóźnienie</label>
             <select
-              value={f.delayMinutes}
-              onChange={e => f.setDelayMinutes(Number(e.target.value))}
+              value={delayMinutes}
+              onChange={e => setDelayMinutes(Number(e.target.value))}
             >
               <option value={0}>natychmiast</option>
               <option value={120}>+2h</option>
@@ -90,8 +97,8 @@ export function TriggerEditPanel({ trigger, onClose, onSaved }: Props) {
             {CHANNELS_ALL.map(ch => (
               <Chip
                 key={ch}
-                active={f.channels.some(c => c.toLowerCase() === ch.toLowerCase())}
-                onClick={() => f.toggleChannel(ch.toUpperCase())}
+                active={channels.some(c => c.toLowerCase() === ch.toLowerCase())}
+                onClick={() => toggleChannel(ch.toUpperCase())}
               >
                 {ch}
               </Chip>
@@ -105,10 +112,10 @@ export function TriggerEditPanel({ trigger, onClose, onSaved }: Props) {
           <textarea
             id="trigger-body"
             aria-label="treść"
-            ref={f.textareaRef}
+            ref={textareaRef}
             rows={6}
-            value={f.body}
-            onChange={e => f.setBody(e.target.value)}
+            value={body}
+            onChange={e => setBody(e.target.value)}
             style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}
           />
         </div>
@@ -120,7 +127,7 @@ export function TriggerEditPanel({ trigger, onClose, onSaved }: Props) {
               key={p}
               className="chip"
               style={{ fontSize: 10, padding: "2px 8px" }}
-              onClick={() => f.insertPlaceholder(p)}
+              onClick={() => insertPlaceholder(p)}
               type="button"
             >
               {p}
@@ -142,19 +149,19 @@ export function TriggerEditPanel({ trigger, onClose, onSaved }: Props) {
               Wymaga ręcznego potwierdzenia
             </span>
             <span className="t-mono opacity-55" style={{ fontSize: 10 }}>
-              trafia do skrzynki „do wysłania"
+              trafia do skrzynki „do wysłania&rdquo;
             </span>
           </div>
           <Toggle
-            on={f.requiresManualConfirmation}
-            onChange={() => f.setManualConfirm(!f.requiresManualConfirmation)}
+            on={requiresManualConfirmation}
+            onChange={() => setManualConfirm(!requiresManualConfirmation)}
           />
         </div>
 
         {/* error */}
-        {f.error && (
+        {error && (
           <div className="text-[12px] text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1.5">
-            {f.error}
+            {error}
           </div>
         )}
 
@@ -163,11 +170,11 @@ export function TriggerEditPanel({ trigger, onClose, onSaved }: Props) {
           <button
             className="btn-clean primary"
             style={{ flex: 1, justifyContent: "center" }}
-            onClick={() => f.save(trigger.id, onSaved)}
-            disabled={f.saving}
+            onClick={() => save(trigger.id, onSaved)}
+            disabled={saving}
             aria-label="zapisz zmiany"
           >
-            {f.saving ? "zapisywanie…" : "zapisz zmiany"}
+            {saving ? "zapisywanie…" : "zapisz zmiany"}
           </button>
           <button
             className="btn-clean"

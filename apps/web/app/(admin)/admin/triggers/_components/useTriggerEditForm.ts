@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, type RefObject } from "react";
 import { createLogger } from "@/lib/log";
 import { api } from "@/lib/api";
 import type { TriggerDto } from "@/lib/messaging/types";
@@ -16,7 +16,6 @@ export type TriggerEditState = {
   requiresManualConfirmation: boolean;
   saving: boolean;
   error: string | null;
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   setName: (v: string) => void;
   setEvent: (v: string) => void;
   setDelayMinutes: (v: number) => void;
@@ -27,7 +26,7 @@ export type TriggerEditState = {
   save: (triggerId: string, onSaved: () => void) => Promise<void>;
 };
 
-export function useTriggerEditForm(trigger: TriggerDto): TriggerEditState {
+export function useTriggerEditForm(trigger: TriggerDto, textareaRef: RefObject<HTMLTextAreaElement | null>): TriggerEditState {
   const [name, setName] = useState(trigger.name);
   const [event, setEvent] = useState(trigger.event);
   const [delayMinutes, setDelayMinutes] = useState(trigger.delayMinutes);
@@ -40,7 +39,6 @@ export function useTriggerEditForm(trigger: TriggerDto): TriggerEditState {
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   function toggleChannel(ch: string) {
     setChannels(prev =>
@@ -80,7 +78,7 @@ export function useTriggerEditForm(trigger: TriggerDto): TriggerEditState {
 
   return {
     name, event, delayMinutes, channels, body, requiresManualConfirmation,
-    saving, error, textareaRef,
+    saving, error,
     setName, setEvent, setDelayMinutes, toggleChannel, setBody, setManualConfirm,
     insertPlaceholder, save,
   };

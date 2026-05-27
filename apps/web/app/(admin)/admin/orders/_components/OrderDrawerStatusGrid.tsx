@@ -61,7 +61,7 @@ export function OrderDrawerStatusGrid({ order, onOrderUpdated }: Props) {
         } catch (e: unknown) { log.error("op=locationMove outcome=error", { e }); }
       }
       onOrderUpdated(updated);
-    } catch (e: unknown) {
+    } catch {
       log.error("op=changeStatus outcome=error", { orderId: order.id, to: target });
     } finally {
       setTarget(null);

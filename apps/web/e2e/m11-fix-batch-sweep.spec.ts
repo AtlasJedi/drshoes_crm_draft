@@ -195,7 +195,7 @@ test.describe("M11 fix-batch verifier sweep", () => {
         // Should show "pilne" label or magenta styling somewhere in drawer
         const pilneVisible = await drawer2.getByText(/pilne/i).first().isVisible({ timeout: 2_000 }).catch(() => false);
 
-        const screenshot2 = await snap(page, "drawer-czas-dr0004-pilne");
+        await snap(page, "drawer-czas-dr0004-pilne");
         if (!dniOk) {
           urgentCzasDefect = `DR-2026-0004 drawer shows "${czasText}" (expected ~18 dni, accepted 15-25). Backdated received_at may not be visible to frontend.`;
         } else if (!pilneVisible) {
@@ -293,7 +293,7 @@ test.describe("M11 fix-batch verifier sweep", () => {
       console.warn("[item-math] Cleanup failed:", cleanupErr);
     }
 
-    const screenshotAfterClean = await snap(page, "drawer-item-math-clean");
+    await snap(page, "drawer-item-math-clean");
 
     if (wycenaChanged) {
       REPORT.push({ surface: "drawer.item-math", defect: null, screenshot });

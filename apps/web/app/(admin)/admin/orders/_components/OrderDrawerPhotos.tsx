@@ -54,7 +54,7 @@ export function OrderDrawerPhotos({ orderId }: { orderId: string }) {
   async function onDelete(p: Photo) {
     if (!confirm("Usunąć zdjęcie? Tej akcji nie da się cofnąć.")) return;
     try { await deletePhoto(p.id); await refresh(); }
-    catch (e) { log.warn("op=photos.delete outcome=failed", { photoId: p.id }); }
+    catch { log.warn("op=photos.delete outcome=failed", { photoId: p.id }); }
   }
 
   const addTileStyle: React.CSSProperties = {

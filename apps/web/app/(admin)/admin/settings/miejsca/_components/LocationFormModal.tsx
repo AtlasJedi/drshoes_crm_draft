@@ -27,9 +27,9 @@ export function LocationFormModal({ target, onClose }: Props) {
       if (target) await updateLocation(target.id, { name: trimmed });
       else await createLocation(trimmed);
       onClose(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(
-        err?.code === "location_name_conflict"
+        (err as { code?: string })?.code === "location_name_conflict"
           ? "Miejsce o tej nazwie już istnieje."
           : "Nie udało się zapisać. Spróbuj ponownie.",
       );

@@ -66,7 +66,6 @@ export function SklepTeaser() {
                 transform: `rotate(${(i % 2 ? 1 : -1) * 1.2}deg)`,
                 boxShadow: i === 0 ? "3px 3px 0 var(--ink)" : "none",
               }}
-              // eslint-disable-next-line no-console
               onClick={() => console.warn("filter wkrótce")}
             >
               {f}

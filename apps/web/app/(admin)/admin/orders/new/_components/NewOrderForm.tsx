@@ -12,7 +12,6 @@ import type { UserStubDto } from "@/lib/users/types";
 import { ClientPicker } from "@/components/clients/ClientPicker";
 import { NewOrderItemRow, type ItemRowState } from "./NewOrderItemRow";
 import { plnToCents, centsToPlnDisplay } from "@/lib/orders/money";
-import { KIND_LABELS_PL } from "@/lib/orders/status";
 
 const log = createLogger("new-order-form");
 
