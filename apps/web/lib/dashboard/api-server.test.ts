@@ -57,7 +57,7 @@ describe("getDashboardKpisServer", () => {
     const fetchMock = fetch as unknown as ReturnType<typeof vi.fn>;
     expect(fetchMock).toHaveBeenCalledWith(
       "http://backend-test:8080/api/admin/dashboard/kpis",
-      expect.objectContaining({ cache: "no-store" }),
+      expect.objectContaining({ next: { revalidate: 300 } }),
     );
   });
 

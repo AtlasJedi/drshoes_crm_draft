@@ -42,17 +42,17 @@ describe("KpiTilesRow", () => {
 
   it("acid tile has data-accent=acid", () => {
     render(<KpiTilesRow kpis={kpis} />);
-    expect(screen.getByTestId("kpi-tile-in-progress")).toHaveAttribute("data-accent", "acid");
-    expect(screen.getByTestId("kpi-tile-picked-up-money")).toHaveAttribute("data-accent", "acid");
+    expect(screen.getByTestId("kpi-tile-in-progress")).toHaveAttribute("data-accent", "var(--kpi-sage)");
+    expect(screen.getByTestId("kpi-tile-picked-up-money")).toHaveAttribute("data-accent", "var(--kpi-stone)");
   });
 
   it("pink tile has data-accent=pink", () => {
     render(<KpiTilesRow kpis={kpis} />);
-    expect(screen.getByTestId("kpi-tile-ready")).toHaveAttribute("data-accent", "pink");
+    expect(screen.getByTestId("kpi-tile-ready")).toHaveAttribute("data-accent", "var(--kpi-amber)");
   });
 
   it("blue tile has data-accent=blue", () => {
     render(<KpiTilesRow kpis={kpis} />);
-    expect(screen.getByTestId("kpi-tile-in-progress-money")).toHaveAttribute("data-accent", "blue");
+    expect(screen.getByTestId("kpi-tile-in-progress-money")).toHaveAttribute("data-accent", "var(--kpi-steel)");
   });
 });

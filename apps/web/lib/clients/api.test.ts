@@ -6,7 +6,7 @@ import { describe, it, expect, vi } from "vitest";
 
 const mockGet = vi.fn();
 const mockPatch = vi.fn();
-vi.mock("@/lib/api", () => ({
+vi.mock("../api", () => ({
   api: { get: mockGet, post: vi.fn(), patch: mockPatch, delete: vi.fn() },
 }));
 

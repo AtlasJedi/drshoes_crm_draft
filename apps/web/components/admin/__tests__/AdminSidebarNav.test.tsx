@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // usePathname returns /admin for "Dashboard active" tests
 vi.mock("next/navigation", () => ({ usePathname: vi.fn(() => "/admin") }));
-vi.mock("@/lib/messaging/useUnreadCount", () => ({ useUnreadCount: vi.fn(() => 3) }));
+vi.mock("../../../lib/messaging/useUnreadCount", () => ({ useUnreadCount: vi.fn(() => 3) }));
 vi.mock("@/components/admin/ReportIssueButton", () => ({
   ReportIssueButton: () => <button>report</button>,
 }));
