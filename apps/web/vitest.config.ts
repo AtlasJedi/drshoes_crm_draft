@@ -1,6 +1,5 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
 const nm = (p: string) => path.resolve(__dirname, "node_modules", p);
@@ -9,8 +8,9 @@ const nm = (p: string) => path.resolve(__dirname, "node_modules", p);
 const repoUi = path.resolve(__dirname, "../../packages/ui/src/index.ts");
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react()],
   resolve: {
+    tsconfigPaths: true,
     // Allow packages/ui tests (which live two levels above apps/web but run
     // in apps/web's vitest context) to resolve React + testing-library.
     // String aliases match exact bare specifiers; sub-path aliases are explicit.

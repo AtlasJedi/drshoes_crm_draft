@@ -9,7 +9,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { createLogger } from "@/lib/log";
 import { Chip } from "@drshoes/ui";
-import { STATUS_LABELS_PL } from "@/lib/orders/status";
+import { STATUS_LABELS_PL, STATUS_ORDER } from "@/lib/orders/status";
 import type { OrderStatus, OrderListRow } from "@/lib/orders/types";
 
 const log = createLogger("saved-filter-presets");
@@ -23,15 +23,6 @@ function toIsoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** Order statuses to surface as preset chips, in the same forward-progression
- *  order used by the segmented status changer (ANULOWANE last). */
-const STATUS_ORDER: OrderStatus[] = [
-  "WSTEPNIE_PRZYJETE",
-  "PRZYJETE",
-  "W_REALIZACJI",
-  "CZEKA_NA_KLIENTA",
-  "GOTOWE_DO_ODBIORU",
-];
 
 function buildPresets(): Preset[] {
   const statusPresets: Preset[] = STATUS_ORDER.map((s) => ({

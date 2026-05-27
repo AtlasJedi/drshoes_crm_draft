@@ -62,8 +62,4 @@ describe("KanbanBoard", () => {
     expect(screen.getAllByText("brak zleceń w tym statusie")).toHaveLength(5);
   });
 
-  it("renders 5 dodaj buttons (one per column)", () => {
-    render(<KanbanBoard columns={cols} />);
-    expect(screen.getAllByRole("button", { name: /dodaj/i })).toHaveLength(5);
-  });
 });

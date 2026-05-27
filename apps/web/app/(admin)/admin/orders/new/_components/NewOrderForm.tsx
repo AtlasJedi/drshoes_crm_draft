@@ -322,9 +322,9 @@ export function NewOrderForm({ users }: Props) {
                 <div className="flex flex-col gap-4">
                   {/* Name */}
                   <div>
-                    <div className="flex items-center font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
+                    <label htmlFor="adhocName" className="flex items-center font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
                       <span className="text-magenta font-bold mr-1">*</span>Imię i nazwisko
-                    </div>
+                    </label>
                     <div className={fieldInput}>
                       <input
                         type="text"
@@ -343,9 +343,9 @@ export function NewOrderForm({ users }: Props) {
                   {/* Phone + Email row */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="flex items-center font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
+                      <label htmlFor="adhocPhone" className="flex items-center font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
                         Telefon
-                      </div>
+                      </label>
                       <div className={fieldInput}>
                         <span className="inline-flex items-center px-[14px] bg-ink text-paper font-mono text-[14px] font-semibold tracking-[.06em] border-r-[1.5px] border-ink shrink-0">
                           +48
@@ -361,9 +361,9 @@ export function NewOrderForm({ users }: Props) {
                       </div>
                     </div>
                     <div>
-                      <div className="flex items-center font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
+                      <label htmlFor="adhocEmail" className="flex items-center font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
                         Email
-                      </div>
+                      </label>
                       <div className={fieldInput}>
                         <input
                           type="email"
@@ -476,7 +476,7 @@ export function NewOrderForm({ users }: Props) {
                   <span className="font-mono text-[13px] text-admin-mute tracking-[.04em]">
                     razem
                     <b className="font-stencil font-black text-[20px] text-ink tracking-[.04em] ml-2">
-                      {centsToPlnDisplay(wycenaCents)} zł
+                      {centsToPlnDisplay(wycenaCents)}
                     </b>
                   </span>
                 </div>
@@ -602,16 +602,16 @@ export function NewOrderForm({ users }: Props) {
                   <span className="block font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
                     Wycena <em className="not-italic font-mono text-[9px] tracking-[.1em] ml-1">(auto z pozycji)</em>
                   </span>
-                  <span className="font-stencil font-black text-[22px] tracking-[.01em] leading-[1.05]">
-                    {centsToPlnDisplay(wycenaCents)} zł
+                  <span aria-label="Wycena" className="font-stencil font-black text-[22px] tracking-[.01em] leading-[1.05]">
+                    {centsToPlnDisplay(wycenaCents)}
                   </span>
                 </div>
 
                 {/* Zaliczka (editable) */}
                 <div className="px-4 py-2.5 border-r-[1.5px] border-ink focus-within:bg-acid/[0.18] transition-colors">
-                  <span className="block font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
+                  <label htmlFor="advancePaidPln" className="block font-mono text-[12px] text-admin-mute uppercase tracking-[.14em] mb-1.5">
                     Zaliczka <em className="not-italic font-mono text-[9px] tracking-[.1em] ml-1">jeśli wpłacona</em>
-                  </span>
+                  </label>
                   <div className="flex items-baseline gap-1">
                     <input
                       type="number"
@@ -633,7 +633,7 @@ export function NewOrderForm({ users }: Props) {
                     Do zapłaty
                   </span>
                   <span className="font-stencil font-black text-[22px] text-acid tracking-[.01em] leading-[1.05]">
-                    {centsToPlnDisplay(balanceCents)} zł
+                    {centsToPlnDisplay(balanceCents)}
                   </span>
                 </div>
               </div>

@@ -186,7 +186,7 @@ describe("NewOrderForm — derived Wycena from items", () => {
     });
 
     await act(async () => {
-      fireEvent.click(screen.getByText("+ Dodaj pozycję"));
+      fireEvent.click(screen.getByRole("button", { name: /dodaj pozycję/i }));
     });
 
     await act(async () => {
@@ -202,6 +202,8 @@ describe("NewOrderForm — derived Wycena from items", () => {
   it("submit sends quotedPriceCents equal to sum of item prices (existing client)", async () => {
     render(<NewOrderForm users={[]} />);
 
+    // Switch to existing client mode, then pick a client via the mock
+    await act(async () => { fireEvent.click(screen.getByText("Istniejący klient")); });
     fireEvent.click(screen.getByText("Wybierz klienta"));
 
     await act(async () => {
@@ -223,6 +225,8 @@ describe("NewOrderForm — derived Wycena from items", () => {
   it("submit sends advancePaidCents from the Zaliczka field", async () => {
     render(<NewOrderForm users={[]} />);
 
+    // Switch to existing client mode, then pick a client via the mock
+    await act(async () => { fireEvent.click(screen.getByText("Istniejący klient")); });
     fireEvent.click(screen.getByText("Wybierz klienta"));
 
     const advanceInput = screen.getByLabelText(/zaliczka/i);
@@ -246,9 +250,9 @@ describe("NewOrderForm — derived Wycena from items", () => {
     expect(screen.queryByRole("spinbutton", { name: /wycena/i })).toBeNull();
   });
 
-  it("shows helper text 'Suma z pozycji zlecenia' under Wycena", () => {
+  it("shows helper text '(auto z pozycji)' under Wycena", () => {
     render(<NewOrderForm users={[]} />);
-    expect(screen.getByText(/suma z pozycji zlecenia/i)).toBeTruthy();
+    expect(screen.getByText(/auto z pozycji/i)).toBeTruthy();
   });
 });
 
@@ -263,21 +267,29 @@ describe("NewOrderForm — mode switcher", () => {
     mockCreateClient.mockResolvedValue({ id: "client-uuid-new" });
   });
 
-  it("renders 'Istniejący klient' button selected by default", () => {
+  it("renders 'Nowy klient' tab selected by default with inline fields visible", () => {
     render(<NewOrderForm users={[]} />);
     expect(screen.getByText("Istniejący klient")).toBeTruthy();
     expect(screen.getByText("Nowy klient")).toBeTruthy();
-    // ClientPicker mock renders a "Wybierz klienta" button — confirms existing mode
-    expect(screen.getByText("Wybierz klienta")).toBeTruthy();
+    // Default mode is adhoc — inline fields are shown, ClientPicker is not
+    expect(screen.getByLabelText(/imię i nazwisko/i)).toBeTruthy();
+    expect(screen.queryByText("Wybierz klienta")).toBeNull();
   });
 
-  it("switching to 'Nowy klient' hides ClientPicker and shows inline fields", async () => {
+  it("switching to 'Istniejący klient' shows ClientPicker, switching back shows inline fields", async () => {
     render(<NewOrderForm users={[]} />);
 
+    // Switch to existing client mode
+    await act(async () => {
+      fireEvent.click(screen.getByText("Istniejący klient"));
+    });
+    expect(screen.getByText("Wybierz klienta")).toBeTruthy();
+    expect(screen.queryByLabelText(/imię i nazwisko/i)).toBeNull();
+
+    // Switch back to adhoc
     await act(async () => {
       fireEvent.click(screen.getByText("Nowy klient"));
     });
-
     expect(screen.queryByText("Wybierz klienta")).toBeNull();
     expect(screen.getByLabelText(/imię i nazwisko/i)).toBeTruthy();
     expect(screen.getByLabelText(/telefon/i)).toBeTruthy();
