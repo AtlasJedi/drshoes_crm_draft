@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createLogger } from "@/lib/log";
 import { Chip } from "@drshoes/ui";
 import { STATUS_LABELS_PL, STATUS_ORDER } from "@/lib/orders/status";
-import type { OrderStatus, OrderListRow } from "@/lib/orders/types";
+import type { OrderListRow } from "@/lib/orders/types";
 
 const log = createLogger("saved-filter-presets");
 
