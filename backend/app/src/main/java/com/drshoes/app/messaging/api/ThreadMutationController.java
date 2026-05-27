@@ -14,13 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Write-side thread endpoints: mark-read, assign, discard.
- * Reply endpoint (POST /threads/{id}/messages) lives in ThreadReplyController (task 5-10).
- * GET endpoints live in ThreadController.
- * LOC target: &lt; 80.
- */
 @RestController
 @RequestMapping("/api/admin/threads")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
@@ -59,8 +52,6 @@ public class ThreadMutationController {
         log.info("op=thread.discard actor={} threadId={} outcome=ok", actor.email(), id);
         return toDto(t);
     }
-
-    // ---- private helpers ----
 
     private MessageThreadDto toDto(MessageThreadEntity t) {
         Client client = t.getClientId() == null ? null

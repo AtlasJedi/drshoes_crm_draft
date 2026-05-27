@@ -13,12 +13,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Manages OrderItem mutations and keeps totalPriceCents in sync on the parent Order.
- *
- * Structured logging: op={} orderId={} itemId={} outcome=ok|not-found
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -67,8 +61,6 @@ public class OrderItemService {
         recomputeTotal(orderId);
         log.info("op=removeOrderItem orderId={} itemId={} outcome=ok", orderId, itemId);
     }
-
-    /** Sums item priceCents and writes it to the parent order (both totalPriceCents and quotedPriceCents). */
     void recomputeTotal(UUID orderId) {
         int total = itemRepo.findAllByOrderIdOrderByPosition(orderId)
             .stream().mapToInt(OrderItem::getPriceCents).sum();

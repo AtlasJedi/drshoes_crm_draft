@@ -15,13 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * POST /api/admin/threads/{id}/messages — send a reply on an existing thread.
- * Validates: thread exists (404), matched client (422), not discarded (422),
- * channel match (400). Delegates to MessageRouter.sendReply. Returns MessageDto 200.
- * LOC target: &lt; 70.
- */
 @RestController
 @RequestMapping("/api/admin/threads")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
@@ -67,8 +60,6 @@ public class ThreadReplyController {
 
         return toDto(msg);
     }
-
-    // ---- private ----
 
     private MessageDto toDto(com.drshoes.app.messaging.domain.MessageEntity m) {
         return new MessageDto(m.getId(), m.getOrderId(), m.getClientId(), m.getDirection(),

@@ -13,21 +13,10 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Computes aggregate summary KPIs for a single client.
- *
- * All counts are done in SQL (never in memory).
- * Soft-deleted orders (deleted_at IS NOT NULL) are excluded from all counts.
- * Closed statuses for openOrderCount = WYDANE | ANULOWANE.
- * unreadThreadCount excludes discarded threads.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ClientSummaryService {
-
-    /** Statuses that represent a "closed" order — excluded from openOrderCount. */
     private static final List<OrderStatus> CLOSED_STATUSES =
         List.of(OrderStatus.WYDANE, OrderStatus.ANULOWANE);
 

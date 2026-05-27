@@ -38,11 +38,8 @@ public class PlaceholderResolver {
       log.warn("op=template.render placeholder=link_do_zdjec reason=deferred_until_M3");
       return "—";
     });
-    // v2-E: operator free-form body injected into the followup email wrapper
     strategies.put("wiadomosc_tresc", ctx -> ctx.wiadomoscTresc() != null ? ctx.wiadomoscTresc() : "");
   }
-
-  /** Returns substitution for the placeholder name (no braces) or null if unknown. */
   public String resolve(String name, TemplateContext ctx) {
     var fn = strategies.get(name);
     return fn == null ? null : fn.apply(ctx);

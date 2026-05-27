@@ -21,26 +21,6 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Service layer for the admin photo gallery.
- *
- * <h2>Storage ordering</h2>
- * Upload: BlobStorage.put THEN photos.save. If the DB write fails the transaction
- * rolls back; a storage orphan may remain but the row never exists — no partial state
- * visible to readers. Acceptable per "simplest-but-working" project rule.
- *
- * Delete: photos.delete THEN BlobStorage.delete. DB-first so the row is gone before
- * the object. If the storage delete fails we log a WARN (orphan_failed) and continue —
- * not user-visible; no retry infrastructure yet.
- *
- * <h2>Audit</h2>
- * Each mutating method carries @Audited(parent=...) so AuditLogAspect writes an
- * INTERNAL audit row with parent_entity_id = orderId — linking the event to the order
- * timeline without any manual audit writes in this service.
- *
- * Structured logging: op=photo.* actor={} orderId={} photoId={} outcome={}
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -49,24 +29,12 @@ public class PhotoService {
     static final Set<String> ALLOWED_MIMES = Set.of(
         "image/jpeg", "image/png", "image/webp", "image/heic"
     );
-    static final long MAX_BYTES = 20L * 1024 * 1024;   // 20 MB
+    static final long MAX_BYTES = 20L * 1024 * 1024;
 
     private final PhotoRepository photos;
     private final OrderRepository orders;
     private final OrderItemRepository orderItems;
     private final BlobStorage storage;
-
-    /**
-     * Upload a new photo for an order. Validates mime type and size, stores bytes,
-     * then persists the row.
-     *
-     * @param orderId  the parent order (must exist)
-     * @param itemId   optional order-item association (null = order-level photo)
-     * @param file     the multipart upload
-     * @param label    initial label (BEFORE/IN_PROGRESS/AFTER/OTHER)
-     * @param actorId  the authenticated user performing the upload
-     * @return the persisted Photo entity
-     */
     @Audited(parent = "#orderId")
     @Transactional
     public Photo upload(UUID orderId, UUID itemId, MultipartFile file,
@@ -103,23 +71,10 @@ public class PhotoService {
             saved.getId(), orderId, actorId, saved.getSizeBytes(), saved.getMime(), saved.getLabel());
         return saved;
     }
-
-    /**
-     * List all photos for an order, newest first.
-     */
     @Transactional(readOnly = true)
     public List<Photo> listForOrder(UUID orderId) {
         return photos.findByOrderIdOrderByUploadedAtDesc(orderId);
     }
-
-    /**
-     * Stream the bytes of a photo back to the caller.
-     * Caller MUST close the returned InputStream (try-with-resources).
-     *
-     * Not @Transactional — blob stream is held by caller; tx must not span the download.
-     * Spring Data opens its own short tx for the findById call; JDBC connection is
-     * released before the AWS socket stream is handed to the response writer.
-     */
     public StreamHandle stream(UUID orderId, UUID photoId) {
         var photo = photos.findById(photoId)
             .orElseThrow(() -> new PhotoNotFoundException(photoId));
@@ -127,11 +82,6 @@ public class PhotoService {
         InputStream bytes = storage.get(new BlobKey(photo.getS3Key()));
         return new StreamHandle(bytes, photo.getMime(), photo.getOriginalFilename());
     }
-
-    /**
-     * Change the label on a photo. Returns the updated entity so @Audited can
-     * resolve parent_entity_id via "#result.orderId".
-     */
     @Audited(parent = "#result.orderId")
     @Transactional
     public Photo relabel(UUID orderId, UUID photoId, PhotoLabel newLabel, UUID actorId) {
@@ -145,17 +95,6 @@ public class PhotoService {
             saved.getId(), saved.getOrderId(), actorId, oldLabel, newLabel);
         return saved;
     }
-
-    /**
-     * Hard-delete a photo row and its storage object. Returns the orderId so that
-     * @Audited(parent="#result") can link the audit row to the order timeline.
-     *
-     * Deletion order: DB row first, then storage. Storage failure is logged as
-     * orphan_failed and not propagated — the row is already gone so the photo is
-     * invisible to all readers. Best-effort cleanup per project simplicity rule.
-     *
-     * @return the orderId of the deleted photo (used by @Audited SpEL "#result")
-     */
     @Audited(parent = "#result")
     @Transactional
     public UUID delete(UUID orderId, UUID photoId, UUID actorId) {
@@ -164,26 +103,17 @@ public class PhotoService {
         verifyOwnership(orderId, photoId, photo);
         var s3Key = photo.getS3Key();
         photos.delete(photo);
-        photos.flush();   // flush DB delete before attempting storage delete
+        photos.flush();
         try {
             storage.delete(new BlobKey(s3Key));
         } catch (RuntimeException e) {
             log.warn("op=photo.delete outcome=storage_orphan_failed photoId={} s3Key={} actorId={}",
                 photoId, s3Key, actorId, e);
-            // DB row gone; orphan blob remains. Not user-visible.
         }
         log.info("op=photo.delete outcome=success photoId={} orderId={} actorId={} s3Key={}",
             photoId, orderId, actorId, s3Key);
         return orderId;
     }
-
-    // ── private helpers ──────────────────────────────────────────────────────
-
-    /**
-     * Guard against cross-order photo ID enumeration. Throws PhotoNotFoundException
-     * (not a more informative exception) so callers cannot distinguish "photo does not
-     * exist" from "photo belongs to a different order" — leaks less information.
-     */
     private void verifyOwnership(UUID orderId, UUID photoId, Photo photo) {
         if (!photo.getOrderId().equals(orderId)) {
             throw new PhotoNotFoundException(photoId);
@@ -216,11 +146,6 @@ public class PhotoService {
             throw new PhotoTooLargeException(size, MAX_BYTES);
         }
     }
-
-    /**
-     * Build the S3 key. Format: orders/{orderId}/{photoId}-{slugifiedFilename}
-     * Key always starts with a letter ("o" from "orders/") — satisfies BlobKey constraint.
-     */
     private String buildKey(UUID orderId, UUID photoId, String originalFilename) {
         return "orders/" + orderId + "/" + photoId + "-" + slug(originalFilename);
     }
@@ -228,13 +153,9 @@ public class PhotoService {
     private String safeFilename(String original) {
         return (original == null || original.isBlank()) ? "unknown.bin" : original;
     }
-
-    /** Slugify: replace anything that is not alphanumeric, dot, dash or underscore. */
     private String slug(String input) {
         if (input == null || input.isBlank()) return "file";
         return input.replaceAll("[^A-Za-z0-9._-]", "_");
     }
-
-    /** Carries an open InputStream plus content-type and filename for HTTP streaming. */
     public record StreamHandle(InputStream inputStream, String mime, String filename) {}
 }

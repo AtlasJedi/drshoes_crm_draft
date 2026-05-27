@@ -15,15 +15,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * CRUD service for message_template.
- *
- * Soft-delete: sets active=false; rows are never physically removed (history preserved).
- * Duplicate name: rejects with 409 CONFLICT.
- *
- * Structured logging: op=template.{create,update,delete} outcome=ok name={}
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -78,8 +69,6 @@ public class TemplateService {
         repo.save(e);
         log.info("op=template.delete outcome=ok name={}", e.getName());
     }
-
-    // ---- helpers ----
 
     private MessageTemplateEntity findOrThrow(UUID id) {
         return repo.findById(id).orElseThrow(

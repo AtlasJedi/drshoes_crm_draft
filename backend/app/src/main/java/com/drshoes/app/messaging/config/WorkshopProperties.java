@@ -3,12 +3,6 @@ package com.drshoes.app.messaging.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * Workshop-level constants bound from {@code drshoes.workshop.*} config.
- * Values default to Dr Shoes Poznań contact details; override via environment
- * or application.yaml for other tenants / deployments.
- */
 @ConfigurationProperties("drshoes.workshop")
 @Getter
 @Setter

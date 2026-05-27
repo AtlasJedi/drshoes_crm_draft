@@ -9,19 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Provides the aggregate summary KPI tile data for a single client dossier.
- *
- * Endpoint:
- *   GET /api/admin/clients/{id}/summary — returns ClientSummaryDto (OWNER | EMPLOYEE)
- *
- * Structured logging per dispatch-protocol §7:
- *   op=getClientSummary actor={} clientId={} outcome=ok|not-found
- *
- * 404 is thrown by ClientSummaryService via ClientNotFoundException, mapped by
- * the existing ClientExceptionHandler.
- */
 @RestController
 @RequestMapping("/api/admin/clients")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")

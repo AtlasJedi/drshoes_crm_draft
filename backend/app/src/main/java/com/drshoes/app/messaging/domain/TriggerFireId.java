@@ -6,11 +6,6 @@ import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * Composite PK class for TriggerFireEntity.
- * Field names must match the @Id field names in TriggerFireEntity exactly.
- */
 @EqualsAndHashCode
 @Getter
 @Setter

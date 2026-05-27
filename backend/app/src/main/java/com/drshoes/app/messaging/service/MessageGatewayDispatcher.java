@@ -16,18 +16,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Extracted gateway dispatch unit. Builds an {@link OutboundMessage}, dispatches it
- * through the appropriate channel gateway, updates {@link MessageEntity} status
- * (SENT / FAILED), persists, and bumps the thread's {@code lastMessageAt} on success.
- *
- * <p>Previously this logic was duplicated between {@code MessageRouter.send(...)} and
- * {@code MessageRouter.sendRetry(...)}. M5 adds {@code sendReply} and {@code sendNewToClient},
- * so extraction is a BLOCKER before adding further methods. (M5 plan §10 debt item.)</p>
- *
- * <p>LOC target: ≤ 90. Flag if exceeded.</p>
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -39,20 +27,6 @@ public class MessageGatewayDispatcher {
     private final MessagingSpanHelper spanHelper;
     private final MessageRepository messages;
     private final MessageThreadRepository threads;
-
-    /**
-     * Dispatch a SAVED {@link MessageEntity} through its channel gateway, update status
-     * (SENT / FAILED), persist, and bump the thread's {@code last_message_at} on success.
-     *
-     * <p>Logging contract: one INFO per call with {@code op=gateway.dispatch outcome=ok|failed}.</p>
-     *
-     * @param saved     a persisted MessageEntity in QUEUED state
-     * @param recipient email address or phone number (validated non-blank by OutboundMessage)
-     * @param subject   email subject; null for SMS
-     * @param body      message body (validated non-blank by OutboundMessage)
-     * @return the updated and persisted MessageEntity
-     * @throws IllegalArgumentException if channel is not EMAIL or SMS, or if recipient/body blank
-     */
     public MessageEntity dispatch(MessageEntity saved, String recipient, String subject, String body) {
         return spanHelper.dispatchWithSpan(saved.getChannel(), saved.getId(), recipient, () -> {
             Channel ch = Channel.valueOf(saved.getChannel());
@@ -71,7 +45,7 @@ public class MessageGatewayDispatcher {
                 log.info("op=gateway.dispatch outcome=ok messageId={} channel={} providerId={}",
                         saved.getId(), saved.getChannel(), receipt.providerMessageId());
             } catch (IllegalArgumentException e) {
-                throw e; // propagate unknown-channel and OutboundMessage validation errors
+                throw e;
             } catch (Exception e) {
                 saved.setDeliveryStatus("FAILED");
                 saved.setErrorCode(truncate(e.getClass().getSimpleName(), 60));

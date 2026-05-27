@@ -18,19 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Postmark email gateway implementation.
- *
- * Sends to ${apiBaseUrl}/email with X-Postmark-Server-Token header.
- * Retry policy: one retry on network-level errors (ResourceAccessException or
- * RestClientException wrapping IOException), 1 s pause.
- * No retry on 4xx/5xx — terminal; operator-initiated retry only.
- *
- * Note: SimpleClientHttpRequestFactory (HttpURLConnection) may wrap SocketException
- * as RestClientException rather than ResourceAccessException during header-read phase.
- * isNetworkError() covers both cases.
- */
 @Slf4j
 @RequiredArgsConstructor
 public class PostmarkEmailGateway implements EmailGateway {
@@ -64,13 +51,6 @@ public class PostmarkEmailGateway implements EmailGateway {
 
         return executeWithRetry(m, payload);
     }
-
-    // ─── private helpers ────────────────────────────────────────────────────
-
-    /**
-     * Fetches all attachment bytes via BlobStorage.
-     * Returns null when cumulative size exceeds 10 MB; never swallows storage errors.
-     */
     private Map<String, byte[]> fetchAttachmentBytes(OutboundMessage m) {
         Map<String, byte[]> result = new HashMap<>();
         long total = 0;
@@ -117,13 +97,6 @@ public class PostmarkEmailGateway implements EmailGateway {
             }
         }
     }
-
-    /**
-     * Returns true when the exception represents a network-level failure that should
-     * trigger a retry. Covers both ResourceAccessException (the standard Spring wrapper
-     * for IOException) and RestClientException wrapping an IOException directly
-     * (which SimpleClientHttpRequestFactory can produce during header-read failure).
-     */
     private static boolean isNetworkError(RestClientException e) {
         if (e instanceof ResourceAccessException) return true;
         Throwable cause = e.getCause();
@@ -143,7 +116,6 @@ public class PostmarkEmailGateway implements EmailGateway {
                 .retrieve()
                 .onStatus(status -> !status.is2xxSuccessful(),
                           (req, resp) -> {
-                              // suppress throw; let toEntity capture status + body
                           })
                 .toEntity(String.class);
 

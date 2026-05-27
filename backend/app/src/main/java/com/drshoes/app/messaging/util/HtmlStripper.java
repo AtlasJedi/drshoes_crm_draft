@@ -1,6 +1,4 @@
 package com.drshoes.app.messaging.util;
-
-/** Naive HTML → plain text. Sufficient for inbound email preview/body. */
 public final class HtmlStripper {
 
     private HtmlStripper() {}

@@ -5,15 +5,6 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * JPA entity for the trigger_fire dedup table (composite PK).
- *
- * Design notes:
- *   - Uses @IdClass for composite PK (triggerId + orderId + discriminator).
- *   - firedAt is DB-defaulted (DEFAULT now()); insertable=false so we don't override it.
- *   - No direct FK associations — raw UUIDs only (aggregate boundaries).
- */
 @Entity
 @Table(name = "trigger_fire")
 @IdClass(TriggerFireId.class)
@@ -43,8 +34,6 @@ public class TriggerFireEntity {
         this.orderId = orderId;
         this.discriminator = discriminator;
     }
-
-    // ---- accessors ----
     public UUID getOrderId() { return orderId; }
     public OffsetDateTime getFiredAt() { return firedAt; }
 }

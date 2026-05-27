@@ -2,11 +2,6 @@ package com.drshoes.app.sklep;
 
 import java.time.Instant;
 import java.util.UUID;
-
-/**
- * Immutable DTO for the product reservation API response.
- * Maps 1:1 with {@link ProductReservation} fields; no sensitive data exposed.
- */
 public record ProductReservationDto(
     UUID    id,
     UUID    productId,

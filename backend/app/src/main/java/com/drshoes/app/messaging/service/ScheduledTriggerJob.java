@@ -15,21 +15,6 @@ import java.time.ZoneId;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Cron-based trigger executor for time-relative messaging triggers.
- *
- * Two scheduled methods:
- *   - runBeforePickup()  09:00 Warsaw — BEFORE_PICKUP_X_DAYS triggers
- *   - runAfterHandover() 11:00 Warsaw — AFTER_HANDOVER_Y_DAYS triggers
- *
- * Idempotency is delegated to TriggerEngine.fireScheduled which guards via IdempotencyService.
- * Discriminators: "before:<targetDate>" and "after:<handoverDate>".
- *
- * Logging contract:
- *   op=scheduled_trigger.run kind=BEFORE_PICKUP date={}  — INFO per run
- *   op=scheduled_trigger.run kind=AFTER_HANDOVER date={} — INFO per run
- */
 @Component
 @Slf4j
 @RequiredArgsConstructor

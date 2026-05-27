@@ -11,33 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-
-/**
- * Receives SMSAPI MO (mobile-originated / inbound) callbacks.
- *
- * <h2>Authentication</h2>
- * Source IP allowlist via the {@code Cf-Connecting-Ip} header set by Cloudflare.
- * The header is NOT configurable — production traffic always arrives through Cloudflare.
- * Absent or non-allowlisted IP receives 403 with zero DB writes (fail-closed).
- *
- * <h2>Method + payload</h2>
- * POST /api/webhooks/smsapi/inbound, application/x-www-form-urlencoded.
- * Response: 200 JSON {@code {"messageId", "threadId", "duplicate"}}.
- *
- * <h2>Idempotency</h2>
- * Delegated to {@link InboundMessageService#recordSmsInbound} which checks
- * {@code provider_message_id} uniqueness. Replays return {@code duplicate=true}.
- * Race-window safety net: {@link DataAccessException} from UNIQUE partial index
- * violation caught here; returned as 200 + duplicate=true.
- *
- * <h2>Security</h2>
- * SecurityConfig lists /api/webhooks/** in PUBLIC_MATCHERS and CSRF_IGNORED.
- * Allowlist property: {@code messaging.sms.smsapi.allowlist} (distinct from
- * the delivery callback {@code callback-allowlist} so they can diverge in prod).
- *
- * <h2>Logging</h2>
- * INFO with key=value fields per CLAUDE.md §7. Sender phone is NOT logged at INFO (PII).
- */
 @RestController
 @RequestMapping("/api/webhooks/smsapi/inbound")
 @Slf4j

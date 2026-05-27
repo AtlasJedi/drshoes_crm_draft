@@ -14,13 +14,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Service for automation trigger management.
- *
- * Only list, get, and setEnabled are exposed (full editor deferred to M3).
- * Structured logging: op=trigger.toggle outcome=ok id={} enabled={}
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -48,8 +41,6 @@ public class TriggerService {
         log.info("op=trigger.toggle outcome=ok id={} enabled={}", id, enabled);
         return toDto(saved);
     }
-
-    // ---- helpers ----
 
     private TriggerDto toDto(TriggerEntity t) {
         String templateName = t.getTemplateId() == null ? null

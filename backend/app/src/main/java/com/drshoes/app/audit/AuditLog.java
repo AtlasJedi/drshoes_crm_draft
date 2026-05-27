@@ -4,17 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.UUID;
-
-/**
- * JPA entity mapped to the audit_log table (created by V001__init.sql).
- * Records every audited HTTP request: actor, method, path, status, IP.
- * PII discipline: IP is persisted (acceptable security event per RODO exception);
- * passwords, hashes, and session IDs are never stored or logged.
- *
- * Note: the ip column is type inet in Postgres. Writes use a native query
- * in AuditLogWriter with CAST(:ip AS inet). Reads map back as String via
- * Postgres JDBC returning the inet value as its text representation.
- */
 @Entity
 @Table(name = "audit_log")
 public class AuditLog {
@@ -48,57 +37,21 @@ public class AuditLog {
 
     @Column(name = "body_hash", length = 64)
     private String bodyHash;
-
-    /** Populated by @Audited(parent=...) SpEL evaluation. Links child-entity ops to their parent. */
     @Column(name = "parent_entity_id")
     private UUID parentEntityId;
-
-    /**
-     * OpenTelemetry trace ID captured at the time of the audit event.
-     * 32-char lowercase hex string (128-bit trace ID per W3C traceparent spec).
-     * NULL when no active span context is present (background jobs, startup hooks).
-     */
     @Column(name = "trace_id", length = 32)
     private String traceId;
-
-    /**
-     * Optional free-text note provided by the operator at the time of the action.
-     * Populated only for STATUS_CHANGED rows where the operator filled the note field.
-     * Max 1000 characters (enforced via @Size on ChangeStatusRequest.note).
-     * Added by V015 migration (M8 task m8-fb-1b).
-     */
     @Column(name = "note", columnDefinition = "TEXT")
     private String note;
-
-    /**
-     * Previous storage location of the order before a location move.
-     * NULL when the audit row is not a location-change event.
-     * Added by V020 migration (M10 task 10-5).
-     */
     @Column(name = "location_from", length = 64)
     private String locationFrom;
-
-    /**
-     * New storage location of the order after a location move.
-     * NULL when the audit row is not a location-change event.
-     * Added by V020 migration (M10 task 10-5).
-     */
     @Column(name = "location_to", length = 64)
     private String locationTo;
-
-    /**
-     * Target status for status-change audit rows (POST /api/admin/orders/{uuid}/status).
-     * NULL for all other audit rows.
-     * Added by V027 migration (v2-F) to allow the TimelineEventCurator to emit
-     * DONE kind when the target status is WYDANE.
-     */
     @Column(name = "target_status", length = 32)
     private String targetStatus;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
-
-    // getters/setters
     public UUID getId() { return id; }
     public UUID getActorId() { return actorId; }
     public String getMethod() { return method; }

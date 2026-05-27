@@ -5,15 +5,6 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * JPA entity for the order_item table.
- *
- * Design notes:
- *   - orderId is a raw UUID FK — no @ManyToOne (aggregate boundary kept).
- *   - No @Version — optimistic locking is on Order (aggregate root) only.
- *   - Items are fetched independently via OrderItemRepository.findAllByOrderIdOrderByPosition.
- */
 @Entity
 @Table(name = "order_item")
 @Getter
@@ -52,8 +43,6 @@ public class OrderItem {
 
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
-
-    // ---- accessors ----
     public void setOrderId(UUID orderId) { this.orderId = orderId; }
     public void setKind(OrderItemKind kind) { this.kind = kind; }
     public void setCraftsmanNotes(String craftsmanNotes) { this.craftsmanNotes = craftsmanNotes; }

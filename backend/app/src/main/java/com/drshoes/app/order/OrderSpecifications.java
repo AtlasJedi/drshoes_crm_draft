@@ -12,25 +12,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-/**
- * Static factory for JPA Specifications used when listing Orders.
- * Extracted per the granular-code rule — keeps OrderService and OrderController
- * under the 120 LOC ceiling.
- *
- * Tag predicate uses {@code jsonb_contains(tags, jsonb_build_array(tag))} which
- * maps to the Postgres {@code @>} operator. Hibernate passes unknown function names
- * through to the DB verbatim, so no custom dialect registration is required.
- */
 public final class OrderSpecifications {
 
     private OrderSpecifications() {}
-
-    /**
-     * Builds a Specification that combines all optional filter predicates.
-     *
-     * @param clientId when non-null, restricts results to orders for that client (M7)
-     */
     public static Specification<Order> forList(List<OrderStatus> statuses, UUID assigneeId,
                                                List<OrderItemKind> kinds, String q,
                                                String tag, Instant plannedPickupAtFrom,
@@ -41,7 +25,6 @@ public final class OrderSpecifications {
             preds.add(cb.isNull(root.get("deletedAt")));
             if (statuses != null && !statuses.isEmpty()) {
                 if (wydaneCutoff != null) {
-                    // Default mode: active statuses OR (WYDANE picked up within window).
                     preds.add(cb.or(
                         root.get("status").in(statuses),
                         cb.and(

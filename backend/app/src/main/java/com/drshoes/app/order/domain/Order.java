@@ -8,16 +8,6 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * JPA entity for the order_ table (aggregate root).
- *
- * Design notes:
- *   - clientId / assignedCraftsmanId are raw UUIDs — no @ManyToOne (aggregate boundary).
- *   - Items are NOT modelled as @OneToMany; they are fetched separately via OrderItemRepository.
- *   - @Version enables optimistic locking via the version column added by V004.
- *   - tags is stored as JSONB; mapped as String for simplicity (JSON array serialized by caller).
- */
 @Entity
 @Table(name = "order_")
 @Getter
@@ -98,8 +88,6 @@ public class Order {
 
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
-
-    // ---- accessors ----
     public void setCode(String code) { this.code = code; }
     public void setStatus(OrderStatus status) { this.status = status; }
     public void setReceivedAt(Instant receivedAt) { this.receivedAt = receivedAt; }

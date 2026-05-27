@@ -18,12 +18,6 @@ import java.time.temporal.IsoFields;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Dashboard chart aggregations: stacked bar (week/month/quarter) + mix donut.
- *
- * Structured logging: op={} outcome=ok|error
- */
 @RestController
 @RequestMapping("/api/admin/dashboard")
 @Slf4j
@@ -51,7 +45,6 @@ public class DashboardChartsController {
                 ordersPerWeek = fillPeriods(monthLabels, monthMap);
             }
             case "QUARTER" -> {
-                // First day of current quarter, then go back 3 more quarters
                 LocalDate firstDayOfCurQ = nowWarsaw.toLocalDate()
                         .with(IsoFields.DAY_OF_QUARTER, 1);
                 ZonedDateTime quarterWindowStart = firstDayOfCurQ
@@ -63,7 +56,6 @@ public class DashboardChartsController {
                 ordersPerWeek = fillPeriods(quarterLabels, quarterMap);
             }
             default -> {
-                // WEEK
                 ZonedDateTime weekWindowStart = nowWarsaw.toLocalDate()
                         .with(DayOfWeek.MONDAY)
                         .minusWeeks(7)
@@ -74,11 +66,8 @@ public class DashboardChartsController {
                 ordersPerWeek = fillPeriods(weekLabels, weekMap);
             }
         }
-
-        // Mix donut — derived from enum; adding a new OrderItemKind auto-extends this.
         List<Object[]> rawMix = orderRepo.countByItemKind();
         Map<String, Long> kindCounts = zeroFilledKindMap();
-        // zeroFilledKindMap() already inserts all 5 kinds at 0; just overwrite with real counts below.
         for (Object[] row : rawMix) {
             String kind = (String) row[0];
             long count  = ((Number) row[1]).longValue();
@@ -97,12 +86,6 @@ public class DashboardChartsController {
             period, ordersPerWeek.size(), mixByType.size());
         return new DashboardChartsDto(ordersPerWeek, mixByType);
     }
-
-    /**
-     * Accumulates raw query rows (period_label, primary_kind, order_count) into a map
-     * keyed by period label, value = map of kind → count (all 5 kinds, zero-filled).
-     * Derived entirely from OrderItemKind.values() — no hardcoded kind names.
-     */
     private static Map<String, Map<String, Long>> buildPeriodMap(List<Object[]> rows) {
         Map<String, Map<String, Long>> map = new LinkedHashMap<>();
         for (Object[] row : rows) {
@@ -113,8 +96,6 @@ public class DashboardChartsController {
         }
         return map;
     }
-
-    /** Builds a LinkedHashMap with all OrderItemKind names preset to 0, in enum declaration order. */
     private static Map<String, Long> zeroFilledKindMap() {
         Map<String, Long> m = new LinkedHashMap<>();
         for (OrderItemKind k : OrderItemKind.values()) m.put(k.name(), 0L);

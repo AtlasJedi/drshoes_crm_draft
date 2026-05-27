@@ -14,32 +14,6 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-
-/**
- * Receives SMSAPI delivery callbacks.
- *
- * <h2>Authentication</h2>
- * Source IP allowlist. SMSAPI does NOT sign callbacks; identity verified by IP only.
- * Client IP is read from the configured header ({@code messaging.sms.smsapi.client-ip-header};
- * default {@code X-Forwarded-For}); the leftmost token is used for proxy compatibility.
- * Falls back to {@code request.getRemoteAddr()} when the header is absent.
- * Rejected IPs receive 403 "Forbidden" with zero DB writes.
- *
- * <h2>Method and response</h2>
- * GET /api/webhooks/smsapi (SMSAPI spec §3.6.1 — GET, not POST).
- * Response: 200 with body exactly {@code "OK"} (text/plain, case-sensitive — SMSAPI retries otherwise).
- *
- * <h2>Idempotency</h2>
- * SMSAPI has no per-event id; dedupe relies on the state-guarded UPDATE in
- * {@link WebhookStatusReconciler} (only SENT→target transition is allowed).
- *
- * <h2>Endpoint security</h2>
- * SecurityConfig already lists {@code /api/webhooks/**} in PUBLIC_MATCHERS and CSRF_IGNORED.
- * GET requests are never CSRF-protected by default; no additional config required.
- *
- * <h2>Logging</h2>
- * INFO with key=value fields per CLAUDE.md §7. Raw query params are NOT logged at INFO (PII risk).
- */
 @RestController
 @Slf4j
 public class SmsApiWebhookController {
@@ -73,8 +47,6 @@ public class SmsApiWebhookController {
             @RequestParam(value = "status_name", required = false) String  statusName,
             @RequestParam(value = "idx",         required = false) String  idx,
             HttpServletRequest request) {
-
-        // ── 1. IP allowlist check ────────────────────────────────────────────
         String clientIp = resolveClientIp(request);
         if (!allowlist.contains(clientIp)) {
             log.info("op=webhook.smsapi.received provider=smsapi clientIp={} outcome=rejected_ip",
@@ -86,11 +58,7 @@ public class SmsApiWebhookController {
 
         log.info("op=webhook.smsapi.received provider=smsapi msgId={} statusName={} statusCode={} outcome=accepted",
                 msgId, statusName, statusCode);
-
-        // ── 2. Build raw query-params JSON for archival ──────────────────────
         String rawQueryJson = buildRawQueryJson(msgId, statusCode, doneDateUnixSeconds, statusName, idx);
-
-        // ── 3. Map + reconcile ───────────────────────────────────────────────
         Instant occurredAt = Instant.ofEpochSecond(doneDateUnixSeconds);
         var event  = mapper.fromSmsApi(msgId, statusName, statusCode, occurredAt, rawQueryJson);
         var result = reconciler.apply(event);
@@ -103,12 +71,9 @@ public class SmsApiWebhookController {
             .body("OK");
     }
 
-    // ── private ──────────────────────────────────────────────────────────────
-
     private String resolveClientIp(HttpServletRequest request) {
         String fromHeader = request.getHeader(clientIpHeader);
         if (fromHeader != null && !fromHeader.isBlank()) {
-            // X-Forwarded-For may be comma-separated; leftmost token = original client
             return fromHeader.split("\\s*,\\s*")[0].trim();
         }
         return request.getRemoteAddr();

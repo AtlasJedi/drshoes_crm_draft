@@ -10,16 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * REST controller exposing the active-user list for the assignee dropdown.
- *
- * Endpoint:
- *   GET /api/admin/users — 200 + List<UserStubDto>, auth enforced by SecurityConfig
- *
- * Structured logging per dispatch-protocol §7:
- *   op=listUsers  actor={}  count={}  outcome=ok
- */
 @RestController
 @RequestMapping("/api/admin/users")
 @Slf4j

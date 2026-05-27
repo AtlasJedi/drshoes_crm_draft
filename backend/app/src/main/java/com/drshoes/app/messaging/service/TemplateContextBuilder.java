@@ -14,15 +14,6 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Builds a {@link TemplateContext} from order + client data.
- * Extracted from MessageRouter to keep each class under 120 LOC.
- *
- * v2-E: added 3-arg overload that injects wiadomosc_tresc for the followup
- * email template. Also supports null orderId for client-only context (no order
- * data loaded when the compose action is not associated with a specific order).
- */
 @Component
 @RequiredArgsConstructor
 public class TemplateContextBuilder {
@@ -31,30 +22,9 @@ public class TemplateContextBuilder {
     private final OrderItemRepository orderItems;
     private final ClientRepository clients;
     private final WorkshopProperties workshop;
-
-    /**
-     * Loads order + client rows and assembles a template context for rendering.
-     *
-     * @param orderId  the order UUID (must not be null)
-     * @param clientId the client UUID
-     * @return fully populated {@link TemplateContext}
-     * @throws IllegalArgumentException if order or client row is missing
-     */
     public TemplateContext buildContext(UUID orderId, UUID clientId) {
         return buildContext(orderId, clientId, null);
     }
-
-    /**
-     * Overload that additionally injects {@code wiadomosc_tresc} into the context.
-     * Used by {@link MessageRouter} when wrapping a free-form operator message
-     * inside the followup HTML template (v2-E). When {@code orderId} is null,
-     * order-specific placeholders are omitted (only client + workshop data is loaded).
-     *
-     * @param orderId     the order UUID, or null for client-only context
-     * @param clientId    the client UUID
-     * @param userMessage the operator's typed message body; injected as wiadomosc_tresc
-     * @return fully populated {@link TemplateContext} with wiadomosc_tresc set
-     */
     public TemplateContext buildContext(UUID orderId, UUID clientId, String userMessage) {
         Client client = clients.findById(clientId).orElseThrow(
                 () -> new IllegalArgumentException("Client not found: " + clientId));

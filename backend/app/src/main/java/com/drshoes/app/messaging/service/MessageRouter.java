@@ -13,22 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Single outbound send pipeline. Five public entry points:
- *   - sendManual         — operator-initiated from MessagesController / MessageComposerModal
- *   - sendForTrigger     — called by TriggerEngine after status-change post-commit hook
- *   - sendRetry          — called by MessageRetryService; bypasses template re-render
- *   - sendReply          — operator reply on an existing thread
- *   - sendNewToClient    — cross-thread first-contact compose
- *
- * EMAIL sends (sendReply + sendNewToClient) are wrapped in the followup HTML template (v2-E).
- * Stored body = user plain text (for bubble display); bodyHtml = rendered wrapper (for gateway).
- *
- * Recipient resolution is delegated to {@link MessageRecipientResolver}.
- * Gateway dispatch is delegated to {@link MessageGatewayDispatcher}.
- * Logging contract: exactly ONE INFO log per public call with outcome=SENT|FAILED.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -41,38 +25,16 @@ public class MessageRouter {
     private final TemplateContextBuilder contextBuilder;
     private final MessageRecipientResolver recipientResolver;
     private final MessageGatewayDispatcher dispatcher;
-
-    /**
-     * Manual composer entry point. Returns persisted message id.
-     *
-     * <p>Audit note (task 2-10): @Audited fires on THIS method, producing path
-     * {@code MessageRouter#sendManual}. Task 2-10's MessageSentTimelineHandler
-     * must match BOTH {@code MessageRouter#sendManual} and
-     * {@code MessageRouter#sendForTrigger} — not the private {@code send(...)},
-     * which Spring AOP cannot intercept.
-     */
     @Transactional
     @Audited(parent = "#orderId")
     public UUID sendManual(UUID orderId, UUID clientId, UUID templateId, String channel, UUID actorId) {
         return send(orderId, clientId, templateId, null, channel, actorId);
     }
-
-    /**
-     * Trigger entry point. Returns persisted message id.
-     *
-     * <p>Audit note (task 2-10): @Audited fires on THIS method, producing path
-     * {@code MessageRouter#sendForTrigger}. See sendManual javadoc.
-     */
     @Transactional
     @Audited(parent = "#orderId")
     public UUID sendForTrigger(UUID orderId, UUID clientId, UUID templateId, UUID triggerId, String channel) {
         return send(orderId, clientId, templateId, triggerId, channel, null);
     }
-
-    /**
-     * Retry entry point. Bypasses template lookup — uses stored body/subject from the original
-     * message. No @Audited here; MessageRetryService#retry handles the audit row.
-     */
     @Transactional
     public UUID sendRetry(MessageEntity orig, UUID actorId) {
         var thread = threadService.findOrCreateForClient(orig.getClientId());
@@ -87,12 +49,6 @@ public class MessageRouter {
                 persisted.getDeliveryStatus(), orig.getOrderId(), persisted.getId(), orig.getChannel());
         return persisted.getId();
     }
-
-    /**
-     * Reply send entry point — operator freeform message on an existing thread.
-     * EMAIL channel: body is stored as plain text for bubble display; outbound
-     * email is wrapped in the followup HTML template (v2-E). SMS: sent as-is.
-     */
     @Transactional
     public UUID sendReply(UUID threadId, UUID clientId, String channel, String subject,
                           String body, UUID orderId, AdminPrincipal actor) {
@@ -112,12 +68,6 @@ public class MessageRouter {
                 actor == null ? "system" : actor.email());
         return persisted.getId();
     }
-
-    /**
-     * Cross-thread "Nowa wiadomość" compose — first-contact with a client on a given channel.
-     * EMAIL channel: body is stored as plain text for bubble display; outbound email is
-     * wrapped in the followup HTML template (v2-E). SMS: sent as-is.
-     */
     @Transactional
     public UUID sendNewToClient(UUID clientId, String channel, String subject,
                                 String body, AdminPrincipal actor) {
@@ -138,14 +88,6 @@ public class MessageRouter {
                 actor == null ? "system" : actor.email());
         return persisted.getId();
     }
-
-    // ---- private ----
-
-    /**
-     * Wraps a free-form operator message in the "Dr Shoes - followup (EMAIL)" template.
-     * Returns rendered subject + bodyHtml. The caller stores the original user text as
-     * {@code body} (for bubble display) and this rendered HTML as {@code bodyHtml} (for gateway).
-     */
     private WrappedEmail wrapWithFollowupTemplate(UUID clientId, UUID orderId, String userMessage) {
         var tpl = templates.findByName("Dr Shoes - followup (EMAIL)")
                 .orElseThrow(() -> new IllegalStateException(
@@ -157,8 +99,6 @@ public class MessageRouter {
                 clientId, orderId, renderedSubject);
         return new WrappedEmail(renderedSubject, renderedHtml);
     }
-
-    /** Carrier for the wrapped EMAIL subject + bodyHtml pair. */
     private record WrappedEmail(String subject, String bodyHtml) {}
 
     private UUID send(UUID orderId, UUID clientId, UUID templateId, UUID triggerId,

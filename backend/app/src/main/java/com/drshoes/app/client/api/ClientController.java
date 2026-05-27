@@ -18,24 +18,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * REST controller for the Client aggregate.
- *
- * Endpoints:
- *   GET    /api/admin/clients            — paginated list (OWNER | EMPLOYEE)
- *   GET    /api/admin/clients/search?q=  — typeahead search top-N (OWNER | EMPLOYEE)
- *   GET    /api/admin/clients/{id}       — single client (OWNER | EMPLOYEE)
- *   POST   /api/admin/clients            — create (OWNER | EMPLOYEE)
- *   PATCH  /api/admin/clients/{id}       — update (OWNER | EMPLOYEE)
- *   DELETE /api/admin/clients/{id}       — soft-delete (OWNER only)
- *
- * Structured logging per dispatch-protocol §7:
- *   op=<method> actor={} clientId={} outcome=ok|not-found
- *
- * RBAC: every endpoint requires an authenticated session (enforced by SecurityConfig).
- * DELETE is further restricted to OWNER via @PreAuthorize + RbacService.canManageClients.
- */
 @RestController
 @RequestMapping("/api/admin/clients")
 @Slf4j

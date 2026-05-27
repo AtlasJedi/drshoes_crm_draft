@@ -3,17 +3,6 @@ package com.drshoes.app.sklep;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
-
-/**
- * JPA entity for sklep product reservation.
- *
- * productId is a raw UUID with no FK constraint — the Product entity and its
- * table are deferred to M10. status enum is stored as VARCHAR(32) with a DB check
- * constraint (V017 migration). Cancellation records the timestamp in cancelledAt
- * and flips status to CANCELLED (soft delete).
- *
- * NOTE: this class is intentionally under 120 LOC per granular-code directive.
- */
 @Entity
 @Table(name = "product_reservation")
 public class ProductReservation {
@@ -24,8 +13,6 @@ public class ProductReservation {
 
     @Column(name = "product_id", nullable = false)
     private UUID productId;
-
-    /** Nullable: set when the reservation is linked to a registered client (M10). */
     @Column(name = "client_id")
     private UUID clientId;
 
@@ -52,8 +39,6 @@ public class ProductReservation {
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
-
-    /** JPA no-arg constructor. */
     protected ProductReservation() {}
 
     public ProductReservation(UUID productId, String clientName, String clientPhone, String note) {
@@ -62,8 +47,6 @@ public class ProductReservation {
         this.clientPhone = clientPhone;
         this.note = note;
     }
-
-    // --- getters ---
 
     public UUID getId()          { return id; }
     public UUID getProductId()   { return productId; }
@@ -76,8 +59,6 @@ public class ProductReservation {
     public Instant getCancelledAt() { return cancelledAt; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
-
-    // --- mutators ---
 
     public void cancel() {
         this.status = "CANCELLED";

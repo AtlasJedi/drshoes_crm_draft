@@ -10,14 +10,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-
-/**
- * Central RBAC decision service.
- * Referenced by SpEL in @PreAuthorize annotations as "@rbac".
- *
- * All decisions are logged at DEBUG to avoid per-request INFO spam.
- * Anonymous / null Authentication returns false for every capability.
- */
 @Component("rbac")
 @Slf4j
 public class RbacService {
@@ -54,14 +46,7 @@ public class RbacService {
         return check(auth, "canManageClients", UserRole.OWNER);
     }
 
-    // -------------------------------------------------------------------------
-    // Internal helpers
-    // -------------------------------------------------------------------------
-
     private boolean check(Authentication auth, String capability, UserRole... allowed) {
-        // AnonymousAuthenticationToken.isAuthenticated() returns true in Spring Security 6,
-        // so a plain `!isAuthenticated()` check would let anonymous principals through.
-        // Reject explicitly via instanceof and only then fall back to isAuthenticated().
         if (auth == null || auth instanceof AnonymousAuthenticationToken || !auth.isAuthenticated()) {
             log.debug("op=rbacCheck capability={} actor=anonymous role=anonymous outcome=false", capability);
             return false;

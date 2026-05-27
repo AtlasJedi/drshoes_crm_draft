@@ -9,19 +9,6 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Coordinates the actual persistence of audit rows by combining:
- * - traceId capture via AuditSpanHelper.currentTraceId()
- * - span wrapping via AuditSpanHelper.writeWithSpan()
- * - row persistence via AuditLogWriter
- *
- * Extracted from AuditLogAspect to keep that class under 120 LOC
- * after OTel tracing logic was added (task 8-7).
- *
- * Logging: one INFO per persisted row; WARN on any write failure
- * (never lets audit failure crash the caller).
- */
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -29,26 +16,12 @@ public class AuditWriteCoordinator {
 
     private final AuditLogWriter writer;
     private final AuditSpanHelper spanHelper;
-
-    /** Persists an HTTP audit row, capturing the active OTel trace ID. */
     public void persistHttp(HttpServletRequest r, int status) {
         persistHttp(r, status, null, null, null);
     }
-
-    /**
-     * Persists an HTTP audit row with an optional note.
-     * note is extracted from method args by AuditLogAspect when a HasAuditNote arg is present.
-     */
     public void persistHttp(HttpServletRequest r, int status, String note) {
         persistHttp(r, status, note, null, null);
     }
-
-    /**
-     * Persists an HTTP audit row with an optional note, optional location diff,
-     * and optional targetStatus (for status-change rows only).
-     * locationFrom/locationTo come from request attributes set by OrderNotesController.
-     * targetStatus comes from request attribute "audit.targetStatus" set by OrderController.changeStatus.
-     */
     public void persistHttp(HttpServletRequest r, int status, String note,
                             String locationFrom, String locationTo) {
         String targetStatus = (String) r.getAttribute("audit.targetStatus");
@@ -71,8 +44,6 @@ public class AuditWriteCoordinator {
                 actorName, method, path, status, ex.getMessage());
         }
     }
-
-    /** Persists an @Audited service-method audit row, capturing the active OTel trace ID. */
     public void persistAnnotated(Method method, UUID parentId) {
         String actorName = resolveActorName();
         UUID actorId = resolveActorId();
@@ -91,10 +62,7 @@ public class AuditWriteCoordinator {
         }
     }
 
-    // ---- private helpers ----
-
     static String extractEntityType(String path) {
-        // e.g. /api/admin/orders/uuid -> "orders", /api/admin/clients -> "clients"
         if (path == null) return "unknown";
         String[] parts = path.split("/");
         for (int i = parts.length - 1; i >= 0; i--) {
@@ -120,11 +88,6 @@ public class AuditWriteCoordinator {
         }
         return null;
     }
-
-    /**
-     * Scans joinpoint args for the first {@link HasAuditNote} instance and returns its note.
-     * Returns null if no arg implements HasAuditNote or the note itself is null/blank.
-     */
     static String extractNote(Object[] args) {
         if (args == null) return null;
         for (Object arg : args) {

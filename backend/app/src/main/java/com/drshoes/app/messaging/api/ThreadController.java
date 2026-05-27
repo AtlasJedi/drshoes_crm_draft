@@ -23,12 +23,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Read-only thread endpoints (list + get-by-id).
- * POST mutations (mark-read, assign, discard) live in ThreadMutationController.
- * LOC target: &lt; 120.
- */
 @RestController
 @RequestMapping("/api/admin/threads")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
@@ -88,8 +82,6 @@ public class ThreadController {
         log.info("op=threads.get actor={} threadId={} outcome=ok messages={}", actor.email(), id, msgs.size());
         return new ThreadDetailDto(toDto(t, client), msgs);
     }
-
-    // ---- private helpers ----
 
     private Map<UUID, Client> loadClients(List<MessageThreadEntity> ts) {
         var ids = ts.stream().map(MessageThreadEntity::getClientId)

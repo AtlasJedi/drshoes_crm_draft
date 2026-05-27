@@ -98,7 +98,7 @@ class OrderNotesControllerIntegrationTest extends AdminWebTestBase {
                 .content("{}")
                 .with(csrf()))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value("at_least_one_required"));
+            .andExpect(jsonPath("$.code").value("NOTE_VALIDATION"));
     }
 
     @Test
@@ -111,7 +111,7 @@ class OrderNotesControllerIntegrationTest extends AdminWebTestBase {
                 .content("{\"location\":\"półka 1\"}")
                 .with(csrf()))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value("no_op_change"));
+            .andExpect(jsonPath("$.code").value("NOTE_VALIDATION"));
     }
 
     @Test
@@ -123,7 +123,7 @@ class OrderNotesControllerIntegrationTest extends AdminWebTestBase {
                 .content("{\"location\":\"brak-takiej-lokacji\"}")
                 .with(csrf()))
             .andExpect(status().isConflict())
-            .andExpect(jsonPath("$.error").value("unknown_location"));
+            .andExpect(jsonPath("$.code").value("UNKNOWN_LOCATION"));
     }
 
     @Test

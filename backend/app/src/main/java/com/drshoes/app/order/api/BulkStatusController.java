@@ -27,25 +27,6 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Bulk status-change endpoint.
- *
- * POST /api/admin/orders/bulk/status
- *
- * Accepts up to 100 order IDs and a target status. Processes each order through the
- * existing OrderService.changeStatus pipeline (preserving optimistic-lock version semantics,
- * trigger fanout, and the AuditLogAspect HTTP-level audit row).
- *
- * Always returns 200 with succeeded[]/failed[] unless the request itself is malformed (400)
- * or exceeds the size cap (413).
- *
- * NOTE: Do NOT add @Audited here — the AuditLogAspect controller pointcut already writes
- * exactly one audit row per HTTP request (this bulk call). Per-order service calls are not
- * annotated with @Audited either, so audit semantics are: 1 row per bulk request.
- *
- * Structured logging: op=bulkStatusChange actor={} count={} succeeded={} failed={} outcome=ok
- */
 @RestController
 @RequestMapping("/api/admin/orders")
 @Slf4j
@@ -85,7 +66,7 @@ public class BulkStatusController {
                     req.newStatus(),
                     order.getVersion(),
                     req.sendTriggers(),
-                    null  // bulk status changes carry no per-order note
+                    null
                 );
                 ChangeStatusResponse resp = orderService.changeStatus(orderId, singleReq);
                 succeeded.add(new SucceededItem(orderId, resp.order().code(), fromStatus, req.newStatus()));
@@ -93,7 +74,6 @@ public class BulkStatusController {
                 failed.add(new FailedItem(orderId, order.getCode(), fromStatus, "VERSION_CONFLICT"));
                 log.info("op=bulkStatusChange orderId={} error=VERSION_CONFLICT outcome=skipped", orderId);
             } catch (IllegalStateException e) {
-                // Illegal transition — state machine guard (future use, free-transitions currently active)
                 failed.add(new FailedItem(orderId, order.getCode(), fromStatus, "ILLEGAL_TRANSITION"));
                 log.info("op=bulkStatusChange orderId={} error=ILLEGAL_TRANSITION outcome=skipped", orderId);
             } catch (Exception e) {

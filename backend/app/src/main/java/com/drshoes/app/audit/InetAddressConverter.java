@@ -5,17 +5,6 @@ import jakarta.persistence.Converter;
 import org.postgresql.util.PGobject;
 
 import java.sql.SQLException;
-
-/**
- * JPA AttributeConverter: maps a Java String to a PostgreSQL inet column.
- *
- * The PostgreSQL JDBC driver requires inet values to be passed as PGobject with
- * type "inet". Without this converter, Hibernate 6 binds the value as VARCHAR
- * and Postgres rejects it: "column is of type inet but expression is of type
- * character varying".
- *
- * postgresql driver promoted to compile scope in pom.xml to allow this import.
- */
 @Converter
 public class InetAddressConverter implements AttributeConverter<String, Object> {
 

@@ -14,19 +14,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * REST controller for message template CRUD.
- *
- * Endpoints:
- *   GET    /api/admin/templates        — list all  (OWNER | EMPLOYEE)
- *   GET    /api/admin/templates/{id}   — detail    (OWNER | EMPLOYEE)
- *   POST   /api/admin/templates        — create    (OWNER only)
- *   PATCH  /api/admin/templates/{id}   — update    (OWNER only)
- *   DELETE /api/admin/templates/{id}   — soft-del  (OWNER only)
- *
- * Structured logging: op=template.{list,get} actor={} outcome=ok
- */
 @RestController
 @RequestMapping("/api/admin/templates")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")

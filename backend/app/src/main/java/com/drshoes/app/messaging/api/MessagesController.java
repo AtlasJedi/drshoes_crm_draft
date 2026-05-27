@@ -7,7 +7,6 @@ import com.drshoes.app.messaging.dto.SendMessageRequest;
 import com.drshoes.app.messaging.repository.MessageRepository;
 import com.drshoes.app.messaging.service.MessageRetryService;
 import com.drshoes.app.messaging.service.MessageRouter;
-import com.drshoes.app.messaging.service.NotRetryableException;
 import com.drshoes.app.order.domain.Order;
 import com.drshoes.app.order.domain.OrderRepository;
 import org.springframework.http.HttpStatus;
@@ -23,18 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * REST: GET + POST /api/admin/orders/{orderId}/messages
- *       and POST /api/admin/messages/{id}/retry.
- *
- * Class-level @RequestMapping is intentionally absent so the retry endpoint
- * can live at a flat path (/api/admin/messages/{id}/retry) without the orderId prefix.
- * All other paths are declared explicitly on each method.
- *
- * Actor resolved via {@code @AuthenticationPrincipal AdminPrincipal} — no per-request DB lookup.
- * {@code message.sent_by} and {@code audit_log.actor_id} both carry the authenticated user's UUID.
- */
 @RestController
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
 @Slf4j
@@ -93,17 +80,6 @@ public class MessagesController {
         log.info("op=messages.retry actor={} messageId={} newId={} outcome=ok",
             actor.email(), messageId, dto.id());
         return ResponseEntity.ok(dto);
-    }
-
-    @ExceptionHandler(NotRetryableException.class)
-    public ResponseEntity<Map<String, String>> handleNotRetryable(NotRetryableException e) {
-        log.info("op=messages.retry outcome=not_retryable messageId={} actualStatus={}",
-            e.getMessageId(), e.getActualStatus());
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(Map.of(
-                "code",         "NOT_RETRYABLE",
-                "messageId",    e.getMessageId().toString(),
-                "actualStatus", e.getActualStatus()));
     }
 
     private MessageDto toDto(MessageEntity e) {

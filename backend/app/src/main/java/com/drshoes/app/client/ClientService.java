@@ -17,16 +17,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Business logic for the Client aggregate.
- *
- * Structured logging per dispatch-protocol §7:
- *   op=<name> clientId={} outcome=ok|already-deleted|not-found
- * The client_contact_present invariant (phone OR email required) is validated here
- * before any DB write, so callers receive a domain exception rather than a raw
- * DataIntegrityViolationException from the CHECK constraint.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -115,8 +105,6 @@ public class ClientService {
         repo.save(c);
         log.info("op=softDeleteClient clientId={} outcome=ok", id);
     }
-
-    // ------------------------------------------------------------------ helpers
 
     private static void validateContactPresent(String phone, String email) {
         boolean hasPhone = phone != null && !phone.isBlank();

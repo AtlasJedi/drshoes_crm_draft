@@ -6,29 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-
-/**
- * Pure mapping utility: HTTP status + response body → DeliveryReceipt.
- *
- * Three response shapes handled:
- *  - 200 + ErrorCode=0 + MessageID        → DeliveryReceipt.accepted(messageId)
- *  - 200 + ErrorCode!=0 + Message         → DeliveryReceipt.failed("POSTMARK-"+code, message)
- *  - 4xx/5xx (any non-200 status)         → DeliveryReceipt.failed("HTTP-"+status, body)
- *
- * JSON parse failure returns DeliveryReceipt.failed("PARSE_ERROR", ...) — never swallowed.
- */
 @Slf4j
 public final class PostmarkResponseMapper {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
 
     private PostmarkResponseMapper() {}
-
-    /**
-     * @param httpStatus HTTP response status code
-     * @param body       raw response body string
-     * @return {@link DeliveryReceipt} — never null, never throws
-     */
     public static DeliveryReceipt fromResponse(int httpStatus, String body) {
         if (httpStatus != 200) {
             return DeliveryReceipt.failed("HTTP-" + httpStatus, body);

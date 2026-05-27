@@ -4,14 +4,6 @@ import com.drshoes.app.client.domain.Client;
 
 import java.time.Instant;
 import java.util.UUID;
-
-/**
- * Full client projection returned by read + mutation endpoints.
- *
- * preferredChannel and rodoConsentAt were previously absent from the record
- * (entity-level concern only). Added in M7 task 7-1 to support the client
- * dossier page header and the EditClientModal response.
- */
 public record ClientDto(
     UUID id,
     String firstName,

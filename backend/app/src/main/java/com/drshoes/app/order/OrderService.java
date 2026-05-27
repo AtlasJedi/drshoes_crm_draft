@@ -22,15 +22,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Command + query facade for the Order aggregate root.
- * Mutations: create, update, changeStatus, softDelete, item delegation.
- * Queries (get/list) delegate to repository via {@link OrderSpecifications}.
- * Item mutations delegate to {@link OrderItemService}.
- *
- * Structured logging: op={} orderId={} outcome=ok|not-found|already-deleted|version-conflict
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -43,8 +34,6 @@ public class OrderService {
     private final OrderItemService itemService;
     private final TriggerEngine triggerEngine;
     private final UserRepository userRepo;
-
-    // ---- queries ----
 
     @Transactional(readOnly = true)
     public OrderDto get(UUID id) {
@@ -92,8 +81,6 @@ public class OrderService {
         return page.map(o -> OrderListRow.of(o, names.getOrDefault(o.getClientId(), "—")));
     }
 
-    // ---- commands ----
-
     @Transactional
     public OrderDto create(CreateOrderRequest req) {
         if (clientRepo.findById(req.clientId()).filter(c -> c.getDeletedAt() == null).isEmpty())
@@ -128,8 +115,6 @@ public class OrderService {
         if (o.getDeletedAt() != null) throw new OrderAlreadyDeletedException(id);
         if (req.version() != null && req.version() != o.getVersion())
             throw new OrderVersionConflictException(id, o.getVersion());
-
-        // M10 hygiene: compute Polish diff BEFORE applying changes
         String diffNote = OrderUpdateDiff.computePolish(o, req, this::resolveUserName);
 
         if (req.description() != null)              o.setDescription(req.description());
@@ -142,15 +127,12 @@ public class OrderService {
             throw new IllegalArgumentException(
                 "quotedPriceCents is computed from items and cannot be patched directly");
         if (req.advancePaidCents() != null)         o.setAdvancePaidCents(req.advancePaidCents());
-
-        // Inject diff into request attribute for AuditLogAspect to pick up
         if (diffNote != null) {
             try {
                 ServletRequestAttributes attrs =
                     (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
                 attrs.getRequest().setAttribute("audit.diffNote", diffNote);
             } catch (IllegalStateException ignored) {
-                // no request bound (e.g., called from test) — drop silently
             }
         }
 
@@ -195,8 +177,6 @@ public class OrderService {
         log.info("op=softDeleteOrder orderId={} outcome=ok", id);
     }
 
-    // ---- item delegation ----
-
     @Audited(parent = "#orderId")
     @Transactional
     public OrderItemDto addItem(UUID orderId, CreateOrderItemRequest req) {
@@ -217,8 +197,6 @@ public class OrderService {
         ensureOrderActive(orderId);
         itemService.removeItem(orderId, itemId);
     }
-
-    // ---- private helpers ----
 
     private void ensureOrderActive(UUID orderId) {
         orderRepo.findById(orderId)

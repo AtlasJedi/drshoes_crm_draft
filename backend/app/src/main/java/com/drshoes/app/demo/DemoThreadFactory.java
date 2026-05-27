@@ -12,19 +12,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Seeds one demo MessageThread with 4 alternating-direction messages so the
- * inbox UI has content to display in the demo environment.
- *
- * Thread creation goes through MessageThreadService.findOrCreateForClient
- * (idempotent find-or-create). Messages are inserted directly via
- * MessageRepository — no MessageRouter invocation so no real provider sends
- * are triggered during seed.
- *
- * AuditLogAspect does not fire here because seed runs outside an HTTP request
- * (ApplicationRunner, no .api. controller in the call stack).
- */
 @Component
 @Profile("local")
 @Slf4j

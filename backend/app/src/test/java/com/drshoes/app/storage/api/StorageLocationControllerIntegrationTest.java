@@ -70,7 +70,7 @@ class StorageLocationControllerIntegrationTest extends AdminWebTestBase {
                 .content("{\"name\":\"dup\"}")
                 .with(csrf()))
             .andExpect(status().isConflict())
-            .andExpect(jsonPath("$.error").value("location_name_conflict"));
+            .andExpect(jsonPath("$.code").value("LOCATION_CONFLICT"));
     }
 
     @Test

@@ -14,34 +14,13 @@ import java.util.UUID;
 public interface MessageRepository extends JpaRepository<MessageEntity, UUID> {
 
     List<MessageEntity> findAllByOrderIdOrderByCreatedAtAsc(UUID orderId);
-
-    /**
-     * Finds a message by its provider-assigned message ID and channel.
-     * Used by WebhookStatusReconciler to correlate inbound webhook callbacks
-     * to the outbound message row.
-     */
     @Query("SELECT m FROM MessageEntity m WHERE m.providerMessageId = :providerMessageId AND m.channel = :channel")
     Optional<MessageEntity> findByProviderMessageIdAndChannel(
             @Param("providerMessageId") String providerMessageId,
             @Param("channel") String channel);
-
-    /**
-     * Bulk-updates clientId and clears rawSender on all messages belonging to a thread.
-     * Used by MessageThreadMutationService.assignUnmatched to propagate client resolution
-     * to existing message rows when an unmatched thread is linked to a known client.
-     */
     @Modifying
     @Query("UPDATE MessageEntity m SET m.clientId = :clientId, m.rawSender = null WHERE m.threadId = :threadId")
     void bulkUpdateClientIdByThreadId(@Param("threadId") UUID threadId, @Param("clientId") UUID clientId);
-
-    /**
-     * State-guarded UPDATE: advances delivery_status from SENT to the target status.
-     * Returns 1 if the row was updated, 0 if it was already at the target status
-     * or not in SENT state (no-op / idempotent).
-     *
-     * Only rows in SENT status are eligible for transition; this prevents a
-     * later webhook from overwriting a FAILED status back to DELIVERED or vice-versa.
-     */
     @Modifying
     @Query("""
         UPDATE MessageEntity m
@@ -57,10 +36,5 @@ public interface MessageRepository extends JpaRepository<MessageEntity, UUID> {
             @Param("errorCode")     String errorCode,
             @Param("errorMessage")  String errorMessage,
             @Param("deliveredAt")   java.time.OffsetDateTime deliveredAt);
-
-    /**
-     * Returns all messages for a thread ordered by creation time ascending.
-     * Used by ThreadController.getThread to populate the ThreadDetailDto messages list.
-     */
     List<MessageEntity> findAllByThreadIdOrderByCreatedAtAsc(UUID threadId);
 }

@@ -7,7 +7,6 @@ import com.drshoes.app.auth.domain.UserRepository;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.auth.service.AuthService;
 import com.drshoes.app.auth.service.InvalidCredentialsException;
-import com.drshoes.app.auth.service.LoginThrottledException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -28,18 +27,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * REST controller for admin authentication: login, logout, me.
- *
- * Endpoints:
- *   POST /api/admin/auth/login  — 204 on success, 401 on bad creds, 429 if throttled
- *   POST /api/admin/auth/logout — 204 (invalidates session)
- *   GET  /api/admin/auth/me     — 200 with MeResponse JSON (requires active session)
- *
- * Structured logging per dispatch-protocol §7:
- *   op=login|logout|me  actor={email|anonymous}  outcome=success|...
- */
 @RestController
 @RequestMapping("/api/admin/auth")
 @Slf4j
@@ -58,24 +45,11 @@ public class AuthController {
                                       HttpServletResponse response,
                                       HttpSession session) {
         User u = authService.login(req.email(), req.password(), request);
-        // Explicitly persist the SecurityContext to the session so subsequent requests
-        // can load it. Spring Security 6 SecurityContextHolderFilter no longer auto-saves;
-        // the context must be saved explicitly when authentication happens outside the
-        // standard filter chain (programmatic login).
         CONTEXT_REPO.saveContext(SecurityContextHolder.getContext(), request, response);
-        // Force session id rotation post-login (session fixation defence).
         session.setAttribute("authenticated", true);
         log.info("op=login actor={} userId={} outcome=success", u.getEmail(), u.getId());
         return ResponseEntity.noContent().build();
     }
-
-    /**
-     * DEMO / HANDOFF CONVENIENCE — auth bypass.
-     * GET /api/admin/auth/quicklogin → mints a session for test@test.pl (OWNER) and
-     * 302-redirects to /admin. Anyone with the URL is admin. Remove after demo.
-     *
-     * Uses GET + 302 (no JS, no form, no CSRF token) so any browser handles it natively.
-     */
     @GetMapping("/quicklogin")
     @Transactional
     public ResponseEntity<Void> quicklogin(HttpServletRequest request,
@@ -123,25 +97,6 @@ public class AuthController {
             .orElseThrow(InvalidCredentialsException::new);
         log.info("op=me actor={} userId={} outcome=success", p.email(), p.userId());
         return ResponseEntity.ok(new MeResponse(p.userId(), u.getEmail(), u.getFullName(), u.getRole(), u.getLastLoginAt()));
-    }
-
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException e) {
-        log.info("op=login outcome=invalid_credentials");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(error("INVALID_CREDENTIALS", e.getMessage()));
-    }
-
-    @ExceptionHandler(LoginThrottledException.class)
-    public ResponseEntity<Map<String, Object>> handleThrottled(LoginThrottledException e) {
-        log.info("op=login outcome=throttled");
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-            .header("Retry-After", "900")
-            .body(error("LOGIN_THROTTLED", e.getMessage()));
-    }
-
-    private static Map<String, Object> error(String code, String message) {
-        return Map.of("error", Map.of("code", code, "message", message));
     }
 
     private static String currentActor() {

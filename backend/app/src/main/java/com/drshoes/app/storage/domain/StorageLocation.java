@@ -4,13 +4,6 @@ import jakarta.persistence.*;
 import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * Storage location administered as a simple string set.
- *
- * Design: see docs/superpowers/specs/2026-05-16-m10-notes-and-locations-design.md
- * — owner directive "simple CRM, no IDs in UX". The id is internal only.
- */
 @Entity
 @Table(name = "storage_location")
 @Getter

@@ -9,17 +9,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Business logic for the Sklep product reservation queue.
- *
- * Methods:
- *   list(productId)      — active reservations for one product (oldest-first)
- *   listLatest(limit)    — latest N active reservations across all products (dashboard panel)
- *   cancel(productId, id) — soft-cancel a reservation (sets status=CANCELLED + cancelledAt)
- *
- * Structured logging: op=<method> actor=<email> productId=<id> outcome=<ok|error>
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor

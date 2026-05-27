@@ -11,11 +11,6 @@ import java.net.URI;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * CRUD endpoints for the storage_location string set.
- * AuditLogAspect handles audit row writes (controller pointcut).
- */
 @RestController
 @RequestMapping("/api/admin/storage-locations")
 @Slf4j

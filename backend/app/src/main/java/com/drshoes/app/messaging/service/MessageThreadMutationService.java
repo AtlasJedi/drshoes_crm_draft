@@ -15,15 +15,6 @@ import java.time.ZoneOffset;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Write-side service: mutations on message threads.
- * Read-side find-or-create operations stay in {@link MessageThreadService}.
- *
- * All three public methods are annotated with {@code @Audited(parent = "#threadId")}.
- * The SpEL resolves via {@code Parameter#getName()} — works because the project
- * compiles with {@code -parameters} (set in parent pom.xml maven-compiler-plugin).
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -79,8 +70,6 @@ public class MessageThreadMutationService {
         log.info("op=thread.discard actor={} threadId={} outcome=ok", actor.email(), threadId);
         return saved;
     }
-
-    // ---- private ----
 
     private MessageThreadEntity require(UUID threadId) {
         return threads.findById(threadId)

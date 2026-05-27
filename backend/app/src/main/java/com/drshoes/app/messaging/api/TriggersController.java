@@ -11,18 +11,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * REST controller for automation trigger read + toggle.
- *
- * Endpoints:
- *   GET   /api/admin/triggers        — list  (OWNER | EMPLOYEE)
- *   GET   /api/admin/triggers/{id}   — detail (OWNER | EMPLOYEE)
- *   PATCH /api/admin/triggers/{id}/enabled — toggle (OWNER only)
- *
- * Full editor (create/update/delete) deferred to M3 per locked decision.
- * Structured logging: op=trigger.{list,get} actor={} outcome=ok
- */
 @RestController
 @RequestMapping("/api/admin/triggers")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")

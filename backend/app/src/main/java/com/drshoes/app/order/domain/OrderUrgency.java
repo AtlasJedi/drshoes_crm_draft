@@ -5,15 +5,6 @@ import java.time.Duration;
 import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * Computes the "pilne" (urgent) flag.
- *
- * <p>Rule (2026-05-19): an order is urgent iff its status is {@link OrderStatus#PRZYJETE}
- * AND it has been in the shop for at least {@value #THRESHOLD_DAYS} days.
- * Any status transition away from PRZYJETE clears the flag automatically because
- * the flag is computed — not stored.
- */
 @Setter
 @Getter
 public final class OrderUrgency {

@@ -12,81 +12,46 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
-
-/**
- * Pure helper for computing a Polish-language diff string for OrderService.update.
- *
- * Returns a "; "-joined list of field-change strings, or null when nothing changed.
- * Used to populate audit_log.note so the timeline shows meaningful diffs instead of
- * generic "Zamówienie zaktualizowane" entries.
- *
- * Skipped fields: currentStorageLocationId (proto column, M10 hygiene deferred),
- * version (optimistic lock, not user-facing).
- */
 public final class OrderUpdateDiff {
 
     private static final DateTimeFormatter DATE_FMT =
         DateTimeFormatter.ofPattern("dd.MM.yyyy").withZone(ZoneId.of("Europe/Warsaw"));
 
     private OrderUpdateDiff() {}
-
-    /**
-     * Computes a Polish diff string comparing the current order state to the incoming request.
-     *
-     * @param before           the current persisted Order (before mutations)
-     * @param req              the incoming UpdateOrderRequest
-     * @param userNameResolver function to resolve a UUID to a display name;
-     *                         called only when assignedCraftsmanId changes
-     * @return a non-blank diff string, or null when the effective request is a no-op
-     */
     public static String computePolish(Order before, UpdateOrderRequest req,
                                        Function<UUID, String> userNameResolver) {
         List<String> parts = new ArrayList<>();
-
-        // description (m) → "zmieniony"
         if (req.description() != null && !Objects.equals(req.description(), before.getDescription())) {
             String oldVal = quote(truncate(before.getDescription(), 30));
             String newVal = quote(truncate(req.description(), 30));
             parts.add("Opis zmieniony z " + oldVal + " na " + newVal);
         }
-
-        // plannedPickupAt (m: "odbiór") → "zmieniony"
         if (req.plannedPickupAt() != null
                 && !Objects.equals(req.plannedPickupAt(), before.getPlannedPickupAt())) {
             String oldDate = formatDate(before.getPlannedPickupAt());
             String newDate = formatDate(req.plannedPickupAt());
             parts.add("Planowany odbiór zmieniony z " + oldDate + " na " + newDate);
         }
-
-        // assignedCraftsmanId (m: "wykonawca") → "zmieniony"
         if (req.assignedCraftsmanId() != null
                 && !Objects.equals(req.assignedCraftsmanId(), before.getAssignedCraftsmanId())) {
             String oldName = resolveName(before.getAssignedCraftsmanId(), userNameResolver);
             String newName = resolveName(req.assignedCraftsmanId(), userNameResolver);
             parts.add("Wykonawca zmieniony z " + oldName + " na " + newName);
         }
-
-        // cancelledReason (m: "powód") → "zmieniony"
         if (req.cancelledReason() != null
                 && !Objects.equals(req.cancelledReason(), before.getCancelledReason())) {
             String oldVal = quote(truncate(before.getCancelledReason(), 30));
             String newVal = quote(truncate(req.cancelledReason(), 30));
             parts.add("Powód anulowania zmieniony z " + oldVal + " na " + newVal);
         }
-
-        // tags (plural) — content diff not parsed
         if (req.tags() != null && !Objects.equals(req.tags(), before.getTags())) {
             parts.add("Tagi zaktualizowane");
         }
-
-        // quotedPriceCents (f: "cena") → "zmieniona"
         if (req.quotedPriceCents() != null && req.quotedPriceCents() != before.getQuotedPriceCents()) {
             String oldPln = formatPln(before.getQuotedPriceCents());
             String newPln = formatPln(req.quotedPriceCents());
             parts.add("Cena zmieniona z " + oldPln + " na " + newPln);
         }
-
-        // advancePaidCents (f: "zaliczka") → "zmieniona"
         if (req.advancePaidCents() != null && req.advancePaidCents() != before.getAdvancePaidCents()) {
             String oldPln = formatPln(before.getAdvancePaidCents());
             String newPln = formatPln(req.advancePaidCents());
@@ -94,15 +59,12 @@ public final class OrderUpdateDiff {
         }
 
         if (parts.isEmpty()) return null;
-        // " · " joiner keeps multi-field PATCHes readable as one elegant title
         return String.join(" · ", parts);
     }
 
     private static String quote(String s) {
         return "„" + s + "”";
     }
-
-    // ---- private helpers ----
 
     static String truncate(String s, int max) {
         if (s == null) return "";

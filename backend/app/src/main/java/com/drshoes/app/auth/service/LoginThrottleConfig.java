@@ -5,15 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
-
-/**
- * Registers the LoginThrottle bean.
- *
- * Production: 5 attempts per 15-minute window (interval refill).
- * Local/E2E/dev: set drshoes.auth.throttle.enabled=false to disable the
- * throttle entirely — tryConsume returns true unconditionally. capacity/
- * window-minutes remain configurable but are ignored when disabled.
- */
 @Configuration
 public class LoginThrottleConfig {
 

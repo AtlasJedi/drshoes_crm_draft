@@ -8,20 +8,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
-
-/**
- * Auto-configures {@link PostmarkEmailGateway} when
- * {@code messaging.email.provider=postmark} is set.
- *
- * The existing {@link EmailGatewayAutoConfiguration} retains its
- * {@code @ConditionalOnMissingBean(EmailGateway.class)} guard, so
- * {@link com.drshoes.lib.email.LoggingEmailGateway} remains the fallback in
- * dev/test/local where this auto-configuration is not activated. The
- * {@code before = EmailGatewayAutoConfiguration.class} ordering ensures the
- * Postmark bean is registered first, so the missing-bean guard sees it and
- * skips the Logging fallback even when the legacy {@code drshoes.email.provider}
- * default would otherwise also produce a Logging bean.
- */
 @AutoConfiguration(before = EmailGatewayAutoConfiguration.class)
 @ConditionalOnProperty(name = "messaging.email.provider", havingValue = "postmark")
 @EnableConfigurationProperties(PostmarkProperties.class)

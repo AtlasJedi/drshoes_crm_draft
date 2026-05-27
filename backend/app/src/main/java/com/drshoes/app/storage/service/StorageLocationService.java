@@ -8,15 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * CRUD for the simple string-set of storage locations.
- *
- * Policy:
- *   - name UNIQUE — rename to existing → LocationConflictException (mapped 409 by controller).
- *   - Missing id on update/deactivate → LocationNotFoundException (mapped 404).
- *   - deactivate is soft-delete (active=false). Historical orders.location strings unaffected.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor

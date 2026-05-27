@@ -20,17 +20,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Calendar view endpoint: orders windowed by planned_pickup_at + unscheduled list.
- *
- * GET /api/admin/orders/calendar?from=YYYY-MM-DD&to=YYYY-MM-DD
- *   - scheduled: orders with planned_pickup_at in [from, to] window, active statuses
- *   - unscheduled: active orders with no planned_pickup_at, capped at 50
- *   - Range > 92 days or from > to → 400
- *
- * Structured logging: op=calendarQuery from={} to={} scheduledCount={} unscheduledCount={} outcome=ok
- */
 @RestController
 @RequestMapping("/api/admin/orders")
 @Slf4j
@@ -58,17 +47,11 @@ public class CalendarController {
 
         Instant fromInstant = from.atStartOfDay(WARSAW).toInstant();
         Instant toInstant   = to.plusDays(1).atStartOfDay(WARSAW).toInstant();
-
-        // v2-B: all active orders in window — both with and without plannedPickupAt
         List<Order> allOrders = orderRepo.findAllActiveInWindow(fromInstant, toInstant);
-
-        // Pre-fetch client names in one batch
         Set<UUID> clientIds = new HashSet<>();
         allOrders.forEach(o -> clientIds.add(o.getClientId()));
         Map<UUID, String> clientNames = clientRepo.findAllById(clientIds).stream()
             .collect(Collectors.toMap(Client::getId, Client::getFullName));
-
-        // Pre-fetch first items in one batch (for itemSummary)
         Set<UUID> orderIds = new HashSet<>();
         allOrders.forEach(o -> orderIds.add(o.getId()));
         Map<UUID, String> summaries = buildSummaries(orderIds);
@@ -80,16 +63,8 @@ public class CalendarController {
         long defaultedCount = scheduledDtos.stream().filter(CalendarOrderDto::pickupAtDefaulted).count();
         log.info("op=calendarQuery from={} to={} scheduledCount={} defaultedCount={} outcome=ok",
             from, to, scheduledDtos.size(), defaultedCount);
-
-        // unscheduled is always empty — every order now has an effectivePickupAt
         return new CalendarResponseDto(scheduledDtos, List.of());
     }
-
-    /**
-     * Maps an Order to CalendarOrderDto (v2-B contract).
-     * effectivePickupAt = plannedPickupAt ?? receivedAt + 14 days.
-     * pickupAtDefaulted = true when no explicit plannedPickupAt was set.
-     */
     private CalendarOrderDto toDto(Order o, Map<UUID, String> clientNames,
                                    Map<UUID, String> summaries) {
         String clientName = clientNames.getOrDefault(o.getClientId(), "");
@@ -107,8 +82,6 @@ public class CalendarController {
             defaulted,
             summary, urgent);
     }
-
-    /** Delegates to OrderUrgency: status == PRZYJETE AND receivedAt + 4d <= now. */
     private static boolean isUrgent(Order o) {
         return OrderUrgency.isUrgent(o.getReceivedAt(), o.getStatus());
     }

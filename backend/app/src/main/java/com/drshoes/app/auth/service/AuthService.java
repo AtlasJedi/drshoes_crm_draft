@@ -15,15 +15,6 @@ import java.time.Instant;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Core authentication service: throttle-check → load user → BCrypt-verify →
- * set last_login_at → push authentication into SecurityContextHolder.
- *
- * Structured logging per dispatch-protocol §7:
- *   op=login actor={email} userId={id} outcome=success|invalid_credentials|throttled ip={ip}
- * Password / hash are NEVER logged.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -32,19 +23,6 @@ public class AuthService {
     private final UserRepository users;
     private final PasswordEncoder enc;
     private final LoginThrottle throttle;
-
-    /**
-     * Authenticates a user by email and password.
-     * Throttle check happens BEFORE user lookup (anti-enumeration: unknown emails
-     * still consume a token from the bucket, so response timing is uniform).
-     *
-     * @param email    the login email
-     * @param password the plaintext password (never logged)
-     * @param request  the current HTTP request (used for IP-based throttle key)
-     * @return the authenticated User entity
-     * @throws LoginThrottledException     if too many attempts from the same IP
-     * @throws InvalidCredentialsException if email not found or password mismatch
-     */
     @Transactional
     public User login(String email, String password, HttpServletRequest request) {
         String ip = request.getRemoteAddr();

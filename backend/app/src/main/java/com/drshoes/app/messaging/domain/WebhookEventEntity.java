@@ -10,26 +10,12 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * Forensic log of every inbound webhook callback from Postmark / SMSAPI.
- * Supports state-guarded dedupe: UNIQUE(provider, provider_event_id) WHERE NOT NULL.
- * Also stores events where no transition was applied (DEDUP, DROPPED, NO_MESSAGE, etc.)
- * for operational observability.
- *
- * <p>Fields are intentionally mutable (no @Immutable) so the reconciler can
- * UPDATE applied_outcome from PROCESSING → final value in a two-phase flow if needed.</p>
- */
 @Entity
 @Table(name = "webhook_event")
 @Getter
 @Setter
 public class WebhookEventEntity {
-
-    /** Mirrors the CHECK constraint in V010. */
     public enum AppliedStatus { DELIVERED, FAILED }
-
-    /** Mirrors the CHECK constraint in V010 (includes PROCESSING — plan errata §1). */
     public enum AppliedOutcome {
         APPLIED, DEDUP, NO_MESSAGE, NO_TRANSITION, DROPPED, PROCESSING
     }
@@ -47,15 +33,11 @@ public class WebhookEventEntity {
 
     @Column(name = "provider_message_id", length = 120)
     private String providerMessageId;
-
-    /** FK to message.id — nullable; ON DELETE SET NULL in schema. */
     @Column(name = "message_id")
     private UUID messageId;
 
     @Column(name = "event_type", nullable = false, length = 40)
     private String eventType;
-
-    /** NULL when outcome is DROPPED (no delivery decision made). */
     @Enumerated(EnumType.STRING)
     @Column(name = "applied_status", length = 16)
     private AppliedStatus appliedStatus;
@@ -79,8 +61,6 @@ public class WebhookEventEntity {
 
     @Column(name = "applied_at")
     private Instant appliedAt;
-
-    // ---- getters / setters ----
     public void setProviderEventId(String providerEventId) { this.providerEventId = providerEventId; }
     public void setMessageId(UUID messageId) { this.messageId = messageId; }
     public void setAppliedStatus(AppliedStatus appliedStatus) { this.appliedStatus = appliedStatus; }

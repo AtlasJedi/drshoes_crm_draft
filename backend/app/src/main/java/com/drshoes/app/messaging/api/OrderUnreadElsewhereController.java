@@ -15,14 +15,6 @@ import java.util.Comparator;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * GET /api/admin/orders/{orderId}/unread-elsewhere
- * Returns the total unread_count + threadId of the client's most-recent thread
- * that has unread messages and is NOT linked to this order.
- * count=0 + threadId=null when no such thread exists.
- * LOC target: < 60.
- */
 @RestController
 @RequestMapping("/api/admin/orders")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
@@ -46,9 +38,6 @@ public class OrderUnreadElsewhereController {
             log.info("op=order.unreadElsewhere actor={} orderId={} outcome=no_client", actor.email(), orderId);
             return new UnreadElsewhereDto(0, null);
         }
-
-        // Find the client's most-recent thread with unread_count > 0.
-        // "Elsewhere" = any thread with unread messages for this client.
         var unreadThread = threads
             .findAllByClientIdAndUnreadCountGreaterThan(order.getClientId(), 0)
             .stream()

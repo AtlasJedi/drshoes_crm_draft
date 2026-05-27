@@ -19,29 +19,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Creates 18 sample orders spread across all OrderStatus values and OrderItemKind types.
- *
- * received_at spans 8 weeks so that every dashboard widget renders meaningful data:
- *   - Pilne panel:             3 orders (PRZYJETE, aged 10/7/5 days).
- *   - Mix donut (active-only): items from orders NOT in WYDANE/ANULOWANE/GOTOWE_DO_ODBIORU.
- *   - Zlecenia/tydzień chart:  non-zero bars across W14..W21 (56/49/42/35/28d entries
- *                              cover earlier weeks; recent entries cover the last 3 weeks).
- *   - KPI "W realizacji":      3 orders (rows 9, 11, 14).
- *   - KPI "Gotowe do odbioru": 2 orders (rows 6, 7).
- *
- * CreateOrderItemRequest arity (4 fields verified against codebase):
- *   (kind, description, craftsmanNotes, priceCents)
- *
- * ChangeStatusRequest arity (3 fields verified):
- *   (targetStatus, expectedVersion [int], sendTriggers [Boolean])
- *   sendTriggers=FALSE for seed data — no SMS/email triggers during seeding.
- *
- * WSTEPNIE_PRZYJETE: OrderService.create always starts at PRZYJETE.
- * changeStatus has no guard on valid transitions, so PRZYJETE→WSTEPNIE_PRZYJETE
- * is allowed directly. Verified in OrderService.changeStatus (no state machine check).
- */
 @Component
 @Profile("local")
 @Slf4j
@@ -54,8 +31,6 @@ public class DemoOrderFactory {
     public List<Order> createAll(List<Client> clients) {
         var now = Instant.now();
         var result = new ArrayList<Order>();
-
-        // ── Week -8 to -5 (terminal orders, excluded from Mix donut) ────────────
         result.add(seed(clients, 0, now, 56, OrderStatus.WYDANE,
             OrderItemKind.NAPRAWA,     "Wymiana zelówek — buty robocze",            -1));
         result.add(seed(clients, 1, now, 49, OrderStatus.WYDANE,
@@ -66,35 +41,22 @@ public class DemoOrderFactory {
             OrderItemKind.RENOWACJA,   "Zbyt mocno uszkodzone — rezygnacja",        -1));
         result.add(seed(clients, 4, now, 28, OrderStatus.WYDANE,
             OrderItemKind.SZEWC,       "Wymiana zamka — kozaki damskie",            -1));
-
-        // ── Week -3 to -2 (ready/terminal — excluded from Mix donut) ───────────
         result.add(seed(clients, 5, now, 21, OrderStatus.GOTOWE_DO_ODBIORU,
             OrderItemKind.RENOWACJA,   "Renowacja skóry — buty wizytowe",            3));
         result.add(seed(clients, 0, now, 18, OrderStatus.GOTOWE_DO_ODBIORU,
             OrderItemKind.CUSTOM,      "Hand-painted florals — sneakers",            2));
-
-        // ── Week -2 (active — included in Mix donut) ────────────────────────────
         result.add(seed(clients, 1, now, 14, OrderStatus.CZEKA_NA_KLIENTA,
             OrderItemKind.NAPRAWA,     "Wymiana zamka — kozaki",                     5));
-
-        // Row 9 — two items (CUSTOM + SZEWC) — W_REALIZACJI
         result.add(seedWithExtra(clients, 2, now, 12, OrderStatus.W_REALIZACJI,
             OrderItemKind.CUSTOM,      "Custom painting — Air Force 1",
             OrderItemKind.SZEWC,       "Naszycie patchy",                            7));
-
-        // ── Week -1 to this week (active — included in Mix donut) ───────────────
-        // Row 10 — pilne: PRZYJETE 10 days ago (>= 4 days threshold)
         result.add(seed(clients, 3, now, 10, OrderStatus.PRZYJETE,
             OrderItemKind.CZYSZCZENIE, "Pełne czyszczenie sneakersów",               6));
 
         result.add(seed(clients, 4, now,  8, OrderStatus.W_REALIZACJI,
             OrderItemKind.RENOWACJA,   "Renowacja kurtki bomber",                    5));
-
-        // Row 12 — pilne: PRZYJETE 7 days ago
         result.add(seed(clients, 5, now,  7, OrderStatus.PRZYJETE,
             OrderItemKind.SZEWC,       "Przyklejenie zelówki + impregnacja",         4));
-
-        // Row 13 — pilne: PRZYJETE 5 days ago + second item
         result.add(seedWithExtra(clients, 0, now,  5, OrderStatus.PRZYJETE,
             OrderItemKind.NAPRAWA,     "Naprawa zamka — bot zimowy",
             OrderItemKind.CZYSZCZENIE, "Czyszczenie wkładki",                        3));
@@ -104,23 +66,15 @@ public class DemoOrderFactory {
 
         result.add(seed(clients, 2, now,  3, OrderStatus.WSTEPNIE_PRZYJETE,
             OrderItemKind.SZEWC,       "Konsultacja — wymiana podeszwy",             5));
-
-        // Row 16 — PRZYJETE fresh (2 days ago — not pilne)
         result.add(seed(clients, 3, now,  2, OrderStatus.PRZYJETE,
             OrderItemKind.CZYSZCZENIE, "Czyszczenie skórzanej torby",               10));
-
-        // Row 17 — PRZYJETE fresh (1 day ago — not pilne)
         result.add(seed(clients, 4, now,  1, OrderStatus.PRZYJETE,
             OrderItemKind.RENOWACJA,   "Renowacja kurtki ramoneski",               12));
-
-        // Row 18 — PRZYJETE just received (today)
         result.add(seed(clients, 5, now,  0, OrderStatus.PRZYJETE,
             OrderItemKind.CUSTOM,      "Custom — kurtka jeansowa z napisami",       14));
 
         return result;
     }
-
-    // ── Single-item seed ────────────────────────────────────────────────────────
 
     private Order seed(List<Client> clients, int clientIdx, Instant now, int daysAgo,
                        OrderStatus targetStatus, OrderItemKind kind,
@@ -129,8 +83,6 @@ public class DemoOrderFactory {
             List.of(new CreateOrderItemRequest(kind, description, null, 0)),
             daysUntilPickup);
     }
-
-    // ── Two-item seed ───────────────────────────────────────────────────────────
 
     private Order seedWithExtra(List<Client> clients, int clientIdx, Instant now, int daysAgo,
                                 OrderStatus targetStatus,
@@ -144,8 +96,6 @@ public class DemoOrderFactory {
             ),
             daysUntilPickup);
     }
-
-    // ── Core seeding logic ──────────────────────────────────────────────────────
 
     private Order seedItems(List<Client> clients, int clientIdx, Instant now, int daysAgo,
                             OrderStatus targetStatus, List<CreateOrderItemRequest> items,
@@ -181,15 +131,6 @@ public class DemoOrderFactory {
             v = result.order().version();
         }
     }
-
-    /**
-     * Returns the list of status transitions required to reach {@code target}
-     * starting from PRZYJETE (the initial status set by OrderService.create).
-     *
-     * WSTEPNIE_PRZYJETE: allowed as a direct transition from PRZYJETE because
-     * OrderService.changeStatus has no state machine guard — it accepts any
-     * target status. Documented deviation from natural flow.
-     */
     private List<OrderStatus> progressionTo(OrderStatus target) {
         return switch (target) {
             case WSTEPNIE_PRZYJETE -> List.of(OrderStatus.WSTEPNIE_PRZYJETE);

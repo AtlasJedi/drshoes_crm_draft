@@ -15,19 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * SMSAPI SMS gateway implementation.
- *
- * POSTs to ${apiBaseUrl}/sms.do with Authorization: Bearer &lt;token&gt; header.
- * Retry policy: one retry on ResourceAccessException (network/timeout), 1 s pause.
- * No retry on 4xx/5xx — terminal; operator-initiated retry only.
- *
- * Carry-forward #3 (plan-errata #6): adds check_idx=1 to the request payload
- * when msg.idempotencyKey() is non-null, activating SMSAPI's 24-h dedup window.
- *
- * No attachment support: SMS is body-only (no BlobStorage dependency).
- */
 @Slf4j
 @RequiredArgsConstructor
 public class SmsApiSmsGateway implements SmsGateway {
@@ -40,7 +27,6 @@ public class SmsApiSmsGateway implements SmsGateway {
 
     @Override
     public DeliveryReceipt send(OutboundMessage m) {
-        // Build payload; add check_idx=1 when idempotencyKey present (dedup activation).
         Map<String, Object> payload = new LinkedHashMap<>(
                 SmsApiPayloadMapper.toPayload(m, props.getFrom()));
         if (m.idempotencyKey() != null && !m.idempotencyKey().isBlank()) {
@@ -48,8 +34,6 @@ public class SmsApiSmsGateway implements SmsGateway {
         }
         return executeWithRetry(m, payload);
     }
-
-    // ─── private helpers ────────────────────────────────────────────────────
 
     private DeliveryReceipt executeWithRetry(OutboundMessage m, Map<String, Object> payload) {
         try {
@@ -77,14 +61,6 @@ public class SmsApiSmsGateway implements SmsGateway {
             }
         }
     }
-
-    /**
-     * Returns true when the exception represents a network-level failure that should
-     * trigger a retry. Covers both ResourceAccessException (the standard Spring wrapper
-     * for IOException) and RestClientException wrapping an IOException directly
-     * (which SimpleClientHttpRequestFactory can produce during header-read failure —
-     * same pattern as PostmarkEmailGateway, see 4-4 dispatch log decision #2).
-     */
     private static boolean isNetworkError(RestClientException e) {
         if (e instanceof ResourceAccessException) return true;
         Throwable cause = e.getCause();
@@ -104,7 +80,6 @@ public class SmsApiSmsGateway implements SmsGateway {
                 .retrieve()
                 .onStatus(status -> !status.is2xxSuccessful(),
                           (req, resp) -> {
-                              // suppress throw; capture status+body via toEntity below
                           })
                 .toEntity(String.class);
 

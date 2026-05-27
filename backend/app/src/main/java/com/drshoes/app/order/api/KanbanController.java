@@ -14,18 +14,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Kanban board endpoint — returns all 4 active columns in one round-trip.
- *
- * GET /api/admin/orders/kanban?limitPerColumn=N
- *   - columns: PRZYJETE → W_REALIZACJI → CZEKA_NA_KLIENTA → GOTOWE_DO_ODBIORU
- *   - all columns capped at limitPerColumn (1–200); 400 if out of range
- *   - total = unfiltered badge count; hasMore = total > effective cap
- *   - soft-deleted excluded
- *
- * Structured logging: op=kanbanBoard limitPerColumn={} outcome=ok
- */
 @RestController
 @RequestMapping("/api/admin/orders")
 @Slf4j
@@ -50,8 +38,6 @@ public class KanbanController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "limitPerColumn must be between 1 and 200");
         }
-
-        // First pass: fetch counts + paged cards per column.
         Map<OrderStatus, List<Order>> columnOrders = new LinkedHashMap<>();
         Map<OrderStatus, Long> columnTotals = new LinkedHashMap<>();
         Map<UUID, Order> allOrders = new LinkedHashMap<>();
@@ -64,18 +50,12 @@ public class KanbanController {
             columnOrders.put(status, cards);
             cards.forEach(o -> allOrders.put(o.getId(), o));
         }
-
-        // Batch fetch client names.
         Set<UUID> clientIds = allOrders.values().stream()
             .map(Order::getClientId)
             .collect(Collectors.toSet());
         Map<UUID, String> clientNames = clientRepo.findAllById(clientIds).stream()
             .collect(Collectors.toMap(Client::getId, Client::getFullName));
-
-        // Batch fetch item summaries.
         Map<UUID, String> summaries = buildSummaries(allOrders.keySet());
-
-        // Build column DTOs.
         List<KanbanColumnDto> columns = new ArrayList<>();
         for (OrderStatus status : COLUMN_ORDER) {
             long total  = columnTotals.get(status);
@@ -99,8 +79,6 @@ public class KanbanController {
         log.info("op=kanbanBoard limitPerColumn={} outcome=ok", limitPerColumn);
         return new KanbanResponseDto(columns);
     }
-
-    /** Delegates to OrderUrgency: status == PRZYJETE AND receivedAt + 4d <= now. */
     private static boolean isUrgent(Order o) {
         return OrderUrgency.isUrgent(o.getReceivedAt(), o.getStatus());
     }

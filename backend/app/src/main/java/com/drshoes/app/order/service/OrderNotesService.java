@@ -9,19 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Handles POST /api/admin/orders/{orderId}/notes.
- *
- * Semantics:
- *   - At least one of (note, newLocation) must be non-blank.
- *   - If newLocation given: must exist in storage_location WHERE active=true.
- *   - If newLocation equals current order.location AND note is blank → no_op_change.
- *   - Atomic: orders.location updated only if validation passes; aspect writes
- *     audit row after controller returns. If service throws, controller throws,
- *     aspect does not persist audit. orders.location update is in same @Transactional
- *     so it rolls back too.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor

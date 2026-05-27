@@ -13,15 +13,6 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * POST /api/admin/orders/{orderId}/notes
- * Adds a free-text note (and/or location move) to the order's history.
- *
- * AuditLogAspect writes the audit row from method+path+note+location-diff.
- * Location diff is communicated to the aspect via HttpServletRequest attributes
- * set after the service returns — the aspect reads them in the same request thread.
- */
 @RestController
 @RequestMapping("/api/admin/orders/{orderId}/notes")
 @Slf4j
@@ -38,10 +29,6 @@ public class OrderNotesController {
             HttpServletRequest httpReq) {
 
         OrderNotesService.Result r = svc.addNote(orderId, req.note(), req.location());
-
-        // Thread location diff to the AuditLogAspect via request attributes.
-        // The aspect runs after this method returns (same thread); request lifecycle
-        // cleans up attributes — no manual clear needed.
         httpReq.setAttribute("audit.locationFrom", r.oldLocation());
         httpReq.setAttribute("audit.locationTo",   r.newLocation());
 

@@ -24,30 +24,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * REST controller for the Order aggregate.
- *
- * Endpoints:
- *   POST   /api/admin/orders                       — create (OWNER | EMPLOYEE)
- *   GET    /api/admin/orders                       — paginated list (OWNER | EMPLOYEE)
- *   GET    /api/admin/orders/{id}                  — single order (OWNER | EMPLOYEE)
- *   PATCH  /api/admin/orders/{id}                  — update (OWNER | EMPLOYEE)
- *   POST   /api/admin/orders/{id}/status           — change status (OWNER | EMPLOYEE)
- *   DELETE /api/admin/orders/{id}                  — soft-delete (OWNER only)
- *   POST   /api/admin/orders/{id}/items            — add item (OWNER | EMPLOYEE)
- *   PATCH  /api/admin/orders/{id}/items/{itemId}   — update item (OWNER | EMPLOYEE)
- *   DELETE /api/admin/orders/{id}/items/{itemId}   — remove item (OWNER | EMPLOYEE)
- *
- * Structured logging per dispatch-protocol §7:
- *   op=<method> actor={} orderId={} outcome=ok
- *
- * RBAC: all endpoints require authenticated session (enforced by SecurityConfig).
- * DELETE /orders/{id} is further restricted to OWNER via @PreAuthorize + RbacService.canDeleteOrders.
- *
- * NOTE: This class exceeds 120 LOC due to 9 endpoints. CRUD-style controllers are an
- * accepted exception to the granular-code rule per CLAUDE.md (mirroring JPA entity exception).
- */
 @RestController
 @RequestMapping("/api/admin/orders")
 @Slf4j
@@ -126,9 +102,6 @@ public class OrderController {
                                              @Valid @RequestBody ChangeStatusRequest req,
                                              Authentication auth,
                                              HttpServletRequest httpReq) {
-        // Expose targetStatus as a request attribute so AuditWriteCoordinator can
-        // persist it into audit_log.target_status — allows curator to emit DONE kind
-        // when the transition lands at WYDANE (v2-F, V027 migration).
         httpReq.setAttribute("audit.targetStatus", req.targetStatus().name());
         ChangeStatusResponse resp = svc.changeStatus(id, req);
         log.info("op=changeOrderStatus actor={} orderId={} targetStatus={} noteLen={} outcome=ok",

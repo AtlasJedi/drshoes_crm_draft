@@ -8,18 +8,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Idempotent dev-data seeder. Active only under the "local" profile with
- * drshoes.demo.seed.enabled=true.
- *
- * Skips entirely when the client table already has >= 6 rows (re-run safe).
- * Business-layer calls (ClientService, OrderService) are used so audit log
- * entries and entity validation fire exactly as they do for real traffic.
- *
- * Factored data creation into DemoClientFactory and DemoOrderFactory to
- * keep this orchestrator under 120 LOC.
- */
 @Component("demoSeedRunner")
 @Profile("local")
 @ConditionalOnProperty(prefix = "drshoes.demo.seed", name = "enabled",
@@ -38,8 +26,6 @@ public class DemoSeedRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         run();
     }
-
-    /** Package-visible overload — allows test code to re-invoke idempotently. */
     void run() {
         log.info("op=demo.seed status=starting");
         long existing = clientRepository.count();

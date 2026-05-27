@@ -15,24 +15,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-
-/**
- * Evaluates and fires messaging triggers.
- *
- * Two entry points:
- *   - onStatusChange(orderId, fromStatus, toStatus): called inside an active @Transactional from
- *     OrderService.changeStatus. Registers an afterCommit hook; the actual fire happens
- *     post-commit in a new transaction (opened by MessageRouter.sendForTrigger).
- *   - fireScheduled(trg, orderId, discriminator): called by ScheduledTriggerJob for time-based
- *     triggers. No transaction registration — caller is responsible for scheduling context.
- *
- * Idempotency: every fire is guarded by IdempotencyService.claimTriggerFire. Duplicate fires
- * (e.g., status re-entered) are silently skipped with an INFO log.
- *
- * Logging contract:
- *   - trigger.skip (INFO): idempotency guard fired; fire skipped.
- *   - trigger.fire outcome=error (ERROR): gateway or parse failure during fire.
- */
 @Service
 @Slf4j
 public class TriggerEngine {
@@ -57,11 +39,6 @@ public class TriggerEngine {
         this.requiresNewTx = new TransactionTemplate(txManager);
         this.requiresNewTx.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
-
-    /**
-     * Called from OrderService.changeStatus inside its @Transactional method.
-     * Registers an afterCommit callback so trigger fires are skipped on rollback.
-     */
     public void onStatusChange(UUID orderId, String fromStatus, String toStatus) {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -70,10 +47,6 @@ public class TriggerEngine {
             }
         });
     }
-
-    /**
-     * Public entry for the scheduled job — fires for orders matched by the cron-aware caller.
-     */
     public void fireScheduled(TriggerEntity trg, UUID orderId, String discriminator) {
         if (!idem.claimTriggerFire(trg.getId(), orderId, discriminator)) {
             log.info("op=scheduled_trigger.skip reason=idempotent triggerId={} orderId={}",
@@ -82,8 +55,6 @@ public class TriggerEngine {
         }
         fireOne(trg, orderId);
     }
-
-    // ---- private ----
 
     private void fireImmediateForStatus(UUID orderId, String toStatus) {
         var enabled = triggers.findAllByEventAndEnabledTrue(TriggerEvent.STATUS_CHANGE);

@@ -1,12 +1,4 @@
 package com.drshoes.app.messaging.util;
-
-/**
- * Normalizes phone numbers to E.164 format with Polish country code fallback.
- * Strips spaces, parentheses, and dashes; converts 00-prefix to +; prepends +48
- * for bare 9-digit or 11-digit 48-prefixed numbers.
- *
- * Returns null for null or empty-after-stripping input.
- */
 public final class PhoneNormalizer {
 
     private PhoneNormalizer() {}

@@ -9,21 +9,6 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-
-/**
- * JPA entity for the photo table (created by V009).
- *
- * Implements {@link Persistable} so that Spring Data JPA always calls
- * {@code EntityManager.persist()} rather than {@code merge()} when {@code save()} is
- * invoked with a pre-assigned UUID (as PhotoService does to pre-compute the S3 key
- * before storing the row). Without {@code Persistable}, Spring Data's {@code isNew()}
- * check sees a non-null id and calls {@code merge()}, which expects an existing row
- * and throws {@code StaleObjectStateException}.
- *
- * The {@code @Transient isNew} flag is set to {@code true} at construction time and
- * cleared by {@code @PostPersist} / {@code @PostLoad} so that subsequent saves
- * (e.g. relabel) correctly call {@code merge()}.
- */
 @Entity
 @Table(name = "photo")
 @Getter

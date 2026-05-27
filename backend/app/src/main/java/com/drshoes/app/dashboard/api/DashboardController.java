@@ -15,12 +15,6 @@ import java.util.Locale;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * Read-only dashboard aggregation endpoints.
- *
- * Structured logging: op={} actor={} outcome=ok
- */
 @RestController
 @RequestMapping("/api/admin/dashboard")
 @Slf4j
@@ -60,13 +54,6 @@ public class DashboardController {
             inProgress, readyForPickup, todayIntake, monthRevenue, formatted,
             inProgressMoney, inProgressFormatted, pickedUpMoneyMonth, pickedUpMonthFormatted);
     }
-
-    /**
-     * Converts cents to PLN and formats with pl-PL locale.
-     * Non-breaking spaces (U+00A0) produced by the locale are replaced with
-     * regular spaces so the JSON value is predictable and human-readable.
-     * Example: 1824000 cents → "18 240,00 zł"
-     */
     private static String formatPln(long cents) {
         NumberFormat nf = NumberFormat.getCurrencyInstance(PL);
         double pln = cents / 100.0;

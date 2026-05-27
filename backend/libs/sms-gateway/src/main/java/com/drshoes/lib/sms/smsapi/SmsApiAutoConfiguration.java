@@ -7,17 +7,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
-
-/**
- * Auto-configures {@link SmsApiSmsGateway} when
- * {@code messaging.sms.provider=smsapi} is set.
- *
- * Ordered {@code before = SmsGatewayAutoConfiguration.class} so the SmsApi
- * gateway bean registers before the fallback {@link com.drshoes.lib.sms.LoggingSmsGateway}
- * autoconfig evaluates its {@code @ConditionalOnMissingBean(SmsGateway.class)}
- * guard — without this ordering both beans can register and Spring fails with
- * NoUniqueBeanDefinitionException at startup when this provider is selected.
- */
 @AutoConfiguration(before = SmsGatewayAutoConfiguration.class)
 @ConditionalOnProperty(name = "messaging.sms.provider", havingValue = "smsapi")
 @EnableConfigurationProperties(SmsApiProperties.class)

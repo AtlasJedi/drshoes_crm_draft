@@ -17,12 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-/**
- * POST /api/admin/clients/{id}/messages — cross-thread "Nowa wiadomość" composer.
- * Separate controller for clean RBAC surface; keeps MessagesController unchanged (M2 contract).
- * LOC target: < 70.
- */
 @RestController
 @RequestMapping("/api/admin/clients")
 @PreAuthorize("hasAnyRole('OWNER','EMPLOYEE')")
@@ -56,8 +50,6 @@ public class ClientMessageController {
 
         return toDto(msg);
     }
-
-    // ---- private ----
 
     private void validateChannelAvailability(Client client, String channel) {
         if ("EMAIL".equals(channel) && (client.getEmail() == null || client.getEmail().isBlank())) {
