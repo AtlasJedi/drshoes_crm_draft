@@ -37,3 +37,15 @@ screenshots/m9-parity/
 
 # DB backups (created by `make backup` / `make update`)
 backups/
+
+# Dev artifacts — do not commit
+*.png
+!apps/web/e2e/_screens/*.png
+design/archive/
+design/handoff/
+design/prototype/
+docs/dispatch-log/
+docs/superpowers/
+docs/screenshots/
+.claude/
+CLAUDE.md
