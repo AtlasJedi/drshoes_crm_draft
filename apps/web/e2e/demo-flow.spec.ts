@@ -86,8 +86,8 @@ async function changeOrderStatus(page: Page, statusLabel: string) {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const EMAIL    = "misza@drshoes.pl";
-const PASSWORD = "change-me-on-first-login";
+const EMAIL    = process.env.E2E_ADMIN_EMAIL    ?? "misza@drshoes.pl";
+const PASSWORD = process.env.E2E_ADMIN_PASSWORD ?? "change-me-on-first-login";
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
