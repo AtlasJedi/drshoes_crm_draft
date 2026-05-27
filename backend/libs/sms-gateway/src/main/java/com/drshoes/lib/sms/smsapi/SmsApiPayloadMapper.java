@@ -4,7 +4,7 @@ import com.drshoes.lib.messaging.OutboundMessage;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-public final class SmsApiPayloadMapper {
+public class SmsApiPayloadMapper {
 
     private SmsApiPayloadMapper() {}
     public static Map<String, Object> toPayload(OutboundMessage msg, String from) {

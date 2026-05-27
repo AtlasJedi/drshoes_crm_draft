@@ -1,5 +1,6 @@
 package com.drshoes.app.photo.api;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.photo.domain.PhotoLabel;
 import com.drshoes.app.photo.domain.PhotoRepository;
@@ -69,7 +70,7 @@ public class PhotoController {
     @PatchMapping("/api/admin/photos/{id}")
     public PhotoDto relabel(
             @PathVariable UUID id,
-            @RequestBody RelabelPhotoRequest req,
+            @Valid @RequestBody RelabelPhotoRequest req,
             @AuthenticationPrincipal AdminPrincipal actor) {
         log.info("op=photo.relabel.recv photoId={} actorId={} newLabel={}", id, actor.userId(), req.label());
         var photo = photoRepository.findById(id)

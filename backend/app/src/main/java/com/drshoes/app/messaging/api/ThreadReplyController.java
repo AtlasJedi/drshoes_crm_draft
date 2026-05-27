@@ -1,5 +1,6 @@
 package com.drshoes.app.messaging.api;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.messaging.dto.MessageDto;
 import com.drshoes.app.messaging.dto.SendReplyRequest;
@@ -28,7 +29,7 @@ public class ThreadReplyController {
 
     @PostMapping("/{id}/messages")
     public MessageDto sendReply(@PathVariable UUID id,
-                                @RequestBody SendReplyRequest req,
+                                @Valid @RequestBody SendReplyRequest req,
                                 @AuthenticationPrincipal AdminPrincipal actor) {
         log.info("op=thread.sendReply actor={} threadId={} channel={}", actor.email(), id, req.channel());
 

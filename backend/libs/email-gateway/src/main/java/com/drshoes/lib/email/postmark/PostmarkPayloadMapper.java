@@ -8,7 +8,7 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-public final class PostmarkPayloadMapper {
+public class PostmarkPayloadMapper {
 
     private static final long MAX_ATTACHMENT_BYTES = 10L * 1024 * 1024;
 

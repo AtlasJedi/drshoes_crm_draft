@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 @Setter
 @Getter
-public final class OrderUrgency {
+public class OrderUrgency {
 
     public static final int THRESHOLD_DAYS = 4;
 

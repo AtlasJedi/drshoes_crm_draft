@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-public final class OrderListPolicy {
+public class OrderListPolicy {
 
     private OrderListPolicy() {}
 

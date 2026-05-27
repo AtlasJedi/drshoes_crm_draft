@@ -61,10 +61,4 @@ public class WebhookEventEntity {
 
     @Column(name = "applied_at")
     private Instant appliedAt;
-    public void setProviderEventId(String providerEventId) { this.providerEventId = providerEventId; }
-    public void setMessageId(UUID messageId) { this.messageId = messageId; }
-    public void setAppliedStatus(AppliedStatus appliedStatus) { this.appliedStatus = appliedStatus; }
-    public void setRawPayload(JsonNode rawPayload) { this.rawPayload = rawPayload; }
-    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
-    public void setAppliedAt(Instant appliedAt) { this.appliedAt = appliedAt; }
 }

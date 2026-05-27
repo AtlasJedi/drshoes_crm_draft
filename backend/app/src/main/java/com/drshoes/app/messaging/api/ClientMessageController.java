@@ -1,5 +1,6 @@
 package com.drshoes.app.messaging.api;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
@@ -30,7 +31,7 @@ public class ClientMessageController {
 
     @PostMapping("/{clientId}/messages")
     public MessageDto sendNew(@PathVariable UUID clientId,
-                              @RequestBody SendNewMessageRequest req,
+                              @Valid @RequestBody SendNewMessageRequest req,
                               @AuthenticationPrincipal AdminPrincipal actor) {
         log.info("op=client.sendNew actor={} clientId={} channel={}", actor.email(), clientId, req.channel());
 

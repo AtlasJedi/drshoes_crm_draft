@@ -1,5 +1,6 @@
 package com.drshoes.app.messaging.api;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.messaging.dto.ToggleTriggerRequest;
 import com.drshoes.app.messaging.dto.TriggerDto;
 import com.drshoes.app.messaging.service.TriggerService;
@@ -36,7 +37,7 @@ public class TriggersController {
     @PatchMapping("/{id}/enabled")
     @PreAuthorize("hasRole('OWNER')")
     public TriggerDto toggle(@PathVariable UUID id,
-                             @RequestBody ToggleTriggerRequest req,
+                             @Valid @RequestBody ToggleTriggerRequest req,
                              Authentication auth) {
         var dto = svc.setEnabled(id, Boolean.TRUE.equals(req.enabled()));
         log.info("op=trigger.toggle actor={} triggerId={} enabled={} outcome=ok",

@@ -1,5 +1,6 @@
 package com.drshoes.app.messaging.api;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.client.domain.Client;
 import com.drshoes.app.client.domain.ClientRepository;
@@ -35,7 +36,7 @@ public class ThreadMutationController {
 
     @PostMapping("/{id}/assign")
     public MessageThreadDto assign(@PathVariable UUID id,
-                                   @RequestBody AssignThreadRequest req,
+                                   @Valid @RequestBody AssignThreadRequest req,
                                    @AuthenticationPrincipal AdminPrincipal actor) {
         log.info("op=thread.assign actor={} threadId={} targetClientId={}",
             actor.email(), id, req.clientId());

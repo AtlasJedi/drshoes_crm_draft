@@ -1,5 +1,5 @@
 package com.drshoes.app.messaging.util;
-public final class HtmlStripper {
+public class HtmlStripper {
 
     private HtmlStripper() {}
 

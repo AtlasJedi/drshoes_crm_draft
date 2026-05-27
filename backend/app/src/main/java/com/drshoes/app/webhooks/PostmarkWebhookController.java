@@ -1,5 +1,6 @@
 package com.drshoes.app.webhooks;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.messaging.service.WebhookStatusReconciler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +42,7 @@ public class PostmarkWebhookController {
     @PostMapping("/api/webhooks/postmark")
     public ResponseEntity<Void> receive(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @RequestBody String rawBody) {
+            @Valid @RequestBody String rawBody) {
         if (!verifyBasicAuth(authHeader)) {
             log.info("op=webhook.postmark.received provider=postmark outcome=rejected_auth");
             return ResponseEntity.status(401).build();

@@ -1,5 +1,5 @@
 package com.drshoes.app.messaging.util;
-public final class PhoneNormalizer {
+public class PhoneNormalizer {
 
     private PhoneNormalizer() {}
 

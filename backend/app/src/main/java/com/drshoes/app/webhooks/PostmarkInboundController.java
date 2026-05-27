@@ -1,5 +1,6 @@
 package com.drshoes.app.webhooks;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.messaging.dto.PostmarkInboundPayload;
 import com.drshoes.app.messaging.service.InboundMessageService;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +39,7 @@ public class PostmarkInboundController {
     @PostMapping("/api/webhooks/postmark/inbound")
     public ResponseEntity<InboundResponse> receive(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @RequestBody PostmarkInboundPayload payload) {
+            @Valid @RequestBody PostmarkInboundPayload payload) {
 
         if (!verifyBasicAuth(authHeader)) {
             log.info("op=webhook.postmark.inbound actor=postmark outcome=rejected");

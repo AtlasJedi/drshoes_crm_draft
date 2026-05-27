@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
-public final class OrderUpdateDiff {
+public class OrderUpdateDiff {
 
     private static final DateTimeFormatter DATE_FMT =
         DateTimeFormatter.ofPattern("dd.MM.yyyy").withZone(ZoneId.of("Europe/Warsaw"));

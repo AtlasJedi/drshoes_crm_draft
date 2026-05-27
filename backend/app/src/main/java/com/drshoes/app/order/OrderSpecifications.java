@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-public final class OrderSpecifications {
+public class OrderSpecifications {
 
     private OrderSpecifications() {}
     public static Specification<Order> forList(List<OrderStatus> statuses, UUID assigneeId,

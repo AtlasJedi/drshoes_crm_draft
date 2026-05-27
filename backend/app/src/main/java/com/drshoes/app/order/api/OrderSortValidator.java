@@ -4,7 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.Set;
-public final class OrderSortValidator {
+public class OrderSortValidator {
     static final Set<String> ALLOWED_FIELDS = Set.of(
         "receivedAt", "createdAt", "code", "status", "pickedUpAt"
     );

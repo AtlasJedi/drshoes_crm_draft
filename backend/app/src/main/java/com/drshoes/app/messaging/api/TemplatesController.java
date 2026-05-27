@@ -1,5 +1,6 @@
 package com.drshoes.app.messaging.api;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.messaging.dto.CreateTemplateRequest;
 import com.drshoes.app.messaging.dto.TemplateDto;
 import com.drshoes.app.messaging.dto.UpdateTemplateRequest;
@@ -38,7 +39,7 @@ public class TemplatesController {
 
     @PostMapping
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<TemplateDto> create(@RequestBody CreateTemplateRequest req,
+    public ResponseEntity<TemplateDto> create(@Valid @RequestBody CreateTemplateRequest req,
                                               Authentication auth) {
         var created = svc.create(req);
         log.info("op=template.create actor={} templateId={} outcome=ok", actor(auth), created.id());
@@ -48,7 +49,7 @@ public class TemplatesController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('OWNER')")
     public TemplateDto update(@PathVariable UUID id,
-                              @RequestBody UpdateTemplateRequest req,
+                              @Valid @RequestBody UpdateTemplateRequest req,
                               Authentication auth) {
         var updated = svc.update(id, req);
         log.info("op=template.update actor={} templateId={} outcome=ok", actor(auth), id);

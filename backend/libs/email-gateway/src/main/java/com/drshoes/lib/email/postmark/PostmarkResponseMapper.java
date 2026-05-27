@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
-public final class PostmarkResponseMapper {
+public class PostmarkResponseMapper {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
 

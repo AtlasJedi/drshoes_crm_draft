@@ -1,5 +1,6 @@
 package com.drshoes.app.messaging.api;
 
+import jakarta.validation.Valid;
 import com.drshoes.app.auth.principal.AdminPrincipal;
 import com.drshoes.app.messaging.domain.MessageEntity;
 import com.drshoes.app.messaging.dto.MessageDto;
@@ -46,7 +47,7 @@ public class MessagesController {
 
     @PostMapping("/api/admin/orders/{orderId}/messages")
     public ResponseEntity<MessageDto> send(@PathVariable UUID orderId,
-                                           @RequestBody SendMessageRequest req,
+                                           @Valid @RequestBody SendMessageRequest req,
                                            @AuthenticationPrincipal AdminPrincipal actor) {
         if (req.templateId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "templateId is required");
