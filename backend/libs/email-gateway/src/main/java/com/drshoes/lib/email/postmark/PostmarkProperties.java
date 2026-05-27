@@ -2,7 +2,7 @@ package com.drshoes.lib.email.postmark;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("messaging.email.postmark")
-public class PostmarkProperties {
+public final class PostmarkProperties {
     private String serverToken;
     private String from = "noreply@drshoes.pl";
     private String messageStream = "outbound";

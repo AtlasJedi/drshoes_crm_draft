@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
-@Configuration
-public class LoginThrottleConfig {
+@Configuration(proxyBeanMethods = false)
+public final class LoginThrottleConfig {
 
     @Value("${drshoes.auth.throttle.enabled:true}")
     private boolean enabled;

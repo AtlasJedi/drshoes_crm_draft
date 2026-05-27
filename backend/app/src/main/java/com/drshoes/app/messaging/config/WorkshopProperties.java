@@ -6,7 +6,7 @@ import lombok.Setter;
 @ConfigurationProperties("drshoes.workshop")
 @Getter
 @Setter
-public class WorkshopProperties {
+public final class WorkshopProperties {
 
     private String name        = "Dr Shoes Poznań";
     private String address     = "Aleje Karola Marcinkowskiego 26, 61-745 Poznań";

@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableJdbcHttpSession(maxInactiveIntervalInSeconds = 1800)
-public class SessionConfig {
+public final class SessionConfig {
 
     @Bean
     CookieSameSiteSupplier sameSite() {

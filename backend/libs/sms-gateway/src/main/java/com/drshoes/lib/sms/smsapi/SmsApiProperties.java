@@ -3,7 +3,7 @@ package com.drshoes.lib.sms.smsapi;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 @ConfigurationProperties("messaging.sms.smsapi")
-public class SmsApiProperties {
+public final class SmsApiProperties {
     private String token;
     private String from = "DrShoes";
     private List<String> callbackAllowlist = List.of(

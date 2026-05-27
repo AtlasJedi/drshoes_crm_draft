@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.Clock;
 import java.time.ZoneId;
-@Configuration
-public class MessagingClockConfig {
+@Configuration(proxyBeanMethods = false)
+public final class MessagingClockConfig {
 
     @Bean
     public Clock messagingClock() {

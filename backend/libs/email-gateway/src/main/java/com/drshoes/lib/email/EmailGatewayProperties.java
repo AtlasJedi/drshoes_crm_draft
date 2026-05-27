@@ -3,7 +3,7 @@ package com.drshoes.lib.email;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("drshoes.email")
-public class EmailGatewayProperties {
+public final class EmailGatewayProperties {
 
     public enum Provider { POSTMARK, SMTP, NOOP }
 

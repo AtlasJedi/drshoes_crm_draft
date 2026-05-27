@@ -13,9 +13,9 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import lombok.extern.slf4j.Slf4j;
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @Slf4j
-public class SecurityConfig {
+public final class SecurityConfig {
     @Value("${drshoes.security.csrf-enabled:true}")
     private boolean csrfEnabled;
     private static final String[] PUBLIC_MATCHERS = {

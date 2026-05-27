@@ -7,7 +7,7 @@ import lombok.Setter;
 @ConfigurationProperties("drshoes.sms")
 @Getter
 @Setter
-public class SmsGatewayProperties {
+public final class SmsGatewayProperties {
 
     public enum Provider { SMSAPI_PL, TWILIO, NOOP }
 

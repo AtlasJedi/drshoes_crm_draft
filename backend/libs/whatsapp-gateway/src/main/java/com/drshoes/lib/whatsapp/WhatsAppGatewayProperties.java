@@ -3,7 +3,7 @@ package com.drshoes.lib.whatsapp;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("drshoes.whatsapp")
-public class WhatsAppGatewayProperties {
+public final class WhatsAppGatewayProperties {
 
     public enum Provider { WHATSAPP_CLOUD_API, NOOP }
 

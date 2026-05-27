@@ -3,7 +3,7 @@ package com.drshoes.lib.email.smtp;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("messaging.email.smtp")
-public class SmtpProperties {
+public final class SmtpProperties {
 
     private String from = "no-reply@drshoes.local";
     private String fromName = "Dr Shoes";
