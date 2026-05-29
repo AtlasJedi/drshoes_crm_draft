@@ -65,7 +65,7 @@ DRSHOES_DEMO_SEED_ENABLED=false      # ⚑ koniecznie false w produkcji
 ### ⚑ Identyfikacja warsztatu (placeholdery w mailach)
 ```bash
 DRSHOES_WORKSHOP_NAME=Dr Shoes
-DRSHOES_WORKSHOP_ADDRESS=ul. Mostowa 5a, 50-088 Wrocław
+DRSHOES_WORKSHOP_ADDRESS=Aleje Karola Marcinkowskiego 26, 61-745 Poznań
 DRSHOES_WORKSHOP_OPENING_HOURS=pon–pt 10:00–18:00 · sob 11:00–15:00
 DRSHOES_WORKSHOP_URL=https://drshoes.pl
 ```

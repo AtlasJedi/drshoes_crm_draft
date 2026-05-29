@@ -50,16 +50,23 @@ services:
       MESSAGING_EMAIL_PROVIDER: smtp
       MESSAGING_EMAIL_SMTP_FROM: ${SMTP_FROM}
       MESSAGING_EMAIL_SMTP_FROM_NAME: ${SMTP_FROM_NAME}
+      # Hetzner blocks outbound TCP 25 AND 465 on new accounts by default;
+      # 587 (STARTTLS) is open. Stick with 587 unless the egress block is lifted.
       SPRING_MAIL_HOST: smtp.gmail.com
-      SPRING_MAIL_PORT: 465
+      SPRING_MAIL_PORT: 587
       SPRING_MAIL_USERNAME: ${SMTP_USERNAME}
       SPRING_MAIL_PASSWORD: ${SMTP_PASSWORD}
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_SSL_ENABLE: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_SSL_ENABLE: "false"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_CONNECTIONTIMEOUT: "10000"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_TIMEOUT: "15000"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_WRITETIMEOUT: "15000"
+      # MailHealthIndicator opens a TCP connection to SPRING_MAIL_HOST on every
+      # /actuator/health poll. On a slow/blocked egress this trips the Docker
+      # healthcheck (10s timeout) and the container is marked unhealthy even
+      # though the app is fine. The probe is not load-bearing — disable it.
+      MANAGEMENT_HEALTH_MAIL_ENABLED: "false"
 
       # Workshop identity (rendered into email templates)
       DRSHOES_WORKSHOP_NAME: ${WORKSHOP_NAME}

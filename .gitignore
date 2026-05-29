@@ -4,6 +4,10 @@ node_modules
 .env
 .env.local
 .env.*.local
+.env.prod
+infra/.env.prod
+infra/scripts/seed-users.sql
+**/*.bak-*
 .DS_Store
 *.log
 dist
